@@ -39,7 +39,7 @@ module.exports = async function createConfig(): Promise<Config> {
     title: 'nyx docs',
     tagline: 'Documentation of the nyx framework.',
     url: 'https://nyx-discord.github.io',
-    baseUrl: '/docs/',
+    baseUrl: '/nyx/docs/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
