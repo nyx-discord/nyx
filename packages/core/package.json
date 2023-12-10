@@ -23,7 +23,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist/**",
+    "assets/**"
   ],
   "scripts": {
     "lint": "eslint ./src --fix",

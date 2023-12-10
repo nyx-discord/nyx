@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "module": "./dist/index.mjs",
   "files": [
-    "dist/**"
+    "dist/**",
+    "assets/**"
   ],
   "private": false,
   "publishConfig": {
