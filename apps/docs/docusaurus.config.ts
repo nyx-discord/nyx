@@ -92,61 +92,62 @@ module.exports = async function createConfig(): Promise<Config> {
       ],
     ],
 
-    themeConfig:
-      /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
-      {
-        navbar: {
-          title: 'Nyx Docs',
-          logo: {
-            alt: 'Nyx Logo',
-            src: 'img/favicon.ico',
+    themeConfig: {
+      navbar: {
+        title: 'Nyx Docs',
+        logo: {
+          alt: 'Nyx Logo',
+          src: 'img/favicon.ico',
+        },
+        items: [
+          {
+            type: 'localeDropdown',
+            position: 'left',
           },
-          items: [
-            {
-              type: 'localeDropdown',
-              position: 'left',
-            },
-            {
-              href: 'https://nyx-discord.github.io/nyx/typedoc',
-              label: 'TypeDoc',
-              position: 'right',
-            },
-            {
-              href: 'https://github.com/nyx-discord/nyx',
-              label: 'GitHub',
-              position: 'right',
-            },
-          ],
-        },
-        footer: {
-          style: 'dark',
-          copyright: `Copyright © ${new Date().getFullYear()} nyx. Built with Docusaurus.`,
-        },
-        prism: {
-          theme: lightCodeTheme,
-          darkTheme: darkCodeTheme,
-          magicComments: [
-            {
-              className: 'theme-code-block-highlighted-line',
-              line: 'highlight-next-line',
-              block: { start: 'highlight-start', end: 'highlight-end' },
-            },
-            {
-              className: 'code-block-error-line',
-              line: 'error-next-line',
-              block: { start: 'error-start', end: 'error-end' },
-            },
-            {
-              className: 'code-block-warn-line',
-              line: 'warn-next-line',
-              block: { start: 'warn-start', end: 'warn-end' },
-            },
-          ],
-        },
-        zoom: {
-          selector: 'img',
-        },
+          {
+            href: 'https://nyx-discord.github.io/nyx/typedoc',
+            label: 'TypeDoc',
+            position: 'right',
+          },
+          {
+            href: 'https://github.com/nyx-discord/nyx',
+            label: 'GitHub',
+            position: 'right',
+          },
+        ],
       },
+      colorMode: {
+        defaultMode: 'dark',
+      },
+      footer: {
+        style: 'dark',
+        copyright: `Copyright © ${new Date().getFullYear()} nyx. Built with Docusaurus.`,
+      },
+      prism: {
+        theme: lightCodeTheme,
+        darkTheme: darkCodeTheme,
+        magicComments: [
+          {
+            className: 'theme-code-block-highlighted-line',
+            line: 'highlight-next-line',
+            block: { start: 'highlight-start', end: 'highlight-end' },
+          },
+          {
+            className: 'code-block-error-line',
+            line: 'error-next-line',
+            block: { start: 'error-start', end: 'error-end' },
+          },
+          {
+            className: 'code-block-warn-line',
+            line: 'warn-next-line',
+            block: { start: 'warn-start', end: 'warn-end' },
+          },
+        ],
+      },
+      zoom: {
+        selector: 'img',
+      },
+    },
     plugins: [require.resolve('docusaurus-plugin-image-zoom')],
   };
 };
