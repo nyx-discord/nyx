@@ -1,0 +1,153 @@
+---
+title: ️🛡️ Session Interception
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Session interception refers to blocking a session from being executed. In nyx, there are two ways to do this:
+
+1. Add a `SessionMiddleware` to the respective `SessionMiddlewareLinkedList` in the `SessionExecutor` that handles
+the session execution.
+2. Provide the respective `SessionFilter` in the `Session`.
+
+Let's explore when and how to use each of these methods.
+
+## 🚦 Session Middlewares
+
+`SessionMiddlewares` are objects stored on a `SessionMiddlewareLinkedList`, which is held and called by
+the session executor when a session is about to be executed.
+
+Specifically, there are two types of session middlewares:
+* `SessionStartMiddleware` - Checked when a session starts.
+* `SessionUpdateMiddleware` - Checked when a session is updated.
+
+Each consist of:
+* A `check()` method, which takes a session and its arguments. Returns a `MiddlewareResponse`.
+* A `Priority`, that determines its priority inside the list.
+
+When being checked, a middleware is passed the session that is being checked and the execution metadata. The session then
+replies with a `MiddlewareResponse`, which can either:
+
+* Allow the execution (`{ allowed: true }`), with either:
+* Making the linked list check the next middleware (`{ allowed: true, checkNext: true }`).
+* Forcing the chain to end (`{ allowed: true, checkNext: false }`).
+* Deny the execution (`{ allowed: false, checkNext: false }`).
+
+The `AbstractMiddleware`, has `protected` utility methods to generate these responses. Specifically, `this.true()`,
+`this.false()` and `this.forceTrue()`.
+
+:::info
+Middlewares are not bot aware, meaning that you can reuse the same instance for many bots.
+:::
+
+### ❓ When to use a middleware?
+
+Middlewares are best for executing something or intercepting for all sessions. For example, the filtering
+(`SessionFilter`) logic is done by a middleware.
+
+They're very good when intercepting `Sessions` in general, but not really for one in particular, since it
+would be very inefficient to check all the sessions searching for only one of them.
+
+### 👷‍ Middleware Creation
+
+You can create your own middleware by either:
+
+* Extending the respective `AbstractSessionMiddleware` from `@framework` (recommended).
+* Implementing the respective `SessionMiddleware` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending an AbstractSessionMiddleware">
+```
+
+```ts
+import {
+  AbstractSessionStartMiddleware,
+  AbstractSessionUpdateMiddleware,
+} from '@nyx-discord/framework';
+
+class MySessionStartMiddleware extends AbstractSessionStartMiddleware {
+  public check(session: Session, args: SessionStartArgs): MiddlewareResponse {
+    return this.true();
+  }
+}
+
+const startMiddleware = new MySessionStartMiddleware();
+bot.sessions.getExecutor().getStartMiddleware().add(startMiddleware);
+
+class MySessionUpdateMiddleware extends AbstractSessionUpdateMiddleware {
+  public check(session: Session, args: SessionUpdateArgs): MiddlewareResponse {
+    return this.true();
+  }
+}
+
+const updateMiddleware = new MySessionUpdateMiddleware();
+bot.sessions.getExecutor().getUpdateMiddleware().add(updateMiddleware);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing SessionMiddleware">
+```
+
+```ts
+import { SessionStartMiddleware, SessionUpdateMiddleware } from '@nyx-discord/core';
+
+class MySessionStartMiddleware implements SessionStartMiddleware {
+  // ...
+}
+
+const startMiddleware = new MySessionStartMiddleware();
+bot.sessions.getExecutor().getStartMiddleware().add(startMiddleware);
+
+class MySessionUpdateMiddleware implements SessionUpdateMiddleware {
+  // ...
+}
+
+const updateMiddleware = new MySessionUpdateMiddleware();
+bot.sessions.getExecutor().getUpdateMiddleware().add(updateMiddleware);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+By default, the following middleware chain is used:
+
+* `SessionFilterCheckMiddleware` - See [🚧 Session Filters](#-Session-filters).
+
+## 🚧 Session Filters
+
+An `SessionFilter` is a nullable object provided by an `Session`, checked by a `SessionFilterCheckMiddleware`.
+
+Specifically, there are two types of session filters:
+* `SessionStartFilter` - Checked when the session starts.
+* `SessionUpdateFilter` - Checked when the session is updated.
+
+:::info
+Filters are not bot aware nor session aware, meaning that you can reuse the same instance for many sessions.
+:::
+
+:::tip
+Think of a filter like adding an `if` at the beginning of your session's execution, except it gets checked before the
+session is executed and, since it's an object, you can reuse it for multiple sessions or save state on it.
+:::
+
+Though sessions can only provide one filter, `@framework` provides utility filter aggregators that implement the
+basic `AND`, `OR`, `NOT` gates, that can help you "combine" multiple filters into one.
+
+### ❓ When to use a filter?
+
+Filters are best suited for sharing common conditions that multiple sessions should share before executing.
+
+Also, since they have access to the session that is being filtered and the `SessionExecutionMeta` object, filters can
+share information to the session, effectively working as a "pre-processor".
+
+### 👷‍ Filter Creation
+
+You can create your own filter by either:
+
+* Extending the respective `AbstractSessionFilter` from `@framework` (recommended).
+* Implementing the respective `SessionFilter` interface from `@core`.

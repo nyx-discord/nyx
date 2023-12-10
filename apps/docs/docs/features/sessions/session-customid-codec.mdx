@@ -1,0 +1,60 @@
+---
+title: 💬 Session CustomId Codec
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `SessionCustomIdCodec` is the object responsible for encoding and decoding sessions custom ids. That is, custom ids
+that refer to sessions. With this object you can easily create components that will update sessions when
+they are used. It's stored by a `SessionManager`, and you can get it via `SessionManager#getCustomIdCodec()`.
+
+## 👷 Creation
+
+You can create a session custom ID codec by either:
+
+* Extending `DefaultSessionCustomIdCodec` from `@framework` (recommended).
+* Implementing the `SessionCustomIdCodec` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultSessionCustomIdCodec">
+```
+
+```ts
+import { DefaultSessionCustomIdCodec } from '@nyx-discord/framework';
+
+class MySessionCustomIdCodec extends DefaultSessionCustomIdCodec {
+  // ...
+}
+
+const myCodec = new MySessionCustomIdCodec();
+
+const myBot = Bot.create((bot) => ({
+  sessions: DefaultSessionManager.create(bot, { customIdCodec: myCodec }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing SessionCustomIdCodec">
+```
+
+```ts
+import { SessionCustomIdCodec } from '@nyx-discord/core';
+
+class MySessionCustomIdCodec implements SessionCustomIdCodec {
+  // ...
+}
+
+const myCodec = new MySessionCustomIdCodec();
+
+const myBot = Bot.create((bot) => ({
+  sessions: DefaultSessionManager.create(bot, { customIdCodec: myCodec }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```

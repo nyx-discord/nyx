@@ -1,0 +1,123 @@
+---
+title: 🗂️ SubCommand Group
+---
+
+# 🗂️ SubCommand Group
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+Subcommand groups are non-executable commands inside [️👨‍👧‍👦 Parent Commands](./parent-command), whose only purpose is to
+store subcommands.
+
+:::note
+While SubCommand Groups don't depend on a specific bot, they do depend on their `ParentCommand`.
+:::
+
+## 👷 Creation
+
+You can create a sub command group command by either:
+
+* Extending `AbstractSubCommandGroup` from `@framework` (recommended).
+* Implementing the `SubCommandGroup` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractSubCommandGroup">
+```
+
+```ts
+import { AbstractSubCommandGroup } from '@nyx-discord/framework';
+
+class MySubCommandGroup extends AbstractSubCommandGroup {
+  protected data: SubCommandGroupData = {
+    name: 'hello',
+    description: 'Hello world!',
+  }
+
+  protected children = [
+    new MySubCommand(this),
+  ]
+}
+
+// highlight-next-line
+// The parentCommand variable is the ParentCommand that will contain this group
+
+const subCommandGroup = new MySubCommandGroup(parentCommand);
+
+// warn-start
+// Throws IllegalDuplicateError if a child with that name already exists
+// Throws RangeError if no more children can be added to this command (25)
+// Throws AssertionError if this child's parent is not subCommandParent
+// warn-end
+parentCommand.addChild(subCommandGroup);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing SubCommandGroup">
+```
+
+```ts
+import { SubCommandGroup } from '@nyx-discord/core';
+
+class MySubCommandGroup implements SubCommandGroup {
+  // ...
+}
+
+// highlight-next-line
+// The parentCommand variable is the ParentCommand that will contain this group
+
+const subCommandGroup = new MySubCommandGroup(parentCommand);
+
+// warn-start
+// Throws IllegalDuplicateError if a child with that name already exists
+// Throws RangeError if no more children can be added to this command (25)
+// Throws AssertionError if this child's parent is not subCommandParent
+// warn-end
+parentCommand.addChild(subCommandGroup);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 🔀 Manipulating children
+
+Normally, a parent's children are created alongside the parent, but they can also be added (and removed) on runtime with
+`SubCommandGroup#addChild()`, `SubCommandGroup#removeChildByInstance()` and `SubCommandGroup#removeChildByName()`.
+
+After updating a subcommand group, you must call `CommandManager#update()` on its parent in order to reflect the changes
+on Discord.
+
+```ts
+const subCommandGroup = new MySubCommandGroup(parentCommand);
+parentCommand.addChild(subCommandGroup);
+
+// highlight-next-line
+// Adding a subcommand
+
+const mySubcommand = new MySubCommand(subCommandGroup);
+
+// warn-start
+// Throws IllegalDuplicateError if a subcommand with that name already exists
+// Throws RangeError if no more children can be added to this group (25)
+// Throws AssertionError if this subcommand's parent is not subCommandGroup
+// warn-end
+subCommandGroup.addChild(mySubcommand);
+
+await this.bot.commands.updateCommand(parentCommand);
+
+// highlight-next-line
+// Removing a subcommand
+
+// warn-next-line
+// Throws ObjectNotFoundError if the subcommand is not present
+// warn-next-line
+subCommandGroup.removeChildByInstance(mySubcommand);
+
+await this.bot.commands.updateCommand(parentCommand);
+```

@@ -1,0 +1,40 @@
+{
+  "name": "@nyx-discord/framework",
+  "version": "1.0.3",
+  "description": "The default implementation of nyx framework.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "files": [
+    "dist/**"
+  ],
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "lint": "eslint ./src --fix",
+    "format": "prettier --write ./src",
+    "barrel": "barrelsby --directory ./src --delete --singleQuotes",
+    "build": "tsup-node src/index.ts && tsc --emitDeclarationOnly --declaration --declarationDir ./dist",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord.js",
+    "framework"
+  ],
+  "author": "Amgelo563",
+  "license": "MIT",
+  "peerDependencies": {
+    "discord.js": "^14.14.1"
+  },
+  "dependencies": {
+    "@discordjs/collection": "1.5.3",
+    "@isaacs/ttlcache": "1.4.1",
+    "@nyx-discord/core": "workspace:*",
+    "cron": "3.0.0"
+  }
+}

@@ -1,0 +1,76 @@
+---
+title: ⌛ Session Promise Repository
+---
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+The `SessionPromiseRepository` is the object responsible for creating session end promises. It's stored by a
+`SessionManager`, and you can get it via `SessionManager#getPromiseRepository()`.
+
+You can use this object to create a promise that will be resolved with its end data when a session ends or expires.
+
+## ⌛ Obtaining a promise
+
+```ts
+const repository = bot.sessions.getPromiseRepository();
+
+const promise = repository.getPromise(session);
+// Or:
+const promise = session.getEndPromise();
+
+const endData = await promise;
+const sessionResult = endData.result;
+```
+
+## 👷 Creation
+
+You can create a custom session promise repository by either:
+
+* Extending `DefaultSessionPromiseRepository` from `@framework` (recommended).
+* Implementing the `SessionPromiseRepository` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultSessionPromiseRepository">
+```
+
+```ts
+import { DefaultSessionPromiseRepository } from '@nyx-discord/framework';
+
+class MySessionPromiseRepository extends DefaultSessionPromiseRepository {
+  // ...
+}
+
+const myRepository = new MySessionPromiseRepository();
+
+const myBot = Bot.create((bot) => ({
+  sessions: DefaultSessionManager.create(bot, { promiseRepository: myRepository }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing SessionExecutor">
+```
+
+```ts
+import { SessionPromiseRepository } from '@nyx-discord/core';
+
+class MySessionPromiseRepository implements SessionPromiseRepository {
+  // ...
+}
+
+const myRepository = new MySessionPromiseRepository();
+
+const myBot = Bot.create((bot) => ({
+  sessions: DefaultSessionManager.create(bot, { promiseRepository: myRepository }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```

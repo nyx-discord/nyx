@@ -1,0 +1,395 @@
+---
+title: 📸 Events
+---
+
+# 📸 Events
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Hey there 👋!  This guide is here to give you a fast understanding of how nyx's event system works, so you can use it
+right away. For in-depth details, see the respective guides of each event related object.
+
+## 📚 Description
+
+The event system in nyx is powered by `EventBuses`. These are objects that store and notify their subscribers when an
+event is called either internally or from another source.
+
+Specifically, the event related objects are:
+
+* `EventManager`: The entry point for the event system, holding all the event-related objects and methods that use all
+of these objects.
+* `EventBuses`: Store and notify their subscribers when an event happens, using its `EventDispatcher`.
+* `EventDispatcher`: Stored by a bus, dispatches an event to the subscribers its passed, checking its
+`EventSubscriberMiddlewareLinkedList` and passing any errors to its `ErrorHandler`.
+* `EventSubscribers`: Objects that subscribe to an event emitted by an `EventBus`.
+
+<details>
+  <summary>Event emitting process description</summary>
+
+  1. An object executes the `EventBus#emit()` method on an event bus, passing the emitted event and its arguments.
+  2. The bus gets the currently registered subscribers to said event.
+  3. The subscribers list and arguments are passed to the bus' `EventDispatcher`.
+  4. For every subscriber, the dispatcher checks its `EventSubscriberMiddlewareLinkedList` which will allow or deny its
+  notification to that subscriber. This includes checking the filter on `EventSubscriber#getFilter()`.
+  5. If allowed, the dispatcher will notify the subscriber, routing any errors to its `EventSubscriberErrorHandler`.
+
+</details>
+
+```kroki type=plantuml
+@startuml
+!theme cyborg-outline
+
+actor Object
+
+Object -> EventBus : Emit event with args
+EventBus -> EventBus : Get subscribers for event
+EventBus -> EventDispatcher : Pass subscribers and args
+
+loop For each subscriber
+  EventDispatcher -> EventSubscriberMiddlewareList : Check Middleware
+  EventSubscriberMiddlewareList --> EventDispatcher : Allow/Deny call
+  EventDispatcher -> EventSubscriber : Notify Subscriber
+  EventSubscriber --> EventSubscriberErrorHandler : Handle Errors
+end
+
+@enduml
+```
+
+## ✨ Quick examples
+
+:::note
+Imports are omitted on these examples for simplicity.
+:::
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Listening to interactionCreate">
+```
+
+1. Extend `AbstractDJSClientSubscriber`, implementing `handleEvent()` and `event`.
+2. Register it to a bot's `EventManager`.
+
+```ts
+class InteractionCreateSubscriber
+  extends AbstractDJSClientSubscriber<Events.InteractionCreate> {
+  protected readonly event = Events.InteractionCreate;
+
+  public handleEvent(
+    meta: EventDispatchMeta,
+    interaction: Interaction,
+  ): void {
+    const bot = meta.getBot();
+
+    bot.logger.info(`Interaction ${interaction.id} received.`);
+  }
+}
+
+const subscriber = new InteractionCreateSubscriber();
+await bot.events.subscribeClient(subscriber);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Making an EventBus">
+```
+
+1. Instantiate a bus with either `BasicEventBus#createAsync()` or `BasicEventBus#createSync()`.
+2. Register it to a bot's `EventManager`.
+
+ ```ts
+// Or BasicEventBus#createSync()
+const myBus = BasicEventBus.createAsync(
+  bot,
+  Symbol('myBus'), // Bus ID
+);
+
+await bot.events.addEventBus(myBus);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Listening to command runs">
+```
+
+1. Extend `AbstractEventSubscriber`, implementing `handleEvent()` and `event`.
+2. Register it to a bot's `CommandManager` event bus.
+
+```ts
+class CommandCallSubscriber
+  extends AbstractEventSubscriber<CommandEventArgs, typeof CommandEventEnum.CommandRun> {
+  protected readonly event = CommandEventEnum.CommandRun;
+
+  // All of these arguments are safely typed
+  public handleEvent(
+    meta: EventDispatchMeta,
+    command: ExecutableCommand<CommandData>,
+    interaction: CommandExecutableInteraction,
+    commandMeta: CommandExecutionMeta,
+  ) {
+  const bot = commandMeta.getBot();
+
+  bot.logger.info(`Command '${command.getData().name}' called.`);
+  }
+}
+
+await bot.commands.getEventBus().subscribe(subscriber);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 👂 Subscribing to an event
+
+To subscribe to an event you first need an `EventSubscriber` object.
+
+You can create these by either:
+
+* Extending `AbstractEventSubscriber` from `@framework` (recommended).
+* Instantiating a `SubscriberCallbackWrapper` from `@framework`, passing a callback function.
+* Implementing the `EventSubscriber` interface from `@core`.
+
+After creating it, you finish by subscribing it to the bus that you want with `EventBus#subscribe()`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractEventSubscriber">
+```
+
+```ts
+import { AbstractEventSubscriber } from '@nyx-discord/framework';
+import type { EventDispatchMeta } from '@nyx-discord/core';
+
+class MyEventSubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected readonly event = 'someEvent';
+
+  public handleEvent(meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) {
+    const bot = meta.getBot();
+
+    bot.logger.log('Hello world');
+  }
+}
+
+const frameworkSubscriber = new MyEventSubscriber();
+
+await myBus.subscribe(frameworkSubscriber);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Instantiating SubscriberCallbackWrapper">
+```
+
+```ts
+import { SubscriberCallbackWrapper } from '@nyx-discord/framework';
+
+const callbackSubscriber = new SubscriberCallbackWrapper < MyEventsArgs, 'someEvent'>(
+  'someEvent',
+  (meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) => {
+    const bot = meta.getBot();
+
+    bot.logger.log('Hello world');
+  }
+);
+
+await myBus.subscribe(callbackSubscriber);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing EventSubscriber">
+```
+
+```ts
+import { EventSubscriber } from '@nyx-discord/core';
+
+class MyInterfaceEventSubscriber implements EventSubscriber {
+  protected readonly event = 'someEvent';
+
+  public handleEvent(meta: EventDispatchMeta, ...args: unknown[]): void {
+    const bot = meta.getBot();
+
+    bot.logger.log('Hello world');
+  }
+  // ...
+}
+
+const interfaceSubscriber = new MyInterfaceEventSubscriber();
+
+await myBus.subscribe(interfaceSubscriber);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+### 🤖 Subscribing to the Client
+
+A common operation is to subscribe to the Discord.js Client to listen to client events. To do so, you need an
+`EventSubscriber` that receives any of discord.js' `ClientEvents` as arguments, then just register said subscriber to
+the manager's client event bus.
+
+There's a utility class on `@nyx-discord/framework` for a Client subscriber, the `AbstractDJSClientSubscriber`. It
+receives the handled event as a generic, where you can use the discord.js `Event` enum. This value is used to safely
+type the arguments of the event handler.
+
+```ts
+import { Events } from 'discord.js';
+import type { Interaction } from 'discord.js';
+
+import { AbstractDJSClientSubscriber } from '@nyx-discord/framework';
+import type { EventDispatchMeta } from '@nyx-discord/core';
+
+class InteractionCreateSubscriber
+  extends AbstractDJSClientSubscriber<Events.InteractionCreate> {
+  protected override readonly event = Events.InteractionCreate;
+
+  public handleEvent(meta: EventDispatchMeta, interaction: Interaction) {
+    const bot = meta.getBot();
+
+    bot.logger.info(`Interaction ${interaction.id} received.`);
+  }
+}
+
+const subscriber = new InteractionCreateSubscriber();
+await bot.events.subscribeClient(subscriber);
+```
+
+## 🚌 Creating an event bus
+
+You can create your own event buses by either:
+
+* Instantiating an`BasicEventBus` from`@framework`(recommended).
+* Implementing the`EventBus` interface from`@core`.
+
+:::note
+There are two options to instantiate a default `BasicEventBus`.
+
+Either with:
+
+  * `BasicEventBus#createAsync()` which uses an`AsyncEventDispatcher`.
+  * `BasicEventBus#createSync()` which uses an`SyncEventDispatcher`.
+
+In
+  * An`AsyncEventDispatcher` executes multiple subscribers at a time, on a fixed amount.
+  * An`SyncEventDispatcher` executes one subscriber at a time, with a fixed execution time until it passes to
+the next.
+
+It's advised that you check the [⚡ Event Dispatcher](./event-dispatcher) documentation for more information.
+:::
+
+After creating it, you finish by registering it with `EventManager#addEventBus()`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Instantiating BasicEventBus">
+```
+
+```ts
+import { BasicEventBus } from '@nyx-discord/framework';
+
+// Uses an AsyncEventDispatcher
+const asyncBus = BasicEventBus.createAsync(
+  bot,
+  Symbol('myAsyncBus'), // Bus ID
+);
+
+// Uses a SyncEventDispatcher
+const syncBus = BasicEventBus.createSync(
+  bot,
+  Symbol('mySyncBus'), // Bus ID
+);
+
+await bot.events
+  .addEventBus(asyncBus)
+  .addEventBus(syncBus);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing EventBus">
+```
+
+```ts
+import { EventBus } from '@nyx-discord/core';
+
+class MyInterfaceEventBus implements EventBus {
+  // ...
+}
+
+const interfaceBus = new MyInterfaceEventBus();
+
+await bot.events.addEventBus(interfaceBus);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 📦 Event Type Safety
+
+To ensure type safety when emitting events, event buses take a generic type of `Record<string, unknown[]>`, that
+represents the events that the bus emits, and their arguments.
+
+A typed event bus will also cause a type error when trying to add a `EventSubscriber` whose arguments don't match any
+event that the bus emits.
+
+```ts
+import { BasicEventBus } from '@nyx-discord/framework';
+
+interface TicketEventsArgs {
+  ticketCreate: [ticket: Ticket],
+  ticketClose: [closedTicket: Ticket, closer: TicketUser],
+}
+
+const ticketBus = BasicEventBus.createAsync<TicketEventsArgs>(
+  bot,
+  Symbol('TicketEventBus'),
+);
+
+const createdTicket: Ticket = {};
+const closedTicket: Ticket = {};
+const closerUser: TicketUser = {};
+
+await ticketBus.emit('ticketCreate', [createdTicket]);
+await ticketBus.emit('ticketClose', [closedTicket, closerUser]);
+
+// error-start
+await ticketBus.emit('ticketCreate', ['Ticket']);
+await ticketBus.emit('ticketClose', [ticketUser]);
+await ticketBus.emit('ticketClose', []);
+// error-end
+
+const validSubscriber = new SubscriberCallbackWrapper<TicketEventsArgs, 'ticketCreate'>(
+  'ticketCreate',
+  (meta: EventDispatchMeta, createdTicket: Ticket) => {
+    // Do something
+  }
+);
+
+const invalidSubscriber = new SubscriberCallbackWrapper<TicketEventsArgs, 'ticketCreate'>(
+  'ticketCreate',
+  // Errors since TicketEventsArgs['ticketCreate'] doesn't match [number]
+  // error-next-line
+  (meta: EventDispatchMeta, createdTicket: number) => {
+    // Do something
+  }
+);
+
+ticketBus
+  .subscribe(validSubscriber)
+    // Errors since [number] doesn't match any event argument on TicketEventsArgs
+  // error-next-line
+  .subscribe(invalidSubscriber);
+```
+
+:::warning
+A current limitation is that the bus (on `EventBus#subscribe()`) will only check that there's an event that matches the
+given arguments. It will not check that the subscriber's event actually matches those types.
+
+It's advised that you create an abstract class for the subscriber you want, similar to the `AbstractDJSClientSubscriber`.
+:::

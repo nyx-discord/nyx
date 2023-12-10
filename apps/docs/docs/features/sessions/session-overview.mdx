@@ -1,0 +1,635 @@
+---
+title: 👤 Sessions
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Hey there 👋!  This guide is here to give you a fast understanding of how nyx's session system works, so you can use it
+right away. For in-depth details, see the respective guides of each session related object.
+
+## 📚 Description
+
+`Sessions` are objects that represent an open interaction session with a user on Discord. They can be used as an easy
+way to maintain a "conversation" with a user, and respond to interactions that the user makes to it.
+
+:::tip
+Some examples of sessions are:
+
+* A paginated embed that shows a user's moderations, allowing advanced options like filtering by type.
+* An interactive embed that guides a user step by step to accomplish something, like creating a ticket category.
+* A detailed settings embed that allows a user to change their server's settings with buttons, modals or select menus.
+* In essence, any kind of situation where continuous interaction with a user is needed.
+:::
+
+Sessions can contain a "result", which is an internal object transmitted to objects that are waiting for the session
+to finish via a `Promise`. This result can be used for even further interaction with the user once the session stops.
+
+The session system is made up of several objects that work together to track user interactions on sessions, sessions
+lifetime and serialization, all coordinated by a `SessionManager`.
+
+Specifically, the session related objects are:
+
+* `SessionManager`: The entry point for the session system, holding all the session-related objects and methods that use all of these objects. All objects below are contained here.
+* `SessionCustomIdCodec`: De/serializes session ids to/from customId strings, to create session components. This component allows you to create and manipulate `customIds` programatically, with no "magic values".
+* `SessionRepository`: Temporarily stores sessions until their TTL is over, and notifies the manager when that happens.
+* `SessionPromiseRepository`: Stores session promises that will be resolved once a given session ends.
+* `SessionExecutor`: Executes sessions, checking its `SessionMiddlewareLinkedList` and passing any errors to its `ErrorHandler`.
+* `SessionUpdateSubscriber`: An [📩 Event Subscriber](../events/event-subscriber) that listens for interactions that can refer to sessions.
+* `EventBus`: An [📣 Event Bus](../events/event-bus) that emits session related events.
+
+There are three utility session types that derive from the main `Session` interface:
+* `PaginationSession`: A session with "pages", like `ListPaginationSession` or `StagePaginationSession`.
+* `ListPaginationSession` Paginates a list of items, showing a given amount of them per page.
+* `StagePaginationSession`: Paginates through "stages", which act like nested sessions.
+
+<details>
+  <summary>Session process overview</summary>
+
+  Session creation:
+
+  1. A user triggers a session creation, typically via a command interaction.
+  2. The command creates the session and registers it to the `SessionManager`. It can then `await` for
+  `Session#getEndPromise()` to wait for the session to end.
+  3. The `SessionManager` saves the session on the repository, which will expire it later if needed.
+  4. The `SessionManager` uses the `SessionExecutor` to start the session.
+  5. The `SessionExecutor` checks its `SessionStartMiddlewareLinkedList` which will allow or deny the start.
+  This includes checking the filter on `Session#getStartFilter()`.
+  6. If the execution is allowed, the session is started, passing any errors to its `SessionStartErrorHandler`.
+  7. The `SessionManager` uses the `EventBus` to emit a `SessionStart` event asynchronously, passing the session.
+
+  Session update:
+
+  1. When the user uses a session component, the `SessionUpdateSubscriber` receives and passes it to the
+  `SessionManager`.
+  2. The `SessionManager` uses the `SessionCustomIdCodec` to check if the interaction refers to a session. If it does,
+  it continues.
+  3. The `SessionManager` gets the session from the `SessionRepository`. If it doesn't exist, it calls
+  `SessionExecutor#handleMissing()`, which will handle the interaction referring to a missing (probably expired)
+  session. If it does exist, it continues.
+  4. The `SessionManager` calls `SessionExecutor#update()` to handle the update, passing the interaction and session.
+  5. The `SessionExecutor` checks its `SessionMiddlewareLinkedList` which will allow or deny the execution.
+  This includes checking the filter on `Session#getUpdateFilter()`.
+  6. If the execution is allowed, the session is updated via `Session#update()`, passing any errors to its
+  `SessionUpdateErrorHandler`, and returning what `Session#update()` returns.
+  7. If the executor returns `true`, the `SessionManager` calls `SessionRepository#setTTL()` to refresh the TTL of
+  the session.
+  7. The `SessionManager` uses the `EventBus` to emit a `SessionUpdate` event asynchronously, passing the session,
+  interaction and meta.
+
+  Session expiration:
+
+  1. Once a given session expires, the `SessionRepository` removes it from its cache, and notifies the manager about it.
+  2. The `SessionManager` creates a `SessionEndData` with an `Expired` origin and no result, which is passed to
+  `SessionExecutor#end()`, alongside the session.
+  3. The `SessionManager` calls `SessionPromiseRepository#resolve()`, to resolve promises waiting for the session to
+  end.
+  4. The `SessionManager` uses the `EventBus` to emit a `SessionExpire` event asynchronously, passing the session and
+  meta.
+
+</details>
+
+#### Session start process
+
+```kroki type=plantuml
+@startuml
+!theme cyborg-outline
+
+participant "User" as user
+participant "Command" as command
+participant "Session" as session
+participant "SessionManager" as manager
+participant "SessionRepository" as repository
+participant "SessionExecutor" as executor
+participant "SessionStartMiddlewareList" as middleware
+participant "EventBus" as eventBus
+
+user -> command : Trigger Session Creation
+activate command
+command -> session : Instantiate Session
+session -> command
+command -> manager : Register to manager
+deactivate command
+activate manager
+manager -> repository : Save Session
+manager -> executor : Start Session
+activate executor
+executor -> middleware : Check Start Middleware
+activate middleware
+middleware -> executor : Allow/Deny start
+deactivate middleware
+executor -> session : Start Session
+executor -> executor : Handle errors
+executor -> manager : Session Started
+deactivate executor
+manager --> eventBus : Emit event
+deactivate manager
+deactivate command
+@enduml
+```
+
+#### Session Update process
+
+```kroki type=plantuml
+@startuml
+!theme cyborg-outline
+
+participant "SessionComponent" as component
+participant "SessionUpdateSubscriber" as subscriber
+participant "SessionManager" as manager
+participant "SessionCustomIdCodec" as codec
+participant "SessionRepository" as repository
+participant "SessionExecutor" as executor
+participant "Session" as session
+participant "SessionMiddlewareLinkedList" as middleware
+participant "EventBus" as eventBus
+
+component -> subscriber : Emit interactionCreate
+activate subscriber
+subscriber -> manager : Pass to SessionManager
+activate manager
+manager -> codec : Extract Session ID
+activate codec
+codec -> manager : Return Session ID
+deactivate codec
+manager -> repository : Get Session from Repository
+activate repository
+repository -> manager : Session exists or missing
+deactivate repository
+alt Session Exists
+  manager -> executor : Call session update
+  activate executor
+  executor -> middleware : Check Update Middleware
+  activate middleware
+  middleware -> session : Check Update Filter
+  activate session
+  session -> middleware : Filter Passed
+  deactivate session
+  middleware -> executor : Middleware Passed
+  deactivate middleware
+  activate session
+  executor -> session : Update Session
+  session -> executor : Request TTL Refresh
+  deactivate session
+  executor -> manager : Request TTL Refresh
+  deactivate executor
+  manager --> repository : Refresh Session TTL
+  manager --> eventBus : Emit Event
+else Missing Session
+  manager --> executor : Handle missing session
+end
+deactivate manager
+deactivate subscriber
+@enduml
+```
+
+#### Session Expiration Process
+
+```kroki type=plantuml
+@startuml
+!theme cyborg-outline
+
+participant "SessionRepository" as repository
+participant "SessionManager" as sessionManager
+participant "SessionExecutor" as sessionExecutor
+participant "Session" as session
+participant "SessionPromiseRepository" as promiseRepository
+participant "EventBus" as eventBus
+
+activate repository
+repository -> repository : Remove Expired Session
+repository --> sessionManager : Notify Session Expiration
+deactivate repository
+
+activate sessionManager
+sessionManager -> sessionManager: Create SessionEndData
+sessionManager -> sessionExecutor : End session
+activate sessionExecutor
+sessionExecutor -> session : Notify end
+activate session
+session -> session : Cleanup, calculate result
+sessionExecutor -> session : Get result
+session -> sessionExecutor : Return result
+deactivate session
+sessionExecutor -> sessionExecutor : Fill EndData with result
+sessionExecutor -> sessionManager : Return EndData
+deactivate sessionExecutor
+
+sessionManager --> promiseRepository : Resolve EndPromise
+
+sessionManager --> eventBus : Emit Event
+deactivate sessionManager
+@enduml
+```
+
+## ✨ Quick Examples
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Simple session">
+```
+
+A simple session just contains components that the user can interact with, for example, a select menu or a button. The
+session will then reply to these interactions on `Session#update()`.
+
+For utility, the default `Session#update()` routes to other methods depending on the interaction type (button, select
+menu, or modal). You can of course override this method to your liking.
+
+```ts
+// A session with no result (void).
+class MySession extends AbstractSession<void> {
+  public async start() {
+    const customIdBuilder = this.customId.clone();
+
+    /**
+     * The builder allows you to create customIds that will route to this session.
+     * The 'select' and 'button' parts are not needed for routing,
+     * but they're there to avoid duplicated customIds, which aren't allowed by Discord.
+     */
+
+    // Creating a select menu
+    const selectMenuId = customIdBuilder.push('select').build();
+    const mySelectMenu = new StringSelectMenuBuilder()
+      .setCustomId(selectMenuId)
+      .setPlaceholder('A select menu!')
+      .setMaxValues(1)
+      .addOptions([
+        {
+          label: 'Option 1',
+          value: 'option1',
+        },
+        {
+          label: 'Option 2',
+          value: 'option2',
+        },
+      ]);
+
+    // Creating a button
+    const buttonId = customIdBuilder.push('button').build();
+    const myButton = new ButtonBuilder()
+      .setCustomId(buttonId)
+      .setLabel('Click to open a modal!')
+      .setStyle(ButtonStyle.Primary);
+
+    // Wrapping and replying
+    const row = new ActionRowBuilder().addComponents(myButton, mySelectMenu);
+
+    await interaction.reply({
+      content: 'Select an option!',
+      components: [row],
+    });
+  }
+
+  /**
+   * Called when updating the session, and `Session#update()`
+   * has determined that it's a button interaction.
+   */
+  protected async handleButton(interaction: ButtonInteraction) {
+    const modalId = customIdBuilder.push('modal').build();
+    const myModal = new ModalBuilder()
+      .setCustomId(modalId)
+      .setTitle('My modal!')
+      .addComponents([
+        new ActionRowBuilder()
+          .addComponents([
+            new TextInputBuilder()
+              .setCustomId('name')
+              .setLabel('Your Name')
+              .setRequired(true)
+              .setStyle(TextInputStyle.Short)
+          ]),
+      ]);
+
+    await interaction.showModal(myModal);
+
+    // You can also get the extra 'button' token (or any added token) here.
+    const codec = this.bot.sessions.getCustomIdCodec();
+    const iterator = codec.createIteratorFromCustomId(interaction.customId);
+    this.bot.logger.log(iterator.getTokens()); // ['button']
+  }
+
+  /**
+   * Called when updating the session, and `Session#update()`
+   * has determined that it's a select menu interaction.
+   */
+  protected async handleSelectMenu(interaction: AnySelectMenuInteraction) {
+    await interaction.reply('You selected: ' + interaction.values[0]);
+  }
+
+  /**
+   * Called when updating the session, and `Session#update()`
+   * has determined that it's a modal interaction.
+   */
+  protected async handleModal(interaction: ModalMessageModalSubmitInteraction) {
+    const name = interaction.fields.getTextInputValue('name');
+
+    await interaction.reply(`Your name is ${name}`);
+  }
+}
+
+// Somewhere in your code, like inside a command...
+
+const sessionId = 'mySessionId'; // Ideally randomly generated
+const session = new MySession(bot, sessionId, interaction);
+await bot.sessions.start(session);
+
+// `await` for the session to end
+await session.getEndPromise();
+
+await interaction.editReply('Session ended!');
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Pagination session">
+```
+
+A pagination session contains more options to accommodate page routing, like the `PaginationCustomIdBuilder`. You can use
+this builder to create page switch components. If you don't specify a page, it will be routed by default to the correspondent
+handler (`#handleSelectMenu()`, `#handleButton()` or `#handleModal()`).
+
+```ts
+class MyPaginationSession extends AbstractPaginationSession<void> {
+  // Called when starting the session.
+  public async start() {
+    const page = this.createPage();
+
+    await this.startInteraction.reply(page);
+  }
+
+  /**
+  * Called when updating the session, and `Session#update()` has determined
+  * that it's an interaction asking for a page update.
+  *
+  * At this step, `this.currentPage` has already been updated.
+  */
+  protected async updatePage(interaction: SessionUpdateInteraction) {
+    /** Only let the user who started the session update the page. */
+    if (interaction.user.id !== this.startInteraction.user.id) {
+      await interaction.reply('You can\'t do this!');
+
+      // "Invalid" interaction. Return `false` to not update the session's TTL.
+      return false;
+    }
+
+    const newPage = this.createPage();
+    await interaction.editReply(newPage);
+    return true;
+  }
+
+  protected createPage() {
+    const randomPage = Math.floor(Math.random() * 10);
+
+    /**
+    * Use this session's customIdBuilder to generate a customId
+    * that will route to this session.
+    */
+    const customIdBuilder = this.customId.clone();
+
+    /**
+    * PaginationSessions have a special `PaginationCustomIdBuilder`
+    * with page manipulation methods.
+    */
+    const customId = customIdBuilder.setPage(randomPage).build();
+
+    const button = new ButtonBuilder()
+      .setCustomId(customId)
+      .setLabel('Go to a random page!')
+      .setStyle(ButtonStyle.Primary);
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    /**
+    * Builds an ActionRow with some default "Next page"
+    * and "Previous page" buttons.
+    *
+    * Equivalent to the example above, but with page this.currentPage -+ 1
+    */
+    const pageRow = this.buildDefaultPageRow();
+
+    return {
+      content: `You're on page ${this.currentPage}`,
+      components: [buttonRow, pageRow]
+    };
+  }
+}
+
+// Somewhere in your code, like inside a command...
+
+const sessionId = 'mySessionId'; // Ideally randomly generated
+const session = new MyPaginationSession(bot, sessionId, interaction);
+await bot.sessions.start(session);
+
+// `await` for the session to end
+await session.getEndPromise();
+
+await interaction.editReply('Session ended!');
+```
+
+:::note
+Even though it may look verbose, this way you can:
+* Make any component that can route to any page index.
+* Have complete control over your page components. No hardcoded "next" or "previous" buttons.
+* Create components that trigger other actions than just page navigation.
+* Filter users out of the pagination, or even let anyone interact with it.
+* Do more things even after the pagination has expired.
+
+Of course, you can create your own abstract class with more logic to facilitate your own usage, if you don't need some
+of these liberties.
+:::
+
+```mdx-code-block
+</TabItem>
+<TabItem value="List pagination session">
+```
+
+A list pagination session is a special type of pagination session that paginates through a list of items.
+
+```ts
+// <number, void> specifies that it lists a number array and doesn't return anything.
+class MyListPaginationSession extends AbstractListPaginationSession<number, void> {
+  // Called when starting the session.
+  public async start() {
+    const page = this.createPage();
+
+    await this.startInteraction.reply(page);
+  }
+
+  /**
+  * Called when updating the session, and `Session#update()` has determined
+  * that it's an interaction asking for a page update.
+  *
+  * At this step, `this.currentPage` has already been updated.
+  */
+  protected async updatePage(interaction: SessionUpdateInteraction) {
+    const page = this.createPage();
+
+    await interaction.editReply(page);
+  }
+
+  protected createPage() {
+    const currentNumbers = this.getCurrentPageElements();
+    const row = this.buildDefaultPageRow();
+
+    return {
+      content: `Current numbers: ${currentNumbers.join(', ')}`,
+      components: [row],
+    };
+  }
+}
+
+// Somewhere in your code, like inside a command...
+
+const sessionItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const sessionId = 'mySessionId'; // Ideally randomly generated
+const session = new MyListPaginationSession(bot, sessionId, interaction, sessionItems);
+await bot.sessions.start(session);
+
+// `await` for the session to end
+await session.getEndPromise();
+
+await interaction.editReply('Session ended!');
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Stage pagination session">
+```
+
+A stage pagination session is a special type of pagination session that paginates through stages, like nested sessions.
+
+It has at least two stages:
+ * A `SessionStartStage`, that will answer to the session start.
+ * Any number of `SessionStages`, that will be switched to while the session is running.
+
+Since a `StagePaginationSession` doesn't contain any logic by itself, any customId not referring to a page will be interpreted
+as a customId referring the current stage.
+
+Note that `StagePaginationSession#getCustomId()` already returns a cloned builder, no need to clone that one, but you should
+clone `AbstractSessionStage#customId`. They are both equivalent actions.
+
+```ts
+class MyStageSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages = [
+    new Stage1(this),
+    new Stage2(this),
+  ] as const;
+}
+
+class Stage1 extends AbstractSessionStartStage<void> {
+  // Called when the session starts with this as the first stage (SessionStartStages).
+  public async onStart(
+    interaction: SessionStartInteraction,
+  ): Promise<void> {
+    const nextPage = this.session.getCurrentPage() + 1;
+    const nextPageId = this.session.getCustomId().setPage(nextPage).build();
+    const pageButton = new ButtonBuilder()
+      .setStyle(1)
+      .setLabel('Next stage')
+      .setCustomId(nextPageId);
+
+    const pageRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      pageButton,
+    );
+
+    const buttonId = this.customId.clone().push('button').build();
+    const button = new ButtonBuilder()
+      .setStyle(1)
+      .setLabel('Click me')
+      .setCustomId(buttonId);
+
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      button,
+    );
+
+    await interaction.reply({
+      components: [pageRow, buttonRow],
+      content: 'test',
+    });
+  }
+
+  // Called when the session switches to this stage.
+  public async onSwitch(
+    interaction: SessionUpdateInteraction,
+    _oldStage: SessionStage<unknown>,
+    _meta: SessionExecutionMeta,
+  ): Promise<boolean> {
+    const row = this.buildDefaultPageRow();
+
+    const buttonId = this.customId.push('test').build();
+    const button = new ButtonBuilder()
+      .setStyle(1)
+      .setLabel('test')
+      .setCustomId(buttonId);
+
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      button,
+    );
+
+    await interaction.update({
+      components: [row, buttonRow],
+      content: 'test switch',
+    });
+
+    return true;
+  }
+
+  /**
+   * Called when the session leaves this stage.
+   *
+   * While this method receives the interaction, it mustn't answer to it, as that
+   * will be done by the next stage.
+   */
+  public onLeave(
+    _interaction: SessionUpdateInteraction,
+    nextStage: SessionStage<unknown>,
+    _meta: SessionExecutionMeta
+  ) {
+    this.bot.logger.log('Left first stage. Went to: ', nextStage);
+  }
+
+  protected async handleButton(
+    interaction: ButtonInteraction,
+    _meta: SessionExecutionMeta,
+  ): Promise<boolean> {
+    await interaction.reply('Clicked!');
+
+    return true;
+  }
+}
+
+class Stage2 extends AbstractSessionStage<void> {
+  public async onSwitch(
+    interaction: SessionUpdateInteraction,
+  ): Promise<boolean> {
+    const row = this.buildDefaultPageRow();
+
+    await interaction.update({
+      components: [row],
+      content: 'Second stage.',
+    });
+
+    return true;
+  }
+
+  public onLeave(): void {
+    this.bot.logger.log('Left second stage');
+  }
+}
+
+// Somewhere in your code, like inside a command...
+
+const sessionId = 'mySessionId'; // Ideally randomly generated
+const session = new MyStageSession(bot, sessionId, interaction);
+await bot.sessions.start(session);
+
+// `await` for the session to end
+await session.getEndPromise();
+
+await interaction.editReply('Session ended!');
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+

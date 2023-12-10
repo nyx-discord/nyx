@@ -1,0 +1,129 @@
+---
+title: ️🛡️ Command Interception
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Command interception refers to blocking a command from being executed. In nyx, there are two ways to do this:
+
+1. Add a `CommandMiddleware` to the `CommandMiddlewareLinkedList` in the `CommandExecutor` that handles
+the command execution.
+2. Provide a `CommandFilter` in the `ExecutableCommand`.
+
+Let's explore when and how to use each of these methods.
+
+## 🚦 Command Middlewares
+
+`CommandMiddlewares` are objects stored on a `CommandMiddlewareLinkedList`, which is held and called by
+the command executor when a command is about to be executed.
+
+It consists of:
+* A `check()` method, which takes a command and its arguments. Returns a `MiddlewareResponse`.
+* A `Priority`, that determines its priority inside the list.
+
+When being checked, a middleware is passed the command that is being checked and the arguments that would be
+used to call it. The middleware then replies with a `MiddlewareResponse`, which can either:
+
+* Allow the execution (`{ allowed: true }`), with either:
+* Making the linked list check the next middleware (`{ allowed: true, checkNext: true }`).
+* Forcing the chain to end (`{ allowed: true, checkNext: false }`).
+* Deny the execution (`{ allowed: false, checkNext: false }`).
+
+The `AbstractMiddleware`, has `protected` utility methods to generate these responses. Specifically, `this.true()`,
+`this.false()` and `this.forceTrue()`.
+
+:::info
+Middlewares are not bot aware, meaning that you can reuse the same instance for many bots.
+:::
+
+### ❓ When to use a middleware?
+
+Middlewares are best for executing something or intercepting for all commands. For example, the filtering
+(`CommandFilter`) logic is done by a middleware.
+
+They're very good when intercepting `ExecutableCommands` in general, but not really for one in particular, since it
+would be very inefficient to check all the commands searching for only one of them.
+
+### 👷‍ Middleware Creation
+
+You can create your own middleware by either:
+
+* Extending `AbstractCommandMiddleware` from `@framework` (recommended).
+* Implementing the `CommandMiddleware` interface from `@core`.
+
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractCommandMiddleware">
+```
+
+```ts
+import { AbstractCommandMiddleware } from '@nyx-discord/framework';
+
+class MyCommandMiddleware extends AbstractCommandMiddleware {
+  public check(command: ExecutableCommand<CommandData>, args: CommandExecutionArgs): MiddlewareResponse {
+    return this.true();
+  }
+}
+
+const middleware = new MyCommandMiddleware();
+
+bot.commands.getExecutor().getMiddleware().add(middleware);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing CommandMiddleware">
+```
+
+```ts
+import { CommandMiddleware } from '@nyx-discord/core';
+
+class MyCommandMiddleware implements CommandMiddleware {
+  // ...
+}
+
+const middleware = new MyCommandMiddleware();
+
+bot.commands.getExecutor().getMiddleware().add(middleware);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+By default, the following middleware chain is used:
+
+* `CommandFilterCheckMiddleware` - See [🚧 Command Filters](#-command-filters).
+
+## 🚧 Command Filters
+
+An `CommandFilter` is a nullable object provided by an `ExecutableCommand`, checked by the `CommandFilterCheckMiddleware`.
+
+:::info
+Filters are not bot aware nor command aware, meaning that you can reuse the same instance for many commands.
+:::
+
+:::tip
+Think of a filter like adding an `if` at the beginning of your command's execution, except it gets checked before the
+command is executed and, since it's an object, you can reuse it for multiple commands or save state on it.
+:::
+
+Though commands can only provide one filter, `@framework` provides utility filter aggregators that implement the
+basic `AND`, `OR`, `NOT` gates, that can help you "combine" multiple filters into one.
+
+### ❓ When to use a filter?
+
+Filters are best suited for sharing common conditions that multiple commands should share before executing.
+
+Also, since they have access to the command that is being filtered and the `CommandExecutionMeta` object, filters can
+share information to the command, effectively working as a "pre-processor".
+
+### 👷‍ Filter Creation
+
+You can create your own filter by either:
+
+* Extending `AbstractCommandFilter` from `@framework` (recommended).
+* Implementing the `CommandFilter` interface from `@core`.

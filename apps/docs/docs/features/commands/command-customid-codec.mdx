@@ -1,0 +1,251 @@
+---
+title: 💬 Command CustomId Codec
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `CommandCustomIdCodec` is the object responsible for encoding and decoding command custom ids. That is, custom ids
+that refer to commands. With this object you can easily create components that will trigger commands when
+they are used. It's stored by a `CommandManager`, and you can get it via `CommandManager#getCustomIdCodec()`.
+
+:::danger
+It's advised that you only use this API for simple user actions. If you're looking for something more complex,
+you should use a dedicated handler or the [👤 Sessions API](./../sessions/session-overview).
+:::
+
+## ✨ Examples
+
+### 🚧 Usage examples
+
+These are short examples on how the API is used overall. For "real world" examples, read the next section.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Referring to a command">
+```
+
+```ts
+// Get the command instance
+const myCommand = commandManager.getRepository().locateByTree(MyCommandClass);
+if (!myCommand) throw new Error('Command not found');
+
+// Get the customId
+const customIdCodec = commandManager.getCustomIdCodec();
+const customId = customIdCodec.serializeToCustomId(myCommand);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Referring with extra data">
+```
+
+Building your custom ID:
+
+```ts
+// Get the command instance
+const myCommand = commandManager.getRepository().locateByTree(MyCommandClass);
+if (!myCommand) throw new Error('Command not found');
+
+// Get the customId builder
+const customIdCodec = commandManager.getCustomIdCodec();
+const customIdBuilder = customIdCodec.createCustomIdBuilder(myCommand);
+
+// Append extra data and build
+const customId = customIdBuilder.setAt(0, 'Extra data').build();
+```
+
+Receiving and extracting the extra data from an `Interaction`:
+
+```ts
+// Build a StringIterator to extract the extra data
+const iterator = customIdCodec.createIteratorFromCustomId(interaction.customId);
+
+// Get at index 0, true to throw an error if not present
+const extraData = iterator.getAt(0, true);
+bot.logger.log(extraData); // 'Extra data'
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+
+### ✅ Implementation examples
+
+These are "real world" examples on how the API can be used. For "short", concrete examples, read the last section.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Referring to a command">
+```
+
+```ts
+// Assume this command is registered
+class PingCommand extends AbstractStandaloneCommand {
+  public async handleInteraction(interaction: ComponentCommandInteraction) {
+    await interaction.reply('Pong!');
+  }
+}
+
+class MyReferralCommand extends AbstractStandaloneCommand {
+  public async execute(
+    interaction: ChatInputCommandInteraction,
+    metadata: CommandExecutionMeta,
+  ) {
+    const bot = metadata.getBot();
+    const commandManager = bot.commands;
+
+    // Get the command instance
+    const pingCommand = commandManager.getRepository().locateByTree(PingCommand);
+    if (!pingCommand) throw new Error('Ping command not found');
+
+    // highlight-start
+    // Get the customId
+    const customIdCodec = bot.commands.getCustomIdCodec();
+    const customId = customIdCodec.serializeToCustomId(pingCommand);
+    // highlight-end
+
+    // Create your component
+
+    const button = new ButtonBuilder()
+      // highlight-start
+      // When this button is clicked, it will trigger PingCommand#handleInteraction()
+      .setCustomId(customId)
+      // highlight-end
+      .setLabel('Click to check your ping!')
+      .setStyle(ButtonStyle.Primary);
+
+    const row = new ActionRowBuilder().addComponents(button);
+    await interaction.reply({ components: [row] });
+  }
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Referring with extra data">
+```
+
+```ts
+const UserIdIndex = 0;
+
+class AdminListCommand extends AbstractStandaloneCommand {
+  public async execute(
+    interaction: ChatInputCommandInteraction,
+    metadata: CommandExecutionMeta,
+  ) {
+    const bot = metadata.getBot();
+    const commandManager = bot.commands;
+
+    // Get the command instance
+    const userInfoCommand = commandManager.getRepository().locateByTree(UserInfoCommand);
+    if (!userInfoCommand) throw new Error('User info command not found');
+
+    // Get the customId builder
+    const customIdCodec = bot.commands.getCustomIdCodec();
+    const customIdBuilder = customIdCodec.createCustomIdBuilder(userInfoCommand);
+
+    // Create customIds by cloning the builder, adding the ID and building
+    const adminACustomId = customIdBuilder
+      .clone()
+      .setAt(UserIdIndex, '1234567890')
+      .build();
+    const adminBCustomId = customIdBuilder
+      .clone()
+      .setAt(UserIdIndex, '0123456789')
+      .build();
+
+    // Create the buttons
+    const adminAButton = new ButtonBuilder()
+      .setCustomId(adminACustomId)
+      .setLabel('Admin A')
+      .setStyle(ButtonStyle.Primary);
+
+    const adminBButton = new ButtonBuilder()
+      .setCustomId(adminBCustomId)
+      .setLabel('Admin B')
+      .setStyle(ButtonStyle.Primary);
+
+    const row = new ActionRowBuilder().addComponents(adminAButton, adminBButton);
+
+    await interaction.reply({ components: [row] });
+  }
+}
+
+class UserInfoCommand extends AbstractStandaloneCommand {
+  public async handleInteraction(
+    interaction: ComponentCommandInteraction,
+    metadata: CommandExecutionMeta,
+  ) {
+    const bot = metadata.getBot();
+    const customIdCodec = bot.commands.getCustomIdCodec();
+
+    // Build a StringIterator to extract the extra data
+    const iterator = customIdCodec.createIteratorFromCustomId(interaction.customId);
+
+    // Get at UserIdIndex index, true to throw an error if not present
+    const userId = iterator.getAt(UserIdIndex, true);
+
+    const user = await bot.client.users.fetch(userId);
+    await interaction.reply(`User: ${user.tag}`);
+  }
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 👷 Creation
+
+You can create a command custom ID codec by either:
+
+* Extending `DefaultCommandCustomIdCodec` from `@framework` (recommended).
+* Implementing the `CommandCustomIdCodec` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultCommandCustomIdCodec">
+```
+
+```ts
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/framework';
+
+class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {
+  // ...
+}
+
+const myCodec = new MyCommandCustomIdCodec();
+
+const myBot = Bot.create((bot) => ({
+  commands: DefaultCommandManager.create(bot, client, clientBus, { customIdCodec: myCodec }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing CommandCustomIdCodec">
+```
+
+```ts
+import { CommandCustomIdCodec } from '@nyx-discord/core';
+
+class MyCommandCustomIdCodec implements CommandCustomIdCodec {
+  // ...
+}
+
+const myCodec = new MyCommandCustomIdCodec();
+
+const myBot = Bot.create((bot) => ({
+  commands: DefaultCommandManager.create(bot, client, clientBus, { customIdCodec: myCodec }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+

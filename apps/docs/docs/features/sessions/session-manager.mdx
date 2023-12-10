@@ -1,0 +1,45 @@
+---
+title: ️💼 Session Manager
+---
+
+The `SessionManager` is the object that holds together the nyx session system.
+
+It consists of:
+
+* `SessionCustomIdCodec` for encoding and decoding custom session ids.
+* `SessionUpdateSubscriber` for listening to session updates.
+* `SessionRepository` for storing sessions.
+* `SessionExecutor` for executing sessions.
+* `SessionPromiseRepository` for storing session end promises.
+* `EventBus` for emitting session related events.
+
+As well as methods to interact with them.
+
+## 👷 Creation
+
+You can create a custom session manager by either:
+
+* Extending `DefaultSessionManager` from `@nyx-discord/framework` (recommended).
+* Implementing `SessionManager` from `@nyx-discord/core`.
+
+Then you can pass it to your bot:
+
+```ts
+class MySessionManager extends DefaultSessionManager {
+  // highlight-next-line
+  public myCustomPublicMethod() {}
+}
+
+const myBot = Bot.create((bot: NyxBot) => ({
+  // ...
+
+  // highlight-next-line
+  sessions: new MySessionManager(/** ... */),
+}));
+
+// highlight-next-line
+myBot.sessions.myCustomPublicMethod() // works!
+```
+
+The `Bot` class is able to infer the type of your custom manager via generics, so accessing any custom public method or
+property will work without errors.

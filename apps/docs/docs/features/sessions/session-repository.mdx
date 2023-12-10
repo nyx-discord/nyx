@@ -1,0 +1,63 @@
+---
+title: 📔 Session Repository
+---
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+The `SessionRepository` is the object responsible for the temporal storage of sessions. It's stored by a
+`SessionManager`, and you can get it via `SessionManager#getRepository()`.
+
+The `DefaultSessionRepository` extends a `TTLCache` object from `@isaacs/ttlcache` to manage the expiration of sessions.
+
+## 👷 Creation
+
+You can create a custom session repository by either:
+
+* Extending `DefaultSessionRepository` from `@framework` (recommended).
+* Implementing the `SessionRepository` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultSessionRepository">
+```
+
+```ts
+import { DefaultSessionRepository } from '@nyx-discord/framework';
+
+class MySessionRepository extends DefaultSessionRepository {
+  // ...
+}
+
+const myRepository = new MySessionPromiseRepository();
+
+const myBot = Bot.create((bot) => ({
+    sessions: DefaultSessionManager.create(bot, { repository: myRepository }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing SessionExecutor">
+```
+
+```ts
+import { SessionRepository } from '@nyx-discord/core';
+
+class MySessionRepository implements SessionRepository {
+  // ...
+}
+
+const myRepository = new MySessionRepository();
+
+const myBot = Bot.create((bot) => ({
+  sessions: DefaultSessionManager.create(bot, { repository: myRepository }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```

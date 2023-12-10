@@ -1,0 +1,285 @@
+---
+title: ️👤 Session
+---
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+A `Session` is an object that holds the state of an interaction session.
+
+The workflow of a session goes like this:
+1. The session is instantiated by some object when an interaction is received.
+2. It's passed to `SessionManager#start()`. This ultimately starts the session via `Session#start()`.
+3. The session replies to its `SessionStartInteraction`, with components that route back to the session.
+4. The user uses one of these components. The bot receives it, sends it to the `SessionManager`, and it's ultimately
+routed to `Session#update()`.
+5. The session is updated, replying to that new interaction, and the cycle repeats.
+6. Eventually the session ends or expires, calling `Session#end()`.
+7. The result is extracted via `Session#getResult()`, which is used to [emit the event](../session-bus), and to
+[resolve the end promise](../session-promise-repository).
+
+:::tip
+To avoid issues, it's recommended that the object that instantiates the session doesn't reply to the interaction.
+Instead, that should be done by the session itself (on `Session#start()`).
+:::
+
+## 👷 Creation
+
+You can create a session by either:
+
+* Extending `AbstractSession` from `@framework` (recommended).
+* Implementing the `Session` interface from `@core`.
+
+After creating it, start it via `SessionManager#start()`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractSession">
+```
+
+```ts
+import { AbstractSession, SessionUpdateInteraction } from '@nyx-discord/framework';
+
+class MySession extends AbstractSession {
+  public async start() {
+    const buttonId = this.customId.clonePush('button').build();
+
+    const updateButton = new ButtonBuilder()
+      .setCustomId(buttonId)
+      .setLabel('Update')
+      .setStyle(ButtonStyle.Primary);
+
+    await this.startInteraction.reply('Hello!');
+  }
+
+  public async end() {
+    const reply = await this.startInteraction.fetchReply();
+    await reply.edit('Goodbye!');
+  }
+
+  protected async handleButton(interaction: SessionUpdateInteraction) {
+    await interaction.reply('Hello again!');
+  }
+}
+
+// Somewhere in your code, like inside a command...
+
+const sessionId = 'mySessionId'; // Ideally randomly generated
+const session = new MySession(bot, sessionId, interaction);
+await bot.sessions.start(session);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing Session">
+```
+
+```ts
+import { Session } from '@nyx-discord/core';
+
+class MySession implements Session {
+  // ...
+}
+
+const session = new MySession(/** ... */);
+await bot.sessions.start(session);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 📝 Updating
+
+A session is "updated" when an interaction whose `customId` property refers to the session is received. The session
+is then updated via `Session#update()`, and it's responsible for answering to that interaction.
+
+:::tip
+When extending `AbstractSession` you don't need to implement `Session#update()`. By default, it redirects interactions
+depending on its type:
+
+* `#handleButton()` for `ButtonInteractions`.
+* `#handleSelectMenu()` for `AnySelectMenuInteractions`.
+* `#handleModal()` for `ModalMessageModalSubmitInteraction`.
+
+Override these instead, depending on what components you are sending.
+:::
+
+When the session is updated, `Session#update()` (or each handle method) must return whether the session's TTL has to be
+refreshed or not.
+
+:::note
+Returning `true` on every update refreshes the session's TTL when updated, while returning always `false` makes the
+TTL to never refresh, like a "timed race" session.
+:::
+
+## 💬 Custom Ids
+
+The `SessionCustomIdCodec` is the object responsible for generating and validating customIds that refer to a session,
+called "Session Custom Ids".
+
+Additionally, it can generate a `CustomIdBuilder`, which you can use to append extra tokens to your customId. When
+receiving it, you can use the codec again to extract the extra tokens using a `StringIterator`.
+
+```ts
+const codec = bot.sessions.getCustomIdCodec();
+
+// Creating a simple customId.
+const simpleCustomId = codec.deserializeToObjectId(session);
+
+// Creating a customId builder.
+const builder = codec.createCustomIdBuilder(session);
+builder.push('foo').push('bar');
+
+// warn-next-line
+// Throws an error if the result has more than 100 characters.
+const tokenCustomId = builder.build();
+
+// Extracting the extra tokens.
+const iterator = codec.createIteratorFromCustomId(tokenCustomId);
+iterator.getTokens(); // ['foo', 'bar']
+```
+
+:::tip
+* To avoid "magic values" where you guess the order of the tokens, you can use `CustomIdBuilder#setAt(index, value)`. You
+can then use `StringIterator#getAt(index)` to get the value, saving the index as a constant somewhere.
+
+* For utility purposes, `AbstractSession` saves its own customId in a `AbstractSession#customId` property. However, make
+sure to **always clone it before appending values to it**.
+
+* Discord doesn't allow duplicated customIds on a single message, even if they come from different component types.
+You can push values like `'button'`, `'select'`, `'modal'` to avoid that issue.
+:::
+
+### ✨ Component Examples
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Button">
+```
+
+```ts
+const buttonId = builder.clonePush('button').build();
+
+const button = new ButtonBuilder()
+  // highlight-next-line
+  .setCustomId(buttonId)
+  .setLabel('A session button')
+  .setStyle(ButtonStyle.Primary);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Select Menu">
+```
+
+:::warning
+The `CustomIdCodec` only uses the customId from the select menu itself, not their options.
+:::
+
+```ts
+const selectId = builder.clonePush('select').build();
+
+const select = new SelectMenuBuilder()
+  // highlight-next-line
+  .setCustomId(selectId)
+  .setPlaceholder('A session select menu')
+  .addOptions([
+    new StringSelectMenuOptionBuilder()
+      .setLabel('Option 1')
+      .setValue('option1'),
+    new StringSelectMenuOptionBuilder()
+      .setLabel('Option 2')
+      .setValue('option2'),
+  ]);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Modal">
+```
+
+```ts
+const modalId = builder.clonePush('modal').build();
+
+const modal = new ModalBuilder()
+  // highlight-next-line
+  .setCustomId(modalId)
+  .setTitle('A session modal')
+  .addComponents([
+    new TextInputBuilder()
+      .setCustomId('textInput')
+      .setLabel('Text input')
+      .setStyle(TextInputStyle.Short),
+  ]);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 🏆 Result
+
+A session can provide a "result", the type of which is defined by the session's generic argument. When the session ends,
+the result obtained via `Session#getResult()` is used to [emit the event](../session-bus), and to
+[resolve the end promise](../session-promise-repository).
+
+Use the result to make sessions that "aggregate" some input data from the user, which can then be used in other code.
+
+```ts
+class MySession extends AbstractSession<number> {
+  // ...
+
+  public end() {
+    this.result = 1;
+  }
+}
+
+// Somewhere in your code, like inside a command...
+
+const sessionId = 'mySessionId'; // Ideally randomly generated
+const session = new MySession(bot, sessionId, interaction);
+await bot.sessions.start(session);
+
+const endData = await session.getEndPromise();
+endData.result; // 1
+```
+
+## ⌛ Session TTL
+
+Once a session starts, it has a given TTL until it expires. When the session is updated, `Session#update()` returns
+whether the TTL has to be refreshed or not.
+
+:::note
+Returning `true` on every update refreshes the session's TTL when updated, while returning always `false` makes the
+TTL to never refresh, like a "timed race" session.
+:::
+
+You can specify a TTL:
+
+* Overriding `ttl` when extending `AbstractSession` from `@framework`.
+* Returning it on `Session#getTTL()` when implementing `Session` from `@core`.
+
+## 🚧 Filters
+
+A `SessionFilter` is an object that can be used to filter out session starts (`SessionStartFilter`)
+or updates (`SessionUpdateFilter`). They are provided by the session, via `Session#getStartFilter()` and
+`Session#getUpdateFilter()`.
+
+To add a filter to your session, first create the filter:
+
+* Extending `AbstractSessionStartFilter` or `AbstractSessionUpdateFilter` from `@framework` (recommended).
+* Implementing the `SessionStartFilter` or `SessionUpdateFilter` interface from `@core`.
+
+After creating it, add it to your session class:
+
+* Overriding `startFilter` or `updateFilter` when extending `AbstractSession` from `@framework`.
+* Returning it on `Session#getStartFilter()` or `Session#getUpdateFilter()` when implementing `Session` from `@core`.
+
+:::note
+For more information on filters, check the [🛡️ Session Interception](../session-interception) documentation.
+:::

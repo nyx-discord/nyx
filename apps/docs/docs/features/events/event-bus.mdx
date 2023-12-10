@@ -1,0 +1,299 @@
+---
+title: 📣 Event Buses
+---
+
+# 📣 Event Buses
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+`EventBuses` are objects responsible for containing and notifying subscribed `EventSubscribers` about events. These
+events can be emitted internally, typically via an EventEmitter, or externally, via `EventBus#emit()`.
+
+An `EventBus` consists of:
+
+* An `EventSubscriber` collection for storing subscribers, mapped by their IDs.
+* An `EventDispatcher` to notify event calls to subscribers.
+
+As well as methods to interact with them.
+
+:::note
+Buses are bot aware, meaning that they belong to only one bot, which is passed on the constructor by default.
+The same event bus instance cannot be registered with two different bots.
+
+The bus is also notified once it's registered on an `EventManager`, on `EventSubscriber#onRegister()`, same when
+unsubscribed, on `#onUnregister()`. Override these methods to perform setup or cleanup logic on the bot.
+:::
+
+## 👷 Creation
+
+You can create an event bus by either:
+
+* Instantiating an `BasicEventBus` from `@framework` (recommended).
+* Implementing the `EventBus` interface from `@core`.
+
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Instantiating BasicEventBus">
+```
+
+```ts
+import { BasicEventBus } from '@nyx-discord/framework';
+
+// Uses an AsyncEventDispatcher
+const asyncBus = BasicEventBus.createAsync(
+  bot,
+  Symbol('myAsyncBus'), // Bus ID
+);
+
+// Uses a SyncEventDispatcher
+const syncBus = BasicEventBus.createSync(
+  bot,
+  Symbol('mySyncBus'), // Bus ID
+);
+
+await bot.events
+  .addEventBus(asyncBus)
+  .addEventBus(syncBus);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing EventBus">
+```
+
+```ts
+import { EventBus } from '@nyx-discord/core';
+
+class MyInterfaceEventBus implements EventBus {
+  // ...
+}
+
+const interfaceBus = new MyInterfaceEventBus();
+
+await bot.events.addEventBus(interfaceBus);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+:::note
+There are two options to instantiate a default `BasicEventBus`.
+
+Either with:
+
+* `BasicEventBus#createAsync()` which uses an `AsyncEventDispatcher`.
+* `BasicEventBus#createSync()` which uses an `SyncEventDispatcher`.
+
+In summary:
+
+* An `AsyncEventDispatcher` executes multiple subscribers at a time, on a fixed amount.
+* An `SyncEventDispatcher` executes one subscriber at a time, but has a fixed execution time until it passes to
+the next.
+
+It's advised that you check the [⚡ Event Dispatcher](./event-dispatcher) documentation for more information.
+:::
+
+## 📩 Subscription
+
+Read the [📩 Event Subscribers](./event-subscriber) documentation for more details on how to subscribe to a bus.
+
+## 📦 Type Safety
+
+To ensure type safety when emitting events, event buses take a generic type of `Record<string, unknown[]>`, that
+represents the events that the bus emits, and their arguments.
+
+A typed event bus will also cause a type error when trying to add a `EventSubscriber` whose arguments don't match any
+event that the bus emits.
+
+```ts
+import { BasicEventBus } from '@nyx-discord/framework';
+
+interface TicketEventsArgs {
+  ticketCreate: [ticket: Ticket],
+  ticketClose: [closedTicket: Ticket, closer: TicketUser],
+}
+
+const ticketBus = BasicEventBus.createAsync<TicketEventsArgs>(
+  bot,
+  Symbol('TicketEventBus'),
+);
+
+const createdTicket: Ticket = {};
+const closedTicket: Ticket = {};
+const closerUser: TicketUser = {};
+
+await ticketBus.emit('ticketCreate', [createdTicket]);
+await ticketBus.emit('ticketClose', [closedTicket, closerUser]);
+
+// error-start
+await ticketBus.emit('ticketCreate', ['Ticket']);
+await ticketBus.emit('ticketClose', [ticketUser]);
+await ticketBus.emit('ticketClose', []);
+// error-end
+
+const validSubscriber = new SubscriberCallbackWrapper<TicketEventsArgs, 'ticketCreate'>(
+  'ticketCreate',
+  (meta: EventDispatchMeta, createdTicket: Ticket) => {
+    // Do something
+  }
+);
+
+const invalidSubscriber = new SubscriberCallbackWrapper<TicketEventsArgs, 'ticketCreate'>(
+  'ticketCreate',
+  // Errors since TicketEventsArgs['ticketCreate'] doesn't match [number]
+  // error-next-line
+  (meta: EventDispatchMeta, createdTicket: number) => {
+    // Do something
+  }
+);
+
+ticketBus
+  .subscribe(validSubscriber)
+    // Errors since [number] doesn't match any event argument on TicketEventsArgs
+  // error-next-line
+  .subscribe(invalidSubscriber);
+```
+
+:::warning
+A current limitation is that the bus (on `EventBus#subscribe()`) will only check that there's an event that matches the
+given arguments. It will not check that the subscriber's event actually matches those types.
+
+It's advised that you create an abstract class for the subscriber you want, similar to the `AbstractDJSClientSubscriber`.
+:::
+
+## 🔃 Subscriber Sorting
+
+By default, subscribers are sorted by their priority on `EventSubscriber#getPriority()`. You can override this by
+calling the `EventBus#sortSubscribers()` method, which takes a comparator function.
+
+```ts
+myEventBus.sortSubscribers((subscriberA, subscriberB) => {
+  return subscriberA.getPriority() - subscriberB.getPriority();
+});
+```
+
+This method is saved and called automatically when adding a new subscriber to the bus, ensuring that subscribers are
+always sorted.
+
+## 🔒 Locking
+
+Event buses extend the `Lockable` interface, so that they can be locked and unlocked.
+
+If an event bus is locked, the `EventManager#removeEventBus()` method will throw an `LockedObjectError` when trying to
+remove it.
+
+You can set an event bus as locked by calling the `BasicEventBus#lock()` method (or overriding the `locked` property
+when extending).
+
+```ts
+import { BasicEventBus } from '@nyx-discord/framework';
+
+const myEventBus = BasicEventBus.createAsync<MyEventsArgs>(bot, Symbol('MyEventBus'));
+// highlight-next-line
+myEventBus.lock();
+
+await bot.events.addEventBus(myEventBus);
+// error-next-line
+await bot.events.removeEventBus(myEventBus); // throws LockedObjectError
+
+myEventBus.unlock();
+await bot.events.removeEventBus(myEventBus); // passes
+```
+
+## ⏰ Using EventEmitters
+
+Event buses are designed to notify subscribers only when the `EventBus#emit()` method is manually called.
+
+However, in certain cases, a third party Node `EventEmitter` can be used to emit events, like the Discord.js Client. In
+such cases, the event bus can act as a "wrapper" for the specified emitter.
+
+You can create such buses by either:
+
+* Instantiating an `BasicEventEmitterBus` from `@framework` (recommended).
+* Implementing the `EventEmitterBus` interface from `@core`.
+
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Instantiating BasicEventEmitterBus">
+```
+
+```ts
+import { BasicEventEmitterBus } from '@nyx-discord/framework';
+
+// Example using the client emitter
+const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArgs>(
+  bot,
+  Symbol('ClientEventBus'),
+  // highlight-next-line
+  bot.client
+);
+
+// Example using a custom event emitter
+const myEventEmitterBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArgs>(
+  bot,
+  Symbol('MyEventEmitterBus'),
+  // highlight-next-line
+  new EventEmitter(),
+)
+
+await bot.events
+  .addEventBus(clientEventBus)
+  .addEventBus(myEventEmitterBus);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing EventEmitterBus">
+```
+
+```ts
+import { EventEmitterBus } from '@nyx-discord/core';
+
+class MyEventEmitterBus implements EventEmitterBus<MyEventArgs> {
+  // ...
+}
+
+const bus = new MyEventEmitterBus();
+
+await bot.events.addEventBus(bus);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+:::info
+The `DefaultEventManager#create()` method uses a `SyncEventDispatcher` for the client bus.
+
+This is to avoid confusion with developers that are already familiar with Node's `EventEmitter`, which is sync in
+nature.
+:::
+
+## 👂 Bus events
+
+Apart from the events specified on the generic argument, a bus can emit "bus related" events.
+
+Currently, these events are:
+
+* `EventSubscriberAdd` - Emitted when an `EventSubscriber` is subscribed to the bus. Passes the added `EventSubscriber`.
+* `EventSubscriberRemove` - Emitted when an `EventSubscriber` is unsubscribed from the bus. Passes the
+removed `EventSubscriber`.
+
+You can get these events from the `EventBusEventEnum` enum on `@core`.
+
+## ⚡ Event Dispatcher
+
+The actual call of subscribers is done by the bus' `EventDispatcher`, which handles middleware and error handling.
+
+Currently, there are two types of event dispatchers:
+
+* `SyncEventDispatcher` - For notifying subscribers synchronously, with a timeout.
+* `AsyncEventDispatcher` - For notifying subscribers asynchronously, with a concurrency limit.
+
+For more information, check the [⚡ EventDispatcher](./event-dispatcher) documentation.

@@ -1,0 +1,74 @@
+---
+title: ️⌚ Schedules
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+`Schedules` are objects that will be ticked some time in the future, and can be used as a feature complete way of
+scheduling events in your bot, apart from Node's `setInterval()` API.
+
+It consists of:
+
+* An `Identifier`, to uniquely identify it.
+* The `tick()` method, which will be called when it's ticked.
+* A `ScheduleInterval`, which can be a string on [cron format](https://crontab.guru/), a number in milliseconds, or a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date).
+* An optional [`ScheduleFilter`](./schedule-interception#-schedule-filters), which can allow or deny its tick.
+* A `ReadonlyMetaCollection`, which contains meta information about the schedule, meant to be read by plugins.
+* `onRegister()` and `onUnregister()` methods, which will be called when the schedule is registered and unregistered respectively.
+
+Schedules aren't ticked by themselves, and rely on a job to do that. You can read more information about jobs on the
+[🔍 Schedule Execution Scheduler](./schedule-scheduler) documentation.
+
+:::info
+Filters are not bot aware, meaning that you can reuse the same instance for many bots.
+:::
+
+## 👷 Creation
+
+You can create a schedule by either:
+
+* Extending `AbstractSchedule` from `@framework` (recommended).
+* Implementing the `Schedule` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractSchedule">
+```
+
+```ts
+import { AbstractSchedule } from '@nyx-discord/framework';
+
+class MySchedule extends AbstractSchedule {
+  // Cron format (every half hour). Can also be a Date or number in ms.
+  protected readonly interval = '*/30 * * * *';
+
+  public async tick(meta: ScheduleTickMeta) {
+    const bot = meta.getBot();
+
+    bot.logger.log("Hello world!");
+  }
+}
+
+const schedule = new MySchedule();
+await bot.schedules.addSchedule(schedule);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing Schedule">
+```
+
+```ts
+class MySchedule implements Schedule {
+  // ...
+}
+
+const schedule = new MySchedule();
+await bot.schedules.addSchedule(schedule);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```

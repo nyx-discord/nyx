@@ -1,0 +1,19 @@
+---
+title: 📣 Schedule Event Bus
+---
+
+The `ScheduleEventBus` emits schedule related events. It's stored by a `ScheduleManager`, and you can get it via
+`ScheduleManager#getEventBus()`.
+
+:::tip
+You can check more information about buses on the [📣 Event Buses](../events/event-bus) documentation.
+:::
+
+## 👂 Events
+
+Currently, the events that it emits are:
+
+* `ScheduleAdd` - Emitted when a new `Schedule` is added. Passes the added `Schedule`.
+* `ScheduleRemove` - Emitted when an `Schedule` is removed. Passes the removed `Schedule`.
+
+You can get these events from the `ScheduleEventEnum` enum on `@core`.

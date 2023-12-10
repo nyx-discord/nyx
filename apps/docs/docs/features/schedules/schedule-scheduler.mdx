@@ -1,0 +1,91 @@
+---
+title: 🔍 Schedule Execution Scheduler
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `ScheduleExecutionScheduler` is the object responsible for tracking the execution of schedules. It's stored by a
+`ScheduleManager`, and you can get it via `ScheduleManager#getScheduler()`.
+
+You can't modify the scheduler directly since the `ScheduleManager` returns a `ReadonlyScheduleExecutionScheduler` type,
+but the hidden methods are available at the `ScheduleManager`. This is because starting and stopping the job needs
+more logic than just modifying the scheduler, and the manager is responsible for coordinating this.
+
+## 👷 Creation
+
+You can create a scheduler by either:
+
+* Extending `DefaultScheduleExecutionScheduler` from `@framework` (recommended).
+* Implementing the `ScheduleExecutionScheduler` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultScheduleExecutionScheduler">
+```
+
+The `DefaultScheduleExecutionScheduler` has two dependencies:
+* The `ScheduleExecutor` to execute schedules when needed.
+* The `ScheduleTickFactory` to create a `ScheduleTickMeta` before executing a schedule.
+
+While the default executor doesn't depend on the `NyxBot`, the tick factory does and as such it needs to be defined
+inside the bot's constructor.
+
+```ts
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/framework';
+
+class MyScheduleExecutionScheduler extends DefaultScheduleExecutionScheduler {
+	// Your custom logic.
+}
+
+// Could also be any `ScheduleExecutor` implementation.
+const executor = DefaultScheduleExecutor.create();
+
+const myBot = Bot.create((bot) => {
+  const tickFactory = (schedule: Schedule) => ScheduleTickMeta.fromSchedule(schedule, bot);
+  const scheduler = MyScheduleExecutionScheduler.create(executor, tickFactory);
+
+  const scheduleManager = DefaultScheduleManager.create(bot, { scheduler, executor });
+
+  return { schedules: scheduleManager };
+});
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing ScheduleExecutionScheduler">
+```
+
+```ts
+import { ScheduleExecutionScheduler } from '@nyx-discord/core';
+
+class MyScheduleExecutionScheduler implements ScheduleExecutionScheduler {
+	// Your custom logic.
+}
+
+const myBot = Bot.create((bot) => {
+  const scheduler = new MyScheduleExecutionScheduler(/** Needed parameters */);
+
+	return {
+    schedules: DefaultScheduleManager.create(bot, { scheduler }),
+	}
+});
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 🧭 Job Adapters
+
+`ScheduleJobAdapters` are objects created by the scheduler that will tick a given schedule in the future. They
+serve as an abstraction for some underlying tick object, like a `cron` job, a `setInterval()` interval, etc.
+
+Since the job is entirely responsible for a given `Schedule`'s ticking on a given bot, stopping or destroying it will
+effectively stop the schedule from being ticked.
+
+:::note
+`@framework` uses a `CronJobAdapter`, which is a `ScheduleJobAdapter` that holds a `CronJob` from the
+[npm cron package](https://www.npmjs.com/package/cron).
+:::

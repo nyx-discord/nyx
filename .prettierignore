@@ -1,0 +1,8 @@
+.prettierignore
+node_modules
+**/node_modules
+.docusaurus/
+**/*.mdx
+**/dist/*
+dist
+tsup.config.ts

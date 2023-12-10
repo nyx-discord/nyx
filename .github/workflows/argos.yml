@@ -1,0 +1,61 @@
+name: Argos CI Screenshots
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - apps/docs/**
+  pull_request:
+    branches: [ main ]
+    paths:
+      - apps/docs/**
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+  workflow_dispatch:
+
+jobs:
+  take-screenshots:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'main' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'Argos')) }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: current
+
+      - name: Use pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Playwright browsers
+        run: pnpm dlx playwright install --with-deps chromium
+
+      - name: Setup Playwright
+        working-directory: apps/docs
+        run: pnpm exec playwright install
+
+      - name: Build the website
+        working-directory: apps/docs
+        run: pnpm exec docusaurus build
+
+      - name: Take screenshots with Playwright
+        working-directory: apps/docs
+        run: pnpm exec playwright test
+
+      - name: Upload screenshots to Argos
+        working-directory: apps/docs
+        run: pnpm exec argos upload ./screenshots

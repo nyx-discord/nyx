@@ -1,0 +1,45 @@
+---
+title: ️💼 Command Manager
+---
+
+The `CommandManager` is the object that holds together the nyx event system.
+
+It consists of:
+
+* `CommandSubscriberContainer` for managing command-related subscribers.
+* `CommandCustomIdProcessor` for processing command customIds.
+* `CommandRouter` for routing command interactions to the respective command.
+* `CommandExecutor` for executing concrete commands.
+* `CommandRepository` for storing the registered commands and managing their registration at Discord.
+* `EventBus` for emitting command related events.
+
+As well as methods to interact with them.
+
+## 👷 Creation
+
+You can create a custom command manager by either:
+
+* Extending `DefaultCommandManager` from `@nyx-discord/framework` (recommended).
+* Implementing `CommandManager` from `@nyx-discord/core`.
+
+Then you can pass it to your bot:
+
+```ts
+class MyCommandManager extends DefaultCommandManager {
+  // highlight-next-line
+  public myCustomPublicMethod() {}
+}
+
+const myBot = Bot.create((bot: NyxBot) => ({
+  // ...
+
+  // highlight-next-line
+  events: new MyCommandManager(/** ... */),
+}));
+
+// highlight-next-line
+myBot.commands.myCustomPublicMethod() // works!
+```
+
+The `Bot` class is able to infer the type of your custom manager via generics, so accessing any custom public method or
+property will work without errors.

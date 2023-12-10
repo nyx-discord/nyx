@@ -1,0 +1,84 @@
+---
+title: ⚡ Command Executor
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `CommandExecutor` is the object responsible for executing commands, based on the received interaction. It's stored
+by a `CommandManager`, and you can get it via `CommandManager#getExecutor()`.
+
+The executor manages that:
+* The `CommandMiddlewareLinkedList` passes the execution.
+* The command is executed with its respective arguments, on the appropriate method.
+* Any errors thrown by the command or middleware are caught, wrapped if needed, and redirected to the `ErrorHandler`.
+
+## 👷 Creation
+
+You can create a custom command executor by either:
+
+* Extending `DefaultCommandExecutor` from `@framework` (recommended).
+* Implementing the `CommandExecutor` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultCommandExecutor">
+```
+
+```ts
+import { DefaultCommandExecutor } from '@nyx-discord/framework';
+
+class MyCommandExecutor extends DefaultCommandExecutor {
+  // ...
+}
+
+const myExecutor = new MyCommandExecutor();
+
+const myBot = Bot.create((bot) => ({
+  commands: DefaultCommandManager.create(bot, client, clientBus, { executor: myExecutor }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing CommandExecutor">
+```
+
+```ts
+import { CommandExecutor } from '@nyx-discord/core';
+
+class MyCommandExecutor implements CommandExecutor {
+  // ...
+}
+
+const myExecutor = new MyCommandExecutor();
+
+const myBot = Bot.create((bot) => ({
+  commands: DefaultCommandManager.create(bot, client, clientBus, { executor: myExecutor }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 🚦 Middleware
+
+The executor stores a `CommandMiddlewareLinkedList` that will either allow or deny the execution of a given command.
+This list can be obtained via `CommandExecutor#getMiddleware()`.
+
+For information about how to use it, check the [️🛡️ Command Interception](./command-interception) documentation.
+
+## 💫 Error Handling
+
+The executor stores an `ErrorHandler`, which is redirected errors thrown by any command. For information about how
+to use it, check the [💫 Error Handling](../../error/error-handling) documentation.
+
+There are special errors that are redirected there however, specifically when checking the middleware. These are:
+
+* `CommandMiddlewareError` - Caused when a middleware throws an error, the list catches it and wraps it in this error. It's known which middleware caused the error.
+* `UncaughtCommandMiddlewareError` - Caused when the list throws an error, and it's not the one above. In theory, it should never happen but it still exists just in case. It's not known which middleware caused the error.
+
+These errors hold information useful to handle them, like the middleware that caused the error, or the entire list if the
+middleware is not known.

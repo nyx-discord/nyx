@@ -1,0 +1,67 @@
+---
+title: ️🔀 Command Resolver
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `CommandResolver` is the object responsible for figuring to what command an `ApplicationCommandInteraction` or an
+`AutocompleteInteraction` is trying to call. It's stored by a `CommandManager`, and you can get it
+via `CommandManager#getResolver()`.
+
+:::danger
+A resolver does not locate the actual command. Instead, it returns a `CommandReferenceData` object that says data about
+the command to find, like its name and type. The `CommandRepository` can then use this to actually locate the command.
+
+This intermediary is needed to avoid the resolver depending on the repository, and thus allowing you to reuse resolvers.
+:::
+
+## 👷 Creation
+
+You can create a command resolver by either:
+
+* Extending `DefaultCommandResolver` from `@framework` (recommended).
+* Implementing the `CommandResolver` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultCommandResolver">
+```
+
+```ts
+import { DefaultCommandResolver } from '@nyx-discord/framework';
+
+class MyCommandResolver extends DefaultCommandResolver {
+  // ...
+}
+
+const myResolver = new MyCommandResolver();
+
+const myBot = Bot.create((bot) => ({
+  commands: DefaultCommandManager.create(bot, client, clientBus, { resolver: myResolver }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing CommandResolver">
+```
+
+```ts
+import { CommandResolver } from '@nyx-discord/core';
+
+class MyCommandResolver implements CommandResolver {
+  // ...
+}
+
+const myResolver = new MyCommandResolver();
+
+const myBot = Bot.create((bot) => ({
+  commands: DefaultCommandManager.create(bot, client, clientBus, { resolver: myResolver }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```

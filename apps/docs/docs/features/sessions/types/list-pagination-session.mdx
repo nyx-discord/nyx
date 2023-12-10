@@ -1,0 +1,93 @@
+---
+title: 📦 List Pagination Session
+---
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+:::tip Pre-knowledge
+It's recommended that you first read the [️🔢 Pagination Session](./pagination-session) documentation, since this is an extension of it.
+:::
+
+A `ListPaginationSession` is a special type of pagination session made to paginate a list of items.
+
+:::note Item refreshing
+Initially, the item's values are received at the session's constructor. You can also include a refreshing system in
+the session to refresh the items with their newest state, if desired.
+:::
+
+## 👷 Creation
+
+You can create a paginated session by either:
+
+* Extending `AbstractListPaginationSession` from `@framework` (recommended).
+* Implementing the `ListPaginationSession` interface from `@core`.
+
+After creating it, start it via `SessionManager#start()`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractListPaginationSession">
+```
+
+```ts
+import { AbstractListPaginationSession, SessionUpdateInteraction } from '@nyx-discord/framework';
+
+class MyListPaginationSession extends AbstractListPaginationSession<number> {
+  public async start() {
+    const page = this.createPage();
+
+    await this.startInteraction.reply(page);
+  }
+
+  protected async updatePage(interaction: SessionUpdateInteraction) {
+    const page = this.createPage();
+
+    await interaction.editReply(page);
+  }
+
+  protected createPage() {
+    const currentNumbers = this.getCurrentPageElements();
+    const row = this.buildDefaultPageRow();
+
+    return {
+      content: `Current numbers: ${currentNumbers.join(', ')}`,
+      components: [row],
+    };
+  }
+}
+
+// Somewhere in your code, like inside a command...
+
+const sessionItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const sessionId = 'mySessionId'; // Ideally randomly generated
+const session = new MyListPaginationSession(bot, sessionId, interaction, sessionItems);
+await bot.sessions.start(session);
+```
+
+:::tip
+In order to retrieve the items belonging to the current page, you can use `this.getCurrentPageElements()`.
+:::
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing ListPaginationSession">
+```
+
+```ts
+import { ListPaginationSession } from '@nyx-discord/core';
+
+class MyListPaginationSession implements ListPaginationSession {
+  // ...
+}
+
+const session = new MyListPaginationSession(/** ... */);
+await bot.sessions.start(session);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```

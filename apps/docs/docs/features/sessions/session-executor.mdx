@@ -1,0 +1,99 @@
+---
+title: ⚡ Session Executor
+---
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+The `SessionExecutor` is the object responsible for executing sessions. It's stored by a `SessionManager`, and you can
+get it via `SessionManager#getExecutor()`.
+
+The executor manages that:
+* The respective `SessionMiddlewareLinkedList` passes the execution.
+* The session is executed with its respective arguments.
+* Any errors thrown by the session or middleware are caught, wrapped if needed, and redirected to the `ErrorHandler`.
+
+## 👷 Creation
+
+You can create a custom session executor by either:
+
+* Extending `DefaultSessionExecutor` from `@framework` (recommended).
+* Implementing the `SessionExecutor` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultSessionExecutor">
+```
+
+```ts
+import { DefaultSessionExecutor } from '@nyx-discord/framework';
+
+class MySessionExecutor extends DefaultSessionExecutor {
+  // ...
+}
+
+const myExecutor = new MySessionExecutor();
+
+const myBot = Bot.create((bot) => ({
+  sessions: DefaultSessionManager.create(bot, { executor: myExecutor }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing SessionExecutor">
+```
+
+```ts
+import { SessionExecutor } from '@nyx-discord/core';
+
+class MySessionExecutor implements SessionExecutor {
+  // ...
+}
+
+const myExecutor = new MySessionExecutor();
+
+const myBot = Bot.create((bot) => ({
+  sessions: DefaultSessionManager.create(bot, { executor: myExecutor }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 🚦 Middleware
+
+The executor stores two `SessionMiddlewareLists` that will either allow or deny the execution of a given session.
+These are:
+
+* `SessionStartMiddlewareList`: Checked when a session starts.
+* `SessionUpdateMiddlewareList`: Checked when a session is updated.
+
+They can be obtained via `SessionExecutor#getStartMiddleware()` and `SessionExecutor#getUpdateMiddleware()`.
+
+For information about how to use them, check the [️🛡️ Session Interception](./session-interception) documentation.
+
+## 💫 Error Handling
+
+The executor stores three `ErrorHandlers`, which are used to redirect errors thrown by any session. These are:
+
+* `SessionStartErrorHandler` - Handles session starts errors.
+* `SessionUpdateErrorHandler` - Handles session updates errors.
+* `SessionEndErrorHandler` - Handles session ends errors.
+
+For information about how to use them, check the [💫 Error Handling](../../error/error-handling) documentation.
+
+There are special errors that are redirected there, specifically when checking the middleware. These are:
+
+* `SessionMiddlewareError` - Caused when a middleware throws an error, the list catches it and wraps it in this error. It's known which middleware caused the error.
+* `UncaughtSessionMiddlewareError` - Caused when the list throws an error, and it's not the one above. In theory, it should never happen but it still exists just in case. It's not known which middleware caused the error.
+
+The specific type depends on the error handler. For instance, the `SessionStartErrorHandler` receives a
+`SessionStartMiddlewareError` and `UncaughtSessionStartMiddlewareError`.
+
+These errors hold information useful to handle them, like the middleware that caused the error, or the entire list if the
+middleware is not known.

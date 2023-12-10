@@ -1,0 +1,23 @@
+---
+title: 🧩 Plugins
+---
+
+Hey there 👋!  This guide is here to document what nyx plugins are, and how you can use them.
+
+## 🧩 Plugins
+
+Plugins are objects that can be used to pack nyx's functionality, such as commands, events, schedules and sessions.
+
+You can create a plugin by implementing the `NyxPlugin` interface.
+
+```ts
+import { NyxPlugin } from '@nyx-discord/core';
+
+class MyPlugin implements NyxPlugin {
+ // ...
+}
+
+const myPlugin = new MyPlugin();
+
+await bot.plugins.register(myPlugin);
+```

@@ -1,0 +1,156 @@
+---
+title: ️🛡️ Event Interception
+---
+
+#  ️🛡️ Event Interception
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Event interception refers to blocking a subscriber from receiving an event. In nyx, there are two ways to do this:
+
+1. Add an `EventSubscriberMiddleware` to the `EventSubscriberMiddlewareLinkedList` in the `EventDispatcher` that handles
+the event execution.
+2. Provide an `EventSubscriberFilter` in the `EventSubscriber` that receives the event.
+
+Let's explore when and how to use each of these methods.
+
+## 🚦 Subscriber Middlewares
+
+`EventSubscriberMiddlewares` are objects stored on a `EventSubscriberMiddlewareLinkedList`, which is held and called by
+the event dispatcher every time an event is about to be notified to a subscriber.
+
+It consists of:
+* A `check()` method, which takes a subscriber and its arguments. Returns a `MiddlewareResponse`.
+* A `Priority`, that determines its priority inside the list.
+
+When being checked, a middleware is passed the subscriber that is being checked and the arguments that would be
+used to call it. The middleware then replies with a `MiddlewareResponse`, which can either:
+
+* Allow the execution (`{ allowed: true }`), with either:
+* Making the linked list check the next middleware (`{ allowed: true, checkNext: true }`).
+* Forcing the chain to end (`{ allowed: true, checkNext: false }`).
+* Deny the execution (`{ allowed: false, checkNext: false }`).
+
+The `AbstractMiddleware`, has `protected` utility methods to generate these responses. Specifically, `this.true()`,
+`this.false()` and `this.forceTrue()`.
+
+:::info
+Middlewares are not bot aware nor event bus aware, meaning that you can reuse the same instance for many event buses.
+
+From the `EventDispatchMeta` passed on the subscriber's args you can get:
+
+* The bot that called the event, via `#getBot()`.
+* The bus where the event was emitted, via `#getBus()`.
+* Whether the event has been marked as handled by another subscriber, via `#isHandled()`.
+
+:::
+
+### ❓ When to use a middleware?
+
+Middlewares are best for executing something or intercepting for all subscribers. For example,
+filtering (`EventSubscriberFilter`) and handling marking (`EventDispatchMeta#setHandled()`) logic are done by
+middlewares.
+
+They're very good when intercepting `EventSubscribers` in general, but not really for one in particular, since it would
+be very inefficient to check all the subscribers searching for only one of them.
+
+### 👷‍ Middleware Creation
+
+You can create your own middleware by either:
+
+* Extending `AbstractEventSubscriberMiddleware` from `@framework` (recommended).
+* Implementing the `EventSubscriberMiddleware` interface from `@core`.
+
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractEventSubscriberMiddleware">
+```
+
+```ts
+import type {
+  EventSubscriber,
+  EventDispatchArgs,
+  MiddlewareResponse
+} from '@nyx-discord/core';
+import { AbstractEventSubscriberMiddleware } from '@nyx-discord/framework';
+
+class MyFrameworkEventSubscriberMiddleware extends AbstractEventSubscriberMiddleware {
+  public check(subscriber: EventSubscriber, args: EventDispatchArgs): MiddlewareResponse {
+    return this.true();
+  }
+}
+
+const frameworkMiddleware = new MyFrameworkEventSubscriberMiddleware();
+
+myBus.getDispatcher().getMiddleware().add(frameworkMiddleware);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing EventSubscriberMiddleware">
+```
+
+```ts
+import { EventSubscriberMiddleware } from '@nyx-discord/core';
+
+class MyInterfaceEventSubscriber implements EventSubscriberMiddleware {
+  // ...
+}
+
+const interfaceMiddleware = new MyInterfaceEventSubscriber();
+
+myBus.getDispatcher().getMiddleware().add(interfaceMiddleware);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+By default, the following middleware chain is used:
+
+* `HandleCheckEventMiddleware` - See [✅ Event handling marking](event-subscriber#-event-handling-marking) on the
+`EventSubscriber` guide.
+* `SubscriberFilterCheckMiddleware` - See [🚧 Subscriber Filters](#-subscriber-filters).
+* `LifetimeEventBusMiddleware` - See [💟 Lifetime](event-subscriber#-lifetime) on the `EventSubscriber` guide.
+
+## 🚧 Subscriber Filters
+
+An `EventSubscriberFilter` is a nullable object provided by an `EventSubscriber`, checked by
+the `SubscriberFilterCheckMiddleware`.
+
+:::info
+Filters are not bot aware nor event subscriber aware, meaning that you can reuse the same instance for many subscribers.
+
+From the `EventDispatchMeta` passed on the subscriber's args you can get:
+
+* The bot that called the event, via `#getBot()`.
+* The bus where the event was emitted, via `#getBus()`.
+* Whether the event has been marked as handled by another subscriber, via `#isHandled()`.
+
+:::
+
+:::tip
+Think of a filter like adding an `if` at the beginning of your subscriber's `#handleEvent()`, except it
+gets checked before the subscriber is executed and, since it's an object, you can reuse it for multiple subscribers and
+save state on it.
+:::
+
+Though subscribers can only provide one filter, `@framework` provides utility filter aggregators that implement the
+basic `AND`, `OR`, `NOT` gates, that can help you "combine" multiple filters into one.
+
+### ❓ When to use a filter?
+
+Filters are best suited for sharing common conditions that multiple subscribers should share before executing.
+
+Also, since they have access to the subscriber that is being filtered and the `EventCallMeta` object, filters can share
+information to the subscriber, effectively working as a "pre-processor".
+
+### 👷‍ Filter Creation
+
+You can create your own filter by either:
+
+* Extending `AbstractEventSubscriberFilter` from `@framework` (recommended).
+* Implementing the `EventSubscriberFilter` interface from `@core`.

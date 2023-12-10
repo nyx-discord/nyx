@@ -1,0 +1,27 @@
+---
+title: 👂 Session Subscriber
+---
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+The `SessionSubscriber` is the object responsible for listening to interactions that could belong to a session update.
+It's stored by a `SessionManager`, and you can get it via `SessionManager#getUpdateSubscriber()`.
+
+## 👷 Creation
+
+Check the [📩 Event Subscribers](../events/event-subscriber) documentation for information on how to create a subscriber.
+
+After creating it, you can add it to the `SessionManager`, either when building it or with
+`SessionManager#setUpdateSubscriber()`:
+
+```ts
+const myBot = Bot.create((bot) => ({
+  sessions: DefaultSessionManager.create(bot, { subscriber: mySubscriber }),
+}));
+
+// Or:
+myBot.sessions.setUpdateSubscriber(subscriber);
+```

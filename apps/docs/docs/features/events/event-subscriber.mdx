@@ -1,0 +1,492 @@
+---
+title: 📩 Event Subscribers
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+`EventSubscribers` are objects that are notified by an `EventBus` once a given event happens, and certain conditions
+specified by the subscriber happen.
+
+:::note
+Subscribers don't depend on a specific bot or bus, and you can reuse the same instance for many.
+
+To get the bot that is calling an event, use the `EventDispatchMeta#getBot()` method on the meta passed for the event.
+
+The subscriber is also notified once it's subscribed to a bus (which contains the bot), on
+`EventSubscriber#onSubscribe()` , same when unsubscribed, on `#onUnsubscribe()`.
+Override these methods to perform setup or cleanup logic on the bus/bot.
+:::
+
+## 👷 Creation
+
+You can create an event subscriber by either:
+
+* Extending `AbstractEventSubscriber` from `@framework` (recommended).
+* Instantiating a `SubscriberCallbackWrapper` from `@framework`, passing a callback function.
+* Implementing the `EventSubscriber` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractEventSubscriber">
+```
+
+```ts
+import { AbstractEventSubscriber } from '@nyx-discord/framework';
+import type { EventDispatchMeta } from '@nyx-discord/core';
+
+class MyEventSubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected readonly event = 'someEvent';
+
+  public handleEvent(meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) {
+    const bot = meta.getBot();
+
+    bot.logger.log('Hello world');
+  }
+}
+
+const frameworkSubscriber = new MyEventSubscriber();
+
+await myBus.subscribe(frameworkSubscriber);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Instantiating SubscriberCallbackWrapper">
+```
+
+```ts
+import { SubscriberCallbackWrapper } from '@nyx-discord/framework';
+
+const callbackSubscriber = new SubscriberCallbackWrapper < MyEventsArgs, 'someEvent'>(
+  'someEvent',
+  (meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) => {
+    const bot = meta.getBot();
+
+    bot.logger.log('Hello world');
+  }
+);
+
+await myBus.subscribe(callbackSubscriber);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing EventSubscriber">
+```
+
+```ts
+import { EventSubscriber } from '@nyx-discord/core';
+
+class MyInterfaceEventSubscriber implements EventSubscriber {
+  protected readonly event = 'someEvent';
+
+  public handleEvent(meta: EventDispatchMeta, ...args: unknown[]): void {
+    const bot = meta.getBot();
+
+    bot.logger.log('Hello world');
+  }
+  // ...
+}
+
+const interfaceSubscriber = new MyInterfaceEventSubscriber();
+
+await myBus.subscribe(interfaceSubscriber);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 👂 Subscription
+
+To subscribe to a bus, you'll either need a reference to it or its ID.
+
+```ts
+// Using the EventManager
+await bot.events.subscribe(subscriber, myBusId); // Can also pass the bus reference
+
+// Using an existing reference to the bus
+await myBus.subscribe(subscriber);
+```
+
+The difference with using the `EventManager` versus using a direct reference is that the `EventManager` will make sure
+that the bus is currently registered on the bot. Otherwise, it will throw an `ObjectNotFoundError`.
+
+```ts
+const newBus = BasicEventBus.createSync(bot, Symbol('myBus'));
+// error-next-line
+await bot.events.subscribe(subscriber, newBus); // Throws ObjectNotFoundError
+```
+
+## 🧱 Event Dispatch Meta
+
+The first argument of the `EventSubscriber#handleEvent()` handler is an `EventDispatchMeta` object, which is a
+`Collection` that stores metadata about the event call.
+
+:::tip
+This metadata can be created by the caller on the `EventBus#emit()` method, specifying extra arguments to be read by the
+subscribers (apart from the event arguments).
+
+It's also passed to the `EventMiddleware`, and can be used as a way to share data from the middleware to subscribers.
+:::
+
+Apart from the keys saved by the caller or the middleware, the dispatch meta contains:
+
+* The bot that called the event, via `#getBot()`.
+* The bus where the event was emitted, via `#getBus()`.
+* Whether the event has been marked as handled by another subscriber, via `#isHandled()`.
+
+### ✅ Event handling marking
+
+By default, when a subscriber marks an event as "handled" with the `EventDispatchMeta#setHandled()` method, it won't be
+received by the rest of the subscribers. This is useful for events that only need to be "executed once", for example,
+replying to an `Interaction`.
+
+However, you can make your subscriber to be always called, even when the event is handled, overriding
+the `ignoreHandled` property on `AbstractEventSubscriber`.
+
+```mdx-code-block
+<details>
+  <summary>Example of event handling marking functionality</summary>
+```
+
+```ts
+import { AbstractEventSubscriber } from '@nyx-discord/framework';
+
+// A subscriber with priority Highest marks the event as handled
+class HighestEventSubscriber extends AbstractEventSubscriber {
+  protected readonly event = 'someEvent';
+
+  // highlight-next-line
+  protected readonly priority = PriorityEnum.Highest;
+
+  public handleEvent(meta: EventDispatchMeta): void {
+    // some logic
+
+    const bot = meta.getBot();
+
+    bot.logger.log('Called HighestEventSubscriber!');
+    meta.setHandled();
+  }
+}
+
+// A subscriber with priority Lowest doesn't receive the event
+class LowestEventSubscriber extends AbstractEventSubscriber {
+  protected readonly event = 'someEvent';
+
+// highlight-next-line
+  protected readonly priority = PriorityEnum.Lowest;
+
+  public handleEvent(meta: EventDispatchMeta): void {
+    const bot = meta.getBot();
+
+    bot.logger.log('Called LowestEventSubscriber!');
+  }
+}
+
+// A subscriber with priority Lowest but `ignoreHandled = false` receives the event
+class LowestNotIgnoredEventSubscriber extends AbstractEventSubscriber {
+  protected readonly event = 'someEvent';
+
+// highlight-next-line
+  protected readonly priority = PriorityEnum.Lowest;
+
+// highlight-next-line
+  protected readonly ignoreHandled = false;
+
+  public handleEvent(meta: EventDispatchMeta): void {
+    const bot = meta.getBot();
+
+    bot.logger.log('Called LowestNotIgnoredEventSubscriber!');
+  }
+}
+
+await myBus
+  .subscribe(new LowestEventSubscriber())
+  .subscribe(new HighestEventSubscriber());
+
+await myBus.emit('someEvent', []);
+/**
+ * Logger output:
+ * - Called HighestEventSubscriber!
+ * - Called LowestNotIgnoredEventSubscriber!
+ * Notice how LowestEventSubscriber wasn't called.
+ */
+```
+
+```mdx-code-block
+</details>
+```
+
+:::warning
+The handling marking logic is done by the `HandleCheckEventMiddleware` on `@framework`. If you make your entirely
+custom middleware, include it (or an equivalent). Otherwise, this feature won't work at all.
+:::
+
+## 💟 Lifetime
+
+Subscribers can specify its "lifetime", which determines how much it lasts registered on the bus. This is similar to
+using Node's `EventEmitter#on()` vs `EventEmitter#once()`. This can be done overriding the `lifetime` property on
+`AbstractEventSubscriber`.
+
+Available lifetimes can be gotten from `EventSubscriberLifetimeEnum` on `@core`, which are:
+
+* `On` to "permanently" subscribe to the bus until manually unsubscribed.
+* `Once` to subscribe for a single call (The `EventSubscriberMiddleware` must allow the execution).
+
+
+```mdx-code-block
+<details>
+  <summary>Subscriber lifetime example on <code>AbstractEventSubscriber</code></summary>
+```
+
+```ts
+import { EventSubscriberLifetimeEnum } from '@nyx-discord/core';
+import { AbstractEventSubscriber } from '@nyx-discord/framework';
+
+class OnEventSubscriber extends AbstractEventSubscriber {
+  protected readonly event = 'someEvent';
+
+// highlight-next-line
+  protected readonly lifetime = EventSubscriberLifetimeEnum.On;
+
+  public handleEvent(meta: EventDispatchMeta): void {
+    const bot = meta.getBot();
+
+    bot.logger.log('Hello from On subscriber!');
+  }
+}
+
+class OnceEventSubscriber extends AbstractEventSubscriber {
+  protected readonly event = 'someEvent';
+
+  // highlight-next-line
+  protected readonly lifetime = EventSubscriberLifetimeEnum.Once;
+
+  public override onUnsubscribe(bus: EventBus): void {
+    // highlight-next-line
+    bus.bot.logger.log('Unsubscribed OnceEventSubscriber.');
+  }
+
+  public handleEvent(meta: EventDispatchMeta): void {
+    const bot = meta.getBot();
+
+    bot.logger.log('Hello from On subscriber!');
+  }
+}
+
+await myBus
+  .subscribe(new OnEventSubscriber())
+  .subscribe(new OnceEventSubscriber());
+
+await myBus.emit('someEvent', []);
+/**
+ * Logger output:
+ * - Hello from On subscriber!
+ * - Hello from Once subscriber!
+ * - Unsubscribed OnceEventSubscriber.
+ */
+
+await myBus.emit('someEvent', []);
+/**
+ * Logger output:
+ * - Hello from On subscriber!
+ */
+```
+```mdx-code-block
+</details>
+```
+
+:::warning
+The lifetime logic is done by the `LifetimeCheckEventMiddleware` on `@framework`. If you make your entirely custom
+middleware, include it (or an equivalent). Otherwise, this feature won't work at all.
+:::
+
+## 🔃 Priority
+
+Subscribers with higher `Priority` will be called early, and get the opportunity to mark the event as handled first.
+This can be done overriding the `priority` property on `AbstractEventSubscriber`.
+
+Available priorities can be gotten from `PriorityEnum` on `@core`, which are, sorted from executed first to last:
+
+* `LowMonitor` - Meant to be used for monitoring (like analytics) and not actual execution logic.
+* `Lowest`
+* `Low`
+* `Normal` - Default value.
+* `High`
+* `Highest`
+* `HighMonitor` - Meant to be used for monitoring (like analytics) and not actual execution logic.
+
+```mdx-code-block
+<details>
+  <summary>Subscriber priority example on <code>AbstractEventSubscriber</code></summary>
+```
+
+```ts
+import { PriorityEnum } from '@nyx-discord/core';
+import { AbstractEventSubscriber } from '@nyx-discord/framework';
+
+class HighestEventSubscriber extends AbstractEventSubscriber {
+  protected readonly event = 'someEvent';
+
+  // highlight-next-line
+  protected readonly priority = PriorityEnum.Highest;
+
+  public handleEvent(meta: EventDispatchMeta): void {
+    const bot = meta.getBot();
+
+    bot.logger.log('First!');
+  }
+}
+
+class LowestEventSubscriber extends AbstractEventSubscriber {
+  protected readonly event = 'someEvent';
+
+  // highlight-next-line
+  protected readonly priority = PriorityEnum.Lowest;
+
+  public handleEvent(meta: EventDispatchMeta): void {
+    const bot = meta.getBot();
+
+    bot.logger.log('Last!');
+  }
+}
+
+await myBus
+  .subscribe(new LowestEventSubscriber())
+  .subscribe(new HighestEventSubscriber());
+
+await myBus.emit('someEvent', []);
+/**
+* Logger output:
+* - First!
+* - Last!
+*/
+```
+
+```mdx-code-block
+</details>
+```
+
+:::warning
+The priority sorting logic is done by the `BasicEventBus#DefaultSorter` static property. If you override your sorter,
+make sure to keep the priority in mind. Otherwise, this feature won't work at all.
+:::
+
+## 🛑 Filtering
+
+Subscribers can specify an `EventSubscriberFilter`, which is a custom object that specifies whether the subscriber
+should be called or not. It receives the subscriber, the subscriber arguments, and returns a boolean.
+
+Filters are particularly useful when reusing event ignoring logic. They also get access to the `EventDispatchMeta`,
+where they can save objects to be used by the subscriber.
+
+:::tip
+
+* Filters are not subscriber aware, meaning that the same instance can be reused on many subscribers.
+
+* While subscribers cannot specify more than one filter, you can use a `FilterAggregator` from `@framework` to "merge"
+filters. For example, use the `AndFilter` to make a filter that returns `true` if all filters passed on its
+constructor return `true`.
+
+* You can check more information about event interception on the [🛡️ Event Interception](./event-interception)
+category guide. More specifically, you can check the [🚧 Filters](./event-interception#-subscriber-filters) section.
+:::
+
+
+```mdx-code-block
+<details>
+  <summary>Filter example using <code>AbstractSubscriberFilter</code></summary>
+```
+
+```ts
+import type {
+  ClientEvents,
+  Snowflake
+} from 'discord.js';
+
+import type { EventDispatchArgs } from '@nyx-discord/core';
+import {
+  AbstractEventSubscriber,
+  AbstractSubscriberFilter
+} from '@nyx-discord/framework';
+
+type InteractionCreateArgs = ClientEvents['interactionCreate'];
+
+class UserBlacklistInteractionSubscriberFilter
+  extends AbstractSubscriberFilter<InteractionCreateArgs> {
+  protected readonly userIds: Snowflake[];
+
+  constructor(userIds: Snowflake[]) {
+    super();
+    this.userIds = userIds;
+  }
+
+  public check(
+    _subscriber: EventSubscriber,
+    ...args: EventDispatchArgs<InteractionCreateArgs>,
+  ) {
+    const [_meta, interaction] = args;
+
+    // highlight-next-line
+    return this.userIds.includes(interaction.user.id);
+  }
+}
+
+class MyEventSubscriber extends AbstractEventSubscriber {
+  protected readonly event = 'someEvent';
+
+  // highlight-start
+  protected readonly filter = new UserBlacklistInteractionSubscriberFilter(
+    ['235428738748121088'],
+  );
+  // highlight-end
+
+  public handleEvent(): void {
+    // highlight-next-line
+    // Only executed if user ID is not '235428738748121088'
+  }
+}
+```
+
+```mdx-code-block
+</details>
+```
+
+:::warning
+The filter check logic is done by the `SubscriberFilterCheckMiddleware` on `@framework`. If you make your entirely
+custom middleware, include it (or an equivalent). Otherwise, this feature won't work at all.
+:::
+
+## 📝 Metadata
+
+When extending nyx with plugins, you may want to specify extra data for them. You can do so with the `MetaCollection`
+object, saved on the subscriber.
+
+:::note
+While subscribers internally save a `MetaCollection`, the return type of `#getMeta()` is a `ReadonlyMetaCollection`,
+meaning that external objects can read the collection, but not modify it.
+:::
+
+```ts
+import { PriorityEnum } from '@nyx-discord/core';
+import type { PriorityEnum } from '@nyx-discord/core';
+import { AbstractEventSubscriber } from '@nyx-discord/framework';
+import { Collection } from '@discordjs/collection';
+
+class MyEventSubscriber extends AbstractEventSubscriber {
+protected readonly event = 'someEvent';
+
+// highlight-start
+protected readonly meta = new Collection < Identifier, unknown > ([
+  ['someKey', 'someValue']
+]);
+// highlight-end
+}
+
+// a plugin can now read it via:
+const meta = myEventSubscriber.getMeta();
+const value = meta.get('someKey'); // 'someValue'
+```

@@ -1,0 +1,16 @@
+---
+title: 📣 Command Event Bus
+---
+
+The `ScheduleEventBus` emits command related events. It's stored by a `CommandManager`, and you can get it via
+`CommandManager#getEventBus()`.
+
+Currently, these events are:
+
+* `CommandAdd` - A top level command was added. Passes the added `TopLevelCommand`.
+* `CommandRemove` - A top level command was removed. Passes the removed `TopLevelCommand`.
+* `CommandUpdate` - A top level command was updated. Passes the updated `TopLevelCommand`.
+* `CommandRun` - An executable command was run. Passes the `ExecutableCommand`, the `CommandExecutableInteraction` and the `CommandExecutionMeta`.
+* `CommandAutocomplete` - An executable command's autocompletion was called. Passes the `ExecutableCommand`, the `CommandAutocompleteInteraction`, the `CommandExecutionMeta` and the answered `ApplicationCommandOptionChoiceData[]`.
+
+You can get these events from the `CommandEventEnum` enum on `@core`.

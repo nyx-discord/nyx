@@ -1,0 +1,19 @@
+---
+title: 📣 Event Manager Event Bus
+---
+
+The `EventManagerEventBus` emits "event manager" related events. It's stored by an `EventManager`, and you can get it
+via `EventManager#getManagerBus()`.
+
+:::tip
+You can check more information about buses on the [📣 Event Buses](./event-bus) documentation.
+:::
+
+## 👂 Events
+
+Currently, the events that it emits are:
+
+* `EventBusAdd` - Emitted when a new `EventBus` is added. Passes the added `EventBus`.
+* `EventBusRemove` - Emitted when an `EventBus` is removed. Passes the removed `EventBus`.
+
+You can get these events from the `EventManagerEventEnum` enum on `@core`.

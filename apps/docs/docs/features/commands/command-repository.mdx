@@ -1,0 +1,71 @@
+---
+title: 📔 Command Repository
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `CommandRepository` is the object responsible for storing commands and their Discord.js `ApplicationCommand`
+mappings, as well as adding commands at Discord using the `Client`. It's stored by a `CommandManager`, and you can get
+it via `CommandManager#getRepository()`.
+
+:::danger
+It's a pending rewrite to make the `CommandRepository` only store commands, and delegate the serialization and
+registration of commands to a separate object.
+:::
+
+You can't modify the repository directly since the `CommandManager` returns a `ReadonlyCommandRepository` type, but the
+hidden methods are available at the `CommandManager`. This is because adding, removing and updating a command needs more
+logic than just modifying the repository, and the manager is responsible for coordinating this.
+
+
+## 👷 Creation
+
+You can create a command repository by either:
+
+* Extending `DefaultCommandRepository` from `@framework` (recommended).
+* Implementing the `CommandRepository` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultCommandRepository">
+```
+
+```ts
+import { DefaultCommandRepository } from '@nyx-discord/framework';
+
+class MyCommandRepository extends DefaultCommandRepository {
+  // ...
+}
+
+const myRepository = new MyCommandRepository();
+
+const myBot = Bot.create((bot) => ({
+  commands: DefaultCommandManager.create(bot, client, clientBus, { repository: myRepository }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing CommandRepository">
+```
+
+```ts
+import { CommandRepository } from '@nyx-discord/core';
+
+class MyCommandRepository implements CommandRepository {
+  // ...
+}
+
+const myRepository = new MyCommandRepository();
+
+const myBot = Bot.create((bot) => ({
+  commands: DefaultCommandManager.create(bot, client, clientBus, { repository: myRepository }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+

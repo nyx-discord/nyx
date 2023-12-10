@@ -1,0 +1,83 @@
+---
+title: ️🧩 SubCommand
+---
+
+# ️🧩 SubCommand
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Subcommands are executable commands that are stored inside a `ParentCommand` or a `SubCommandGroup`.
+
+:::note
+While SubCommands don't depend on a specific bot, they do depend on their parent (`ParentCommand` or `SubCommandGroup`).
+:::
+
+## 👷 Creation
+
+You can create a subcommand by either:
+
+* Extending `AbstractSubCommand` from `@framework` (recommended).
+* Implementing the `SubCommand` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractSubCommand">
+```
+
+```ts
+import { AbstractSubCommand } from '@nyx-discord/framework';
+
+class MySubCommand extends AbstractSubCommand {
+  protected data: SubCommandData = {
+    name: 'hello',
+    description: 'Hello world!',
+  }
+}
+
+// highlight-start
+// The subCommandParent variable is the parent that will contain this subcommand,
+// whether a ParentCommand or a SubCommandGroup
+// highlight-end
+
+const subCommand = new MySubCommand(subCommandParent);
+
+// warn-start
+// Throws IllegalDuplicateError if a child with that name already exists
+// Throws RangeError if no more children can be added to this command (25)
+// Throws AssertionError if this child's parent is not subCommandParent
+// warn-end
+subCommandParent.addChild(subCommand);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing SubCommand">
+```
+
+```ts
+import { SubCommand } from '@nyx-discord/core';
+
+class MySubCommand implements SubCommand {
+  // ...
+}
+
+// highlight-start
+// The subCommandParent variable is the parent that will contain this subcommand,
+// whether a ParentCommand or a SubCommandGroup
+// highlight-end
+
+const subCommand = new MySubCommand(subCommandParent);
+
+// warn-start
+// Throws IllegalDuplicateError if a child with that name already exists
+// Throws RangeError if no more children can be added to this command (25)
+// Throws AssertionError if this child's parent is not subCommandParent
+// warn-end
+subCommandParent.addChild(subCommand);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```

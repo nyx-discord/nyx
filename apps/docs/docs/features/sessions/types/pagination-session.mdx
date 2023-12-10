@@ -1,0 +1,274 @@
+---
+title: 🔢 Pagination Session
+---
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+:::tip Pre-knowledge
+It's recommended that you first read the [️👤 Session](./session) documentation, since this is an extension of it.
+:::
+
+A `PaginationSession` is a special type of session made to be paginated (have pages).
+
+From a manager's perspective, a pagination session is just a regular session. The pagination logic happens inside the session
+itself.
+
+For the case of `AbstractPaginationSession`, it does it by implementing `#update()`, which does the following:
+
+```mdx-code-block
+<ol>
+  <li>It attempts to extract a referred page, depending on the interaction type:<ul><li>`Buttons`: Extracts from `#customId`.</li><li>`SelectMenu`: Extracts from `#customId`. If no page is present there, it's a `StringSelectMenu` and only one value was selected, it extracts from the selected value.</li><li>`Modal`: Extracts from `#customId`. If no page is present there, it iterates through the modal's components, searching for a component whose `customId` is the session's `customId`. If there is one, the page is extracted from said component's value.</li></ul></li>
+  <li>If there's no referred page, it uses `super.update()`, which will call `#handleButton()`, `#handleSelectMenu()`
+or `#handleModal()` (like a regular `AbstractSession`).</li>
+  <li>If there's a referred page, it updates its `currentPage` and calls `#updatePage()`.</li>
+</ol>
+```
+
+:::tip Overriding page resolving
+You can change the page resolving behavior by overriding `#update()`, `#extractPageFromInteraction()`,
+`#extractPageFromButton()`, `#extractPageFromSelectMenu()` or `#extractPageFromModal()`.
+:::
+
+## 👷 Creation
+
+You can create a paginated session by either:
+
+* Extending `AbstractPaginationSession` from `@framework` (recommended).
+* Implementing the `PaginationSession` interface from `@core`.
+
+After creating it, start it via `SessionManager#start()`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractPaginationSession">
+```
+
+```ts
+import { AbstractPaginationSession, SessionUpdateInteraction } from '@nyx-discord/framework';
+
+class MyPaginationSession extends AbstractPaginationSession {
+  public async handleStart() {
+    const page = this.createPage();
+
+    await this.startInteraction.reply(page);
+  }
+
+  protected async updatePage(interaction: SessionUpdateInteraction) {
+    const newPage = this.createPage();
+    await interaction.editReply(newPage);
+    return true;
+  }
+
+  protected createPage() {
+    const randomPage = Math.floor(Math.random() * 10);
+
+    const customIdBuilder = this.customId.clone();
+    const customId = customIdBuilder.setPage(randomPage).build();
+
+    const button = new ButtonBuilder()
+      .setCustomId(customId)
+      .setLabel('Go to a random page!')
+      .setStyle(ButtonStyle.Primary);
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    const pageRow = this.buildDefaultPageRow();
+
+    return {
+      content: `You're on page ${this.currentPage}`,
+      components: [buttonRow, pageRow]
+    };
+  }
+}
+
+// Somewhere in your code, like inside a command...
+
+const sessionId = 'mySessionId'; // Ideally randomly generated
+const session = new MyPaginationSession(bot, sessionId, interaction);
+await bot.sessions.start(session);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing PaginationSession">
+```
+
+```ts
+import { PaginationSession } from '@nyx-discord/core';
+
+class MyPaginationSession implements PaginationSession {
+  // ...
+}
+
+const session = new MyPaginationSession(/** ... */);
+await bot.sessions.start(session);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 💬 Pagination Custom Ids
+
+When using a pagination session the `SessionCustomIdCodec` can generate a `PaginationCustomIdBuilder`, an extension of
+`CustomIdBuilder` that supports adding a page reference to the customId being built.
+
+```ts
+const codec = bot.sessions.getCustomIdCodec();
+
+const builder = codec.createPageCustomIdBuilder(session);
+builder.push('foo').push('bar').setPage(1);
+
+const customId = builder.build();
+```
+
+For `AbstractPaginationSession`:
+* A customId not referring to a page is handled by `AbstractSession#update()` (see [👤 Session (📝 Updating)](./session#-updating)).
+* A customId referring to a page is handled by `AbstractPaginationSession#updatePage()`.
+
+### ✨ Component Examples
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Button">
+```
+
+```ts
+const buttonId = builder.cloneSetPage(3).build();
+
+const button = new ButtonBuilder()
+  // highlight-next-line
+  .setCustomId(buttonId)
+  .setLabel('Go to page 3')
+  .setStyle(ButtonStyle.Primary);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Select Menu">
+```
+
+You can either:
+
+* Put the pagination custom id in the select menu itself, making it switch to that page regardless of selection (useful
+for [🔀 Stage Pagination Sessions](./stage-pagination-session)).
+
+```ts
+const selectId = builder.cloneSetPage(3).build();
+
+const select = new SelectMenuBuilder()
+  // highlight-next-line
+  .setCustomId(selectId)
+  .setPlaceholder('Switch to page 3')
+  .addOptions([
+    new StringSelectMenuOptionBuilder()
+      .setLabel('Option 1')
+      .setValue('option1'),
+    new StringSelectMenuOptionBuilder()
+      .setLabel('Option 2')
+      .setValue('option2'),
+  ]);
+```
+
+* Put the pagination custom id in the select menu's options, making it switch to that page only when the option is
+selected. Note that you still need to put the pagination custom id in the select menu itself.
+
+:::warning
+If a received interaction has more than 1 value, the `AbstractPaginationSession` won't try to parse its values as
+pagination indexes.
+:::
+
+```ts
+const selectId = builder.build();
+
+const selectMenu = new StringSelectMenuBuilder()
+  // highlight-next-line
+  .setCustomId(selectId)
+  // highlight-next-line
+  .setMaxValues(1)
+  .setPlaceholder('Select a page');
+
+
+const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  .map((page: number) => {
+    // highlight-next-line
+    const customId = this.customId.cloneSetPage(page);
+
+    return new StringSelectMenuOptionBuilder()
+      .setLabel(`Go to page ${page}`)
+      // highlight-next-line
+      .setValue(customId)
+  });
+
+selectMenu.addOptions(options);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Modal">
+```
+
+You can either:
+
+* Put the pagination custom id in the modal itself, making it switch to that page regardless of values (useful
+for [🔀 Stage Pagination Sessions](./stage-pagination-session)).
+
+```ts
+const modalId = builder.cloneSetPage(3).build();
+
+const textInput = new TextInputBuilder()
+  .setCustomId('textInput')
+  .setLabel('Text input')
+  .setStyle(TextInputStyle.Short);
+
+const modalRow = new ActionRowBuilder<ModalActionRowComponentBuilder>()
+  .addComponents(textInput);
+
+const modal = new ModalBuilder()
+  // highlight-next-line
+  .setCustomId(modalId)
+  .setTitle('A session modal that switches to page 3')
+  .addComponents(modalRow);
+```
+
+* Put the pagination custom id in the modal's components, making it switch to that component's value (if it's a number).
+Note that you still need to put the pagination custom id in the modal itself.
+
+:::warning
+If the component's value cannot be parsed to a number, it will be handled as a regular update (`#handleModal()`).
+:::
+
+```ts
+const modalId = builder.build();
+
+const modal = new ModalBuilder()
+  .setTitle('Pagination')
+  // highlight-next-line
+  .setCustomId(modalId)
+
+const textInput = new TextInputBuilder()
+  .setLabel('New page?')
+  // highlight-next-line
+  .setCustomId(modalId)
+  .setStyle(TextInputStyle.Short);
+
+const modalRow = new ActionRowBuilder<ModalActionRowComponentBuilder>()
+  .addComponents(textInput);
+
+modal.addComponents(modalRow);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 🧩 Utility methods
+
+The `AbstractPaginationSession` provides the following `protected` utility methods:
+
+* `#buildDefaultPageRow()`: Builds a component row with default "next"/"previous" buttons.
+* `#buildCustomIdForPage(page: number)`: Builds a customId for a specific page.

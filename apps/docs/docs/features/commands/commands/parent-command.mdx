@@ -1,0 +1,101 @@
+---
+title: ️👨‍👧‍👦 Parent Command
+---
+
+# ️👨‍👧‍👦 Parent Command
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+Parent commands are non-executable, top level commands that only serve to store children. These children can be either
+`SubCommands` or `SubCommandGroups`.
+
+## 👷 Creation
+
+You can create a parent command by either:
+
+* Extending `AbstractParentCommand` from `@framework` (recommended).
+* Implementing the `ParentCommand` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractParentCommand">
+```
+
+```ts
+import { AbstractParentCommand } from '@nyx-discord/framework';
+
+class MyParentCommand extends AbstractParentCommand {
+  protected data: ParentCommandData = {
+    name: 'hello',
+    description: 'Hello world!',
+  }
+
+  protected children = [
+    new MySubCommand(this),
+  ]
+}
+
+const command = new MyParentCommand();
+await bot.commands.addCommand(command);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing ParentCommand">
+```
+
+```ts
+import { ParentCommand } from '@nyx-discord/core';
+
+class MyParentCommand implements ParentCommand {
+  // ...
+}
+
+const command = new MyParentCommand();
+await bot.commands.addCommand(command);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 🔀 Manipulating children
+
+Normally, a parent's children are created alongside the parent, but they can also be added (and removed) on runtime with
+`ParentCommand#addChild()`, `ParentCommand#removeChildByInstance()` and `ParentCommand#removeChildByName()`.
+
+After updating a parent command, you must call `CommandManager#update()` on it in order to reflect the changes on
+Discord.
+
+```ts
+const parentCommand = new MyParentCommand();
+await this.bot.commands.addCommand(parentCommand);
+
+// highlight-next-line
+// Adding a child
+
+const mySubCommand = new MySubCommand(parentCommand);
+
+// warn-start
+// Throws IllegalDuplicateError if a child with that name already exists
+// Throws RangeError if no more children can be added to this parent command (25)
+// Throws AssertionError if this child's parent is not parentCommand
+parentCommand.addChild(mySubCommand);
+// warn-end
+
+await this.bot.commands.updateCommand(parentCommand);
+
+// highlight-next-line
+// Removing a child
+
+// warn-next-line
+// Throws ObjectNotFoundError if the child is not present
+// warn-next-line
+parentCommand.removeChildByInstance(mySubCommand);
+
+await this.bot.commands.updateCommand(parentCommand);
+```

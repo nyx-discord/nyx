@@ -1,0 +1,66 @@
+---
+title: 📔 Schedule Repository
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `ScheduleRepository` is the object responsible for storing schedules. It's stored by a `ScheduleManager`, and you can
+get it via `ScheduleManager#getRepository()`.
+
+It only consists of a `Collection` to store schedules, and methods to interact with it.
+
+You can't modify the repository directly since the `ScheduleManager` returns a `ReadonlyScheduleRepository` type, but
+the hidden methods are available at the `ScheduleManager`. This is because adding and removing a schedule needs more
+logic than just modifying the repository, and the manager is responsible for coordinating this.
+
+## 👷 Creation
+
+You can create a schedule repository by either:
+
+* Extending `DefaultScheduleRepository` from `@framework` (recommended).
+* Implementing the `ScheduleRepository` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultScheduleRepository">
+```
+
+```ts
+import { DefaultScheduleRepository } from '@nyx-discord/framework';
+
+class MyScheduleRepository extends DefaultScheduleRepository {
+  // ...
+}
+
+const myRepository = MyScheduleRepository.create();
+
+const myBot = Bot.create((bot) => ({
+  schedules: DefaultScheduleManager.create(bot, { repository: myRepository }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing ScheduleRepository">
+```
+
+```ts
+import { ScheduleRepository } from '@nyx-discord/core';
+
+class MyScheduleRepository implements ScheduleRepository {
+  // ...
+}
+
+const myRepository = new MyScheduleRepository();
+
+const myBot = Bot.create((bot) => ({
+  schedules: DefaultScheduleManager.create(bot, { repository: myRepository }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+

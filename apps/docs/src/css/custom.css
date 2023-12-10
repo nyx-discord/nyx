@@ -1,0 +1,257 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Amgelo563
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+
+:root {
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-base: "Roboto";
+  --ifm-hr-border-color: #5662f6;
+  --ifm-font-size-base: 120%;
+  --ifm-footer-padding-vertical: 18px;
+
+  --ifm-code-padding-vertical: 0.2rem;
+  --ifm-code-padding-horizontal: 0.2rem;
+
+  --docusaurus-error-code-line-bg: red;
+  --docusaurus-error-code-line-border: darkred;
+}
+
+[data-theme='dark']:root {
+  --ifm-color-primary: #526bfc;
+  --ifm-color-primary-dark: #4653d7;
+  --ifm-color-primary-darker: #3c49c2;
+  --ifm-color-primary-darkest: #353da8;
+  --ifm-color-primary-light: #616dfd;
+  --ifm-color-primary-lighter: #7581ff;
+  --ifm-color-primary-lightest: #a3aaff;
+  --ifm-navbar-background-color: #242526;
+
+  --docusaurus-highlighted-code-line-bg: #363636;
+  --docusaurus-error-code-line-bg: #482222;
+  --docusaurus-error-code-line-border: #bd0000;
+  --docusaurus-warn-code-line-bg: #2b2b20;
+  --docusaurus-warn-code-line-border: #bdba00;
+}
+
+[data-theme='light']:root {
+  --ifm-color-primary: #526bfc;
+  --ifm-color-primary-dark: #616dfd;
+  --ifm-color-primary-darker: #7581ff;
+  --ifm-color-primary-darkest: #a3aaff;
+  --ifm-color-primary-light: #4653d7;
+  --ifm-color-primary-lighter: #3c49c2;
+  --ifm-color-primary-lightest: #353da8;
+  --ifm-navbar-background-color: #e3e3e3;
+  --ifm-navbar-search-input-placeholder-color: #8a8b8d;
+
+  --docusaurus-highlighted-code-line-bg: #ececec;
+  --docusaurus-error-code-line-bg: #f7d9db;
+  --docusaurus-error-code-line-border: #e55d5e;
+  --docusaurus-warn-code-line-bg: #ffffcf;
+  --docusaurus-warn-code-line-border: #e5de5d;
+}
+
+/* Footer background color */
+.footer {
+  background-color: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-1000);
+}
+
+.docusaurus-highlight-code-line {
+  background-color: rgb(72, 77, 91);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+.code-block-error-line {
+  background-color: var(--docusaurus-error-code-line-bg);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+  border-left: 3px solid var(--docusaurus-error-code-line-border);
+}
+
+.code-block-warn-line {
+  background-color: var(--docusaurus-warn-code-line-bg);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+  border-left: 3px solid var(--docusaurus-warn-code-line-border);
+}
+
+html[data-theme="dark"] {
+  --ifm-color-emphasis-0: var(--ifm-color-gray-1000);
+  --ifm-color-emphasis-100: var(--ifm-color-gray-900);
+  --ifm-color-emphasis-200: var(--ifm-color-gray-800);
+  --ifm-color-emphasis-300: var(--ifm-color-gray-700);
+  --ifm-color-emphasis-400: var(--ifm-color-gray-600);
+  --ifm-color-emphasis-500: var(--ifm-color-gray-500);
+  --ifm-color-emphasis-600: var(--ifm-color-gray-400);
+  --ifm-color-emphasis-700: var(--ifm-color-gray-300);
+  --ifm-color-emphasis-800: var(--ifm-color-gray-200);
+  --ifm-color-emphasis-900: var(--ifm-color-gray-100);
+  --ifm-color-emphasis-1000: var(--ifm-color-gray-0);
+  --ifm-background-color: #181a1b;
+  --ifm-hover-overlay: rgba(255, 255, 255, 0.05);
+  --ifm-menu-link-sublist-icon-filter: invert(100%) sepia(94%) saturate(17%) hue-rotate(223deg) brightness(104%) contrast(98%);
+  --ifm-color-content-secondary: rgba(255, 255, 255, 1);
+  --ifm-breadcrumb-separator-filter: invert(64%) sepia(11%) saturate(0%) hue-rotate(149deg) brightness(99%) contrast(95%);
+}
+
+html[data-theme="light"] {
+  /* Because #FFFFFF is just pure madness */
+  --ifm-background-color: #f8f8f8;
+  --ifm-menu-color: #5b5b5b;
+}
+
+.table-container {
+  display: block;
+  overflow-x: auto;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  box-shadow: var(--ifm-global-shadow-lw) !important;
+  border-radius: 8px;
+}
+
+table {
+  display: table;
+  width: 100%;
+  overflow-wrap: break-word;
+  border-collapse: collapse;
+  border-style: hidden;
+  margin-bottom: 0px;
+}
+
+table span {
+  margin-right: 5px;
+}
+
+table tr {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+table th {
+  background-color: rgb(72, 77, 91, 0.1);
+  padding: 8px;
+}
+
+table tbody tr th {
+  padding: 3px;
+}
+
+table td {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: rgb(72, 77, 91, 0);
+}
+
+table tr:nth-child(even) td {
+  border-color: rgb(72, 77, 91, 0.1);
+}
+
+table tr:nth-child(odd) td {
+  border-color: rgb(72, 77, 91, 0.1);
+}
+
+table label {
+  display: block;
+  unicode-bidi: embed;
+  font-family: monospace;
+  font-weight: 600;
+  font-size: larger;
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+[data-theme='dark'] table label {
+  color: #e07683;
+}
+
+[data-theme='light'] table label {
+  color: #80004b;
+}
+
+.menu__link--sublist {
+  font-size: 18px;
+}
+
+.menu__list {
+  font-size: 14px;
+}
+
+[data-theme='light'] .navbar__search-input::placeholder {
+  color: #1b1b1b;
+}
+
+[data-theme='dark'] aside {
+  background-color: #212121;
+}
+
+[data-theme='light'] aside {
+  background-color: #f3f3f3;
+}
+
+label b, label strong {
+  color: var(--ifm-color-emphasis-1000) !important;
+}
+
+.markdown a:not(.hash-link, .card) {
+  color: var(--ifm-color-primary-lightest);
+  text-decoration: underline;
+  font-weight: 450;
+}
+
+[data-theme='dark'] .admonition-note {
+  background-color: #2b2b2b;
+  border-color: var(--ifm-color-primary-light);
+  color: rgb(233, 233, 233);
+}
+
+[data-theme='light'] .admonition-note {
+  background-color: #f0f0f0;
+  border-color: var(--ifm-color-primary-light);
+}
+
+blockquote {
+  line-height: 1.5;
+  font-size: 100%;
+}
+
+.float-right {
+  margin-left: 5%;
+  float: right;
+}
+
+[data-theme='light'] .kroki-image {
+  -webkit-filter: invert(1);
+  filter: invert(1);
+}

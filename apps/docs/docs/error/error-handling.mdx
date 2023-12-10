@@ -1,0 +1,79 @@
+---
+title: 💫 Error Handling
+---
+
+In nyx, every executor holds an `ErrorHandler`, where errors thrown by middlewares and executed objects are handled.
+
+An error handler behaves like a map of consumers, where the key is the error constructor (the class) and the value is an
+`ErrorConsumer`, which is a callback that receives the error, the object, the arguments that were used to call it
+and the bot.
+
+## 🔨 Manipulating consumers
+
+To add a consumer, use `ErrorHandler#setConsumer()`:
+
+```ts
+const errorHandler = bot.commands.getExecutor().getErrorHandler();
+
+errorHandler.setConsumer(
+  MyError,
+  (
+    error: MyError,
+    command: ExecutableCommand<CommandData>,
+    args: CommandExecutionArgs,
+    bot: NyxBot
+  ) => {
+    const { logger } = bot;
+    const { name } = command.getData();
+
+    logger.error(
+      `MyError occurred while executing ${name} with args: ${args}`,
+      error
+    );
+  }
+);
+```
+
+To remove a consumer, use `ErrorHandler#removeConsumer()`:
+
+```ts
+const errorHandler = bot.commands.getExecutor().getErrorHandler();
+
+errorHandler.removeConsumer(MyError);
+```
+
+## ⏬ Fallback consumer
+
+The `ErrorHandler` has a fallback consumer, which is used if no consumer was found for a given error.
+
+```ts
+const errorHandler = bot.commands.getExecutor().getErrorHandler();
+
+errorHandler.setFallbackConsumer(
+  (
+    error: object,
+    command: ExecutableCommand<CommandData>,
+    args: CommandExecutionArgs,
+    bot: NyxBot
+  ) => {
+    const { logger } = bot;
+    const { name } = command.getData();
+
+    logger.error(
+      `An unhandled error occurred while executing ${name} with args: ${args}`,
+      error
+    );
+  }
+);
+```
+
+## 🔎 Consumer resolution
+
+The `BasicErrorHandler` resolves a consumer based on the error prototype, going from the top to the bottom.
+
+:::note
+For instance, if `MyError2` extends `MyError1` which extends `MyError`, then it will first try to resolve the consumer
+for `MyError2`, then for `MyError1` and finally for `MyError`.
+:::
+
+If no consumer is found, the fallback consumer is used, whose error type is simply `object`.

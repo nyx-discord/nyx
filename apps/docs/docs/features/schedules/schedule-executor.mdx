@@ -1,0 +1,92 @@
+---
+title: ⚡ Schedule Executor
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The `ScheduleExecutor` is the object responsible for executing schedules. It's stored by a `ScheduleManager`, and you
+can get it via `ScheduleManager#getExecutor()`.
+
+It's used by the `ScheduleManager`, which passes to the executor the schedule to execute and the schedule tick
+metadata.
+
+The executor is then responsible that:
+* The `ScheduleMiddlewareLinkedList` passes the execution.
+* The schedule is executed, passing the tick metadata.
+* Any errors thrown by the schedule or middleware are caught, wrapped if needed, and redirected to the `ErrorHandler`.
+
+It consists of:
+* A `tick()` method to execute a schedule.
+* A `ScheduleMiddlewareLinkedList` to allow or deny the execution of schedules.
+* An `ErrorHandler` to handle errors thrown by schedules or the middleware list.
+
+## 👷 Creation
+
+You can create a schedule executor by either:
+
+* Extending `DefaultScheduleExecutor` from `@framework` (recommended).
+* Implementing the `ScheduleExecutor` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultScheduleExecutor">
+```
+
+```ts
+import { DefaultScheduleExecutor } from '@nyx-discord/framework';
+
+class MyScheduleExecutor extends DefaultScheduleExecutor {
+  // ...
+}
+
+const myExecutor = new MyScheduleExecutor();
+
+const myBot = Bot.create((bot) => ({
+  schedules: DefaultScheduleManager.create(bot, { executor: myExecutor }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing ScheduleExecutor">
+```
+
+```ts
+import { ScheduleExecutor } from '@nyx-discord/core';
+
+class MyScheduleExecutor implements ScheduleExecutor {
+  // ...
+}
+
+const myExecutor = new MyScheduleExecutor();
+
+const myBot = Bot.create((bot) => ({
+  schedules: DefaultScheduleManager.create(bot, { executor: myExecutor }),
+}));
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 🚦 Middleware
+
+The executor stores a `ScheduleMiddlewareLinkedList` that will either allow or deny the execution of a given schedule.
+This list can be obtained via `ScheduleExecutor#getMiddleware()`.
+
+For information about how to use it, check the [️🛡️ Schedule Interception](./schedule-interception) documentation.
+
+## 💫 Error Handling
+
+The executor stores an `ErrorHandler`, which is redirected errors thrown by any schedule. For information about how
+to use it, check the [💫 Error Handling](../../error/error-handling) documentation.
+
+There are special errors that are redirected there however, specifically when checking the middleware. These are:
+
+* `ScheduleMiddlewareError` - Caused when a middleware throws an error, the list catches it and wraps it in this error. It's known which middleware caused the error.
+* `UncaughtScheduleMiddlewareError` - Caused when the list throws an error, and it's not the one above. In theory, it should never happen, but it still exists just in case. It's not known which middleware caused the error.
+
+These errors hold information useful to handle them, like the middleware that caused the error, or the entire list if the
+middleware is not known.

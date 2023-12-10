@@ -1,0 +1,129 @@
+---
+title: ️🛡️ Schedule Interception
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Schedule interception refers to blocking a schedule from being executed. In nyx, there are two ways to do this:
+
+1. Add a `ScheduleMiddleware` to the `ScheduleMiddlewareLinkedList` in the `ScheduleExecutor` that handles
+the schedule execution.
+2. Provide a `ScheduleFilter` in the `Schedule`.
+
+Let's explore when and how to use each of these methods.
+
+## 🚦 Schedule Middlewares
+
+`ScheduleMiddlewares` are objects stored on a `ScheduleMiddlewareLinkedList`, which is held and called by
+the schedule executor when a schedule is about to be executed.
+
+It consists of:
+* A `check()` method, which takes a schedule and its arguments. Returns a `MiddlewareResponse`.
+* A `Priority`, that determines its priority inside the list.
+
+When being checked, a middleware is passed the schedule that is being checked and the tick metadata. The schedule then
+replies with a `MiddlewareResponse`, which can either:
+
+* Allow the execution (`{ allowed: true }`), with either:
+* Making the linked list check the next middleware (`{ allowed: true, checkNext: true }`).
+* Forcing the chain to end (`{ allowed: true, checkNext: false }`).
+* Deny the execution (`{ allowed: false, checkNext: false }`).
+
+The `AbstractMiddleware`, has `protected` utility methods to generate these responses. Specifically, `this.true()`,
+`this.false()` and `this.forceTrue()`.
+
+:::info
+Middlewares are not bot aware, meaning that you can reuse the same instance for many bots.
+:::
+
+### ❓ When to use a middleware?
+
+Middlewares are best for executing something or intercepting for all schedules. For example, the filtering
+(`ScheduleFilter`) logic is done by a middleware.
+
+They're very good when intercepting `Schedules` in general, but not really for one in particular, since it
+would be very inefficient to check all the schedules searching for only one of them.
+
+### 👷‍ Middleware Creation
+
+You can create your own middleware by either:
+
+* Extending `AbstractScheduleMiddleware` from `@framework` (recommended).
+* Implementing the `ScheduleMiddleware` interface from `@core`.
+
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractScheduleMiddleware">
+```
+
+```ts
+import { AbstractScheduleMiddleware } from '@nyx-discord/framework';
+
+class MyScheduleMiddleware extends AbstractScheduleMiddleware {
+  public check(schedule: Schedule, args: ScheduleTickArgs): MiddlewareResponse {
+    return this.true();
+  }
+}
+
+const middleware = new MyScheduleMiddleware();
+
+bot.schedules.getExecutor().getMiddleware().add(middleware);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing ScheduleMiddleware">
+```
+
+```ts
+import { ScheduleMiddleware } from '@nyx-discord/core';
+
+class MyScheduleMiddleware implements ScheduleMiddleware {
+  // ...
+}
+
+const middleware = new MyScheduleMiddleware();
+
+bot.schedules.getExecutor().getMiddleware().add(middleware);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+By default, the following middleware chain is used:
+
+* `ScheduleFilterCheckMiddleware` - See [🚧 Schedule Filters](#-Schedule-filters).
+
+## 🚧 Schedule Filters
+
+An `ScheduleFilter` is a nullable object provided by an `Schedule`, checked by the `ScheduleFilterCheckMiddleware`.
+
+:::info
+Filters are not bot aware nor schedule aware, meaning that you can reuse the same instance for many schedules.
+:::
+
+:::tip
+Think of a filter like adding an `if` at the beginning of your schedule's execution, except it gets checked before the
+schedule is executed and, since it's an object, you can reuse it for multiple schedules or save state on it.
+:::
+
+Though schedules can only provide one filter, `@framework` provides utility filter aggregators that implement the
+basic `AND`, `OR`, `NOT` gates, that can help you "combine" multiple filters into one.
+
+### ❓ When to use a filter?
+
+Filters are best suited for sharing common conditions that multiple schedules should share before executing.
+
+Also, since they have access to the schedule that is being filtered and the `ScheduleExecutionMeta` object, filters can
+share information to the schedule, effectively working as a "pre-processor".
+
+### 👷‍ Filter Creation
+
+You can create your own filter by either:
+
+* Extending `AbstractScheduleFilter` from `@framework` (recommended).
+* Implementing the `ScheduleFilter` interface from `@core`.

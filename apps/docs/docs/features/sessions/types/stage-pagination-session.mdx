@@ -1,0 +1,170 @@
+---
+title: 📁 Stage Pagination Session
+---
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+:::tip Pre-knowledge
+It's recommended that you first read the [️🔢 Pagination Session](./pagination-session) documentation, since this is an extension of it.
+:::
+
+A `StagePaginationSession` is a special type of pagination session made to paginate a list of stages.
+
+## 📁 Stages
+
+A stage is an object inside a `StagePaginationSession` that represents a single page in the pagination. Switching from
+one stage to another is the equivalent of switching pages on a pagination component.
+
+A stage can:
+* Be updated, similar to a `Session` update (see [👤 Session (📝 Updating)](./session#-updating)).
+* Be switched to and reply to the interaction switching to it via `SessionStage#onSwitch()`.
+* Be left and perform some cleanup logic via `SessionStage#onLeave()`.
+* Return a result, similar to a `Session` result (see [👤 Session (🏆 Result)](./session#-result)).
+
+### 🏆 Session start stages
+
+The first stage on a `StagePaginationSession` is a `SessionStartStage`. It's used to start the session, and behaves
+exactly the same as any session, except it also has a `SessionStartStage#onStart()` method, called when the session
+is started.
+
+:::note
+A `SessionStartStage` is necessary because the `SessionStartInteraction` and `SessionUpdateInteraction` types aren't
+compatible with each other, so a "normal" stage can't be used.
+:::
+
+### 👷 Stage creation
+
+You can create a stage by either:
+
+* Extending `AbstractSessionStage` (or `AbstractSessionStartStage`) from `@framework` (recommended).
+* Implementing the `SessionStage` (or `SessionStartStage`) interface from `@core`.
+
+After creating it, add it to a `StagePaginationSession`'s class.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractSessionStage">
+```
+
+```ts
+import { AbstractSessionStage } from '@nyx-discord/framework';
+
+class MyStage extends AbstractSessionStage<void> {
+  public async onSwitch(
+    interaction: SessionUpdateInteraction,
+  ): Promise<boolean> {
+    const row = this.buildDefaultPageRow();
+
+    const buttonId = this.customId.clonePush('button').build();
+    const button = new ButtonBuilder()
+      .setStyle(1)
+      .setLabel('Click me!')
+      .setCustomId(buttonId);
+
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    await interaction.update({
+      components: [row, buttonRow],
+      content: 'Switched to this stage.',
+    });
+
+    return true;
+  }
+
+  public onLeave(
+    _interaction: SessionUpdateInteraction,
+    nextStage: SessionStage<unknown>,
+    _meta: SessionExecutionMeta
+  ) {
+    this.bot.logger.log('Left MyStage. Went to: ', nextStage);
+  }
+
+  protected async handleButton(
+    interaction: ButtonInteraction,
+  ): Promise<boolean> {
+    await interaction.reply('Clicked!');
+
+    return true;
+  }
+}
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing SessionStage">
+```
+
+```ts
+import { SessionStage } from '@nyx-discord/core';
+
+class MyStage implements SessionStage<void> {
+  // ...
+}
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 💬 Pagination Custom Ids
+
+The pagination works in a similar way as in the
+[🔢 Pagination Session (💬 Pagination Custom Ids)](./pagination-session#-pagination-custom-ids). In essence:
+
+* A customId not referring to a page is handled by `SessionStage#update()` (see [👤 Session [📝 Updating]](./session#-updating)) of the current stage.
+* A customId referring to a page makes the session switch to that stage, calling `SessionStage#onSwitch()`
+on the new one and `SessionStage#onLeave()` on the old one.
+
+## 👷 Session creation
+
+You can create a stage pagination session by either:
+
+* Extending `AbstractStagePaginationSession` from `@framework` (recommended).
+* Implementing the `StagePaginationSession` interface from `@core`.
+
+After creating it, start it via `SessionManager#start()`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractStagePaginationSession">
+```
+
+```ts
+import { AbstractStagePaginationSession } from '@nyx-discord/framework';
+
+class MyStageSession extends AbstractStagePaginationSession {
+  protected readonly stages = [
+    new Stage1(this),
+    new Stage2(this),
+  ] as const;
+}
+
+const sessionId = 'mySessionId'; // Ideally randomly generated
+const session = new MyStageSession(bot, sessionId, interaction);
+await bot.sessions.start(session);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing StagePaginationSession">
+```
+
+```ts
+import { StagePaginationSession } from '@nyx-discord/core';
+
+class MyStageSession implements StagePaginationSession {
+  // ...
+}
+
+const session = new MyStageSession(/** ... */);
+await bot.sessions.start(session);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```

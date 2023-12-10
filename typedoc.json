@@ -1,0 +1,17 @@
+{
+  "entryPoints": [
+    "packages/*"
+  ],
+  "customTitle": "nyx Typedoc",
+  "customDescription": "Typedoc documentation of the nyx framework",
+  "entryPointStrategy": "packages",
+  "includeVersion": false,
+  "theme": "my-theme",
+  "out": "build/typedoc",
+  "favicon": "assets/favicon.ico",
+  "plugin": [
+    "@mxssfd/typedoc-theme",
+    "typedoc-plugin-extras",
+    "typedoc-plugin-djs-links"
+  ]
+}

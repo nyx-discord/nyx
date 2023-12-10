@@ -1,0 +1,149 @@
+---
+title: 🚀 First Start
+---
+
+# 🚀 First Start
+
+Hello there! 👋 This step-by-step guide is here to help you make and run a simple nyx bot.
+
+## ⏬ Installation
+
+First, let's start by installing nyx:
+
+```bash npm2yarn
+npm install @nyx-discord/framework @nyx-discord/core
+```
+
+## 👷 Bot Creation
+
+The first step is to create a Discord.js client. This can be any client (as long as it's not logged in or destroyed).
+
+```ts
+import {
+  Client,
+  GatewayIntentBits
+} from 'discord.js';
+
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds],
+});
+```
+
+Next up, we'll create a new instance of `Bot`, which is `@framework`'s implementation of `NyxBot`.
+
+You can do that with `Bot#create()`, which takes a function that gets passed the currently constructing bot
+instance, and should return the options that you want for the bot.
+
+This is where you'll provide your bot's token, client instance, ID, logger, and other optional settings, like managers.
+
+```ts
+import { Bot } from '@nyx-discord/framework';
+
+const myBot = Bot.create((bot) => ({
+  token: 'TOKEN',
+  client,
+  id: Symbol('My bot'),
+  logger: console, // Can be your own logger
+
+  // For example, if you had a custom command manager:
+  // commands: new MyCustomCommandManager(bot),
+}));
+```
+
+```mdx-code-block
+<details>
+  <summary>About <code>new Bot()</code></summary>
+```
+You can also instantiate <code>Bot</code> with the <code>new</code> operator, but in order to allow dependency
+injection, this constructor requires every manager on its options, including default ones.
+
+You would need to instantiate and pass every manager to it, like so:
+
+```ts
+const myBot = new Bot((bot) => ({
+  token: 'TOKEN',
+  client,
+  id: Symbol('My bot'),
+  logger: console,
+  events: DefaultEventManager.create(bot, client),
+  plugins: DefaultPluginManager.create(bot),
+  // and so on
+}));
+```
+
+You will find this pattern in a lot of other `@framework` objects, where you can instantiate either with
+`new SomeComponent(depA, depB, ...)` specifying every default dependency, or with `SomeComponent.create()`
+"without" default dependencies.
+
+```mdx-code-block
+</details>
+```
+
+:::tip
+When creating a bot (either via `new` or `#create()`), the type of parameters that you return are used in the bot's
+type signature.
+
+This implies that, for example, if you create a `MyCustomCommandManager` and pass it to the bot's options, the bot will
+know that its command manager is `MyCustomCommandManager` and not just the generic `CommandManager`, allowing you to use
+custom properties or methods that you may have added or modified.
+:::
+
+You can create multiple bots and they'll all work independently of each other. This
+means you can have many bots for different purposes, in the same server.
+
+## 🚀 Bot Starting
+
+:::tip
+You can read more information about bot status in its guide.
+:::
+
+To start a bot, you can set it up and then login, or just directly start it:
+
+```ts
+await bot.start(); // setups and logins
+
+// or:
+await bot.setup();
+await bot.login();
+```
+
+:::danger
+Trying to log in a bot without first setting it up will throw an `IllegalStateError`.
+:::
+
+As a quick explanation:
+
+* When a bot is first created, it starts in the `Unsetup` status. It's NOT recommended to interact with the bot on this state.
+* Upon calling `Bot#setup()`, all the managers and plugins are notified about the setup. This is done to safely perform
+possible asynchronous logic that these objects need to actually function, outside the "object construction" step. The
+bot then switches to `Waiting`.
+* It's now safe to log in the bot on Discord with `Bot#login()`. Managers and plugins are also notified after the login,
+but at this point they should already be ready for it.
+
+## 📚 Summary
+
+The final code would look as follows:
+
+```ts
+import { Bot } from '@nyx-discord/framework';
+import {
+  Client,
+  GatewayIntentBits
+} from 'discord.js';
+
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+const bot = Bot.create(() => ({
+  token: 'TOKEN',
+  client,
+  id: Symbol('Bot'),
+  logger: console,
+}));
+
+await bot.start();
+```
+
+And that's it! You now have a running Discord bot with nyx.
+
+If you're interested in the rest of nyx features, such as command adding, event subscribing, schedule creation, etc.,
+make sure to check the rest of the guides.

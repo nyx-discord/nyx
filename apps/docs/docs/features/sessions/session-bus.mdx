@@ -1,0 +1,23 @@
+---
+title: 📣 Session Event Bus
+---
+
+The `SessionEventBus` emits session related events. It's stored by a `ScheduleManager`, and you can get it via
+`SessionManager#getEventBus()`.
+
+:::tip
+You can check more information about buses on the [📣 Event Buses](../events/event-bus) documentation.
+:::
+
+## 👂 Events
+
+Currently, the events that it emits are:
+
+* `SessionStart` - Emitted when a `Session` starts. Passes the started `Session`, its `SessionStartInteraction` and
+`SessionExecutionMeta`.
+* `SessionUpdate` - Emitted when a `Session` is updated. Passes the updated `Session`, its `SessionUpdateInteraction`
+and `SessionExecutionMeta`.
+* `SessionEnd` - Emitted when a `Session` ends. Passes the ended `Session`, its `SessionEndData` and `SessionExecutionMeta`.
+* `SessionExpire` - Emitted when a `Session` expires. Passes the expired `Session` and `SessionEndData`.
+
+You can get these events from the `SessionEventEnum` enum on `@core`.

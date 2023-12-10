@@ -1,0 +1,54 @@
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "format",
+          "barrel"
+        ],
+        "parallel": 1
+      }
+    }
+  },
+  "parallel": 1,
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build",
+        "barrel"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ]
+    },
+    "format": {
+      "dependsOn": [
+        "^format"
+      ]
+    },
+    "lint": {
+      "dependsOn": [
+        "^lint",
+        "format"
+      ]
+    },
+    "barrel": {
+      "dependsOn": [
+        "^barrel",
+        "lint"
+      ],
+      "outputs": [
+        "{projectRoot}/src/index.ts"
+      ]
+    },
+    "prebuild": {
+      "dependsOn": [
+        "^prebuild",
+        "barrel"
+      ]
+    }
+  }
+}

@@ -1,0 +1,107 @@
+---
+title: ⚡ Event Dispatcher
+---
+
+The `EventDispatcher` is the object responsible for notifying subscribers about an event.
+
+They are used by the `EventBus`, which passes to the dispatcher the subscribers and the arguments to use to notify them.
+
+The dispatcher is then responsible that for each subscriber:
+
+* The `EventSubscriberMiddlewareLinkedList` passes the execution.
+* The subscriber is executed with its respective arguments.
+* Any errors thrown by the subscriber or middleware are caught, wrapped if needed, and redirected to the `ErrorHandler`.
+
+The main reason dispatchers are separated from the bus is because of the different ways subscribers can be called. Nyx
+takes into account two ways: `SyncEventDispatcher` and `AsyncEventDispatcher`.
+
+:::tip
+While `nyx/core` declares sync and async dispatchers, the `EventBus` in reality only depends in the `EventDispatcher`
+interface, so it's not necessary for a custom dispatcher to use the sync or async version.
+:::
+
+## 🔂 Sync Dispatchers
+
+The `SyncEventDispatcher` is a special type of dispatcher which calls its subscribers synchronously, meaning that it
+waits for the current subscriber to finish before executing the next. Its `@framework` implementation is the
+`BasicSyncEventDispatcher`.
+
+### ✅ Sync Advantages
+
+* Synchronous execution ensures that subscribers are only executed in the order of their `Priority`.
+
+* Since synchronous execution waits for a subscriber to finish before moving on to the next one, it is easier to debug,
+as it is easier to trace where an error occurs.
+
+### ❌ Sync Disadvantages
+
+* Synchronous execution may be slower for events with many subscribers, as it has to wait for each subscriber (and its
+middleware) to finish before moving on to the next one. This can cause performance issues.
+* If one subscriber takes a long time to execute, it can cause a delay in the entire system.
+
+### ⏰ Sync Timeout
+
+To tackle the mentioned disadvantages, the `SyncEventDispatcher` has a sync timeout functionality. This allows you to
+set "timeframe" for any subscriber to finish, before the dispatcher stops waiting and calls the next subscriber.
+
+This functionality can be turned off by setting it to `null` via `#setSyncTimeout()`.
+
+:::note
+The default sync timeout is of `10000 ms` (10 seconds).
+:::
+
+## 🔀 Async Dispatchers
+
+The `AsyncEventDispatcher` is a special type of dispatcher which calls its subscribers asynchronously, meaning that it
+doesn't wait for the current subscriber to finish before executing the next. Its `@framework` implementation is the
+`BasicAsyncEventDispatcher`.
+
+### ✅ Async Advantages
+
+* Asynchronous execution can be faster, especially for events with many subscribers, since it can execute them in
+parallel.
+* Asynchronous execution is less prone to blocking or delaying the system, since it can move on to the next subscriber
+while the previous one is still executing.
+
+### ❌ Async Disadvantages
+
+* Multiple subscribers running in parallel may hog the event loop and decrease performance.
+* May lead to calling subscribers in an order different than their priority, which can cause problems in scenarios where
+the order of execution matters. For example, subscribers with `PriorityEnum.Normal` may execute before subscribers with
+`PriorityEnum.High` have finished.
+* Since subscribers are executed in parallel, it can be harder to trace where an error occurs.
+* Asynchronous execution may cause issues with subscribers that rely on the state of the system (such as the event
+handling marking system), as they may not see the most up-to-date state when they execute.
+
+### 📋 Concurrency Limit
+
+To tackle the mentioned disadvantages, the `AsyncEventDispatcher` has a concurrency limit functionality. This allows you
+to set how many subscribers are being checked or executed at the same time.
+
+This functionality can be turned off by setting it to `null` via `#setConcurrencyLimit()`.
+
+:::note
+
+* Setting this limit to `1` effectively turns the dispatcher into a `SyncEventDispatcher`.
+* The default concurrency limit is `3`.
+:::
+
+## 🚦 Middleware
+
+The dispatcher stores an `EventSubscriberMiddlewareLinkedList` that will either allow or deny the call of a given subscriber.
+This list can be obtained via `EventDispatcher#getMiddleware()`.
+
+For information about how to use it, check the [️🛡️ Event Interception](./event-interception) documentation.
+
+## 💫 Error Handling
+
+The dispatcher stores an `ErrorHandler`, which is redirected errors thrown by any subscriber. For information about how
+to use it, check the [💫 Error Handling](../../error/error-handling) documentation.
+
+There are special errors that are redirected there however, specifically when checking the middleware. These are:
+
+* `EventSubscriberMiddlewareError` - Caused when a middleware throws an error, the list catches it and wraps it in this error. It's known which middleware caused the error.
+* `UncaughtEventSubscriberMiddlewareError` - Caused when the list throws an error, and it's not the one above. In theory, it should never happen but it still exists just in case. It's not known which middleware caused the error.
+
+These errors hold information useful to handle them, like the middleware that caused the error, or the entire list if the
+middleware is not known.

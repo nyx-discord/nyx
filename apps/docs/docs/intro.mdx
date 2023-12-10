@@ -1,0 +1,49 @@
+---
+title: 📚 Introduction
+---
+
+Hello there! 👋 This guide is here to give you a quick overview on what nyx is and how it works.
+
+## 📙 Description
+
+nyx is a framework to build Discord.js bots in Typescript. The main ideas behind nyx are:
+
+* It should be fully replaceable and extendable. Every working component can be replaced by your own given it fits the required interface.
+* It should be bare-bones. `@core` has no runtime dependencies, and `@framework` has as little as possible.
+* It should be straightforward to understand and setup. Hence, the existence of this documentation.
+
+Currently, nyx has five main features, each with its own dedicated section guide. These are:
+
+* [💻 Commands](./features/commands/command-overview.mdx), for Discord application commands.
+* [📸 Events](./features/events/event-overview.mdx), for subscribing to events, either from Discord.js or your own.
+* [️⏰ Schedules](./features/schedules/schedule-overview.mdx), for timed tasks.
+* [👤 Sessions](./features/sessions/session-overview.mdx), for user interaction sessions.
+* [️🧩 Plugins](./features/plugins/plugin-overview), for plugins that extend nyx.
+
+## 📋 Packages
+
+nyx is built with two packages: `@nyx-discord/core` and `@nyx-discord/framework`, abbreviated as `@core` and `@framework`.
+
+### 💠 Core
+
+* Defines all the object templates (interfaces) and their relations for nyx, acting as the blueprint.
+* No runtime dependencies (since it doesn't have any actual code), only type dependencies which are `discord.js` and `@discordjs/collection`.
+* It doesn't have any actual implementations, so it's not really usable by itself, without making you write all of them.
+
+### 🧱 Framework
+
+* Provides default, minimal implementations for `@core`, making it directly usable.
+* Its implementations are designed to depend on interfaces from `@core`, rather than each other, making those dependencies fully replaceable by your own.
+* Minimal runtime dependencies due to its "bare bones" ideology.
+
+### ❓ Which package to install
+
+* Most of the time, you'll want to use `@nyx-discord/framework`. Even if you want to include your own components, this library makes it easy to replace them via constructor injection.
+
+* If you want to develop something for nyx, such as a plugin, you can depend only on `@nyx-discord/core`. This way, you can depend on the interfaces and not any actual implementations, ensuring that your component will work across all nyx implementations.
+
+:::danger
+These docs as a whole heavily assumes that you're using `@framework`'s implementations. The terms "by
+default", "the base implementation", etc., all refer to these, as `@core` doesn't have any.
+:::
+

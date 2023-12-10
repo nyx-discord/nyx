@@ -1,0 +1,43 @@
+---
+title: ️💼 Schedule Manager
+---
+
+The `ScheduleManager` is the object that holds together the nyx schedule system.
+
+It consists of:
+
+* `ScheduleExecutionScheduler` for tracking the execution of schedules.
+* `ScheduleRepository` for storing schedules.
+* `ScheduleExecutor` for executing schedules.
+* `EventBus` for emitting schedule related events.
+
+As well as methods to interact with them.
+
+## 👷 Creation
+
+You can create a custom schedule manager by either:
+
+* Extending `DefaultScheduleManager` from `@nyx-discord/framework` (recommended).
+* Implementing `ScheduleManager` from `@nyx-discord/core`.
+
+Then you can pass it to your bot:
+
+```ts
+class MyScheduleManager extends DefaultScheduleManager {
+  // highlight-next-line
+  public myCustomPublicMethod() {}
+}
+
+const myBot = Bot.create((bot: NyxBot) => ({
+  // ...
+
+  // highlight-next-line
+  schedules: new MyScheduleManager(/** ... */),
+}));
+
+// highlight-next-line
+myBot.schedules.myCustomPublicMethod() // works!
+```
+
+The `Bot` class is able to infer the type of your custom manager via generics, so accessing any custom public method or
+property will work without errors.

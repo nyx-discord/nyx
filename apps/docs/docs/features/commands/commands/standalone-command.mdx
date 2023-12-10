@@ -1,0 +1,157 @@
+---
+title: ️📣 Standalone Command
+---
+
+# ️📣 Standalone Command
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Standalone commands are fully executable, top level commands that don't store any children. They can be executed via a
+[Slash Command](#-chatinput-context-slash-commands), or context menus ([User](#-user-context) or [Message](#-message-context)).
+
+## 👷 Creation
+
+You can create a standalone command by either:
+
+* Extending `AbstractStandaloneCommand` from `@framework` (recommended).
+* Implementing the `StandaloneCommand` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractStandaloneCommand">
+```
+
+```ts
+import { AbstractStandaloneCommand } from '@nyx-discord/framework';
+
+class MyStandaloneCommand extends AbstractStandaloneCommand {
+  protected data: StandaloneCommandData = {
+    name: 'hello',
+    description: 'Hello world!',
+  }
+
+  public async execute(
+    interaction: ChatInputCommandInteraction,
+    meta: CommandExecutionMeta
+  ) {
+    const bot = meta.getBot();
+    const botId = bot.getId();
+
+    await interaction.reply(`Hello from Bot ${String(botId)} from MyStandaloneCommand!`);
+  }
+}
+
+const command = new MyStandaloneCommand();
+await bot.commands.addCommand(command);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing StandaloneCommand">
+```
+
+```ts
+import { StandaloneCommand } from '@nyx-discord/core';
+
+class MyStandaloneCommand implements StandaloneCommand {
+  // ...
+}
+
+const command = new MyStandaloneCommand();
+await bot.commands.addCommand(command);
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+
+## 🧭 Standalone Command Contexts
+
+Standalone commands can be executed via a slash command, or context menus (User or Message).
+
+Which of these "contexts" a standalone command supports is stored inside a `StandaloneCommandContextData` object,
+provided via `StandaloneCommand#getContexts()` (overriding `contexts` in `AbstractStandaloneCommand`).
+
+:::tip
+By default, a command can only be executed via a slash command. That is, a context data of:
+
+```json
+{
+  "ChatInput": true,
+  "Message": false,
+  "User": false
+}
+```
+:::
+
+### 🤖 ChatInput context (Slash Commands)
+
+A standalone command can be executed via a slash command if `StandaloneCommand#getContexts().ChatInput` is `true`. After
+that, when a `ChatInputCommandInteraction` is received, it will trigger `StandaloneCommand#execute()`.
+
+```ts
+class ChatInputContextCommand extends AbstractStandaloneCommand {
+  protected contexts: StandaloneCommandContextData = {
+    // highlight-next-line
+    ChatInput: true,
+    Message: false,
+    User: false,
+  }
+
+  public async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+    await interaction.reply('Pong!');
+  }
+}
+```
+
+### 💬 Message context
+
+A standalone command can be executed via a slash command if `StandaloneCommand#getContexts().Message` is `true`. After
+that, when a `MessageContextMenuCommandInteraction` is received, it will trigger `StandaloneCommand#executeMessage()`.
+
+```ts
+class MessageContextCommand extends AbstractStandaloneCommand {
+  protected contexts: StandaloneCommandContextData = {
+    ChatInput: false,
+    // highlight-next-line
+    Message: true,
+    User: false,
+  }
+
+  public async executeMessage(interaction: MessageContextMenuCommandInteraction): Promise<void> {
+    await interaction.reply('Pong!');
+  }
+}
+```
+
+:::note
+For more information, check
+the [Discord Developer documentation on Message commands](https://discord.com/developers/docs/interactions/application-commands#message-commands).
+:::
+
+### 👤 User context
+
+A standalone command can be executed via a slash command if `StandaloneCommand#getContexts().User` is `true`. After
+that, when a `ChatInputCommandInteraction` is received, it will trigger `StandaloneCommand#executeUser()`.
+
+```ts
+class UserContextCommand extends AbstractStandaloneCommand {
+  protected contexts: StandaloneCommandContextData = {
+    ChatInput: false,
+    Message: false,
+    // highlight-next-line
+    User: true,
+  }
+
+  public async executeUser(interaction: UserContextMenuCommandInteraction): Promise<void> {
+    await interaction.reply('Pong!');
+  }
+}
+```
+
+:::note
+For more information, check
+the [Discord Developer documentation on User commands](https://discord.com/developers/docs/interactions/application-commands#user-commands).
+:::
