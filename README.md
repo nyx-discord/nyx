@@ -13,9 +13,9 @@ The original template that nyx is based on was greatly inspired by [Modbot](http
 
 nyx has two documentation sources:
 
-* [Typedoc](https://nyx-discord.github.io/typedoc), documenting classes, types and interfaces, so you can easily explore
-  the library through your browser.
-* [Docusaurus](https://nyx-discord.github.io/docs), which serves as a guide for how to use and modify the framework.
+* [Typedoc](https://nyx-discord.github.io/nyx/typedoc), documenting classes, types and interfaces, so you can easily
+  explore the library through your browser.
+* [Docusaurus](https://nyx-discord.github.io/nyx/docs), which serves as a guide for how to use and modify the framework.
 
 ## ✨ Features
 

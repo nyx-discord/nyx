@@ -107,7 +107,7 @@ module.exports = async function createConfig(): Promise<Config> {
               position: 'left',
             },
             {
-              href: 'https://nyx-discord.github.io/typedoc',
+              href: 'https://nyx-discord.github.io/nyx/typedoc',
               label: 'TypeDoc',
               position: 'right',
             },

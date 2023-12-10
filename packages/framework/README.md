@@ -17,7 +17,8 @@ If a dependency is not specified, the default implementation (included here) is 
 
 nyx has two documentation sources:
 
-* [Typedoc](https://nyx-discord.github.io/typedoc), documenting classes, types and interfaces, so you can easily explore
+* [Typedoc](https://nyx-discord.github.io/nyx/typedoc), documenting classes, types and interfaces, so you can easily
+  explore
   the library through your browser.
-* [Docusaurus](https://nyx-discord.github.io/docs), which serves as a guide for how to use and modify the framework.
+* [Docusaurus](https://nyx-discord.github.io/nyx/docs), which serves as a guide for how to use and modify the framework.
 
