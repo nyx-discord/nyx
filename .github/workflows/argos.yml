@@ -59,3 +59,5 @@ jobs:
       - name: Upload screenshots to Argos
         working-directory: apps/docs
         run: pnpm exec argos upload ./screenshots
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
