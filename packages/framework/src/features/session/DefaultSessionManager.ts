@@ -47,7 +47,7 @@ import {
 import type { ClientEvents, Events } from 'discord.js';
 
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
-
+import { DefaultSessionCustomIdCodec } from './customId/DefaultSessionCustomIdCodec';
 import { DefaultSessionUpdateSubscriber } from './event/DefaultSessionUpdateSubscriber.js';
 import { DefaultSessionExecutor } from './executor/DefaultSessionExecutor.js';
 import { DefaultSessionPromiseRepository } from './promise/DefaultSessionPromiseRepository.js';
@@ -113,6 +113,10 @@ export class DefaultSessionManager implements SessionManager {
 
     if (!constructorOptions.subscriber) {
       constructorOptions.subscriber = new DefaultSessionUpdateSubscriber();
+    }
+
+    if (!constructorOptions.customIdCodec) {
+      constructorOptions.customIdCodec = DefaultSessionCustomIdCodec.create();
     }
 
     if (!constructorOptions.bus) {
@@ -345,22 +349,22 @@ export class DefaultSessionManager implements SessionManager {
     const oldState = session.getState();
 
     if (
-      newState === SessionStateEnum.Uninitalized
-      && oldState != SessionStateEnum.Uninitalized
+      newState === SessionStateEnum.Uninitalized &&
+      oldState != SessionStateEnum.Uninitalized
     ) {
       throw new AssertionError();
     }
 
     if (
-      newState == SessionStateEnum.Running
-      && oldState !== SessionStateEnum.Uninitalized
+      newState == SessionStateEnum.Running &&
+      oldState !== SessionStateEnum.Uninitalized
     ) {
       throw new AssertionError();
     }
 
     if (
-      newState == SessionStateEnum.Ended
-      && oldState !== SessionStateEnum.Running
+      newState == SessionStateEnum.Ended &&
+      oldState !== SessionStateEnum.Running
     ) {
       throw new AssertionError();
     }
