@@ -128,7 +128,7 @@ export class DefaultSessionManager implements SessionManager {
       );
     }
 
-    const fullOptions = options as SessionManagerOptions;
+    const fullOptions = constructorOptions as SessionManagerOptions;
 
     const manager = new DefaultSessionManager(bot, fullOptions);
 
