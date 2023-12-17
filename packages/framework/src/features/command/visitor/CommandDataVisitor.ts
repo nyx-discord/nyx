@@ -95,6 +95,12 @@ export class CommandDataVisitor
   }
 
   public visitParentCommand(command: ParentCommand): void {
+    if (command.size === 0 || command.size > 25) {
+      throw new RangeError(
+        `Can't create a parent command with children size of ${command.size}.`,
+      );
+    }
+
     for (const child of command.getChildren()) child.acceptVisitor(this);
   }
 
@@ -116,6 +122,12 @@ export class CommandDataVisitor
   }
 
   public visitSubCommandGroup(group: SubCommandGroup): void {
+    if (group.size === 0 || group.size > 25) {
+      throw new RangeError(
+        `Can't create a subcommand group with children size of ${group.size}.`,
+      );
+    }
+
     const options: ApplicationCommandSubCommandData[] = [];
     for (const subcommand of group.getChildren()) {
       options.push({

@@ -22,15 +22,15 @@
  * SOFTWARE.
  */
 
-import { AbstractCommand } from './AbstractCommand.js';
 import type {
-  ArrayMinLength,
   ChildableCommand,
   ChildCommand,
   ClassImplements,
   CommandData,
 } from '@nyx-discord/core';
 import { AssertionError, ObjectNotFoundError } from '@nyx-discord/core';
+
+import { AbstractCommand } from './AbstractCommand.js';
 
 export abstract class AbstractChildableCommand<
     Data extends CommandData,
@@ -41,7 +41,7 @@ export abstract class AbstractChildableCommand<
 {
   protected abstract readonly childLimit: number;
 
-  protected abstract readonly children: ArrayMinLength<Child, 1>;
+  protected abstract readonly children: Child[];
 
   public get size() {
     return this.children.length;
