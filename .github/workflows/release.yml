@@ -18,11 +18,12 @@ jobs:
         with:
           version: 8
 
-      - name: Use Node.js 18
+      - name: Setup Node.js with GitHub Packages
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: pnpm
+          registry-url: 'https://npm.pkg.github.com'
 
       - name: Install dependencies
         run: pnpm install
@@ -47,6 +48,13 @@ jobs:
           GIT_AUTHOR_NAME: ${{ github.actor }}
           GIT_AUTHOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js with NPM Registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Release to NPM Registry
         run: |
