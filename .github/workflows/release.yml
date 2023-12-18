@@ -23,18 +23,27 @@ jobs:
         with:
           node-version: 18
           cache: pnpm
-          registry-url: 'https://npm.pkg.github.com'
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Release
+      - name: Run versioning
+        run: pnpm ci:version
+
+      - name: Release to GitHub Packages
         run: |
           git config --global user.email "${GIT_AUTHOR_EMAIL}"
           git config --global user.name "${GIT_AUTHOR_NAME}"
-          pnpm run ci:publish
+          pnpm run ci:publish:github
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_AUTHOR_NAME: ${{ github.actor }}
           GIT_AUTHOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release to NPM Registry
+        run: |
+          pnpm run ci:publish:npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
