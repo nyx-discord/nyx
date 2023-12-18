@@ -29,6 +29,8 @@ jobs:
 
       - name: Run versioning
         run: pnpm ci:version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release to GitHub Packages
         run: |
