@@ -28,8 +28,13 @@ jobs:
         run: pnpm install
 
       - name: Run versioning
-        run: pnpm ci:version
+        run: |
+          git config --global user.email "${GIT_AUTHOR_EMAIL}"
+          git config --global user.name "${GIT_AUTHOR_NAME}"
+          pnpm run ci:version
         env:
+          GIT_AUTHOR_NAME: ${{ github.actor }}
+          GIT_AUTHOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release to GitHub Packages
