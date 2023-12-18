@@ -19,8 +19,23 @@ jobs:
   create-release-pr:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Check out repository
         uses: actions/checkout@v3
+
+      - name: Use pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Update Version
         run: |
           git config --global user.email "${GIT_AUTHOR_EMAIL}"
