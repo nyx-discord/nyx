@@ -15,13 +15,7 @@
     "docusaurus-deploy": "lerna run deploy --scope=@nyx-discord/docs",
     "docusaurus-serve": "lerna run serve --scope=@nyx-discord/docs",
     "prepare": "husky install",
-    "versionup": "lerna version",
-    "ci:versionup:patch": "lerna version patch --no-private --no-push --no-git-tag-version --conventional-commits --yes && npm run commit-version",
-    "ci:versionup:minor": "lerna version minor --no-private --no-push --no-git-tag-version --conventional-commits --yes && npm run commit-version",
-    "ci:versionup:major": "lerna version major --no-private --no-push --no-git-tag-version --conventional-commits --yes && npm run commit-version",
-    "commit-version": "git add . && git commit -m \"chore(release): v$(node -p 'require(\"./lerna.json\").version')\"",
-    "release": "lerna publish from-package --no-private",
-    "ci:release": "lerna publish from-package --yes --no-private --conventional-commits"
+    "ci:publish": "lerna publish --yes --no-private --conventional-commits --create-release github --message \"chore(release): publish\""
   },
   "keywords": [],
   "author": "Amgelo563",
