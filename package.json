@@ -15,7 +15,7 @@
     "docusaurus-deploy": "lerna run deploy --scope=@nyx-discord/docs",
     "docusaurus-serve": "lerna run serve --scope=@nyx-discord/docs",
     "prepare": "husky install",
-    "ci:version": "lerna version --no-private --conventional-commits --create-release github --message \"chore(release): version\"",
+    "ci:version": "lerna version --yes --no-private --conventional-commits --create-release github --message \"chore(release): version\"",
     "ci:publish:github": "lerna publish from-git --yes --registry=https://npm.pkg.github.com",
     "ci:publish:npm": "lerna publish from-git --yes --registry=https://registry.npmjs.org"
   },
