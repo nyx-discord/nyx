@@ -1,6 +1,6 @@
 {
   "name": "@nyx-discord/core",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "The core of nyx. Contains the object interfaces and contracts that make up the framework.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
