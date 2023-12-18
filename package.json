@@ -17,7 +17,7 @@
     "prepare": "husky install",
     "ci:version": "lerna version --yes --no-private --conventional-commits --create-release github --message \"chore(release): version\"",
     "ci:publish:github": "lerna publish from-git --yes --registry=https://npm.pkg.github.com",
-    "ci:publish:npm": "lerna publish from-git --yes --registry=https://registry.npmjs.org"
+    "ci:publish:npm": "lerna publish from-git --yes"
   },
   "keywords": [],
   "author": "Amgelo563",
