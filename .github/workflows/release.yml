@@ -1,6 +1,17 @@
 name: Create Release
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version Bump Type'
+        required: true
+        default: 'conventional'
+        type: choice
+        options:
+          - conventional
+          - patch
+          - minor
+          - major
 
 permissions:
   contents: write
@@ -32,7 +43,7 @@ jobs:
         run: |
           git config --global user.email "${GIT_AUTHOR_EMAIL}"
           git config --global user.name "${GIT_AUTHOR_NAME}"
-          pnpm run ci:version
+          pnpm run ci:version:${{ github.event.inputs.version }}
         env:
           GIT_AUTHOR_NAME: ${{ github.actor }}
           GIT_AUTHOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
