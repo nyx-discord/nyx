@@ -60,7 +60,6 @@ jobs:
 
       - name: Release to NPM Registry
         run: |
-          rm .npmrc
           echo "@nyx-discord:registry=https://registry.npmjs.org" >> .npmrc
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
           pnpm run ci:publish:npm
