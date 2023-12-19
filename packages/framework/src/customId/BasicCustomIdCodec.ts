@@ -94,6 +94,8 @@ export class BasicCustomIdCodec<Serialized extends Identifiable<string>>
       this.dataSeparator,
     );
 
+    if (!builder || builder.getNamespace() !== this.namespace) return null;
+
     return builder ? builder.getObjectId() : null;
   }
 }
