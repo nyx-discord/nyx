@@ -349,22 +349,22 @@ export class DefaultSessionManager implements SessionManager {
     const oldState = session.getState();
 
     if (
-      newState === SessionStateEnum.Uninitalized &&
-      oldState != SessionStateEnum.Uninitalized
+      newState === SessionStateEnum.Uninitalized
+      && oldState != SessionStateEnum.Uninitalized
     ) {
       throw new AssertionError();
     }
 
     if (
-      newState == SessionStateEnum.Running &&
-      oldState !== SessionStateEnum.Uninitalized
+      newState == SessionStateEnum.Running
+      && oldState !== SessionStateEnum.Uninitalized
     ) {
       throw new AssertionError();
     }
 
     if (
-      newState == SessionStateEnum.Ended &&
-      oldState !== SessionStateEnum.Running
+      newState == SessionStateEnum.Ended
+      && oldState !== SessionStateEnum.Running
     ) {
       throw new AssertionError();
     }
