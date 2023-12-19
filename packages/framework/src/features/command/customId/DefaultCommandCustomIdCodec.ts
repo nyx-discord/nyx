@@ -25,8 +25,10 @@
 import type {
   CommandCustomIdCodec,
   CommandData,
+  CommandReferenceData,
   ExecutableCommand,
 } from '@nyx-discord/core';
+import { CommandCustomIdBuilder } from '@nyx-discord/core';
 import { BasicCustomIdCodec } from '../../../customId/BasicCustomIdCodec.js';
 
 export class DefaultCommandCustomIdCodec
@@ -45,5 +47,15 @@ export class DefaultCommandCustomIdCodec
 
   public static create(): CommandCustomIdCodec {
     return new DefaultCommandCustomIdCodec();
+  }
+
+  public deserializeToData(customId: string): CommandReferenceData | null {
+    return (
+      CommandCustomIdBuilder.fromCommandCustomId(
+        customId,
+        this.separator,
+        this.dataSeparator,
+      )?.getReferenceData() ?? null
+    );
   }
 }

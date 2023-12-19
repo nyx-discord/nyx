@@ -32,6 +32,7 @@ export * from './features/command/commands/implements/ImplementsParentCommand';
 export * from './features/command/commands/implements/ImplementsStandaloneCommand';
 export * from './features/command/commands/implements/ImplementsSubCommand';
 export * from './features/command/commands/implements/ImplementsSubCommandGroup';
+export * from './features/command/customId/CommandCustomIdBuilder';
 export * from './features/command/customId/CommandCustomIdCodec';
 export * from './features/command/data/command/CommandData';
 export * from './features/command/data/command/ParentCommandData';

@@ -203,8 +203,8 @@ export class DefaultCommandManager implements CommandManager {
     if (!command) return false;
 
     const metadata =
-      meta
-      ?? CommandExecutionMeta.fromCommandAutocomplete(
+      meta ??
+      CommandExecutionMeta.fromCommandAutocomplete(
         command,
         interaction,
         this.bot,
@@ -252,10 +252,10 @@ export class DefaultCommandManager implements CommandManager {
     } else {
       const { customId } = interaction;
 
-      const commandId = this.customIdCodec.deserializeToObjectId(customId);
-      if (!commandId) return false;
+      const commandData = this.customIdCodec.deserializeToData(customId);
+      if (!commandData) return false;
 
-      const foundCommand = this.repository.getCommandById(commandId);
+      const foundCommand = this.repository.locateByData(commandData);
       if (!foundCommand || !foundCommand.isExecutable()) return false;
 
       command = foundCommand;
@@ -264,8 +264,8 @@ export class DefaultCommandManager implements CommandManager {
     if (!command) return false;
 
     const metadata =
-      meta
-      ?? CommandExecutionMeta.fromCommandCall(command, interaction, this.bot);
+      meta ??
+      CommandExecutionMeta.fromCommandCall(command, interaction, this.bot);
 
     try {
       await this.executor.execute(command, interaction, metadata);

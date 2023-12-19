@@ -27,6 +27,7 @@ import type { CustomIdCodec } from '../../../customId/CustomIdCodec.js';
 import type { StringIterator } from '../../../string/StringIterator';
 import type { ExecutableCommand } from '../commands/abstract/ExecutableCommand.js';
 import type { CommandData } from '../data/command/CommandData.js';
+import type { CommandReferenceData } from '../resolver/CommandReferenceData';
 
 /** An object responsible for creating and manipulating customIds that refer to command names. */
 export interface CommandCustomIdCodec
@@ -74,4 +75,7 @@ export interface CommandCustomIdCodec
    * console.log(iterator.getTokens()) // ['Amgelo#1106', 'extraInfo']
    */
   createIteratorFromCustomId(commandCustomId: string): StringIterator | null;
+
+  /** Extracts the reference data from the passed command customId. */
+  deserializeToData(customId: string): CommandReferenceData | null;
 }
