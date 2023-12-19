@@ -203,8 +203,8 @@ export class DefaultCommandManager implements CommandManager {
     if (!command) return false;
 
     const metadata =
-      meta ??
-      CommandExecutionMeta.fromCommandAutocomplete(
+      meta
+      ?? CommandExecutionMeta.fromCommandAutocomplete(
         command,
         interaction,
         this.bot,
@@ -264,8 +264,8 @@ export class DefaultCommandManager implements CommandManager {
     if (!command) return false;
 
     const metadata =
-      meta ??
-      CommandExecutionMeta.fromCommandCall(command, interaction, this.bot);
+      meta
+      ?? CommandExecutionMeta.fromCommandCall(command, interaction, this.bot);
 
     try {
       await this.executor.execute(command, interaction, metadata);

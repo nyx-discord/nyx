@@ -49,6 +49,21 @@ export class DefaultCommandCustomIdCodec
     return new DefaultCommandCustomIdCodec();
   }
 
+  public override createCustomIdBuilder(
+    command: ExecutableCommand<CommandData>,
+  ) {
+    const id = command.getId();
+    const data = command.toReferenceData();
+
+    return new CommandCustomIdBuilder({
+      data,
+      namespace: this.namespace,
+      objectId: id,
+      dataSeparator: this.dataSeparator,
+      separator: this.separator,
+    });
+  }
+
   public deserializeToData(customId: string): CommandReferenceData | null {
     return (
       CommandCustomIdBuilder.fromCommandCustomId(

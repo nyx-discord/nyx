@@ -27,6 +27,7 @@ import type {
   CommandExecutionMeta,
   CommandFilter,
   CommandOptionData,
+  CommandReferenceData,
   ComponentCommandInteraction,
   CustomIdBuilder,
   ExecutableCommand,
@@ -122,4 +123,6 @@ export abstract class AbstractExecutableCommand<Data extends CommandData>
     interaction: ChatInputCommandInteraction,
     metadata: CommandExecutionMeta,
   ): Awaitable<void>;
+
+  public abstract toReferenceData(): CommandReferenceData;
 }

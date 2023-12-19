@@ -23,12 +23,15 @@
  */
 
 import type {
+  CommandReferenceData,
   CommandVisitor,
   ParentCommand,
   SubCommand,
   SubCommandData,
   SubCommandGroup,
 } from '@nyx-discord/core';
+import { ResolvedCommandType } from '@nyx-discord/core';
+
 import { AbstractExecutableCommand } from './abstract/AbstractExecutableCommand.js';
 
 /** A child, executable command that belongs to an {@link ParentCommand} or {@link SubCommandGroup}. */
@@ -58,5 +61,24 @@ export abstract class AbstractSubCommand
   public override getReadableName(): string {
     const names: string[] = [this.parent.getReadableName(), this.data.name];
     return names.join('/');
+  }
+
+  public getReferenceData(): CommandReferenceData {
+    if (this.parent.isParentCommand()) {
+      return {
+        type: ResolvedCommandType.SubCommand,
+        root: this.parent.getData().name,
+        subCommand: this.data.name,
+      };
+    } else {
+      const root = this.parent.getParent();
+
+      return {
+        type: ResolvedCommandType.SubCommandOnGroup,
+        root: root.getData().name,
+        group: this.parent.getData().name,
+        subCommand: this.data.name,
+      };
+    }
   }
 }

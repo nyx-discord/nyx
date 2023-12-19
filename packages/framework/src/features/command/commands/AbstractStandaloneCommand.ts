@@ -27,7 +27,9 @@ import type {
   CommandVisitor,
   StandaloneCommand,
   StandaloneCommandData,
+  StandaloneCommandReferenceData,
 } from '@nyx-discord/core';
+import { ResolvedCommandType } from '@nyx-discord/core';
 import type {
   Awaitable,
   MessageContextMenuCommandInteraction,
@@ -94,5 +96,13 @@ export abstract class AbstractStandaloneCommand
     }
 
     return bitmask.toString(10);
+  }
+
+  public getReferenceData(): StandaloneCommandReferenceData {
+    return {
+      type: ResolvedCommandType.StandaloneCommand,
+      root: this.data.name,
+      commandType: this.contexts[0],
+    };
   }
 }

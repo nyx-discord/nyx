@@ -35,6 +35,7 @@ import type { CommandOptionData } from '../../data/option/CommandOptionData.js';
 import type { CommandExecutionMeta } from '../../execution/meta/CommandExecutionMeta.js';
 import type { CommandFilter } from '../../filter/CommandFilter.js';
 import type { ComponentCommandInteraction } from '../../interaction/ComponentCommandInteraction.js';
+import type { CommandReferenceData } from '../../resolver/CommandReferenceData';
 import type { Command } from './Command.js';
 
 /** A command that can be executed (called) by an interaction. */
@@ -63,4 +64,7 @@ export interface ExecutableCommand<Data extends CommandData>
     _interaction: ComponentCommandInteraction,
     metadata: CommandExecutionMeta,
   ): Awaitable<void>;
+
+  /** Returns the reference data of this command. */
+  toReferenceData(): CommandReferenceData;
 }

@@ -99,10 +99,10 @@ export class CommandCustomIdBuilder extends MetadatableCustomIdBuilder {
           break;
         case ResolvedCommandType.SubCommandOnGroup:
           if (
-            'subCommand' in raw &&
-            typeof raw.subCommand === 'string' &&
-            'group' in raw &&
-            typeof raw.group === 'string'
+            'subCommand' in raw
+            && typeof raw.subCommand === 'string'
+            && 'group' in raw
+            && typeof raw.group === 'string'
           ) {
             return raw;
           }
