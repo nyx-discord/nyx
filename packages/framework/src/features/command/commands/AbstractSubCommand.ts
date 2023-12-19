@@ -63,7 +63,7 @@ export abstract class AbstractSubCommand
     return names.join('/');
   }
 
-  public getReferenceData(): CommandReferenceData {
+  public toReferenceData(): CommandReferenceData {
     if (this.parent.isParentCommand()) {
       return {
         type: ResolvedCommandType.SubCommand,
