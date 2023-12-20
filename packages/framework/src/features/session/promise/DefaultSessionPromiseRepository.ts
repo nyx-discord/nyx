@@ -28,7 +28,6 @@ import type {
   SessionEndData,
   SessionPromiseRepository,
 } from '@nyx-discord/core';
-import { ObjectNotFoundError } from '@nyx-discord/core';
 
 type SessionPromiseData = {
   promise: Promise<SessionEndData<unknown>>;
@@ -108,7 +107,7 @@ export class DefaultSessionPromiseRepository
 
     const promiseData = this.promises.get(id);
     if (!promiseData) {
-      throw new ObjectNotFoundError(`Session '${session.getId()}' not found`);
+      return;
     }
 
     this.promises.delete(id);
@@ -123,7 +122,7 @@ export class DefaultSessionPromiseRepository
 
     const promiseData = this.promises.get(id);
     if (!promiseData) {
-      throw new ObjectNotFoundError(`Session '${session.getId()}' not found`);
+      return;
     }
 
     this.promises.delete(id);
