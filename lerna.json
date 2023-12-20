@@ -5,7 +5,7 @@
   "changelog": true,
   "commitHooks": true,
   "changelogPreset": {
-    "preset": "conventional-changelog-conventionalcommits",
+    "name": "conventional-changelog-conventionalcommits",
     "presetConfig": {
       "types": [
         {
