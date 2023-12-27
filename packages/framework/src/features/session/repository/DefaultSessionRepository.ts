@@ -75,7 +75,7 @@ export class DefaultSessionRepository extends TTLCache<
       key: string,
       reason: TTLCache.DisposeReason,
     ) => {
-      if (reason !== 'stale') {
+      if (!value || reason !== 'stale') {
         return;
       }
 
