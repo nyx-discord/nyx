@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.4](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.1.3...@nyx-discord/core@1.1.4) (2023-12-27)
+
+**Note:** Version bump only for package @nyx-discord/core
+
 ## 1.1.3 (2023-12-27)
 
 ### Bug Fixes

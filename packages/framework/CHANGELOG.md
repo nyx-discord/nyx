@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.4](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.1.3...@nyx-discord/framework@1.1.4) (2023-12-27)
+
+### Bug Fixes
+
+- fix default session expiration callback triggering on manually deleted entries ([4be6136](https://github.com/nyx-discord/nyx/commit/4be6136445063a9d55c6b9f42088eae8e39af513))
+
 ## 1.1.3 (2023-12-27)
 
 ### Bug Fixes
