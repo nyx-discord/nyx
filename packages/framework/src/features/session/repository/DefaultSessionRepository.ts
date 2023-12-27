@@ -26,7 +26,11 @@ import TTLCache from '@isaacs/ttlcache';
 import type { Session, SessionRepository } from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
 
-type SessionExpirationCallback = (value: Session<unknown>) => Awaitable<void>;
+type SessionExpirationCallback = (
+  value: Session<unknown>,
+  key: string,
+  reason: TTLCache.DisposeReason,
+) => Awaitable<void>;
 
 export class DefaultSessionRepository extends TTLCache<
   string,
@@ -66,7 +70,17 @@ export class DefaultSessionRepository extends TTLCache<
   }
 
   public setExpirationCallback(callback: SessionExpirationCallback): void {
-    this.dispose = callback;
+    this.dispose = (
+      value: Session<unknown>,
+      key: string,
+      reason: TTLCache.DisposeReason,
+    ) => {
+      if (reason !== 'stale') {
+        return;
+      }
+
+      void callback(value, key, reason);
+    };
   }
 
   public getTTL(id: string): Awaitable<number | null> {
