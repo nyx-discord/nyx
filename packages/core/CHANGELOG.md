@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 1.1.3 (2023-12-27)
+
+### Bug Fixes
+
+- fix default session expiration callback triggering on manual deletes ([612c368](https://github.com/nyx-discord/nyx/commit/612c368d08377f44786701f82711abc790f1997b))
+
 ## 1.1.2 (2023-12-20)
 
 **Note:** Version bump only for package @nyx-discord/core
