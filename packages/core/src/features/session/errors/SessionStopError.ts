@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
+import type { SessionEndData } from '../end/SessionEndData';
 import type { SessionExecutionMeta } from '../execution/meta/SessionExecutionMeta.js';
 import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction';
 import type { Session } from '../session/Session.js';
-import type { SessionEndData } from '../stop/SessionEndData';
 import { AbstractSessionError } from './AbstractSessionError.js';
 
 export class SessionStopError<

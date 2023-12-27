@@ -25,12 +25,12 @@
 import type { Awaitable } from 'discord.js';
 import type { Identifier } from '../../../../identity/Identifier.js';
 import type { MiddlewareLinkedList } from '../../../../middleware/list/MiddlewareLinkedList.js';
+import type { SessionEndData } from '../../end/SessionEndData';
 import type { SessionErrorHandler } from '../../error/SessionErrorHandler.js';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction.js';
 import type { SessionStartMiddleware } from '../../middleware/SessionStartMiddleware.js';
 import type { SessionUpdateMiddleware } from '../../middleware/SessionUpdateMiddleware.js';
 import type { Session } from '../../session/Session.js';
-import type { SessionEndData } from '../../stop/SessionEndData';
 import type { SessionEndArgs } from '../args/SessionEndArgs';
 import type { SessionStartArgs } from '../args/SessionStartArgs.js';
 import type { SessionUpdateArgs } from '../args/SessionUpdateArgs.js';

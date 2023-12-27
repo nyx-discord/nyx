@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
+import type { SessionEndData } from '../end/SessionEndData';
 import type { SessionExecutionMeta } from '../execution/meta/SessionExecutionMeta.js';
 import type { SessionStartInteraction } from '../interaction/SessionStartInteraction.js';
 import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction.js';
 import type { Session } from '../session/Session.js';
-import type { SessionEndData } from '../stop/SessionEndData';
 
 /** Enum of possible session events. */
 export const SessionEventEnum = {

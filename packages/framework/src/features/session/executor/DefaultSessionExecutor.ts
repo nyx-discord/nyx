@@ -52,8 +52,6 @@ import { SessionStartMiddlewareLinkedList } from '../middleware/SessionStartMidd
 import { SessionUpdateMiddlewareLinkedList } from '../middleware/SessionUpdateMiddlewareLinkedList.js';
 
 export class DefaultSessionExecutor implements SessionExecutor {
-  public static readonly SessionExpiredCode = Symbol('Expired');
-
   protected readonly startErrorHandler: SessionErrorHandler<SessionStartArgs>;
 
   protected readonly updateErrorHandler: SessionErrorHandler<SessionUpdateArgs>;

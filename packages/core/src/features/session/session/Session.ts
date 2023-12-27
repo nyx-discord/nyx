@@ -27,13 +27,13 @@ import type { BotAware } from '../../../bot/BotAware.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Identifier } from '../../../identity/Identifier.js';
 import type { Metadatable } from '../../../meta/Metadatable.js';
+import type { SessionEndData } from '../end/SessionEndData';
 import type { SessionExecutionMeta } from '../execution/meta/SessionExecutionMeta.js';
 import type { SessionStartFilter } from '../filter/SessionStartFilter.js';
 import type { SessionUpdateFilter } from '../filter/SessionUpdateFilter.js';
 import type { SessionStartInteraction } from '../interaction/SessionStartInteraction.js';
 import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction.js';
 import type { SessionState } from '../state/SessionState.js';
-import type { SessionEndData } from '../stop/SessionEndData';
 
 /**
  * An object that represents a user's interaction session with a
