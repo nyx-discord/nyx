@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,8 @@
 
 import type { ClassImplements } from '../../../../types/ClassImplements.js';
 import type { CommandData } from '../../data/command/CommandData.js';
-import type { Command } from './Command.js';
 import type { ChildCommand } from './ChildCommand.js';
+import type { Command } from './Command.js';
 
 /** A command that can contain {@link ChildCommand children commands}. */
 export interface ChildableCommand<
@@ -45,6 +45,16 @@ export interface ChildableCommand<
    * @throws {AssertionError} If this child's parent is not this command.
    */
   addChild(child: Child): this;
+
+  /**
+   * Adds a list of children to this command.
+   * @throws {IllegalDuplicateError} If there's already a registered child with
+   *   the name of a child in the list.
+   * @throws {RangeError} If adding this child list would make this command
+   *   surpass its max children. See {@link getMaxChildren}.
+   * @throws {AssertionError} If one of the child's parent is not this command.
+   */
+  addChildren(children: Child[]): this;
 
   /**
    * Removes a child by its instance.
