@@ -1,4 +1,5 @@
 ![nyx Logo](assets/nyx.png)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnyx-discord%2Fnyx.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnyx-discord%2Fnyx?ref=badge_shield)
 
 ---
 
@@ -108,6 +109,9 @@ If you don't understand it or don't want to bother reading it all, here's what y
 
 You don't need to explicitly give credit to this repository (all the credit is inside `LICENSE` already), but I'll be
 grateful if you do so 💙.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnyx-discord%2Fnyx.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnyx-discord%2Fnyx?ref=badge_large)
 
 ## 🚧 Disclaimers
 
