@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -194,7 +194,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
     reason: string,
     code: Identifier | number,
     meta: SessionExecutionMeta,
-  ): Promise<SessionEndData<unknown> | null> {
+  ): Promise<SessionEndData<unknown>> {
     if (session.getState() !== SessionStateEnum.Running) {
       throw new IllegalStateError();
     }
@@ -219,7 +219,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
         session.bot,
       );
 
-      return null;
+      return endData;
     }
   }
 
