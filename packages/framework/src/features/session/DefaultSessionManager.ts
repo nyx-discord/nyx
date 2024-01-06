@@ -261,9 +261,7 @@ export class DefaultSessionManager implements SessionManager {
     const data = await this.executor.end(session, reason, code, metadata);
     session.setState(SessionStateEnum.Ended);
 
-    if (!data) {
-      return this;
-    }
+    this.promiseRepository.resolve(session, data);
 
     Promise.resolve(
       this.bus.emit(SessionEventEnum.SessionEnd, [session, data, metadata]),
