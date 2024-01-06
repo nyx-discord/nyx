@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.1...@nyx-discord/framework@1.2.2) (2024-01-06)
+
+### Bug Fixes
+
+- fix BasicCustomIdCodec[#create](https://github.com/nyx-discord/nyx/issues/create)IteratorFromCustomId() discarding first token ([16f7982](https://github.com/nyx-discord/nyx/commit/16f79824950856bc645790095516705eabc3e971))
+
 ## [1.2.1](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.0...@nyx-discord/framework@1.2.1) (2024-01-06)
 
 ### Bug Fixes
