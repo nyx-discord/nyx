@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.0...@nyx-discord/framework@1.2.1) (2024-01-06)
+
+### Bug Fixes
+
+- also resolve SessionPromise when manually ending session ([7ba0e61](https://github.com/nyx-discord/nyx/commit/7ba0e619db9f42d062ed5a89003fb1625def2f7b))
+- don't proceed on DefaultSessionManager[#update](https://github.com/nyx-discord/nyx/issues/update)() if session ended while updating ([17fae72](https://github.com/nyx-discord/nyx/commit/17fae725e404a68f1b89eb2bba5588ae98056841))
+
 ## [1.2.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.1.4...@nyx-discord/framework@1.2.0) (2024-01-06)
 
 ### Features
