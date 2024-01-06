@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.1.4...@nyx-discord/core@1.2.0) (2024-01-06)
+
+### Features
+
+- add ChildableCommand[#add](https://github.com/nyx-discord/nyx/issues/add)Children() ([1d8d3bc](https://github.com/nyx-discord/nyx/commit/1d8d3bc58abc13a651640ef8bc6ecfa2fd259e8a))
+- add SessionSelfEndCode ([f832b75](https://github.com/nyx-discord/nyx/commit/f832b75728fd1a8e7cd96b0a06150b731371d87a))
+
+### Bug Fixes
+
+- fix SessionManager[#end](https://github.com/nyx-discord/nyx/issues/end)() code type to accept Identifiers ([b7a89f9](https://github.com/nyx-discord/nyx/commit/b7a89f9eb9dc0716275401fa328418004a446fa9))
+
 ## [1.1.4](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.1.3...@nyx-discord/core@1.1.4) (2023-12-27)
 
 **Note:** Version bump only for package @nyx-discord/core

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.1.4...@nyx-discord/framework@1.2.0) (2024-01-06)
+
+### Features
+
+- add AbstractSession[#self](https://github.com/nyx-discord/nyx/issues/self)End() and [#codec](https://github.com/nyx-discord/nyx/issues/codec) utilities ([7265088](https://github.com/nyx-discord/nyx/commit/72650882e579987a826c2c240a70e0e1cf367668))
+- add ChildableCommand[#add](https://github.com/nyx-discord/nyx/issues/add)Children() ([1d8d3bc](https://github.com/nyx-discord/nyx/commit/1d8d3bc58abc13a651640ef8bc6ecfa2fd259e8a))
+
 ## [1.1.4](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.1.3...@nyx-discord/framework@1.1.4) (2023-12-27)
 
 ### Bug Fixes
