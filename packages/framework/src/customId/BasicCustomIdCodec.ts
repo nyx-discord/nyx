@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -82,7 +82,7 @@ export class BasicCustomIdCodec<Serialized extends Identifiable<string>>
 
     if (!builder || builder.getNamespace() !== this.namespace) return null;
 
-    const [_dataToken, ...tokens] = builder.getTokens();
+    const [...tokens] = builder.getTokens();
 
     return new StringIterator(tokens);
   }
