@@ -23,8 +23,8 @@
  */
 
 import type { Awaitable } from 'discord.js';
-import type { Identifier } from '../../../../identity/Identifier.js';
 import type { MiddlewareLinkedList } from '../../../../middleware/list/MiddlewareLinkedList.js';
+import type { SessionEndCode } from '../../end/SessionEndCode';
 import type { SessionEndData } from '../../end/SessionEndData';
 import type { SessionErrorHandler } from '../../error/SessionErrorHandler.js';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction.js';
@@ -67,7 +67,7 @@ export interface SessionExecutor {
   end(
     session: Session<unknown>,
     reason: string,
-    code: Identifier | number,
+    code: SessionEndCode,
     meta: SessionExecutionMeta,
   ): Awaitable<SessionEndData<unknown>>;
 

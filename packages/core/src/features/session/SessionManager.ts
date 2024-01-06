@@ -25,11 +25,11 @@
 import type { Awaitable, ClientEvents, Events } from 'discord.js';
 
 import type { BotAware } from '../../bot/BotAware.js';
-import type { Identifier } from '../../identity/Identifier';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber.js';
 import type { SessionCustomIdCodec } from './customId/SessionCustomIdCodec.js';
+import type { SessionEndCode } from './end/SessionEndCode';
 import type { SessionEventArgs } from './events/SessionEvent.js';
 import type { SessionExecutor } from './execution/executor/SessionExecutor.js';
 import type { SessionExecutionMeta } from './execution/meta/SessionExecutionMeta.js';
@@ -64,7 +64,7 @@ export interface SessionManager extends BotAware, BotLifecycleObserver {
   end(
     session: Session<unknown>,
     reason: string,
-    code: Identifier | number,
+    code: SessionEndCode,
     meta?: SessionExecutionMeta,
   ): Awaitable<this>;
 

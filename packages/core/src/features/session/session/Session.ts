@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,8 @@
 import type { Awaitable } from 'discord.js';
 import type { BotAware } from '../../../bot/BotAware.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
-import type { Identifier } from '../../../identity/Identifier.js';
 import type { Metadatable } from '../../../meta/Metadatable.js';
+import type { SessionEndCode } from '../end/SessionEndCode';
 import type { SessionEndData } from '../end/SessionEndData';
 import type { SessionExecutionMeta } from '../execution/meta/SessionExecutionMeta.js';
 import type { SessionStartFilter } from '../filter/SessionStartFilter.js';
@@ -73,7 +73,7 @@ export interface Session<Result>
    */
   onEnd(
     reason: string,
-    code: Identifier | number,
+    code: SessionEndCode,
     meta: SessionExecutionMeta,
   ): Awaitable<void>;
 

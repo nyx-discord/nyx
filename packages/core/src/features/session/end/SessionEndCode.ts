@@ -22,11 +22,7 @@
  * SOFTWARE.
  */
 
-import type { SessionEndCode } from './SessionEndCode';
+import type { Identifier } from '../../../identity/Identifier';
 
-/** Type of data about a session's end. */
-export type SessionEndData<Result> = {
-  reason: string;
-  code: SessionEndCode;
-  result: Result | null;
-};
+/** Type of code of a session's end. */
+export type SessionEndCode = Identifier | number;

@@ -22,5 +22,7 @@
  * SOFTWARE.
  */
 
+import type { SessionEndCode } from './SessionEndCode';
+
 /** Conventional end code for sessions that ended by themselves. */
-export const SessionSelfEndCode = Symbol('SelfEnded');
+export const SessionSelfEndCode: SessionEndCode = Symbol('SelfEnded');
