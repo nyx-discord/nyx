@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 import type { Awaitable, ClientEvents, Events } from 'discord.js';
 
 import type { BotAware } from '../../bot/BotAware.js';
+import type { Identifier } from '../../identity/Identifier';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber.js';
@@ -63,7 +64,7 @@ export interface SessionManager extends BotAware, BotLifecycleObserver {
   end(
     session: Session<unknown>,
     reason: string,
-    code: number,
+    code: Identifier | number,
     meta?: SessionExecutionMeta,
   ): Awaitable<this>;
 
