@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import type {
   NyxBot,
   ReadonlyMetaCollection,
   Session,
+  SessionCustomIdCodec,
   SessionEndData,
   SessionExecutionMeta,
   SessionStartFilter,
@@ -38,7 +39,11 @@ import type {
   SessionUpdateFilter,
   SessionUpdateInteraction,
 } from '@nyx-discord/core';
-import { AssertionError, SessionStateEnum } from '@nyx-discord/core';
+import {
+  AssertionError,
+  SessionSelfEndCode,
+  SessionStateEnum,
+} from '@nyx-discord/core';
 import type {
   AnySelectMenuInteraction,
   Awaitable,
@@ -67,6 +72,8 @@ export abstract class AbstractSession<Result = void>
 
   protected readonly ttl: number = AbstractSession.DefaultTTL;
 
+  protected readonly codec: SessionCustomIdCodec;
+
   protected readonly meta: MetaCollection = new Collection<
     Identifier,
     unknown
@@ -86,7 +93,8 @@ export abstract class AbstractSession<Result = void>
     this.id = id;
     this.startInteraction = startInteraction;
 
-    this.customId = bot.sessions.getCustomIdCodec().createCustomIdBuilder(this);
+    this.codec = bot.sessions.getCustomIdCodec();
+    this.customId = this.codec.createCustomIdBuilder(this);
     if (ttl !== undefined) this.ttl = ttl;
   }
 
@@ -189,5 +197,9 @@ export abstract class AbstractSession<Result = void>
     _meta: SessionExecutionMeta,
   ): boolean | Promise<boolean> {
     throw new NotImplementedError();
+  }
+
+  protected async selfEnd(reason: string): Promise<void> {
+    await this.bot.sessions.end(this, reason, SessionSelfEndCode);
   }
 }
