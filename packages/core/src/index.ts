@@ -113,6 +113,7 @@ export * from './features/session/customId/PaginationCustomIdBuilder';
 export * from './features/session/customId/SessionCustomIdCodec';
 export * from './features/session/end/SessionEndData';
 export * from './features/session/end/SessionExpiredCode';
+export * from './features/session/end/SessionSelfEndCode';
 export * from './features/session/error/SessionErrorHandler';
 export * from './features/session/errors/AbstractSessionError';
 export * from './features/session/errors/SessionStartError';
