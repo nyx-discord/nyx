@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -212,6 +212,10 @@ export class DefaultSessionManager implements SessionManager {
       interaction,
       metadata,
     );
+
+    if (session.getState() === SessionStateEnum.Ended) {
+      return true;
+    }
 
     if (updateTtl) {
       await this.repository.setTTL(session.getId(), session.getTTL());
