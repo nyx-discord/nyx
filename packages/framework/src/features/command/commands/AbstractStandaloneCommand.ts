@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -98,7 +98,7 @@ export abstract class AbstractStandaloneCommand
     return bitmask.toString(10);
   }
 
-  public getReferenceData(): StandaloneCommandReferenceData {
+  public toReferenceData(): StandaloneCommandReferenceData {
     return {
       type: ResolvedCommandType.StandaloneCommand,
       root: this.data.name,
