@@ -111,6 +111,7 @@ export * from './features/schedule/schedule/Schedule';
 export * from './features/session/SessionManager';
 export * from './features/session/customId/PaginationCustomIdBuilder';
 export * from './features/session/customId/SessionCustomIdCodec';
+export * from './features/session/end/SessionEndCode';
 export * from './features/session/end/SessionEndData';
 export * from './features/session/end/SessionExpiredCode';
 export * from './features/session/end/SessionSelfEndCode';
