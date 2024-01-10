@@ -44,7 +44,7 @@ jobs:
       # Needed because if only @framework changes, @core won't be built
       # and the compilation of @framework will fail.
       - name: Build core
-        run: pnpm run build:core
+        run: pnpm --filter core run build
 
       - name: Run versioning
         run: |
