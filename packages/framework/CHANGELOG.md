@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.4](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.3...@nyx-discord/framework@1.2.4) (2024-01-10)
+
+### Bug Fixes
+
+- rename AbstractStandaloneCommand[#get](https://github.com/nyx-discord/nyx/issues/get)ReferenceData() to [#to](https://github.com/nyx-discord/nyx/issues/to)ReferenceData() ([359f6f9](https://github.com/nyx-discord/nyx/commit/359f6f99b8efe331ceba795557077670720d8219))
+
 ## [1.2.3](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.2...@nyx-discord/framework@1.2.3) (2024-01-06)
 
 **Note:** Version bump only for package @nyx-discord/framework

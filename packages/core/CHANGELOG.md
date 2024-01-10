@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.2.2...@nyx-discord/core@1.2.3) (2024-01-10)
+
+### Bug Fixes
+
+- add missing export to core index.ts ([b671889](https://github.com/nyx-discord/nyx/commit/b671889e8db177288d6d55bc99f559f36df7b903))
+
 ## [1.2.2](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.2.1...@nyx-discord/core@1.2.2) (2024-01-06)
 
 **Note:** Version bump only for package @nyx-discord/core
