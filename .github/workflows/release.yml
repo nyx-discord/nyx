@@ -41,6 +41,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      # Needed because if only @framework changes, @core won't be built
+      # and the compilation of @framework will fail.
+      - name: Build core
+        run: pnpm run build:core
+
       - name: Run versioning
         run: |
           git config --global user.email "${GIT_AUTHOR_EMAIL}"
