@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,10 +45,9 @@ export class ActionRowList<ComponentData extends ActionRowComponentData> {
   protected readonly rows: ActionRowWrapper<ComponentData>[];
 
   constructor(...data: ActionRowData<ComponentData>[]) {
-    this.rows = data
-      .map((row) => row.components)
-      .flat(1)
-      .map((row) => new ActionRowWrapper<ComponentData>(row));
+    this.rows = data.map(
+      (row) => new ActionRowWrapper<ComponentData>(...row.components),
+    );
   }
 
   /** Creates an ActionRowList from a {@link Message}. */
