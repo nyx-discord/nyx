@@ -38,7 +38,7 @@ export class BasicCustomIdCodec<Serialized extends Identifiable<string>>
 {
   public static readonly DefaultSeparator: string = '႞';
 
-  public static readonly DefaultDataSeparator: string = '_';
+  public static readonly DefaultDataSeparator: string = '୵';
 
   protected readonly namespace: string;
 
