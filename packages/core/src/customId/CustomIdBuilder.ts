@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,13 +33,11 @@ export interface CustomIdBuilderOptions {
 export class CustomIdBuilder {
   public static readonly LengthLimit: number = 100;
 
-  public static readonly DefaultSeparator: string = '∎';
-
   /** The input tokens used to build the customId. */
   protected readonly tokens: string[] = [];
 
   /** The string used to separate tokens when joining the string together. */
-  protected separator = CustomIdBuilder.DefaultSeparator;
+  protected readonly separator;
 
   constructor(options: CustomIdBuilderOptions) {
     this.separator = options.separator;
@@ -54,7 +52,13 @@ export class CustomIdBuilder {
 
   /** Pushes a value to this builder's {@link tokens}. */
   public push(...values: (string | number)[]): this {
-    this.tokens.push(...values.map((value) => value.toString()));
+    this.tokens.push(
+      ...values.map((value) => {
+        const string = value.toString();
+        this.validate(string);
+        return string;
+      }),
+    );
     return this;
   }
 
@@ -83,8 +87,9 @@ export class CustomIdBuilder {
         `Token at index ${index} already exists.`,
       );
     }
-
-    this.tokens[index] = value.toString();
+    const string = value.toString();
+    this.validate(string);
+    this.tokens[index] = string;
 
     return this;
   }
@@ -135,5 +140,15 @@ export class CustomIdBuilder {
 
   public toString(): string {
     return this.build();
+  }
+
+  protected validate(token: string) {
+    if (token.includes(this.separator)) {
+      throw new IllegalDuplicateError(
+        this.separator,
+        token,
+        'Cannot push a token that contains the separator.',
+      );
+    }
   }
 }

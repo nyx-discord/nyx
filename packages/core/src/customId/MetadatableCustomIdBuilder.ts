@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -83,7 +83,13 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
 
   /** Pushes a value to this builder's {@link metadata}. */
   public pushMeta(...values: (string | number)[]): this {
-    this.metadata.push(...values.map((value) => value.toString()));
+    this.metadata.push(
+      ...values.map((value) => {
+        const string = value.toString();
+        this.validate(string);
+        return string;
+      }),
+    );
     return this;
   }
 
@@ -100,8 +106,9 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
         `Metadata token at index ${index} already exists.`,
       );
     }
-
-    this.tokens[index] = value.toString();
+    const string = value.toString();
+    this.validate(string);
+    this.tokens[index] = string;
 
     return this;
   }
@@ -140,5 +147,15 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
     const joinedTokens = super.build();
 
     return `${dataString}${this.separator}${joinedTokens}`;
+  }
+
+  protected override validate(value: string): void {
+    if (value.includes(this.dataSeparator)) {
+      throw new AssertionError(
+        `The value "${value}" cannot contain the data separator "${this.dataSeparator}".`,
+      );
+    }
+
+    super.validate(value);
   }
 }
