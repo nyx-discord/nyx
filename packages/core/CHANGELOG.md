@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.2.3...@nyx-discord/core@1.3.0) (2024-01-14)
+
+### Features
+
+- validate strings on CustomIdBuilders before pushing ([997a90d](https://github.com/nyx-discord/nyx/commit/997a90d57fd4a3f566bfecd3ee2a52b44f2d0efe))
+
 ## [1.2.3](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.2.2...@nyx-discord/core@1.2.3) (2024-01-10)
 
 ### Bug Fixes

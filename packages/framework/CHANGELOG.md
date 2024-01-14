@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.5](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.4...@nyx-discord/framework@1.2.5) (2024-01-14)
+
+### Bug Fixes
+
+- fix ActionRowList constructor mapping every component to a new row ([f710a83](https://github.com/nyx-discord/nyx/commit/f710a836ca5d591003f8f46c87c2c8a255d0112c))
+
 ## [1.2.4](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.3...@nyx-discord/framework@1.2.4) (2024-01-10)
 
 ### Bug Fixes
