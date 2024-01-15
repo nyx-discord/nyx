@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -102,7 +102,12 @@ export class DefaultCommandRepository implements CommandRepository {
     if (command.isStandaloneCommand()) {
       const existentStandaloneCommand = this.commands.find(
         (registeredCommand) => {
-          if (!registeredCommand.isStandaloneCommand()) return false;
+          if (
+            !registeredCommand.isStandaloneCommand()
+            || registeredCommand.getData().name !== command.getData().name
+          ) {
+            return false;
+          }
 
           const commandContexts = command.getContexts();
           const registeredCommandContexts = registeredCommand.getContexts();
@@ -116,7 +121,7 @@ export class DefaultCommandRepository implements CommandRepository {
         throw new IllegalDuplicateError(
           existentStandaloneCommand,
           command,
-          `The command '${command.constructor.name}' wasn't added. Another command '${existentStandaloneCommand.constructor.name}' already exists with that ID.`,
+          `The command '${command.constructor.name}' wasn't added. Another standalone command '${existentStandaloneCommand.constructor.name}' of the same name already exists that supports its same contexts.`,
         );
       }
     }
