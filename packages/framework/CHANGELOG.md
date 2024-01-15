@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.6](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.5...@nyx-discord/framework@1.2.6) (2024-01-15)
+
+### Bug Fixes
+
+- fix DefaultCommandRepository standalone command duplicate search ([8b207a6](https://github.com/nyx-discord/nyx/commit/8b207a68b74cc3c8162a4e3dcf95d75c5becd65a))
+
 ## [1.2.5](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.4...@nyx-discord/framework@1.2.5) (2024-01-14)
 
 ### Bug Fixes
