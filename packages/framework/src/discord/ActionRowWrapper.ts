@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ type ComponentEditCallback<ComponentData extends ActionRowComponentData> = (
 
 /** An object for easy manipulation of an action row component. */
 export class ActionRowWrapper<ComponentData extends ActionRowComponentData> {
-  protected readonly components: ComponentData[];
+  protected components: ComponentData[];
 
   constructor(...components: ComponentData[]) {
     this.components = components;
@@ -91,6 +91,43 @@ export class ActionRowWrapper<ComponentData extends ActionRowComponentData> {
   public has(where: (component: ComponentData) => boolean): boolean {
     const found = this.components.find(where);
     return !!found;
+  }
+
+  public map<T>(callback: (component: ComponentData) => T): T[] {
+    return this.components.map(callback);
+  }
+
+  public filter(
+    where: (component: ComponentData) => boolean,
+  ): ActionRowWrapper<ComponentData> {
+    return new ActionRowWrapper<ComponentData>(
+      ...this.components.filter(where),
+    );
+  }
+
+  public forEach(callback: (component: ComponentData) => void): this {
+    this.components.forEach(callback);
+    return this;
+  }
+
+  public find(
+    where: (component: ComponentData) => boolean,
+  ): ComponentData | undefined {
+    return this.components.find(where);
+  }
+
+  public remove(where: (component: ComponentData) => boolean): this {
+    this.components = this.components.filter((component) => !where(component));
+    return this;
+  }
+
+  public removeAll(): this {
+    this.components = [];
+    return this;
+  }
+
+  public getComponents(): ReadonlyArray<ComponentData> {
+    return this.components;
   }
 
   public toRowData(): ActionRowData<ComponentData> {
