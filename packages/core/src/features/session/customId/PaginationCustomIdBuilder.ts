@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -86,6 +86,26 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
 
   public getPage(): number | null {
     return this.page;
+  }
+
+  public setToNextPage(): this {
+    if (this.page === null) return this;
+
+    return this.setPage(this.page + 1);
+  }
+
+  public setToPreviousPage(): this {
+    if (this.page === null) return this;
+
+    return this.setPage(this.page - 1);
+  }
+
+  public cloneSetNextPage(): this {
+    return this.clone().setToNextPage() as this;
+  }
+
+  public cloneSetPreviousPage(): this {
+    return this.clone().setToPreviousPage() as this;
   }
 
   public override clone(): PaginationCustomIdBuilder {
