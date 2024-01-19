@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.6...@nyx-discord/framework@1.3.0) (2024-01-19)
+
+### Features
+
+- add ActionRowWrapper[#map](https://github.com/nyx-discord/nyx/issues/map)(), [#filter](https://github.com/nyx-discord/nyx/issues/filter)(), [#for](https://github.com/nyx-discord/nyx/issues/for)Each(), [#find](https://github.com/nyx-discord/nyx/issues/find)(), [#remove](https://github.com/nyx-discord/nyx/issues/remove)(), [#remove](https://github.com/nyx-discord/nyx/issues/remove)All() and [#get](https://github.com/nyx-discord/nyx/issues/get)Components() ([0c34707](https://github.com/nyx-discord/nyx/commit/0c3470791ef5a9503b0daa2d91072d713623e88e))
+
+### Bug Fixes
+
+- rename AbstractStagePaginationSession[#on](https://github.com/nyx-discord/nyx/issues/on)Start() to AbstractStagePaginationSession[#start](https://github.com/nyx-discord/nyx/issues/start)() ([1d0c031](https://github.com/nyx-discord/nyx/commit/1d0c0316127dabb50e695c880f69ce6089941acf))
+
 ## [1.2.6](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.5...@nyx-discord/framework@1.2.6) (2024-01-15)
 
 ### Bug Fixes
