@@ -74,17 +74,14 @@ export class ActionRowWrapper<ComponentData extends ActionRowComponentData> {
     callback: ComponentEditCallback<ComponentData>,
     many = true,
   ): this {
-    let appliableComponents = this.components.filter((component) =>
-      where(component),
-    );
-    if (!many) {
-      appliableComponents = appliableComponents.length
-        ? [appliableComponents[0]]
-        : [];
+    for (const component of this.components) {
+      if (where(component)) {
+        const index = this.components.indexOf(component);
+        this.components[index] = callback(component);
+        if (!many) break;
+      }
     }
-    for (const [index, component] of appliableComponents.entries()) {
-      this.components[index] = callback(component);
-    }
+
     return this;
   }
 
