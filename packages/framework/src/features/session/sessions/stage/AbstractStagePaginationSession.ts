@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@ export abstract class AbstractStagePaginationSession<Result>
 {
   protected abstract readonly stages: SessionStageArray;
 
-  public handleStart(meta: SessionExecutionMeta): Awaitable<void> {
+  public start(meta: SessionExecutionMeta): Awaitable<void> {
     const stage = this.stages[0];
 
     return stage.onStart(this.startInteraction, meta);
