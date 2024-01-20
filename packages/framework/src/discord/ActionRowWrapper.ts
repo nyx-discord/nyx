@@ -30,7 +30,12 @@ import type {
   MessageActionRowComponentData,
   ModalActionRowComponentBuilder,
 } from 'discord.js';
-import { ActionRowBuilder, ComponentType } from 'discord.js';
+import {
+  ActionRowBuilder,
+  ButtonStyle,
+  ComponentType,
+  isJSONEncodable,
+} from 'discord.js';
 
 type ComponentEditCallback<ComponentData extends ActionRowComponentData> = (
   component: ComponentData,
@@ -67,6 +72,38 @@ export class ActionRowWrapper<ComponentData extends ActionRowComponentData> {
       this.components[index] = callback(component);
     }
     return this;
+  }
+
+  public editComponent(
+    customId: string,
+    callback: ComponentEditCallback<ComponentData>,
+  ): this {
+    return this.editWhere(
+      (component) => {
+        if (isJSONEncodable(component)) {
+          const json = component.toJSON();
+          if (
+            json.type === ComponentType.Button
+            && json.style === ButtonStyle.Link
+          ) {
+            return false;
+          }
+
+          return json.custom_id === customId;
+        } else {
+          if (
+            component.type === ComponentType.Button
+            && component.style === ButtonStyle.Link
+          ) {
+            return false;
+          }
+
+          return component.customId === customId;
+        }
+      },
+      callback,
+      false,
+    );
   }
 
   public editWhere(
