@@ -34,7 +34,7 @@
     "lint": "eslint ./src --fix",
     "format": "prettier --write ./src",
     "barrel": "barrelsby --directory ./src --delete --singleQuotes",
-    "build": "tsup-node src/index.ts && tsc --emitDeclarationOnly --declaration --declarationDir ./dist",
+    "build": "rimraf dist && tsup-node src/index.ts && tsc --emitDeclarationOnly --declaration --declarationDir ./dist",
     "prepublishOnly": "pnpm run build"
   },
   "keywords": [
