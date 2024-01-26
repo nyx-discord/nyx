@@ -98,4 +98,16 @@ export class BasicCustomIdCodec<Serialized extends Identifiable<string>>
 
     return builder ? builder.getObjectId() : null;
   }
+
+  public getNamespace(): string {
+    return this.namespace;
+  }
+
+  public getSeparator(): string {
+    return this.separator;
+  }
+
+  public getDataSeparator(): string {
+    return this.dataSeparator;
+  }
 }
