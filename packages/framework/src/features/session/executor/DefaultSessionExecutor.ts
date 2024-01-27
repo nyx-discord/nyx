@@ -123,7 +123,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
     }
 
     try {
-      await session.start(meta);
+      await session.onStart(meta);
 
       return true;
     } catch (error) {
@@ -176,7 +176,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
     }
 
     try {
-      return await session.update(interaction, meta);
+      return await session.onUpdate(interaction, meta);
     } catch (error) {
       await this.updateErrorHandler.handle(
         error as object,

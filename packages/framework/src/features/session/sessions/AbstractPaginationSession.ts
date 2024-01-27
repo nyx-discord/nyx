@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -62,7 +62,7 @@ export abstract class AbstractPaginationSession<Result>
     this.currentPage = 0;
   }
 
-  public override async update(
+  public override async onUpdate(
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,
   ): Promise<boolean> {
@@ -70,7 +70,7 @@ export abstract class AbstractPaginationSession<Result>
 
     /** Not a page switch interaction, handle as normal. */
     if (newPage === null) {
-      return super.update(interaction, meta);
+      return super.onUpdate(interaction, meta);
     }
 
     /** Switch page interaction. */

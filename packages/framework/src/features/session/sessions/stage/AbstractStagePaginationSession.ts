@@ -40,13 +40,13 @@ export abstract class AbstractStagePaginationSession<Result>
 {
   protected abstract readonly stages: SessionStageArray;
 
-  public start(meta: SessionExecutionMeta): Awaitable<void> {
+  public onStart(meta: SessionExecutionMeta): Awaitable<void> {
     const stage = this.stages[0];
 
     return stage.onStart(this.startInteraction, meta);
   }
 
-  public override async update(
+  public override async onUpdate(
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,
   ): Promise<boolean> {

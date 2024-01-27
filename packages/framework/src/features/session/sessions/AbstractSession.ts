@@ -98,7 +98,11 @@ export abstract class AbstractSession<Result = void>
     if (ttl !== undefined) this.ttl = ttl;
   }
 
-  public async update(
+  public async start(): Promise<void> {
+    await this.bot.sessions.start(this);
+  }
+
+  public async onUpdate(
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,
   ): Promise<boolean> {
@@ -107,7 +111,7 @@ export abstract class AbstractSession<Result = void>
     return this.handleSelectMenu(interaction, meta);
   }
 
-  public abstract start(meta: SessionExecutionMeta): Awaitable<void>;
+  public abstract onStart(meta: SessionExecutionMeta): Awaitable<void>;
 
   public abstract onEnd(
     reason: string,
