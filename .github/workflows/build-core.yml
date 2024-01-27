@@ -2,7 +2,6 @@ name: Build Core
 
 on:
   push:
-    branches: [ main ]
     paths:
       - packages/core/**
   workflow_dispatch:
