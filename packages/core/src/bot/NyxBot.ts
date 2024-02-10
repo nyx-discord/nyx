@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,12 +31,12 @@ import type { ScheduleManager } from '../features/schedule/ScheduleManager.js';
 import type { SessionManager } from '../features/session/SessionManager.js';
 import type { Identifiable } from '../identity/Identifiable.js';
 import type { Identifier } from '../identity/Identifier';
-import type { Logger } from '../log/Logger.js';
+import type { NyxLogger } from '../log/NyxLogger';
 import type { BotService } from '../service/BotService.js';
 
 /** A bot of the nyx framework. */
 export interface NyxBot<
-  ConcreteLogger extends Logger = Logger,
+  ConcreteLogger extends NyxLogger = NyxLogger,
   ConcreteCommandManager extends CommandManager = CommandManager,
   ConcreteEventManager extends EventManager = EventManager,
   ConcreteScheduleManager extends ScheduleManager = ScheduleManager,

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@ import type {
   CommandManager,
   EventManager,
   Identifier,
-  Logger,
   NyxBot,
+  NyxLogger,
   PluginManager,
   ScheduleManager,
   SessionManager,
@@ -44,7 +44,7 @@ import { DefaultSessionManager } from '../features/session/DefaultSessionManager
 import { DefaultBotService } from '../service/DefaultBotService.js';
 
 type BotOptionsWithDefaults<
-  ConcreteLogger extends Logger,
+  ConcreteLogger extends NyxLogger,
   ConcreteCommandManager extends CommandManager,
   ConcreteEventManager extends EventManager,
   ConcreteScheduleManager extends ScheduleManager,
@@ -77,7 +77,7 @@ type BotOptionsWithDefaults<
 
 /** The main Bot class. */
 export class Bot<
-  ConcreteLogger extends Logger,
+  ConcreteLogger extends NyxLogger,
   ConcreteCommandManager extends CommandManager,
   ConcreteEventManager extends EventManager,
   ConcreteScheduleManager extends ScheduleManager,
@@ -135,7 +135,7 @@ export class Bot<
   }
 
   public static create<
-    ConcreteLogger extends Logger,
+    ConcreteLogger extends NyxLogger,
     ConcreteCommandManager extends CommandManager,
     ConcreteEventManager extends EventManager,
     ConcreteScheduleManager extends ScheduleManager,

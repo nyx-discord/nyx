@@ -162,7 +162,7 @@ export * from './list/LinkedListNode';
 export * from './list/SortedLinkedList';
 export * from './lock/Lockable';
 export * from './lock/LockedObjectError';
-export * from './log/Logger';
+export * from './log/NyxLogger';
 export * from './meta/MetaCollection';
 export * from './meta/Metadatable';
 export * from './meta/ReadonlyMetaCollection';

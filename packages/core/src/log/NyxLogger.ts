@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
  */
 
 /** An object used by a bot to log information. */
-export interface Logger {
+export interface NyxLogger {
   log: (...args: any[]) => unknown;
   trace: (...args: any[]) => unknown;
   debug: (...args: any[]) => unknown;
