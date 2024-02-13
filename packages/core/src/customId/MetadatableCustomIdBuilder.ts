@@ -67,7 +67,7 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
     const tokens = string.split(separator);
     if (!tokens.length) return null;
 
-    const [data, ...extraTokens] = tokens;
+    const [data, ...extraTokens] = tokens.length === 2 ? [tokens[0]] : tokens;
     const [namespace, objectId, ...metadata] = data.split(metadataSeparator);
     if (!namespace || !objectId) return null;
 
