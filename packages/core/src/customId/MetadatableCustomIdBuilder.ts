@@ -108,13 +108,13 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
     }
     const string = value.toString();
     this.validate(string);
-    this.tokens[index] = string;
+    this.metadata[index] = string;
 
     return this;
   }
 
   public getMetaAt(index: number): string | null {
-    return this.tokens[index] ?? null;
+    return this.metadata[index] ?? null;
   }
 
   public getNamespace(): string {
