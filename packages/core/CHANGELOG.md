@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.3.0...@nyx-discord/core@1.4.0) (2024-02-13)
+
+### Features
+
+- add PaginationCustomIdBuilder next and previous page methods ([5f7abad](https://github.com/nyx-discord/nyx/commit/5f7abad5ab7e7db8096d2d63e7a37e8d95783ee9))
+
+### Bug Fixes
+
+- fix MetadatableCustomIdBuilder meta methods changing non metadata tokens ([a0bb9d2](https://github.com/nyx-discord/nyx/commit/a0bb9d224c5da16e86b674363650ac475747c561))
+
 ## [1.3.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.2.3...@nyx-discord/core@1.3.0) (2024-01-14)
 
 ### Features
