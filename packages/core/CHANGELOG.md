@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.5.0...@nyx-discord/core@1.5.1) (2024-02-19)
+
+### Bug Fixes
+
+- fix MetadatableCustomIdBuilder omitting non empty token ([4d5d4c5](https://github.com/nyx-discord/nyx/commit/4d5d4c5f1ffba0662383507b2acb752c93d29272))
+
 ## [1.5.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.4.0...@nyx-discord/core@1.5.0) (2024-02-19)
 
 ### Features

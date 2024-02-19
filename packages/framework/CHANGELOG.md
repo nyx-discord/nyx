@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.5.0...@nyx-discord/framework@1.5.1) (2024-02-19)
+
+**Note:** Version bump only for package @nyx-discord/framework
+
 ## [1.5.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.4.0...@nyx-discord/framework@1.5.0) (2024-02-19)
 
 ### Features
