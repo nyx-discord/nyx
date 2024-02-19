@@ -277,6 +277,17 @@ export class DefaultSessionManager implements SessionManager {
     return this;
   }
 
+  public resolve(
+    interaction: SessionUpdateInteraction,
+  ): Promise<Session<unknown> | null> {
+    const { customId } = interaction;
+    const sessionCustomId = this.codec.deserializeToObjectId(customId);
+
+    if (!sessionCustomId) return Promise.resolve(null);
+
+    return this.repository.get(sessionCustomId);
+  }
+
   public async setUpdateSubscriber(
     subscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>,
   ): Promise<this> {
