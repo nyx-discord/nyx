@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.4.0...@nyx-discord/core@1.5.0) (2024-02-19)
+
+### Features
+
+- add SessionManager[#resolve](https://github.com/nyx-discord/nyx/issues/resolve)() ([99007a1](https://github.com/nyx-discord/nyx/commit/99007a1a4d6dba4df9a6e08f2831c59410b09381))
+
+### Bug Fixes
+
+- filter empty string if there's only metadata in a built MetadatableCustomId ([126d334](https://github.com/nyx-discord/nyx/commit/126d3349d7c6a939c881cb8afe814612618b9d8d))
+
 ## [1.4.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.3.0...@nyx-discord/core@1.4.0) (2024-02-13)
 
 ### Features

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.4.0...@nyx-discord/framework@1.5.0) (2024-02-19)
+
+### Features
+
+- add SessionManager[#resolve](https://github.com/nyx-discord/nyx/issues/resolve)() ([99007a1](https://github.com/nyx-discord/nyx/commit/99007a1a4d6dba4df9a6e08f2831c59410b09381))
+- make AbstractSession[#self](https://github.com/nyx-discord/nyx/issues/self)End() reason optional ([9908b38](https://github.com/nyx-discord/nyx/commit/9908b384073a152559c4c86ace0434369a59b176))
+
+### Bug Fixes
+
+- handle undefined return type in SessionRepository ([9e8bea9](https://github.com/nyx-discord/nyx/commit/9e8bea92abe8862d5e6feb4d3a627d6e878d61e6))
+
 ## [1.4.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.3.0...@nyx-discord/framework@1.4.0) (2024-02-13)
 
 ### Features

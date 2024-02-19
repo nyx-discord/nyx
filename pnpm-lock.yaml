@@ -166,7 +166,7 @@ importers:
         specifier: 1.4.1
         version: 1.4.1
       '@nyx-discord/core':
-        specifier: ^1.4.0
+        specifier: ^1.5.0
         version: link:../core
       cron:
         specifier: 3.0.0
