@@ -68,6 +68,11 @@ export interface SessionManager extends BotAware, BotLifecycleObserver {
     meta?: SessionExecutionMeta,
   ): Awaitable<this>;
 
+  /** Resolves an {@link Session} given a {@link SessionUpdateInteraction}. */
+  resolve(
+    interaction: SessionUpdateInteraction,
+  ): Awaitable<Session<unknown> | null>;
+
   /** Returns the event subscriber for {@link SessionUpdateInteraction}. */
   getUpdateSubscriber(): EventSubscriber<
     ClientEvents,
