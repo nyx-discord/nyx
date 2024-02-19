@@ -199,7 +199,9 @@ export abstract class AbstractSession<Result = void>
     throw new NotImplementedError();
   }
 
-  protected async selfEnd(reason: string): Promise<void> {
-    await this.bot.sessions.end(this, reason, SessionSelfEndCode);
+  protected async selfEnd(reason?: string): Promise<void> {
+    const endReason = reason ?? SessionSelfEndCode.toString();
+
+    await this.bot.sessions.end(this, endReason, SessionSelfEndCode);
   }
 }
