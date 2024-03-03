@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -90,6 +90,7 @@ export class DefaultCommandManager implements CommandManager {
     bot: NyxBot,
     client: Client,
     clientBus: EventBus<ClientEvents>,
+    refreshCommands: boolean,
     options?: Partial<CommandManagerOptions>,
   ): CommandManager {
     const constructorOptions: Partial<CommandManagerOptions> = options ?? {};
@@ -104,7 +105,10 @@ export class DefaultCommandManager implements CommandManager {
     }
 
     if (!constructorOptions.repository) {
-      constructorOptions.repository = DefaultCommandRepository.create(client);
+      constructorOptions.repository = DefaultCommandRepository.create(
+        client,
+        refreshCommands,
+      );
     }
 
     if (!constructorOptions.executor) {

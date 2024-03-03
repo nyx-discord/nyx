@@ -60,16 +60,22 @@ export class DefaultCommandRepository implements CommandRepository {
 
   protected readonly client: Client;
 
-  constructor(client: Client) {
-    this.client = client;
-  }
+  protected readonly refreshCommands: boolean;
 
-  public static create(client: Client): CommandRepository {
-    return new DefaultCommandRepository(client);
+  constructor(client: Client, refreshCommands: boolean) {
+    this.client = client;
+    this.refreshCommands = refreshCommands;
   }
 
   public get size() {
     return this.commands.size;
+  }
+
+  public static create(
+    client: Client,
+    refreshCommands: boolean,
+  ): CommandRepository {
+    return new DefaultCommandRepository(client, refreshCommands);
   }
 
   public onSetup(): void {
@@ -77,6 +83,8 @@ export class DefaultCommandRepository implements CommandRepository {
   }
 
   public async onStart(): Promise<void> {
+    if (!this.refreshCommands) return;
+
     await this.refreshDiscord();
   }
 
