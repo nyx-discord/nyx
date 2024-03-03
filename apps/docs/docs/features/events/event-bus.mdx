@@ -2,9 +2,10 @@
 title: 📣 Event Buses
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # 📣 Event Buses
-
-
 
 `EventBuses` are objects responsible for containing and notifying subscribed `EventSubscribers` about events. These
 events can be emitted internally, typically via an EventEmitter, or externally, via `EventBus#emit()`.
@@ -63,7 +64,7 @@ await bot.events
 ```
 
 ```ts
-import { EventBus } from '@nyx-discord/core';
+import {EventBus} from '@nyx-discord/core';
 
 class MyInterfaceEventBus implements EventBus<MyEventsArgs> {
   // ...
