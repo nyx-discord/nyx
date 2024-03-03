@@ -2,8 +2,7 @@
 title: 📩 Event Subscribers
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+
 
 `EventSubscribers` are objects that are notified by an `EventBus` once a given event happens, and certain conditions
 specified by the subscriber happen.
@@ -471,19 +470,17 @@ meaning that external objects can read the collection, but not modify it.
 :::
 
 ```ts
-import { PriorityEnum } from '@nyx-discord/core';
-import type { PriorityEnum } from '@nyx-discord/core';
 import { AbstractEventSubscriber } from '@nyx-discord/framework';
 import { Collection } from '@discordjs/collection';
 
 class MyEventSubscriber extends AbstractEventSubscriber {
-protected readonly event = 'someEvent';
+  protected readonly event = 'someEvent';
 
-// highlight-start
-protected readonly meta = new Collection < Identifier, unknown > ([
-  ['someKey', 'someValue']
-]);
-// highlight-end
+  // highlight-start
+  protected readonly meta = new Collection<Identifier, unknown>([
+    ['someKey', 'someValue']
+  ]);
+  // highlight-end
 }
 
 // a plugin can now read it via:

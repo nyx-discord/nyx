@@ -4,8 +4,7 @@ title: 📣 Event Buses
 
 # 📣 Event Buses
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+
 
 `EventBuses` are objects responsible for containing and notifying subscribed `EventSubscribers` about events. These
 events can be emitted internally, typically via an EventEmitter, or externally, via `EventBus#emit()`.
@@ -42,13 +41,13 @@ You can create an event bus by either:
 import { BasicEventBus } from '@nyx-discord/framework';
 
 // Uses an AsyncEventDispatcher
-const asyncBus = BasicEventBus.createAsync(
+const asyncBus = BasicEventBus<MyEventsArgs>.createAsync(
   bot,
   Symbol('myAsyncBus'), // Bus ID
 );
 
 // Uses a SyncEventDispatcher
-const syncBus = BasicEventBus.createSync(
+const syncBus = BasicEventBus<MyEventsArgs>.createSync(
   bot,
   Symbol('mySyncBus'), // Bus ID
 );
@@ -66,7 +65,7 @@ await bot.events
 ```ts
 import { EventBus } from '@nyx-discord/core';
 
-class MyInterfaceEventBus implements EventBus {
+class MyInterfaceEventBus implements EventBus<MyEventsArgs> {
   // ...
 }
 
@@ -106,8 +105,8 @@ Read the [📩 Event Subscribers](./event-subscriber) documentation for more det
 To ensure type safety when emitting events, event buses take a generic type of `Record<string, unknown[]>`, that
 represents the events that the bus emits, and their arguments.
 
-A typed event bus will also cause a type error when trying to add a `EventSubscriber` whose arguments don't match any
-event that the bus emits.
+A typed event bus will also cause a type error when trying to add a `EventSubscriber` whose arguments for the
+event they listen don't match the event arguments on the bus.
 
 ```ts
 import { BasicEventBus } from '@nyx-discord/framework';
@@ -157,13 +156,6 @@ ticketBus
   // error-next-line
   .subscribe(invalidSubscriber);
 ```
-
-:::warning
-A current limitation is that the bus (on `EventBus#subscribe()`) will only check that there's an event that matches the
-given arguments. It will not check that the subscriber's event actually matches those types.
-
-It's advised that you create an abstract class for the subscriber you want, similar to the `AbstractDJSClientSubscriber`.
-:::
 
 ## 🔃 Subscriber Sorting
 
@@ -226,7 +218,7 @@ You can create such buses by either:
 import { BasicEventEmitterBus } from '@nyx-discord/framework';
 
 // Example using the client emitter
-const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArgs>(
+const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventsArgs>(
   bot,
   Symbol('ClientEventBus'),
   // highlight-next-line
@@ -234,7 +226,7 @@ const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArgs>(
 );
 
 // Example using a custom event emitter
-const myEventEmitterBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArgs>(
+const myEventEmitterBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventsArgs>(
   bot,
   Symbol('MyEventEmitterBus'),
   // highlight-next-line
@@ -254,7 +246,7 @@ await bot.events
 ```ts
 import { EventEmitterBus } from '@nyx-discord/core';
 
-class MyEventEmitterBus implements EventEmitterBus<MyEventArgs> {
+class MyEventEmitterBus implements EventEmitterBus<MyEventsArgs> {
   // ...
 }
 

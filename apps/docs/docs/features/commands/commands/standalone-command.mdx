@@ -71,34 +71,23 @@ await bot.commands.addCommand(command);
 
 Standalone commands can be executed via a slash command, or context menus (User or Message).
 
-Which of these "contexts" a standalone command supports is stored inside a `StandaloneCommandContextData` object,
-provided via `StandaloneCommand#getContexts()` (overriding `contexts` in `AbstractStandaloneCommand`).
+Which of these "contexts" a standalone command supports is provided by `StandaloneCommand#getContexts()`, which is an
+array of `ApplicationCommandType`.
 
 :::tip
-By default, a command can only be executed via a slash command. That is, a context data of:
-
-```json
-{
-  "ChatInput": true,
-  "Message": false,
-  "User": false
-}
-```
+By default, a command can only be executed via a slash command. That is, a context
+array of `[ApplicationCommandType.ChatInput]`.
 :::
 
 ### 🤖 ChatInput context (Slash Commands)
 
-A standalone command can be executed via a slash command if `StandaloneCommand#getContexts().ChatInput` is `true`. After
+A standalone command can be executed via a slash command if its contexts include `ApplicationCommandType.ChatInput`. After
 that, when a `ChatInputCommandInteraction` is received, it will trigger `StandaloneCommand#execute()`.
 
 ```ts
 class ChatInputContextCommand extends AbstractStandaloneCommand {
-  protected contexts: StandaloneCommandContextData = {
-    // highlight-next-line
-    ChatInput: true,
-    Message: false,
-    User: false,
-  }
+  // highlight-next-line
+  protected contexts = [ApplicationCommandType.ChatInput];
 
   public async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     await interaction.reply('Pong!');
@@ -108,17 +97,13 @@ class ChatInputContextCommand extends AbstractStandaloneCommand {
 
 ### 💬 Message context
 
-A standalone command can be executed via a slash command if `StandaloneCommand#getContexts().Message` is `true`. After
-that, when a `MessageContextMenuCommandInteraction` is received, it will trigger `StandaloneCommand#executeMessage()`.
+A standalone command can be executed via a message context menu if its contexts include `ApplicationCommandType.Message`.
+After that, when a `MessageContextMenuCommandInteraction` is received, it will trigger `StandaloneCommand#executeMessage()`.
 
 ```ts
 class MessageContextCommand extends AbstractStandaloneCommand {
-  protected contexts: StandaloneCommandContextData = {
-    ChatInput: false,
-    // highlight-next-line
-    Message: true,
-    User: false,
-  }
+  // highlight-next-line
+  protected contexts = [ApplicationCommandType.Message];
 
   public async executeMessage(interaction: MessageContextMenuCommandInteraction): Promise<void> {
     await interaction.reply('Pong!');
@@ -133,17 +118,13 @@ the [Discord Developer documentation on Message commands](https://discord.com/de
 
 ### 👤 User context
 
-A standalone command can be executed via a slash command if `StandaloneCommand#getContexts().User` is `true`. After
-that, when a `ChatInputCommandInteraction` is received, it will trigger `StandaloneCommand#executeUser()`.
+A standalone command can be executed via a user context menu if its contexts include `ApplicationCommandType.User`.
+After that, when a `ChatInputCommandInteraction` is received, it will trigger `StandaloneCommand#executeUser()`.
 
 ```ts
 class UserContextCommand extends AbstractStandaloneCommand {
-  protected contexts: StandaloneCommandContextData = {
-    ChatInput: false,
-    Message: false,
-    // highlight-next-line
-    User: true,
-  }
+  // highlight-next-line
+  protected contexts = [ApplicationCommandType.User];
 
   public async executeUser(interaction: UserContextMenuCommandInteraction): Promise<void> {
     await interaction.reply('Pong!');
