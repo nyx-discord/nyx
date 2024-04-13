@@ -34,7 +34,7 @@ Specifically, the session related objects are:
 * `SessionCustomIdCodec`: De/serializes session ids to/from customId strings, to create session components. This component allows you to create and manipulate `customIds` programatically, with no "magic values".
 * `SessionRepository`: Temporarily stores sessions until their TTL is over, and notifies the manager when that happens.
 * `SessionPromiseRepository`: Stores session promises that will be resolved once a given session ends.
-* `SessionExecutor`: Executes sessions, checking its `SessionMiddlewareLinkedList` and passing any errors to its `ErrorHandler`.
+* `SessionExecutor`: Executes sessions, checking its `SessionMiddlewareList` and passing any errors to its `ErrorHandler`.
 * `SessionUpdateSubscriber`: An [📩 Event Subscriber](../events/event-subscriber) that listens for interactions that can refer to sessions.
 * `EventBus`: An [📣 Event Bus](../events/event-bus) that emits session related events.
 
@@ -68,7 +68,7 @@ There are three utility session types that derive from the main `Session` interf
   `SessionExecutor#handleMissing()`, which will handle the interaction referring to a missing (probably expired)
   session. If it does exist, it continues.
   4. The `SessionManager` calls `SessionExecutor#update()` to handle the update, passing the interaction and session.
-  5. The `SessionExecutor` checks its `SessionMiddlewareLinkedList` which will allow or deny the execution.
+  5. The `SessionExecutor` checks its `SessionMiddlewareList` which will allow or deny the execution.
   This includes checking the filter on `Session#getUpdateFilter()`.
   6. If the execution is allowed, the session is updated via `Session#update()`, passing any errors to its
   `SessionUpdateErrorHandler`, and returning what `Session#update()` returns.
@@ -141,7 +141,7 @@ participant "SessionCustomIdCodec" as codec
 participant "SessionRepository" as repository
 participant "SessionExecutor" as executor
 participant "Session" as session
-participant "SessionMiddlewareLinkedList" as middleware
+participant "SessionMiddlewareList" as middleware
 participant "EventBus" as eventBus
 
 component -> subscriber : Emit interactionCreate

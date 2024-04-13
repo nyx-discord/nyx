@@ -11,7 +11,7 @@ The `SessionExecutor` is the object responsible for executing sessions. It's sto
 get it via `SessionManager#getExecutor()`.
 
 The executor manages that:
-* The respective `SessionMiddlewareLinkedList` passes the execution.
+* The respective `SessionMiddlewareList` passes the execution.
 * The session is executed with its respective arguments.
 * Any errors thrown by the session or middleware are caught, wrapped if needed, and redirected to the `ErrorHandler`.
 

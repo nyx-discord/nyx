@@ -25,10 +25,9 @@ It consists of:
 When being checked, a middleware is passed the command that is being checked and the arguments that would be
 used to call it. The middleware then replies with a `MiddlewareResponse`, which can either:
 
-* Allow the execution (`{ allowed: true }`), with either:
-* Making the linked list check the next middleware (`{ allowed: true, checkNext: true }`).
-* Forcing the chain to end (`{ allowed: true, checkNext: false }`).
-* Deny the execution (`{ allowed: false, checkNext: false }`).
+* Make the list check the next middleware: `{ allowed: true, checkNext: true }`.
+* Forcing the execution to end as with an allowed result: `{ allowed: true, checkNext: false }`.
+* Deny the execution: `{ allowed: false, checkNext: false }`.
 
 The `AbstractMiddleware`, has `protected` utility methods to generate these responses. Specifically, `this.true()`,
 `this.false()` and `this.forceTrue()`.
@@ -62,7 +61,7 @@ You can create your own middleware by either:
 import { AbstractCommandMiddleware } from '@nyx-discord/framework';
 
 class MyCommandMiddleware extends AbstractCommandMiddleware {
-  public check(command: ExecutableCommand<CommandData>, args: CommandExecutionArgs): MiddlewareResponse {
+  public check(command: ExecutableCommand<CommandData>, ...args: CommandExecutionArgs): MiddlewareResponse {
     return this.true();
   }
 }
@@ -94,7 +93,7 @@ bot.commands.getExecutor().getMiddleware().add(middleware);
 </Tabs>
 ```
 
-By default, the following middleware chain is used:
+By default, the following middleware list is used:
 
 * `CommandFilterCheckMiddleware` - See [🚧 Command Filters](#-command-filters).
 
