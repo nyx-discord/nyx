@@ -45,9 +45,9 @@
     "rimraf": "5.0.5",
     "tsc-files": "1.1.4",
     "tsup": "7.2.0",
-    "typedoc": "0.25.4",
+    "typedoc": "0.25.13",
     "typedoc-plugin-djs-links": "2.1.1",
     "typedoc-plugin-extras": "3.0.0",
-    "typescript": "5.3.2"
+    "typescript": "5.4.5"
   }
 }

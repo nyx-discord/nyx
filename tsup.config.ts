@@ -26,18 +26,12 @@ import { defineConfig } from 'tsup';
 
 // eslint-disable-next-line import/no-default-export
 export default defineConfig({
-  entry: {
-    '.': 'src/index.ts',
-  },
-  external: [],
-  noExternal: [],
+  entry: ['src/index.ts'],
   platform: 'node',
   target: 'es2022',
-  minify: false,
   splitting: false,
-  keepNames: true,
   sourcemap: true,
-  shims: true,
+  keepNames: true,
   cjsInterop: true,
   format: ['cjs', 'esm'],
   dts: true,
