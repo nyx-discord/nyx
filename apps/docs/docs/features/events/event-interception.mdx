@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 Event interception refers to blocking a subscriber from receiving an event. In nyx, there are two ways to do this:
 
-1. Add an `EventSubscriberMiddleware` to the `EventSubscriberMiddlewareLinkedList` in the `EventDispatcher` that handles
+1. Add an `EventSubscriberMiddleware` to the `SubscriberMiddlewareList` in the `EventDispatcher` that handles
 the event execution.
 2. Provide an `EventSubscriberFilter` in the `EventSubscriber` that receives the event.
 
@@ -17,7 +17,7 @@ Let's explore when and how to use each of these methods.
 
 ## 🚦 Subscriber Middlewares
 
-`EventSubscriberMiddlewares` are objects stored on a `EventSubscriberMiddlewareLinkedList`, which is held and called by
+`EventSubscriberMiddlewares` are objects stored on a `SubscriberMiddlewareList`, which is held and called by
 the event dispatcher every time an event is about to be notified to a subscriber.
 
 It consists of:
@@ -27,10 +27,9 @@ It consists of:
 When being checked, a middleware is passed the subscriber that is being checked and the arguments that would be
 used to call it. The middleware then replies with a `MiddlewareResponse`, which can either:
 
-* Allow the execution (`{ allowed: true }`), with either:
-* Making the linked list check the next middleware (`{ allowed: true, checkNext: true }`).
-* Forcing the chain to end (`{ allowed: true, checkNext: false }`).
-* Deny the execution (`{ allowed: false, checkNext: false }`).
+* Make the list check the next middleware: `{ allowed: true, checkNext: true }`.
+* Forcing the execution to end as with an allowed result: `{ allowed: true, checkNext: false }`.
+* Deny the execution: `{ allowed: false, checkNext: false }`.
 
 The `AbstractMiddleware`, has `protected` utility methods to generate these responses. Specifically, `this.true()`,
 `this.false()` and `this.forceTrue()`.
@@ -109,7 +108,7 @@ myBus.getDispatcher().getMiddleware().add(interfaceMiddleware);
 </Tabs>
 ```
 
-By default, the following middleware chain is used:
+By default, the following middleware list is used:
 
 * `HandleCheckEventMiddleware` - See [✅ Event handling marking](event-subscriber#-event-handling-marking) on the
 `EventSubscriber` guide.

@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 Session interception refers to blocking a session from being executed. In nyx, there are two ways to do this:
 
-1. Add a `SessionMiddleware` to the respective `SessionMiddlewareLinkedList` in the `SessionExecutor` that handles
+1. Add a `SessionMiddleware` to the respective `SessionMiddlewareList` in the `SessionExecutor` that handles
 the session execution.
 2. Provide the respective `SessionFilter` in the `Session`.
 
@@ -15,7 +15,7 @@ Let's explore when and how to use each of these methods.
 
 ## 🚦 Session Middlewares
 
-`SessionMiddlewares` are objects stored on a `SessionMiddlewareLinkedList`, which is held and called by
+`SessionMiddlewares` are objects stored on a `SessionMiddlewareList`, which is held and called by
 the session executor when a session is about to be executed.
 
 Specifically, there are two types of session middlewares:
@@ -29,10 +29,9 @@ Each consist of:
 When being checked, a middleware is passed the session that is being checked and the execution metadata. The session then
 replies with a `MiddlewareResponse`, which can either:
 
-* Allow the execution (`{ allowed: true }`), with either:
-* Making the linked list check the next middleware (`{ allowed: true, checkNext: true }`).
-* Forcing the chain to end (`{ allowed: true, checkNext: false }`).
-* Deny the execution (`{ allowed: false, checkNext: false }`).
+* Make the list check the next middleware: `{ allowed: true, checkNext: true }`.
+* Forcing the execution to end as with an allowed result: `{ allowed: true, checkNext: false }`.
+* Deny the execution: `{ allowed: false, checkNext: false }`.
 
 The `AbstractMiddleware`, has `protected` utility methods to generate these responses. Specifically, `this.true()`,
 `this.false()` and `this.forceTrue()`.
@@ -114,7 +113,7 @@ bot.sessions.getExecutor().getUpdateMiddleware().add(updateMiddleware);
 </Tabs>
 ```
 
-By default, the following middleware chain is used:
+By default, the following middleware list is used:
 
 * `SessionFilterCheckMiddleware` - See [🚧 Session Filters](#-Session-filters).
 

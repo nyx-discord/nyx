@@ -8,7 +8,7 @@ They are used by the `EventBus`, which passes to the dispatcher the subscribers 
 
 The dispatcher is then responsible that for each subscriber:
 
-* The `EventSubscriberMiddlewareLinkedList` passes the execution.
+* The `SubscriberMiddlewareList` passes the execution.
 * The subscriber is executed with its respective arguments.
 * Any errors thrown by the subscriber or middleware are caught, wrapped if needed, and redirected to the `ErrorHandler`.
 
@@ -88,7 +88,7 @@ This functionality can be turned off by setting it to `null` via `#setConcurrenc
 
 ## 🚦 Middleware
 
-The dispatcher stores an `EventSubscriberMiddlewareLinkedList` that will either allow or deny the call of a given subscriber.
+The dispatcher stores an `SubscriberMiddlewareList` that will either allow or deny the call of a given subscriber.
 This list can be obtained via `EventDispatcher#getMiddleware()`.
 
 For information about how to use it, check the [️🛡️ Event Interception](./event-interception) documentation.
