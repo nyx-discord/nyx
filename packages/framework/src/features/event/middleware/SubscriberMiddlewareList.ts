@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,35 +24,36 @@
 
 import type {
   EventSubscriberMiddleware as SubMiddleware,
-  MiddlewareLinkedList,
+  MiddlewareList,
+  Tail,
 } from '@nyx-discord/core';
 import { EventSubscriberMiddlewareError } from '@nyx-discord/core';
+import { AbstractMiddlewareList } from '../../../middleware/AbstractMiddlewareList';
 
 import { LifetimeCheckEventMiddleware } from '../lifetime/LifetimeCheckEventMiddleware.js';
 import { HandleCheckEventMiddleware } from '../meta/HandleCheckEventMiddleware.js';
-import { AbstractMiddlewareLinkedList } from '../../../filter/middleware/AbstractMiddlewareLinkedList.js';
 import { SubscriberFilterCheckMiddleware } from './SubscriberFilterCheckMiddleware.js';
 
-export class SubscriberMiddlewareLinkedList extends AbstractMiddlewareLinkedList<SubMiddleware> {
-  public static create(): MiddlewareLinkedList<SubMiddleware> {
+export class SubscriberMiddlewareList extends AbstractMiddlewareList<SubMiddleware> {
+  public static create(): MiddlewareList<SubMiddleware> {
     const handledEventMiddleware = new HandleCheckEventMiddleware();
     const filterMiddleware = new SubscriberFilterCheckMiddleware();
     const lifetimeEventMiddleware = new LifetimeCheckEventMiddleware();
 
-    return new SubscriberMiddlewareLinkedList().addAll([
+    return new SubscriberMiddlewareList().bulkAdd(
       handledEventMiddleware,
       filterMiddleware,
       lifetimeEventMiddleware,
-    ]);
+    );
   }
 
-  protected override throwWrappedError(
+  protected wrapError(
     erroredMiddleware: SubMiddleware,
-    subscriber: Parameters<SubMiddleware['check']>[0],
-    args: Parameters<SubMiddleware['check']>[1],
     error: Error,
-  ) {
-    throw new EventSubscriberMiddlewareError(
+    subscriber: Parameters<SubMiddleware['check']>[0],
+    ...args: Tail<Parameters<SubMiddleware['check']>>
+  ): Error {
+    return new EventSubscriberMiddlewareError(
       error,
       erroredMiddleware,
       subscriber,

@@ -41,7 +41,7 @@ Specifically, the schedule related objects are:
 use all of these objects. All objects below are contained here.
 * `ScheduleExecutionScheduler`: Tracks the execution of schedules and stores the `ScheduleJobAdapters`.
 * `ScheduleRepository`: Stores all the currently registered schedules.
-* `ScheduleExecutor`: Executes schedules, checking its `ScheduleMiddlewareLinkedList` and passing any errors to
+* `ScheduleExecutor`: Executes schedules, checking its `ScheduleMiddlewareList` and passing any errors to
 its `ErrorHandler`.
 * `EventBus`: An [📣 Event Bus](../events/event-bus) that emits schedule related events.
 
@@ -58,7 +58,7 @@ its `ErrorHandler`.
   When the job determines that the schedule should be called:
 
   1. The `ScheduleJobAdapter` tells the `ScheduleExecutor` to execute the schedule.
-  2. The `ScheduleExecutor` checks its `ScheduleMiddlewareLinkedList` which will allow or deny the execution.
+  2. The `ScheduleExecutor` checks its `ScheduleMiddlewareList` which will allow or deny the execution.
   This includes checking the filter on `Schedule#getFilter()`.
   3. If the execution is allowed, the schedule is called, passing any errors to its `ErrorHandler`.
 
@@ -73,7 +73,7 @@ participant ScheduleRepository
 participant ScheduleExecutionScheduler
 participant ScheduleJobAdapter
 participant ScheduleExecutor
-participant ScheduleMiddlewareLinkedList
+participant ScheduleMiddlewareList
 participant ErrorHandler
 
 ScheduleManager -> ScheduleRepository: Add Schedule
@@ -85,8 +85,8 @@ deactivate ScheduleManager
 
 note over ScheduleJobAdapter: Job Signals Schedule Call
 ScheduleJobAdapter -> ScheduleExecutor: Execute Schedule
-ScheduleExecutor -> ScheduleMiddlewareLinkedList: Check Middleware
-ScheduleMiddlewareLinkedList -> ScheduleExecutor: Execution Allowed?
+ScheduleExecutor -> ScheduleMiddlewareList: Check Middleware
+ScheduleMiddlewareList -> ScheduleExecutor: Execution Allowed?
 ScheduleExecutor -> ScheduleJobAdapter: Call Schedule
 ScheduleJobAdapter -> ErrorHandler: Pass Errors
 @enduml

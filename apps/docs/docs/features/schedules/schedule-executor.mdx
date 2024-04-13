@@ -12,13 +12,13 @@ It's used by the `ScheduleManager`, which passes to the executor the schedule to
 metadata.
 
 The executor is then responsible that:
-* The `ScheduleMiddlewareLinkedList` passes the execution.
+* The `ScheduleMiddlewareList` passes the execution.
 * The schedule is executed, passing the tick metadata.
 * Any errors thrown by the schedule or middleware are caught, wrapped if needed, and redirected to the `ErrorHandler`.
 
 It consists of:
 * A `tick()` method to execute a schedule.
-* A `ScheduleMiddlewareLinkedList` to allow or deny the execution of schedules.
+* A `ScheduleMiddlewareList` to allow or deny the execution of schedules.
 * An `ErrorHandler` to handle errors thrown by schedules or the middleware list.
 
 ## 👷 Creation
@@ -73,7 +73,7 @@ const myBot = Bot.create((bot) => ({
 
 ## 🚦 Middleware
 
-The executor stores a `ScheduleMiddlewareLinkedList` that will either allow or deny the execution of a given schedule.
+The executor stores a `ScheduleMiddlewareList` that will either allow or deny the execution of a given schedule.
 This list can be obtained via `ScheduleExecutor#getMiddleware()`.
 
 For information about how to use it, check the [️🛡️ Schedule Interception](./schedule-interception) documentation.

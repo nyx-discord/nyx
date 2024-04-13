@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ import type {
   CommandMiddleware,
   ComponentCommandInteraction,
   ExecutableCommand,
-  MiddlewareLinkedList,
+  MiddlewareList,
   StandaloneCommand,
 } from '@nyx-discord/core';
 import {
@@ -52,16 +52,16 @@ import type {
 } from 'discord.js';
 
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
-import { CommandMiddlewareLinkedList } from '../middleware/CommandMiddlewareLinkedList.js';
+import { CommandMiddlewareList } from '../middleware/CommandMiddlewareList';
 
 export class DefaultCommandExecutor implements CommandExecutor {
   protected readonly errorHandler: CommandErrorHandler;
 
-  protected readonly middleware: MiddlewareLinkedList<CommandMiddleware>;
+  protected readonly middleware: MiddlewareList<CommandMiddleware>;
 
   constructor(
     errorHandler: CommandErrorHandler,
-    middleware: MiddlewareLinkedList<CommandMiddleware>,
+    middleware: MiddlewareList<CommandMiddleware>,
   ) {
     this.errorHandler = errorHandler;
     this.middleware = middleware;
@@ -73,7 +73,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
         ExecutableCommand<CommandData>,
         CommandExecutionArgs
       >(),
-      CommandMiddlewareLinkedList.create(),
+      CommandMiddlewareList.create(),
     );
   }
 
@@ -125,7 +125,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
     const respond = async (options: ApplicationCommandOptionChoiceData[]) => {
       try {
         await interaction.respond(
-          options as ApplicationCommandOptionChoiceData<string | number>[],
+          options as ApplicationCommandOptionChoiceData[],
         );
       } catch (error) {
         const wrappedError = this.wrapAutocompleteError(
@@ -246,7 +246,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
     return this.errorHandler;
   }
 
-  public getMiddleware(): MiddlewareLinkedList<CommandMiddleware> {
+  public getMiddleware(): MiddlewareList<CommandMiddleware> {
     return this.middleware;
   }
 
@@ -290,7 +290,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   ): Promise<boolean> {
     let result;
     try {
-      result = await this.middleware.check(command, [interaction, meta]);
+      result = await this.middleware.check(command, interaction, meta);
     } catch (error) {
       const wrappedError = this.wrapMiddlewareError(
         error as Error,
@@ -364,7 +364,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
       ? choices.filter((option) =>
           String(option.value).toLowerCase().startsWith(focused.toLowerCase()),
         )
-      : (choices as ApplicationCommandOptionChoiceData<string | number>[]);
+      : (choices as ApplicationCommandOptionChoiceData[]);
 
     // Add the currently typed option as a first choice, for user convenience
     if (

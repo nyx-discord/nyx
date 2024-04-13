@@ -9,7 +9,7 @@ The `CommandExecutor` is the object responsible for executing commands, based on
 by a `CommandManager`, and you can get it via `CommandManager#getExecutor()`.
 
 The executor manages that:
-* The `CommandMiddlewareLinkedList` passes the execution.
+* The `CommandMiddlewareList` passes the execution.
 * The command is executed with its respective arguments, on the appropriate method.
 * Any errors thrown by the command or middleware are caught, wrapped if needed, and redirected to the `ErrorHandler`.
 
@@ -65,7 +65,7 @@ const myBot = Bot.create((bot) => ({
 
 ## 🚦 Middleware
 
-The executor stores a `CommandMiddlewareLinkedList` that will either allow or deny the execution of a given command.
+The executor stores a `CommandMiddlewareList` that will either allow or deny the execution of a given command.
 This list can be obtained via `CommandExecutor#getMiddleware()`.
 
 For information about how to use it, check the [️🛡️ Command Interception](./command-interception) documentation.

@@ -53,7 +53,7 @@ There are three utility session types that derive from the main `Session` interf
   `Session#getEndPromise()` to wait for the session to end.
   3. The `SessionManager` saves the session on the repository, which will expire it later if needed.
   4. The `SessionManager` uses the `SessionExecutor` to start the session.
-  5. The `SessionExecutor` checks its `SessionStartMiddlewareLinkedList` which will allow or deny the start.
+  5. The `SessionExecutor` checks its `SessionStartMiddlewareList` which will allow or deny the start.
   This includes checking the filter on `Session#getStartFilter()`.
   6. If the execution is allowed, the session is started, passing any errors to its `SessionStartErrorHandler`.
   7. The `SessionManager` uses the `EventBus` to emit a `SessionStart` event asynchronously, passing the session.

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ export class BasicFilterCheckMiddleware<
 
   public async check(
     checked: Checked,
-    args: ExtractFilterArgs<Checked>,
+    ...args: ExtractFilterArgs<Checked>
   ): Promise<MiddlewareResponse> {
     const filter = checked.getFilter();
     if (!filter) return this.true();

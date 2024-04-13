@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,33 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 import type {
-  MiddlewareLinkedList,
-  SessionStartMiddleware as SessMiddleware,
+  MiddlewareList,
+  ScheduleMiddleware,
+  Tail,
 } from '@nyx-discord/core';
-import { SessionStartMiddlewareError } from '@nyx-discord/core';
+import { ScheduleMiddlewareError } from '@nyx-discord/core';
 
-import { AbstractMiddlewareLinkedList } from '../../../filter/middleware/AbstractMiddlewareLinkedList.js';
-import { SessionStartFilterCheckMiddleware } from '../filter/middleware/SessionStartFilterCheckMiddleware.js';
+import { AbstractMiddlewareList } from '../../../middleware/AbstractMiddlewareList';
+import { ScheduleFilterCheckMiddleware } from './ScheduleFilterCheckMiddleware.js';
 
-export class SessionStartMiddlewareLinkedList extends AbstractMiddlewareLinkedList<SessMiddleware> {
-  public static create(): MiddlewareLinkedList<SessMiddleware> {
-    const filterMiddleware = new SessionStartFilterCheckMiddleware();
+export class ScheduleMiddlewareList extends AbstractMiddlewareList<ScheduleMiddleware> {
+  public static create(): MiddlewareList<ScheduleMiddleware> {
+    const filterMiddleware = new ScheduleFilterCheckMiddleware();
 
-    return new SessionStartMiddlewareLinkedList().add(filterMiddleware);
+    return new ScheduleMiddlewareList().add(filterMiddleware);
   }
 
-  protected throwWrappedError(
-    erroredMiddleware: SessMiddleware,
-    session: Parameters<SessMiddleware['check']>[0],
-    args: Parameters<SessMiddleware['check']>[1],
+  protected wrapError(
+    erroredMiddleware: ScheduleMiddleware,
     error: Error,
-  ) {
+    schedule: Parameters<ScheduleMiddleware['check']>[0],
+    ...args: Tail<Parameters<ScheduleMiddleware['check']>>
+  ): Error {
     const [meta] = args;
-    throw new SessionStartMiddlewareError(
+    return new ScheduleMiddlewareError(
       error,
       erroredMiddleware,
-      session,
+      schedule,
       meta,
     );
   }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 
 import type {
   AnyEventSubscriber,
-  EventDispatchArgs,
+  EventDispatchMeta,
   MiddlewareResponse,
 } from '@nyx-discord/core';
 import { EventSubscriberLifetimeEnum, PriorityEnum } from '@nyx-discord/core';
@@ -38,10 +38,9 @@ export class LifetimeCheckEventMiddleware extends AbstractEventSubscriberMiddlew
 
   public async check(
     subscriber: AnyEventSubscriber,
-    args: EventDispatchArgs,
+    meta: EventDispatchMeta,
   ): Promise<MiddlewareResponse> {
     if (subscriber.getLifetime() === EventSubscriberLifetimeEnum.Once) {
-      const [meta] = args;
       const bus = meta.getBus();
 
       await bus.unsubscribe(subscriber);

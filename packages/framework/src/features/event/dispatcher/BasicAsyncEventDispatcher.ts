@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,11 +27,11 @@ import type {
   AsyncEventDispatcher,
   EventSubscriberErrorHandler,
   EventSubscriberMiddleware,
-  MiddlewareLinkedList,
+  MiddlewareList,
 } from '@nyx-discord/core';
 
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
-import { SubscriberMiddlewareLinkedList } from '../middleware/SubscriberMiddlewareLinkedList.js';
+import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList';
 import { AbstractEventDispatcher } from './AbstractEventDispatcher.js';
 
 export class BasicAsyncEventDispatcher
@@ -42,7 +42,7 @@ export class BasicAsyncEventDispatcher
 
   constructor(
     errorHandler: EventSubscriberErrorHandler,
-    middleware: MiddlewareLinkedList<EventSubscriberMiddleware>,
+    middleware: MiddlewareList<EventSubscriberMiddleware>,
     concurrencyLimit?: number | null,
   ) {
     super(errorHandler, middleware);
@@ -54,7 +54,7 @@ export class BasicAsyncEventDispatcher
   public static create(concurrencyLimit?: number | null): AsyncEventDispatcher {
     return new BasicAsyncEventDispatcher(
       new BasicErrorHandler(),
-      SubscriberMiddlewareLinkedList.create(),
+      SubscriberMiddlewareList.create(),
       concurrencyLimit,
     );
   }
@@ -126,7 +126,7 @@ export class BasicAsyncEventDispatcher
     args: Parameters<AnyEventSubscriber['handleEvent']>,
   ): Promise<boolean> {
     return Promise.resolve()
-      .then(() => this.middleware.check(subscriber, args))
+      .then(() => this.middleware.check(subscriber, ...args))
       .catch(async (error) => {
         const [meta] = args;
 

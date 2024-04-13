@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +22,31 @@
  * SOFTWARE.
  */
 import type {
-  MiddlewareLinkedList,
+  MiddlewareList,
   SessionUpdateMiddleware as SesMiddleware,
+  Tail,
 } from '@nyx-discord/core';
 import { SessionUpdateMiddlewareError } from '@nyx-discord/core';
 
-import { AbstractMiddlewareLinkedList } from '../../../filter/middleware/AbstractMiddlewareLinkedList.js';
+import { AbstractMiddlewareList } from '../../../middleware/AbstractMiddlewareList';
 import { SessionUpdateFilterCheckMiddleware } from '../filter/middleware/SessionUpdateFilterCheckMiddleware.js';
 
-export class SessionUpdateMiddlewareLinkedList extends AbstractMiddlewareLinkedList<SesMiddleware> {
-  public static create(): MiddlewareLinkedList<SesMiddleware> {
+export class SessionUpdateMiddlewareList extends AbstractMiddlewareList<SesMiddleware> {
+  public static create(): MiddlewareList<SesMiddleware> {
     const filterMiddleware = new SessionUpdateFilterCheckMiddleware();
 
-    return new SessionUpdateMiddlewareLinkedList().add(filterMiddleware);
+    return new SessionUpdateMiddlewareList().add(filterMiddleware);
   }
 
-  protected throwWrappedError(
+  protected wrapError(
     erroredMiddleware: SesMiddleware,
-    session: Parameters<SesMiddleware['check']>[0],
-    args: Parameters<SesMiddleware['check']>[1],
     error: Error,
-  ) {
+    session: Parameters<SesMiddleware['check']>[0],
+    ...args: Tail<Parameters<SesMiddleware['check']>>
+  ): Error {
     const [interaction, meta] = args;
 
-    throw new SessionUpdateMiddlewareError(
+    return new SessionUpdateMiddlewareError(
       error,
       erroredMiddleware,
       session,

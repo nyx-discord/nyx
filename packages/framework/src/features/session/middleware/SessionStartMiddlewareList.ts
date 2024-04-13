@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,35 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 import type {
-  CommandMiddleware,
-  MiddlewareLinkedList,
+  MiddlewareList,
+  SessionStartMiddleware as SessMiddleware,
+  Tail,
 } from '@nyx-discord/core';
-import { CommandMiddlewareError } from '@nyx-discord/core';
+import { SessionStartMiddlewareError } from '@nyx-discord/core';
 
-import { CommandFilterCheckMiddleware } from '../filter/middleware/CommandFilterCheckMiddleware.js';
-import { AbstractMiddlewareLinkedList } from '../../../filter/middleware/AbstractMiddlewareLinkedList.js';
+import { AbstractMiddlewareList } from '../../../middleware/AbstractMiddlewareList';
+import { SessionStartFilterCheckMiddleware } from '../filter/middleware/SessionStartFilterCheckMiddleware.js';
 
-export class CommandMiddlewareLinkedList extends AbstractMiddlewareLinkedList<CommandMiddleware> {
-  public static create(): MiddlewareLinkedList<CommandMiddleware> {
-    const list = new CommandMiddlewareLinkedList();
-    list.add(new CommandFilterCheckMiddleware());
-    return list;
+export class SessionStartMiddlewareList extends AbstractMiddlewareList<SessMiddleware> {
+  public static create(): MiddlewareList<SessMiddleware> {
+    const filterMiddleware = new SessionStartFilterCheckMiddleware();
+
+    return new SessionStartMiddlewareList().add(filterMiddleware);
   }
 
-  protected throwWrappedError(
-    erroredMiddleware: CommandMiddleware,
-    command: Parameters<CommandMiddleware['check']>[0],
-    args: Parameters<CommandMiddleware['check']>[1],
+  protected wrapError(
+    erroredMiddleware: SessMiddleware,
     error: Error,
-  ) {
-    const [interaction, meta] = args;
-    throw new CommandMiddlewareError(
+    session: Parameters<SessMiddleware['check']>[0],
+    ...args: Tail<Parameters<SessMiddleware['check']>>
+  ): Error {
+    const [meta] = args;
+    return new SessionStartMiddlewareError(
       error,
       erroredMiddleware,
-      command,
-      interaction,
+      session,
       meta,
     );
   }

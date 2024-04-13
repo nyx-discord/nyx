@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,28 +23,35 @@
  */
 
 import type {
-  MiddlewareLinkedList,
-  ScheduleMiddleware,
+  CommandMiddleware,
+  MiddlewareList,
+  Tail,
 } from '@nyx-discord/core';
-import { ScheduleMiddlewareError } from '@nyx-discord/core';
+import { CommandMiddlewareError } from '@nyx-discord/core';
 
-import { ScheduleFilterCheckMiddleware } from './ScheduleFilterCheckMiddleware.js';
-import { AbstractMiddlewareLinkedList } from '../../../filter/middleware/AbstractMiddlewareLinkedList.js';
+import { AbstractMiddlewareList } from '../../../middleware/AbstractMiddlewareList';
+import { CommandFilterCheckMiddleware } from '../filter/middleware/CommandFilterCheckMiddleware.js';
 
-export class ScheduleMiddlewareLinkedList extends AbstractMiddlewareLinkedList<ScheduleMiddleware> {
-  public static create(): MiddlewareLinkedList<ScheduleMiddleware> {
-    const filterMiddleware = new ScheduleFilterCheckMiddleware();
-
-    return new ScheduleMiddlewareLinkedList().add(filterMiddleware);
+export class CommandMiddlewareList extends AbstractMiddlewareList<CommandMiddleware> {
+  public static create(): MiddlewareList<CommandMiddleware> {
+    const list = new CommandMiddlewareList();
+    list.add(new CommandFilterCheckMiddleware());
+    return list;
   }
 
-  protected override throwWrappedError(
-    erroredMiddleware: ScheduleMiddleware,
-    schedule: Parameters<ScheduleMiddleware['check']>[0],
-    args: Parameters<ScheduleMiddleware['check']>[1],
+  protected wrapError(
+    erroredMiddleware: CommandMiddleware,
     error: Error,
-  ): void {
-    const [meta] = args;
-    throw new ScheduleMiddlewareError(error, erroredMiddleware, schedule, meta);
+    command: Parameters<CommandMiddleware['check']>[0],
+    ...args: Tail<Parameters<CommandMiddleware['check']>>
+  ): Error {
+    const [interaction, meta] = args;
+    return new CommandMiddlewareError(
+      error,
+      erroredMiddleware,
+      command,
+      interaction,
+      meta,
+    );
   }
 }

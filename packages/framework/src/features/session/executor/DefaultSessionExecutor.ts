@@ -24,7 +24,7 @@
 
 import type {
   Identifier,
-  MiddlewareLinkedList,
+  MiddlewareList,
   Session,
   SessionEndArgs,
   SessionEndData,
@@ -48,8 +48,8 @@ import {
 
 import { ActionRowList } from '../../../discord/ActionRowList.js';
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
-import { SessionStartMiddlewareLinkedList } from '../middleware/SessionStartMiddlewareLinkedList.js';
-import { SessionUpdateMiddlewareLinkedList } from '../middleware/SessionUpdateMiddlewareLinkedList.js';
+import { SessionStartMiddlewareList } from '../middleware/SessionStartMiddlewareList';
+import { SessionUpdateMiddlewareList } from '../middleware/SessionUpdateMiddlewareList';
 
 export class DefaultSessionExecutor implements SessionExecutor {
   protected readonly startErrorHandler: SessionErrorHandler<SessionStartArgs>;
@@ -58,13 +58,13 @@ export class DefaultSessionExecutor implements SessionExecutor {
 
   protected readonly endErrorHandler: SessionErrorHandler<SessionEndArgs>;
 
-  protected readonly startMiddleware: MiddlewareLinkedList<SessionStartMiddleware>;
+  protected readonly startMiddleware: MiddlewareList<SessionStartMiddleware>;
 
-  protected readonly updateMiddleware: MiddlewareLinkedList<SessionUpdateMiddleware>;
+  protected readonly updateMiddleware: MiddlewareList<SessionUpdateMiddleware>;
 
   constructor(
-    startMiddleware: MiddlewareLinkedList<SessionStartMiddleware>,
-    updateMiddleware: MiddlewareLinkedList<SessionUpdateMiddleware>,
+    startMiddleware: MiddlewareList<SessionStartMiddleware>,
+    updateMiddleware: MiddlewareList<SessionUpdateMiddleware>,
     createErrorHandler: SessionErrorHandler<SessionStartArgs>,
     updateErrorHandler: SessionErrorHandler<SessionUpdateArgs>,
     stopErrorHandler: SessionErrorHandler<SessionEndArgs>,
@@ -79,8 +79,8 @@ export class DefaultSessionExecutor implements SessionExecutor {
 
   public static create(): SessionExecutor {
     return new DefaultSessionExecutor(
-      SessionStartMiddlewareLinkedList.create(),
-      SessionUpdateMiddlewareLinkedList.create(),
+      SessionStartMiddlewareList.create(),
+      SessionUpdateMiddlewareList.create(),
 
       BasicErrorHandler.create(),
       BasicErrorHandler.create(),
@@ -99,7 +99,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
     }
 
     try {
-      const result = await this.startMiddleware.check(session, [meta]);
+      const result = await this.startMiddleware.check(session, meta);
       if (!result) return false;
     } catch (error) {
       const wrappedError =
@@ -149,10 +149,11 @@ export class DefaultSessionExecutor implements SessionExecutor {
     }
 
     try {
-      const result = await this.updateMiddleware.check(session, [
+      const result = await this.updateMiddleware.check(
+        session,
         interaction,
         meta,
-      ]);
+      );
       if (!result) return false;
     } catch (error) {
       const wrappedError =
@@ -223,11 +224,11 @@ export class DefaultSessionExecutor implements SessionExecutor {
     }
   }
 
-  public getStartMiddleware(): MiddlewareLinkedList<SessionStartMiddleware> {
+  public getStartMiddleware(): MiddlewareList<SessionStartMiddleware> {
     return this.startMiddleware;
   }
 
-  public getUpdateMiddleware(): MiddlewareLinkedList<SessionUpdateMiddleware> {
+  public getUpdateMiddleware(): MiddlewareList<SessionUpdateMiddleware> {
     return this.updateMiddleware;
   }
 

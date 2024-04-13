@@ -20,7 +20,7 @@ Specifically, the command related objects are:
 * `CommandManager`: The entry point for the command system, holding all the command-related objects and methods that use all of these objects. All objects below are contained here.
 * `CommandCustomIdCodec`: De/serializes commands names to/from customId strings, useful for creating message components that will trigger commands.
 * `CommandResolver`: Resolves the command data that a given command interaction refers to.
-* `CommandExecutor`: Executes command objects, checking its `CommandMiddlewareLinkedList` and passing any errors to its `ErrorHandler`.
+* `CommandExecutor`: Executes command objects, checking its `CommandMiddlewareList` and passing any errors to its `ErrorHandler`.
 * `CommandRepository`: Stores all the currently registered commands and their command application mappings. It's also responsible for registering commands at Discord.
 * `CommandSubscriptionsContainer`: Stores the [📩 Event Subscribers](../events/event-subscriber) that are subscribed to the [👂 Client event bus](../events/event-manager.mdx#-client-event-bus) to listen for command interactions.
 * `EventBus`: An [📣 Event Bus](../events/event-bus) that emits command related events.
@@ -61,7 +61,7 @@ From the `CommandExecutionMeta` passed on the command's execution (alongside the
   8. If a command is found, the manager passes the execution to the `CommandExecutor`.
   9. The executor checks what method it should execute according to the interaction. In this
   case, `ExecutableCommand#execute()`.
-  10. Once it knows what it should execute, it checks its `CommandMiddlewareLinkedList` which determines whether to
+  10. Once it knows what it should execute, it checks its `CommandMiddlewareList` which determines whether to
   allow
   or deny the command's execution. If it's allowed, the command is called.
   11. If any errors occur, they are passed to its [`ErrorHandler`](../../error/error-handling).

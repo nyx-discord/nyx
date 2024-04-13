@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,5 @@
  * SOFTWARE.
  */
 
-/**
- * A node inside a list of objects linked together by reference (a {@link LinkedList}).
- *
- * Each object in the list is unaware of the list itself,
- * and only knows about the next object, if existent.
- */
-export interface LinkedListNode<T extends LinkedListNode<T>> {
-  /** Points this node to the provided node. */
-  setNext(node: T | null): void;
-
-  /** Returns the object that this node points to. */
-  getNext(): T | null;
-
-  /** Returns the last node on the linked list. */
-  getLast(): T;
-}
+/** Returns the tail of a tuple. */
+export type Tail<T extends any[]> = T extends [any, ...infer R] ? R : never;

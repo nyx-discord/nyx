@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 Command interception refers to blocking a command from being executed. In nyx, there are two ways to do this:
 
-1. Add a `CommandMiddleware` to the `CommandMiddlewareLinkedList` in the `CommandExecutor` that handles
+1. Add a `CommandMiddleware` to the `CommandMiddlewareList` in the `CommandExecutor` that handles
 the command execution.
 2. Provide a `CommandFilter` in the `ExecutableCommand`.
 
@@ -15,7 +15,7 @@ Let's explore when and how to use each of these methods.
 
 ## 🚦 Command Middlewares
 
-`CommandMiddlewares` are objects stored on a `CommandMiddlewareLinkedList`, which is held and called by
+`CommandMiddlewares` are objects stored on a `CommandMiddlewareList`, which is held and called by
 the command executor when a command is about to be executed.
 
 It consists of:

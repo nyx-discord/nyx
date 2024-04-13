@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import type { LinkedList } from '../../../../list/LinkedList.js';
+import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import { AbstractSessionError } from '../../errors/AbstractSessionError.js';
 import type { SessionExecutionMeta } from '../../execution/meta/SessionExecutionMeta.js';
 import type { SessionStartInteraction } from '../../interaction/SessionStartInteraction.js';
@@ -31,11 +31,11 @@ import type { SessionStartMiddleware } from '../SessionStartMiddleware.js';
 
 // eslint-disable-next-line max-len
 export class UncaughtSessionStartMiddlewareError extends AbstractSessionError<SessionStartInteraction> {
-  protected readonly middlewareList: LinkedList<SessionStartMiddleware>;
+  protected readonly middlewareList: MiddlewareList<SessionStartMiddleware>;
 
   constructor(
     error: Error,
-    middlewareList: LinkedList<SessionStartMiddleware>,
+    middlewareList: MiddlewareList<SessionStartMiddleware>,
     session: Session<unknown>,
     meta: SessionExecutionMeta,
   ) {
@@ -44,7 +44,7 @@ export class UncaughtSessionStartMiddlewareError extends AbstractSessionError<Se
   }
 
   /** Returns the middleware list that threw this error. */
-  public getMiddlewareList(): LinkedList<SessionStartMiddleware> {
+  public getMiddlewareList(): MiddlewareList<SessionStartMiddleware> {
     return this.middlewareList;
   }
 }
