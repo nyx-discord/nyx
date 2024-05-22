@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -118,7 +118,8 @@ export class DefaultEventManager implements EventManager {
   }
 
   public async addEventBus(bus: AnyEventBus): Promise<this> {
-    if (bus.bot !== this.bot) {
+    const botBus = bus.getBot();
+    if (botBus && botBus !== this.bot) {
       throw new AssertionError(
         `Bus '${String(bus.getId())}' is not from this bot.`,
       );

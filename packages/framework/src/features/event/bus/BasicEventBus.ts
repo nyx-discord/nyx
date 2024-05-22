@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,7 @@ export class BasicEventBus<
   EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
 > implements EventBus<EventArgsObject>
 {
-  public readonly bot: NyxBot;
+  public readonly bot: NyxBot | null;
 
   protected readonly id: Identifier;
 
@@ -72,7 +72,7 @@ export class BasicEventBus<
   protected readonly meta: MetaCollection = new Collection();
 
   constructor(
-    bot: NyxBot,
+    bot: NyxBot | null,
     id: Identifier,
     sorter: Comparator<Identifier, AnyEventSubscriberFrom<EventArgsObject>>,
     dispatcher: EventDispatcher,
@@ -85,7 +85,7 @@ export class BasicEventBus<
 
   public static createSync<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-  >(bot: NyxBot, id: Identifier) {
+  >(bot: NyxBot | null, id: Identifier) {
     return new BasicEventBus<EventArgsObject>(
       bot,
       id,
@@ -97,7 +97,7 @@ export class BasicEventBus<
 
   public static createAsync<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-  >(bot: NyxBot, id: Identifier): EventBus<EventArgsObject> {
+  >(bot: NyxBot | null, id: Identifier): EventBus<EventArgsObject> {
     return new BasicEventBus<EventArgsObject>(
       bot,
       id,
@@ -243,6 +243,10 @@ export class BasicEventBus<
     return this.dispatcher;
   }
 
+  public getBot(): NyxBot | null {
+    return this.bot;
+  }
+
   public getSubscribers(): ReadonlyCollection<
     Identifier,
     AnyEventSubscriberFrom<EventArgsObject>
@@ -251,6 +255,30 @@ export class BasicEventBus<
       (accumulator, value) => accumulator.concat(value),
       new Collection<Identifier, AnyEventSubscriberFrom<EventArgsObject>>(),
     );
+  }
+
+  public onUnregister(): Awaitable<void> {
+    /** Do nothing by default. */
+  }
+
+  public onRegister(): Awaitable<void> {
+    /** Do nothing by default. */
+  }
+
+  public isLocked(): boolean {
+    return this.locked;
+  }
+
+  public lock(): this {
+    this.locked = true;
+
+    return this;
+  }
+
+  public unlock(): this {
+    this.locked = false;
+
+    return this;
   }
 
   /** Generates the args for a given event. */
@@ -296,30 +324,6 @@ export class BasicEventBus<
     ]);
 
     await subscriber.onUnsubscribe(this as AnyEventBus);
-  }
-
-  public onUnregister(): Awaitable<void> {
-    /** Do nothing by default. */
-  }
-
-  public onRegister(): Awaitable<void> {
-    /** Do nothing by default. */
-  }
-
-  public isLocked(): boolean {
-    return this.locked;
-  }
-
-  public lock(): this {
-    this.locked = true;
-
-    return this;
-  }
-
-  public unlock(): this {
-    this.locked = false;
-
-    return this;
   }
 
   /**
