@@ -79,7 +79,7 @@ class InteractionCreateSubscriber
     meta: EventDispatchMeta,
     interaction: Interaction,
   ): void {
-    const bot = meta.getBot();
+    const bot = meta.getBot(true);
 
     bot.logger.info(`Interaction ${interaction.id} received.`);
   }
@@ -127,7 +127,7 @@ class CommandCallSubscriber
     interaction: CommandExecutableInteraction,
     commandMeta: CommandExecutionMeta,
   ) {
-  const bot = commandMeta.getBot();
+  const bot = commandMeta.getBot(true);
 
   bot.logger.info(`Command '${command.getData().name}' called.`);
   }
@@ -166,7 +166,12 @@ class MyEventSubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent
   protected readonly event = 'someEvent';
 
   public handleEvent(meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) {
+    // Null if you didn't pass a bot while creating your bus
     const bot = meta.getBot();
+    if (!bot) {
+      console.log('Hello world');
+      return;
+    }
 
     bot.logger.log('Hello world');
   }
@@ -188,7 +193,12 @@ import { SubscriberCallbackWrapper } from '@nyx-discord/framework';
 const callbackSubscriber = new SubscriberCallbackWrapper < MyEventsArgs, 'someEvent'>(
   'someEvent',
   (meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) => {
+    // Null if you didn't pass a bot while creating your bus
     const bot = meta.getBot();
+    if (!bot) {
+      console.log('Hello world');
+      return;
+    }
 
     bot.logger.log('Hello world');
   }
@@ -206,13 +216,6 @@ await myBus.subscribe(callbackSubscriber);
 import { EventSubscriber } from '@nyx-discord/core';
 
 class MyInterfaceEventSubscriber implements EventSubscriber {
-  protected readonly event = 'someEvent';
-
-  public handleEvent(meta: EventDispatchMeta, ...args: unknown[]): void {
-    const bot = meta.getBot();
-
-    bot.logger.log('Hello world');
-  }
   // ...
 }
 
@@ -248,7 +251,7 @@ class InteractionCreateSubscriber
   protected override readonly event = Events.InteractionCreate;
 
   public handleEvent(meta: EventDispatchMeta, interaction: Interaction) {
-    const bot = meta.getBot();
+    const bot = meta.getBot(true);
 
     bot.logger.info(`Interaction ${interaction.id} received.`);
   }

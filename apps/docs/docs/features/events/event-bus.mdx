@@ -17,14 +17,6 @@ An `EventBus` consists of:
 
 As well as methods to interact with them.
 
-:::note
-Buses are bot aware, meaning that they belong to only one bot, which is passed on the constructor by default.
-The same event bus instance cannot be registered with two different bots.
-
-The bus is also notified once it's registered on an `EventManager`, on `EventSubscriber#onRegister()`, same when
-unsubscribed, on `#onUnregister()`. Override these methods to perform setup or cleanup logic on the bot.
-:::
-
 ## 👷 Creation
 
 You can create an event bus by either:
@@ -43,13 +35,13 @@ import { BasicEventBus } from '@nyx-discord/framework';
 
 // Uses an AsyncEventDispatcher
 const asyncBus = BasicEventBus.createAsync(
-  bot,
+  bot, // Can be null
   Symbol('myAsyncBus'), // Bus ID
 );
 
 // Uses a SyncEventDispatcher
 const syncBus = BasicEventBus.createSync(
-  bot,
+  bot, // Can be null
   Symbol('mySyncBus'), // Bus ID
 );
 
@@ -220,7 +212,7 @@ import { BasicEventEmitterBus } from '@nyx-discord/framework';
 
 // Example using the client emitter
 const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArgs>(
-  bot,
+  bot, // Can be null
   Symbol('ClientEventBus'),
   // highlight-next-line
   bot.client
@@ -228,7 +220,7 @@ const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArgs>(
 
 // Example using a custom event emitter
 const myEventEmitterBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArgs>(
-  bot,
+  bot, // Can be null
   Symbol('MyEventEmitterBus'),
   // highlight-next-line
   new EventEmitter(),

@@ -63,7 +63,8 @@ class InteractionCreateSubscriber
     meta: EventDispatchMeta,
     interaction: Interaction,
   ): void {
-    const bot = meta.getBot();
+    // Since the built-in client event bus has a bot, this will never throw an error.
+    const bot = meta.getBot(true);
 
     bot.logger.info(`Interaction ${interaction.id} received.`);
   }

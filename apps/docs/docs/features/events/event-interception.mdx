@@ -40,6 +40,10 @@ Middlewares are not bot aware nor event bus aware, meaning that you can reuse th
 From the `EventDispatchMeta` passed on the subscriber's args you can get:
 
 * The bot that called the event, via `#getBot()`.
+
+Note it can be `null` if the bus doesn't have a bot. You can pass `true` to this method to throw an error if it's not present.
+In practice, all built-in event buses have a bot, it will only be `null` for your custom ones where you didn't pass a bot.
+
 * The bus where the event was emitted, via `#getBus()`.
 * Whether the event has been marked as handled by another subscriber, via `#isHandled()`.
 
@@ -126,9 +130,12 @@ Filters are not bot aware nor event subscriber aware, meaning that you can reuse
 From the `EventDispatchMeta` passed on the subscriber's args you can get:
 
 * The bot that called the event, via `#getBot()`.
+
+Note it can be `null` if the bus doesn't have a bot. You can pass `true` to this method to throw an error if it's not present.
+In practice, all built-in event buses have a bot, it will only be `null` for your custom ones where you didn't pass a bot.
+
 * The bus where the event was emitted, via `#getBus()`.
 * Whether the event has been marked as handled by another subscriber, via `#isHandled()`.
-
 :::
 
 :::tip
