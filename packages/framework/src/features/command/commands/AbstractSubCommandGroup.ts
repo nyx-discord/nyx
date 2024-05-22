@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +23,18 @@
  */
 
 import type {
-  CommandVisitor,
   ParentCommand,
   SubCommand,
   SubCommandGroup,
-  SubCommandGroupData,
 } from '@nyx-discord/core';
-import { AbstractChildableCommand } from './abstract/AbstractChildableCommand.js';
+import type { SlashCommandSubcommandGroupBuilder } from 'discord.js';
+import { AbstractChildableCommand } from './child/AbstractChildableCommand';
 
 export abstract class AbstractSubCommandGroup
-  extends AbstractChildableCommand<SubCommandGroupData, SubCommand>
+  extends AbstractChildableCommand<
+    SlashCommandSubcommandGroupBuilder,
+    SubCommand
+  >
   implements SubCommandGroup
 {
   protected override readonly childLimit = 25;
@@ -44,20 +46,25 @@ export abstract class AbstractSubCommandGroup
     this.parent = parent;
   }
 
-  public override isSubCommandGroup(): this is SubCommandGroup {
-    return true;
+  public getName(): string {
+    return this.createData().name;
   }
 
-  public override acceptVisitor(visitor: CommandVisitor<unknown>) {
-    visitor.visitSubCommandGroup(this);
+  public override isSubCommandGroup(): this is SubCommandGroup {
+    return true;
   }
 
   public getParent(): ParentCommand {
     return this.parent;
   }
 
-  public override getReadableName(): string {
-    const names: string[] = [this.parent.getReadableName(), this.data.name];
-    return names.join('/');
+  public getData(): SlashCommandSubcommandGroupBuilder {
+    return this.createData();
   }
+
+  public getNameTree(): ReadonlyArray<string> {
+    return this.parent.getNameTree().concat(this.getName());
+  }
+
+  protected abstract createData(): SlashCommandSubcommandGroupBuilder;
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,35 +23,73 @@
  */
 
 import type {
-  CommandVisitor,
   ParentCommand,
-  ParentCommandData,
   SubCommand,
   SubCommandGroup,
 } from '@nyx-discord/core';
-import { AbstractChildableCommand } from './abstract/AbstractChildableCommand.js';
+import { AssertionError } from '@nyx-discord/core';
+import type { SlashCommandSubcommandsOnlyBuilder, Snowflake } from 'discord.js';
 
-/**
- * A top level command that serves only to contain
- * {@link AbstractSubCommand subcommands} or
- * {@link AbstractSubCommandGroup subcommand groups}.
- *
- * Parent commands cannot be executed by themselves.
- */
+import { AbstractChildableCommand } from './child/AbstractChildableCommand';
+
 export abstract class AbstractParentCommand
   extends AbstractChildableCommand<
-    ParentCommandData,
+    ReturnType<SlashCommandSubcommandsOnlyBuilder['toJSON']>,
     SubCommand | SubCommandGroup
   >
   implements ParentCommand
 {
   protected override readonly childLimit = 25;
 
-  public override acceptVisitor(visitor: CommandVisitor<unknown>): void {
-    visitor.visitParentCommand(this);
-  }
-
-  public override isParentCommand(): this is ParentCommand {
+  public override isParent(): this is ParentCommand {
     return true;
   }
+
+  public getData(): ReturnType<SlashCommandSubcommandsOnlyBuilder['toJSON']> {
+    const data = this.createData();
+    if (data.options.length) {
+      throw new AssertionError('ParentCommands cannot set their options.');
+    }
+
+    for (const child of this.children.values()) {
+      if (child.isSubCommand()) {
+        data.addSubcommand(child.getData());
+      } else if (child.isSubCommandGroup()) {
+        data.addSubcommandGroup(() => {
+          const builder = child.getData();
+          if (builder.options.length) {
+            throw new AssertionError(
+              'SubCommandGroups cannot set their options.',
+            );
+          }
+
+          for (const subCommand of child.getChildren().values()) {
+            builder.addSubcommand(subCommand.getData());
+          }
+
+          return builder;
+        });
+      }
+    }
+
+    return data.toJSON();
+  }
+
+  public getId(): string {
+    return this.createData().name;
+  }
+
+  public getGuilds(): ReadonlyArray<Snowflake> | null {
+    return null;
+  }
+
+  public getName(): string {
+    return this.createData().name;
+  }
+
+  public getNameTree(): ReadonlyArray<string> {
+    return [this.getName()];
+  }
+
+  protected abstract createData(): SlashCommandSubcommandsOnlyBuilder;
 }

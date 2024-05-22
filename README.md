@@ -27,35 +27,26 @@ satisfy the respective interface.
 
 ### Commands
 
-* Complete application command support, with Standalone commands, Parent commands, Subcommands and SubCommand Groups.
+* Complete application command support (slash commands or context menus).
   * Add, remove and update commands (including their children) in runtime.
-  * Route interactions (buttons, select menus and modal submits) to a command, with an easy API that allows storing and
-    retrieving extra data from the customId.
-* Command and SubCommand option autocompletion support.
-* Discord's context menus ([User](https://discord.com/developers/docs/interactions/application-commands#user-commands)
-  and [Message](https://discord.com/developers/docs/interactions/application-commands#message-commands) commands)
-  support.
-* Replace the interaction listeners with your own for even more custom command handling.
-* Deny command executions via `CommandMiddlewares` (for general command filtering) or `CommandFilters` (for
-  command-specific filtering).
-* Handle uncaught command errors with a provided `ErrorHandler`.
+  * Create components (buttons, select menus and modal submits) that trigger a command, with an easy API that allows
+  storing and retrieving extra data from the customId.
+* Intercept command execution with `CommandMiddlewares` (for general filtering) or `CommandFilters` (for command-specific filtering).
+* Use the `CommandExecutionMeta` to provide metadata to your commands from your filter, middleware or subscriber.
+* Subscribe to meta events in the `CommandEventBus` like command runs.
+* Completely override the command interaction listeners with your own for even more custom interaction handling.
+* Handle uncaught command errors on a built-in `ErrorHandler`.
 
 ### Events
 
-* Register multiple `EventBuses`, each with their own execution logic.
-* Subscribe (and unsubscribe) to events on `EventBuses` via `EventSubscriber` objects or callback functions.
-* Enforce emitting and receiving events type safely, including your custom `EventBuses`.
-* Use the built-in `BotEventBus` to subscribe to `NyxBot` wide events, such as `botStop`, `commandAdd`, `scheduleRun`,
-  and many more.
-* Store event metadata across subscribers to share information about the event itself.
-  * The metadata allows marking events as handled so the `EventMiddleware` removes subscribers that don't want to
-    receive such events.
-* Specify an `EventDispatcher` to change the way subscribers are called. By default, two are included:
+* `EventBus` and `EventSubscriber` based event handling.
+* Enforced type safety when emitting and receiving events when using the provided or your custom `EventBuses`.
+* Store event metadata to share information about the event itself across subscribers.
+* Specify an `EventDispatcher` to change the way subscribers are called. By default, either:
   * The `AsyncEventDispatcher` which allows a concurrency limit.
   * The `SyncEventDispatcher` which allows a sync timeout limit before calling the next subscriber.
-* Deny subscriber executions via `EventMiddlewares` (for general filtering) or `SubscriberFilters` (for subscriber
-  specific filtering).
-* Handle subscriber errors via a flexible `ErrorHandler`.
+* Intercept subscriber execution with `EventMiddlewares` (for general filtering) or `SubscriberFilters` (for subscriber-specific filtering).
+* Handle uncaught subscriber errors on a built-in `ErrorHandler`.
 
 ### Schedules
 

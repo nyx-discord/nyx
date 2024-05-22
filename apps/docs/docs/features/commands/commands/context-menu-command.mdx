@@ -1,0 +1,66 @@
+---
+title: 🧾 Context Menu Command
+---
+
+# 🧾 Context Menu Command
+
+```mdx-code-block
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+```
+
+Context menu commands are commands executed on special menus. Currently Discord has two types of context menus:
+
+* [🔗 Message Context Menus](https://discord.com/developers/docs/interactions/application-commands#message-commands), shown when right clicking on a message.
+* [🔗 User Context Menus](.https://discord.com/developers/docs/interactions/application-commands#user-commands), shown when right clicking on a user.
+
+## 👷 Creation
+
+1. Create a context menu command class by either:
+
+* Extending `AbstractContextMenuCommand` from `@framework` (recommended).
+* Implementing the `ContextMenuCommand` interface from `@core`.
+
+2. Implement `createData()` that returns the DJS `ContextMenuCommandBuilder` that stores the command's data, and:
+* Implement `executeUser()` if the command is a user context menu.
+* Implement `executeMessage()` if the command is a message context menu.
+
+3. Instantiate and register it to a bot's `CommandManager`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending AbstractContextMenuCommand">
+```
+
+```ts
+class MyContextMenuCommand extends AbstractContextMenuCommand {
+  protected createData() {
+    return new ContextMenuCommandBuilder()
+      .setName('hello')
+      .setType(ApplicationCommandType.User);
+  }
+
+  public async executeUser(interaction: UserContextMenuCommandInteraction) {
+    await interaction.reply('Hello!');
+  }
+}
+
+const command = new MyContextMenuCommand();
+await bot.commands.addCommands(command);
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing ContextMenuCommand">
+```
+
+
+```ts
+class MyContextMenuCommand implements ContextMenuCommand {
+  // ...
+}
+
+const command = new MyContextMenuCommand();
+await bot.commands.addCommands(command);
+```
+

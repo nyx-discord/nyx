@@ -9,13 +9,6 @@ The `CommandResolver` is the object responsible for figuring to what command an 
 `AutocompleteInteraction` is trying to call. It's stored by a `CommandManager`, and you can get it
 via `CommandManager#getResolver()`.
 
-:::danger
-A resolver does not locate the actual command. Instead, it returns a `CommandReferenceData` object that says data about
-the command to find, like its name and type. The `CommandRepository` can then use this to actually locate the command.
-
-This intermediary is needed to avoid the resolver depending on the repository, and thus allowing you to reuse resolvers.
-:::
-
 ## 👷 Creation
 
 You can create a command resolver by either:
@@ -29,8 +22,6 @@ You can create a command resolver by either:
 ```
 
 ```ts
-import { DefaultCommandResolver } from '@nyx-discord/framework';
-
 class MyCommandResolver extends DefaultCommandResolver {
   // ...
 }
@@ -48,8 +39,6 @@ const myBot = Bot.create((bot) => ({
 ```
 
 ```ts
-import { CommandResolver } from '@nyx-discord/core';
-
 class MyCommandResolver implements CommandResolver {
   // ...
 }

@@ -17,31 +17,22 @@ said execution to the correspondent command object, all coordinated by a `Comman
 
 Specifically, the command related objects are:
 
-* `CommandManager`: The entry point for the command system, holding all the command-related objects and methods that use all of these objects. All objects below are contained here.
-* `CommandCustomIdCodec`: De/serializes commands names to/from customId strings, useful for creating message components that will trigger commands.
-* `CommandResolver`: Resolves the command data that a given command interaction refers to.
-* `CommandExecutor`: Executes command objects, checking its `CommandMiddlewareList` and passing any errors to its `ErrorHandler`.
-* `CommandRepository`: Stores all the currently registered commands and their command application mappings. It's also responsible for registering commands at Discord.
-* `CommandSubscriptionsContainer`: Stores the [📩 Event Subscribers](../events/event-subscriber) that are subscribed to the [👂 Client event bus](../events/event-manager.mdx#-client-event-bus) to listen for command interactions.
-* `EventBus`: An [📣 Event Bus](../events/event-bus) that emits command related events.
+* [`💼 CommandManager`](./command-manager.mdx): The entry point for the command system, holding all the command-related objects and methods that use all of these objects. All objects below are contained here.
+* [`💬 CommandCustomIdCodec`](./command-customid-codec.mdx): De/serializes commands names to/from customId strings, useful for creating message components that will trigger commands.
+* [`🔀 CommandResolver`](./command-resolver.mdx): Resolves the command that a given command interaction refers to.
+* [`⚡ CommandExecutor`](./command-executor.mdx): Executes commands, checking its `CommandMiddlewareList` and passing errors to the [`💫 ErrorHandler`](../../error/error-handling).
+* [`📔 CommandRepository`](./command-repository.mdx): Stores all the currently registered commands.
+* [`🪐 CommandDeployer`](./command-deployer.mdx): Deploys commands to Discord and stores the ApplicationCommand mappings.
+* [`👂 CommandSubscriptionsContainer`](./command-subscribers.mdx): Stores the [📩 Event Subscribers](../events/event-subscriber) that are subscribed to the [👂 Client event bus](../events/event-manager.mdx#-client-event-bus) to listen for command interactions.
+* [`📣 EventBus`](./command-bus.mdx): An [📣 Event Bus](../events/event-bus) that emits command related events.
 
 As well as the actual commands:
 
-* `StandaloneCommand`: A fully executable, top level command with no children. Can be executed via a slash command, or
-context menus (User or Message).
-* `ParentCommand`: A non-executable command that only serves to store subcommands or subcommand groups.
-* `SubCommand`: An executable command inside a `ParentCommand`. Can only be executed via a slash command.
-* `SubCommandGroup`: An non-executable command inside a `ParentCommand` that only serves to store subcommands.
-
-:::tip
-Commands don't depend on a specific bot, and you can reuse the same instance for many.
-
-From the `CommandExecutionMeta` passed on the command's execution (alongside the interaction) you can get:
-
-* The bot that received the command interaction, via `#getBot()`.
-* The timestamp when the command execution began, via `#getCreatedAt()`.
-* Other properties a filter or middleware may have set, via `#get()`.
-:::
+* [`🚀 Standalone Command`](./commands/standalone-command.mdx): A slash command with no children.
+* `🧾 Context Menu Command`: A context menu command (either User or Message).
+* [`️👨‍👧‍👦 Parent Command`](./commands/parent-command.mdx): A non-executable command that only serves to store subcommands or subcommand groups.
+* [`🧩 SubCommand`](./commands/subcommand.mdx): An executable command inside a `ParentCommand`. Can only be executed via a slash command.
+* [`🗂️ SubCommand Group`](./commands/subcommand-group.mdx): An non-executable command inside a `ParentCommand` that only serves to store subcommands.
 
 <details>
   <summary>Command handling process overview</summary>
@@ -49,16 +40,16 @@ From the `CommandExecutionMeta` passed on the command's execution (alongside the
   Here's a high-level overview of how the system works, using a `ChatInputCommandInteraction` as an example:
 
   1. A user triggers a command in Discord.
-  2. The `'interactionCreate'` event is emitted by
+  2. The `interactionCreate` event is emitted by
   the [Discord.js Client](https://discord.js.org/#/docs/discord.js/main/class/Client), passing the interaction as an
   argument.
-  3. The `ClientEventBus` receives it and starts notifying its subscribers.
-  4. One of these subscribers is the `CommandInteractionSubscriber`, stored on
+  3. The [`ClientEventBus`](../events/event-overview#-subscribing-to-the-client) receives it and starts notifying its subscribers.
+  4. One of these subscribers is the [`CommandInteractionSubscriber`](./command-subscribers), stored on
   the `CommandSubscriptionsContainer`.
-  5. The subscriber passes the interaction to the `CommandManager`.
-  6. The manager uses the `CommandResolver` to extract to what command the interaction refers to.
-  7. The command reference data is passed to the `CommandRepository`, to search for a command that matches that data.
-  8. If a command is found, the manager passes the execution to the `CommandExecutor`.
+  5. The subscriber passes the interaction to the [`CommandManager`](./command-manager).
+  6. The manager uses the [`CommandResolver`](./command-resolver) to extract to what command the interaction refers to,
+  passing the currently registered commands from the [`CommandRepository`](./command-repository).
+  8. If a command is found, the manager passes the execution to the [`CommandExecutor`](./command-executor).
   9. The executor checks what method it should execute according to the interaction. In this
   case, `ExecutableCommand#execute()`.
   10. Once it knows what it should execute, it checks its `CommandMiddlewareList` which determines whether to
@@ -78,34 +69,52 @@ participant "Client" as discordjs
 participant "ClientEventBus" as eventbus
 participant "CommandInteractionSubscriber" as subscriber
 participant "CommandManager" as manager
-participant "CommandResolver" as resolver
 participant "CommandRepository" as repository
+participant "CommandResolver" as resolver
 participant "CommandExecutor" as executor
 participant "EventBus" as eventbus2
 discordjs -> eventbus : Emit 'interactionCreate'
 eventbus -> subscriber : Notify Subscribers
 subscriber -> manager : Pass Interaction
-manager -> resolver : Extract reference data
 activate manager
-activate resolver
-resolver -> manager : Return reference data
-deactivate resolver
-manager -> repository : Search command
+manager -> repository : Get all commands
 activate repository
-repository -> manager : Return found command
+repository -> manager
 deactivate repository
-manager -> executor : Execute command
+manager -> resolver : Search executable command
+activate resolver
+resolver -> manager
+deactivate resolver
+manager -> executor : Execute found command
 activate executor
 executor -> executor : Check Middleware
 executor -> executor : Execute command
 executor -> executor : Handle errors
 executor -> manager : Finish execution
 deactivate executor
-manager -> eventbus2 : Emit event
+manager --> eventbus2 : Emit event
 deactivate manager
 @enduml
 ```
 
+## 📚 Creating a command
+
+The overall process of creating a command is to instantiate and register it to a `CommandManager`.
+
+If the bot has started, it will immediately be deployed to Discord, and its `ApplicationCommand` mapping will be
+available on the `CommandDeployer`. If the bot hasn't started, it will be queued to be deployed once it starts.
+
+Aditionally, commands don't depend on a specific bot, and you can reuse the same instance for many.
+
+:::warning
+By default, commands are registered using `ApplicationCommandManager#set()`. This means that commands deployed to
+Discord that are no longer registered will be deleted from there.
+:::
+
+:::tip
+Make sure to register all your commands before starting the bot to minimize the amount of API calls, since registering
+them after the bot has started will cause another API call.
+:::
 
 ## ✨ Quick examples
 
@@ -114,15 +123,16 @@ deactivate manager
 <TabItem value="Creating a Ping Command">
 ```
 
-1. Extend `AbstractStandaloneCommand`, implementing `execute()` and `data`.
+1. Extend `AbstractStandaloneCommand`, implementing `execute()` and `createData()`.
 2. Register it to a bot's `CommandManager`.
 
 ```ts
 class PingCommand extends AbstractStandaloneCommand {
-  protected data: StandaloneCommandData = {
-    name: 'ping',
-    description: 'Pong!',
-  };
+  protected createData() {
+    return new SlashCommandBuilder()
+      .setName('ping')
+      .setDescription('Pong!');
+  }
 
   public async execute(interaction: ChatInputCommandInteraction) {
     await interaction.reply('Pong!');
@@ -130,35 +140,99 @@ class PingCommand extends AbstractStandaloneCommand {
 }
 
 const command = new PingCommand();
-await bot.commands.addCommand(command);
+await bot.commands.addCommands(command);
 ```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Creating a ContextMenuCommand">
+```
+
+1. Extend `AbstractContextMenuCommand`, implementing `createData()`.
+2. Implement `executeUser()` if you're making a User Context Menu, or `executeMessage()` if you're making a Message Context Menu.
+3. Register it to a bot's `CommandManager`.
+
+* User Context Menu:
+
+```ts
+class NameContextMenuCommand extends AbstractContextMenuCommand {
+  protected createData() {
+    return new ContextMenuCommandBuilder()
+      .setName('name')
+      .setType(ApplicationCommandType.User);
+  }
+
+  public async executeUser(interaction: UserContextMenuCommandInteraction) {
+    const user = interaction.targetUser;
+    await interaction.reply(`This is ${user.username}`);
+  }
+}
+
+const command = new NameContextMenuCommand();
+await bot.commands.addCommands(command);
+```
+
+* Message Context Menu:
+
+```ts
+class MessageContentContextMenuCommand extends AbstractContextMenuCommand {
+  protected createData() {
+    return new ContextMenuCommandBuilder()
+      .setName('content')
+      .setType(ApplicationCommandType.Message);
+  }
+
+  public async executeMessage(interaction: MessageContextMenuCommandInteraction) {
+    const message = interaction.targetMessage;
+    await interaction.reply(`This message's content is ${message.content}`);
+  }
+}
+
+const command = new MessageContentContextMenuCommand();
+await bot.commands.addCommands(command);
+```
+
+:::danger
+There won't be any type errors if you don't implement the correspondent execute method for your command (like if you
+don't implement `executeUser()` with `ApplicationCommandType.User`), but you'll get a `NotImplementedError` once the
+command is actually executed, which will be handled by the [`ErrorHandler`](../../error/error-handling).
+:::
 
 ```mdx-code-block
 </TabItem>
 <TabItem value="Creating a SubCommand">
 ```
 
-1. Extend `AbstractParentCommand`, implementing `children` and `data`. This will be the command containing the subcommand.
-2. Extend `AbstractSubCommand`, implementing `execute()` and `data`.
+1. Extend `AbstractParentCommand`, implementing `children` and `createData()`. This will be the command containing the subcommand.
+2. Extend `AbstractSubCommand`, implementing `execute()` and `createData()`.
 3. Register the parent command to a bot's `CommandManager`.
+
+:::danger
+**Do not** add the subcommand as an option inside the `SlashCommandBuilder`. The serialization will do that for you, and
+will actually throw an `AssertionError` if you do that.
+:::
 
 ```ts
 class UserParentCommand extends AbstractParentCommand {
-  protected data: ParentCommandData = {
-    name: 'user',
-    description: 'User-related commands',
-  };
+  protected createData() {
+    return new SlashCommandBuilder()
+      .setName('user')
+      .setDescription('User-related commands');
+  }
 
-  protected children: AbstractSubCommand[] = [
-    new UserNameCommand(),
+  // highlight-start
+  protected children = [
+    new NameSubCommand(this),
   ]
+  // highlight-end
 }
 
-class UserNameCommand extends AbstractSubCommand {
-  protected data: SubCommandData = {
-    name: 'name',
-    description: 'Returns your name.',
-  };
+class NameSubCommand extends AbstractSubCommand {
+  protected createData() {
+    return new SlashCommandSubcommandBuilder()
+      .setName('name')
+      .setDescription('Returns your name.');
+  }
 
   public async execute(interaction: ChatInputCommandInteraction) {
     await interaction.reply(interaction.user.username);
@@ -166,41 +240,142 @@ class UserNameCommand extends AbstractSubCommand {
 }
 
 const parent = new UserParentCommand();
-await bot.commands.addCommand(parent);
-```
-
-
-```mdx-code-block
-</TabItem>
-<TabItem value="Autocompleting options">
-```
-
-From your executable command (a `StandaloneCommand` or `SubCommand`) implement `autocomplete()`. This needs to
-return an array of autocomplete options, either directly or on a promise (async method).
-
-```ts
-class AutocompletableCommand extends AbstractStandaloneCommand {
-  public autocomplete(
-    option: AutocompleteFocusedOption,
-    interaction: AutocompleteInteraction,
-  ) {
-    return [
-      { name: 'foo', value: 'bar' },
-    ];
-  }
-}
+await bot.commands.addCommands(parent);
 ```
 
 :::tip
-The `CommandExecutor` can perform extra filtering logic to your autocomplete options before actually responding. If you
-want to override this and directly answer with any given options, use the 4th parameter of `ExecutableCommand#autocomplete()`.
-This is a callback that receives your options as a parameter.
+Instead of implementing `children`, you could also add the subcommand with `#addChildren()`:
+```ts
+// Same classes as above but parent doesn't implement children:
 
-It's advised that you use this callback instead of `AutocompleteInteraction#respond()`, since the callback will perform
-error routing logic if the method throws an error.
+const parent = new UserParentCommand();
+
+const subCommand = new NameSubCommand(group);
+group.addChildren(subCommand);
+
+await bot.commands.addCommands(parent);
+```
 :::
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Creating a SubCommandGroup">
+```
+
+1. Extend `AbstractParentCommand`, implementing `children` and `createData()`. This will be the command containing the subcommand group.
+2. Extend `AbstractSubCommandGroup`, implementing `createData()`.
+3. Extend `AbstractSubCommand`, implementing `execute()` and `createData()`.
+4. Register the parent command to a bot's `CommandManager`.
+
+:::danger
+**Do not** add the subcommand group as an option inside the `SlashCommandBuilder` or the subcommand inside the
+`SlashCommandSubcommandGroupBuilder`. The serialization will do that for you, and will actually throw an `AssertionError`
+if you do that.
+:::
+
+```ts
+// Create the ParentCommand
+class PhotoParentCommand extends AbstractParentCommand {
+  protected createData() {
+    return new SlashCommandBuilder()
+      .setName('photo')
+      .setDescription('See photos of various things');
+  }
+
+  // highlight-start
+  protected children = [
+    new AnimalPhotoSubCommandGroup(this),
+  ]
+// highlight-end
+}
+
+// Create the SubCommandGroup
+class AnimalPhotoSubCommandGroup extends AbstractSubCommandGroup {
+  protected createData() {
+    return new SlashCommandSubcommandGroupBuilder()
+      .setName('animal')
+      .setDescription('See animal-related photos');
+  }
+
+  // highlight-start
+  protected children = [
+    new DogSubCommand(this),
+  ]
+  // highlight-end
+}
+
+// Create the SubCommand
+class DogSubCommand extends AbstractSubCommand {
+  protected createData() {
+    return new SlashCommandSubcommandBuilder()
+      .setName('dog')
+      .setDescription('See a random photo of a dog.');
+  }
+
+  public async execute(interaction: ChatInputCommandInteraction) {
+    const photo = await getRandomDogPhoto();
+    await interaction.reply(photo);
+  }
+}
+
+const parent = new PhotoParentCommand();
+await bot.commands.addCommands(parent);
+```
+
+:::tip
+Instead of implementing `children`, you could also add the group (and/or the subcommand) with `#addChildren()`:
+```ts
+// Same classes as above but parent and group don't implement children:
+
+const parent = new PhotoParentCommand();
+
+// You can add the group first and then the subcommand or the way around,
+// order doesn't matter.
+
+const group = new AnimalPhotoSubCommandGroup(parent);
+parent.addChildren(group);
+
+const subCommand = new DogSubCommand(group);
+group.addChildren(subCommand);
+
+await bot.commands.addCommands(parent);
+```
+:::
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Autocompletion">
+```
+
+From your executable command (a `StandaloneCommand` or `SubCommand`) implement `autocomplete()`.
+
+```ts
+class AutocompletableCommand extends AbstractStandaloneCommand {
+  public async autocomplete(interaction: AutocompleteInteraction) {
+    await interaction.respond([
+      { name: 'foo', value: 'bar' },
+    ]);
+  }
+}
+```
 
 ```mdx-code-block
 </TabItem>
 </Tabs>
 ```
+
+## 🔜 Next...
+
+Check the documentation of each command type:
+
+* [`🚀 Standalone Command`](./commands/standalone-command.mdx): A slash command with no children.
+* `👤 ContextMenu Command`: A context menu command (either User or Message).
+* [`️👨‍👧‍👦 Parent Command`](./commands/parent-command.mdx): A non-executable command that only serves to store subcommands or subcommand groups.
+* [`🧩 SubCommand`](./commands/subcommand.mdx): An executable command inside a `ParentCommand`. Can only be executed via a slash command.
+* [`🗂️ SubCommand Group`](./commands/subcommand-group.mdx): An non-executable command inside a `ParentCommand` that only serves to store subcommands.
+
+Or check what you can do with commands:
+
+* Make components that call commands with the [`💬 CommandCustomIdCodec`](./command-customid-codec.mdx).
+* Type safely get command instances on the [`📔 CommandRepository`](./command-repository.mdx)
+* Listen to command events on the [📣 EventBus](./command-bus.mdx).

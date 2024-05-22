@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,16 +28,16 @@ import type { BotAware } from '../../bot/BotAware.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber.js';
-import type { ParentCommand } from './commands/ParentCommand';
 import type { TopLevelCommand } from './commands/TopLevelCommand.js';
 import type { CommandCustomIdCodec } from './customId/CommandCustomIdCodec.js';
+import type { ReadonlyCommandDeployer } from './deploy/ReadonlyCommandDeployer';
 import type { CommandSubscriptionsContainer } from './event/CommandSubscriptionsContainer.js';
 import type { CommandEventArgs } from './events/CommandEvent.js';
 import type { CommandExecutor } from './execution/executor/CommandExecutor.js';
 import type { CommandExecutionMeta } from './execution/meta/CommandExecutionMeta.js';
 import type { CommandExecutableInteraction } from './interaction/CommandExecutableInteraction.js';
 import type { ReadonlyCommandRepository } from './repository/ReadonlyCommandRepository.js';
-import type { CommandResolver } from './resolver/CommandResolver.js';
+import type { CommandResolver } from './resolve/CommandResolver';
 
 /** An object that holds methods for interacting with the bot's {@link Command commands}. */
 export interface CommandManager extends BotAware, BotLifecycleObserver {
@@ -64,12 +64,12 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
   ): Awaitable<boolean>;
 
   /**
-   * Adds a {@link TopLevelCommand command} and registers it on Discord, if the
+   * Adds {@link TopLevelCommand commands} and registers them on Discord, if the
    * bot has started.
    *
    * @throws {IllegalDuplicateError} If a command with that same data exists.
    */
-  addCommand(command: TopLevelCommand): Awaitable<this>;
+  addCommands(...commands: TopLevelCommand[]): Awaitable<this>;
 
   /**
    * Removes a {@link TopLevelCommand command} and unregisters it from Discord,
@@ -77,10 +77,16 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
    *
    * @throws {ObjectNotFoundError} If that command is not registered.
    */
-  removeCommand(command: TopLevelCommand): Awaitable<this>;
+  removeCommands(...commands: TopLevelCommand[]): Awaitable<this>;
 
-  /** Updates a parent command on Discord, after its children have changed. */
-  updateParentCommand(command: ParentCommand): Awaitable<this>;
+  /**
+   * Edits commands on Discord. Requires the bot to have started.
+   *
+   * @throws {IllegalStateError} If the bot has not started.
+   * @throws {ObjectNotFoundError} If that command is not deployed.
+   * @throws {Error} If there was an error while editing the commands.
+   */
+  editCommands(...commands: TopLevelCommand[]): Awaitable<this>;
 
   /**
    * Subscribes an event subscriber to the manager's bus.
@@ -88,7 +94,7 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
    * Alias of:
    * ```
    * const managerBus = commandManager.getEventBus();
-   * await eventManager.subscribe(subscriber, managerBus);
+   * await managerBus.subscribe(subscriber);
    * ```
    */
   subscribe(
@@ -112,4 +118,7 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
 
   /** Returns the {@link EventBus} for this manager. */
   getEventBus(): EventBus<CommandEventArgs>;
+
+  /** Returns the {@link CommandDeployer} for this manager. */
+  getDeployer(): ReadonlyCommandDeployer;
 }

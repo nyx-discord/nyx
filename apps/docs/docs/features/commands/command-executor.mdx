@@ -26,8 +26,6 @@ You can create a custom command executor by either:
 ```
 
 ```ts
-import { DefaultCommandExecutor } from '@nyx-discord/framework';
-
 class MyCommandExecutor extends DefaultCommandExecutor {
   // ...
 }
@@ -45,8 +43,6 @@ const myBot = Bot.create((bot) => ({
 ```
 
 ```ts
-import { CommandExecutor } from '@nyx-discord/core';
-
 class MyCommandExecutor implements CommandExecutor {
   // ...
 }

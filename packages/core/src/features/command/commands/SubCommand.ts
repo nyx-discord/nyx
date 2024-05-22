@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,16 @@
  * SOFTWARE.
  */
 
-import type { SubCommandData } from '../data/command/SubCommandData.js';
-import type { ChildCommand } from './abstract/ChildCommand.js';
-import type { ExecutableCommand } from './abstract/ExecutableCommand.js';
+import type { SlashCommandSubcommandBuilder } from 'discord.js';
+import type { ChildCommand } from './child/ChildCommand';
+import type { ChatExecutableCommand } from './executable/ChatExecutableCommand';
 import type { ParentCommand } from './ParentCommand.js';
 import type { SubCommandGroup } from './SubCommandGroup.js';
 
 /** A child, executable command that belongs to a {@link ParentCommand} or {@link SubCommandGroup}. */
 export interface SubCommand
-  extends ExecutableCommand<SubCommandData>,
-    ChildCommand<SubCommandData, ParentCommand | SubCommandGroup> {}
+  extends ChatExecutableCommand<SlashCommandSubcommandBuilder>,
+    ChildCommand<
+      SlashCommandSubcommandBuilder,
+      ParentCommand | SubCommandGroup
+    > {}

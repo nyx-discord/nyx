@@ -1,7 +1,6 @@
 ---
 slug: /
 hide_title: true
-hide_table_of_contents: true
 title: 🏠 Welcome
 ---
 
@@ -13,11 +12,58 @@ title: 🏠 Welcome
 
 Hello there 👋! Welcome to the Docusaurus documentation for nyx, a Discord.js Typescript bot framework.
 
-Here, you'll discover how to create your own bot using nyx, how to customize existing and add new components to it.
+Here, you'll discover how to create your own bot using nyx, how to customize the framework and add new components to it.
 
 :::danger
 nyx is not the best fit for beginners or simple bots. We assume you have some level of understanding of Typescript and
 Discord.js.
-
-If you want something simpler, you might want to check out our bot template, `phanes`.
 :::
+
+## 🌠 Introduction
+
+nyx is a framework to build Discord.js bots in Typescript. The main ideas behind nyx are:
+
+* ♻ **Fully replaceable and extendable**. Every working component can be replaced by your own given it fits the required interface.
+* 🧱 **Bare-bones**. `@core` has no runtime dependencies, and `@framework` has as little as possible, which you can replace either way.
+* 😀 **Easy to understand and setup**. Hacky or unnecessarily messy internal code is avoided, and documentation like this guide or [Typedoc](https://nyx-discord.github.io/nyx/typedoc/) is provided.
+* 🌐 **DJS Native**. Nyx tries to reuse or pass DJS objects as much as possible to avoid falling behind on latest features or needing big rewrites when DJS changes.
+* 💻 **Developer friendly**. Type safety, predictability, error handling and extensibility are some features that make nyx easy to work with.
+
+Currently, nyx has five main features, each with its own dedicated section. These are:
+
+* [💻 Commands](./features/commands/command-overview.mdx), for Discord application commands.
+* [📸 Events](./features/events/event-overview.mdx), for subscribing to events, either from Discord.js or your own.
+* [️⏰ Schedules](./features/schedules/schedule-overview.mdx), for timed tasks.
+* [👤 Sessions](./features/sessions/session-overview.mdx), for user interaction sessions.
+* [️🧩 Plugins](./features/plugins/plugin-overview), for plugins that extend nyx.
+
+## 📋 Packages
+
+The framework is built with two packages: `@nyx-discord/core` and `@nyx-discord/framework`, abbreviated in the guide as `@core` and `@framework`.
+
+### 💠 Core
+
+* Defines all the object templates (interfaces) and their relations for nyx, acting as the blueprint.
+* No runtime dependencies (since it doesn't have any actual code), only type dependencies which are `discord.js` and `@discordjs/collection`.
+* It doesn't have any actual implementations, so it's not really usable by itself.
+
+### 🧱 Framework
+
+* Provides default, minimal implementations for `@core`, making it directly usable.
+* Its implementations are designed to depend on interfaces from `@core`, rather than each other, making those dependencies fully replaceable by your own.
+* Minimal runtime dependencies due to its "bare bones" ideology.
+
+### ❓ Which package to install
+
+* Most of the time, you'll want to use `@framework`. Even if you want to include your own components, this library makes it easy to replace them via constructor injection.
+
+* If you want to develop something for nyx, such as a plugin, you can depend only on `@core`. This way, you can depend on the interfaces and not any actual implementations, ensuring that your component will work across all nyx implementations.
+
+:::danger
+These docs as a whole heavily assumes that you're using `@framework`'s implementations. The terms "by
+default", "the base implementation", etc., all refer to these, as `@core` doesn't have any.
+:::
+
+## 🔜 Next...
+
+Check out the [🚀 Start](./start.mdx) guide to get started on your first nyx bot!

@@ -72,7 +72,7 @@ type BotOptionsWithDefaults<
       ConcretePluginManager,
       ConcreteBotService
     >,
-    'logger' | 'client' | 'id' | 'token' | 'refreshCommands'
+    'logger' | 'client' | 'id' | 'token'
   >;
 
 /** The main Bot class. */
@@ -169,7 +169,6 @@ export class Bot<
         bot,
         generatedOptions.id,
         generatedOptions.client,
-        generatedOptions.refreshCommands,
       );
 
       return { ...defaultOptions, ...generator(bot) } as BotOptions<
@@ -188,7 +187,6 @@ export class Bot<
     bot: NyxBot,
     id: Identifier,
     client: Client,
-    refreshCommands: boolean,
   ) => {
     const eventManager = DefaultEventManager.create(bot, client);
 
@@ -198,7 +196,6 @@ export class Bot<
         bot,
         client,
         eventManager.getClientBus(),
-        refreshCommands,
       ),
       schedules: DefaultScheduleManager.create(bot),
       sessions: DefaultSessionManager.create(bot),

@@ -212,8 +212,6 @@ You can create a command custom ID codec by either:
 ```
 
 ```ts
-import { DefaultCommandCustomIdCodec } from '@nyx-discord/framework';
-
 class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {
   // ...
 }
@@ -231,8 +229,6 @@ const myBot = Bot.create((bot) => ({
 ```
 
 ```ts
-import { CommandCustomIdCodec } from '@nyx-discord/core';
-
 class MyCommandCustomIdCodec implements CommandCustomIdCodec {
   // ...
 }

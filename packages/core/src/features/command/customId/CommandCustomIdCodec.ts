@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +25,11 @@
 import type { CustomIdBuilder } from '../../../customId/CustomIdBuilder';
 import type { CustomIdCodec } from '../../../customId/CustomIdCodec.js';
 import type { StringIterator } from '../../../string/StringIterator';
-import type { ExecutableCommand } from '../commands/abstract/ExecutableCommand.js';
-import type { CommandData } from '../data/command/CommandData.js';
-import type { CommandReferenceData } from '../resolver/CommandReferenceData';
+import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
 
 /** An object responsible for creating and manipulating customIds that refer to command names. */
 export interface CommandCustomIdCodec
-  extends CustomIdCodec<ExecutableCommand<CommandData>> {
+  extends CustomIdCodec<AnyExecutableCommand> {
   /**
    * Creates a {@link CustomIdBuilder} that can be used to start a
    * customId that refers to the passed command.
@@ -40,11 +38,10 @@ export interface CommandCustomIdCodec
    * // userinfo command, with 'Amgelo#1106' as an extra data.
    *
    * const commandManager = myBot.commands;
-   *
-   * const commandRouter = commandManager.getRouter();
+   * const repository = commandManager.getRepository();
    *
    * const userInfoCommand =
-   *   commandRouter.locateCommandByTree(UserInfoCommandClass);
+   *   repository.locateCommandByTree(UserInfoCommandClass);
    * if (!userInfoCommand) return;
    *
    * const customIdCodec = commandManager.getCustomIdCodec();
@@ -55,9 +52,7 @@ export interface CommandCustomIdCodec
    * // Use this for your component's customId.
    * const customId: string = builder.build();
    */
-  createCustomIdBuilder(
-    command: ExecutableCommand<CommandData>,
-  ): CustomIdBuilder;
+  createCustomIdBuilder(command: AnyExecutableCommand): CustomIdBuilder;
 
   /**
    * Creates a {@link StringIterator} from a command customId, leaving only the
@@ -76,6 +71,6 @@ export interface CommandCustomIdCodec
    */
   createIteratorFromCustomId(commandCustomId: string): StringIterator | null;
 
-  /** Extracts the reference data from the passed command customId. */
-  deserializeToData(customId: string): CommandReferenceData | null;
+  /** Returns the separator used to serialize names in command customIds. */
+  getNamesSeparator(): string;
 }

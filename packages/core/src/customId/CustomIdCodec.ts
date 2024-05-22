@@ -22,12 +22,11 @@
  * SOFTWARE.
  */
 
-import type { Identifiable } from '../identity/Identifiable.js';
 import type { StringIterator } from '../string/StringIterator';
 import type { CustomIdBuilder } from './CustomIdBuilder';
 
 /** An object responsible for creating and manipulating customIds that refer to objects. */
-export interface CustomIdCodec<Serialized extends Identifiable<string>> {
+export interface CustomIdCodec<Serialized> {
   /** Creates a customId that refers to the passed object. */
   serializeToCustomId(object: Serialized): string;
 

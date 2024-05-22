@@ -386,10 +386,3 @@ ticketBus
   // error-next-line
   .subscribe(invalidSubscriber);
 ```
-
-:::warning
-A current limitation is that the bus (on `EventBus#subscribe()`) will only check that there's an event that matches the
-given arguments. It will not check that the subscriber's event actually matches those types.
-
-It's advised that you create an abstract class for the subscriber you want, similar to the `AbstractDJSClientSubscriber`.
-:::

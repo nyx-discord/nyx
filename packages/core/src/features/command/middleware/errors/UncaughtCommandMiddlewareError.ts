@@ -23,8 +23,7 @@
  */
 
 import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
-import type { ExecutableCommand } from '../../commands/abstract/ExecutableCommand.js';
-import type { CommandData } from '../../data/command/CommandData.js';
+import type { AnyExecutableCommand } from '../../commands/executable/AnyExecutableCommand';
 import { CommandError } from '../../errors/CommandError.js';
 import type { CommandExecutionMeta } from '../../execution/meta/CommandExecutionMeta.js';
 import type { CommandExecutableInteraction } from '../../interaction/CommandExecutableInteraction.js';
@@ -36,7 +35,7 @@ export class UncaughtCommandMiddlewareError extends CommandError {
   constructor(
     error: Error,
     middlewareList: MiddlewareList<CommandMiddleware>,
-    command: ExecutableCommand<CommandData>,
+    command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
     meta: CommandExecutionMeta,
   ) {

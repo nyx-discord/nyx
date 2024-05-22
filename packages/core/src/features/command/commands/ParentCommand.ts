@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,10 @@
  * SOFTWARE.
  */
 
-import type { ParentCommandData } from '../data/command/ParentCommandData.js';
-import type { ChildableCommand } from './abstract/ChildableCommand.js';
+import type { SlashCommandSubcommandsOnlyBuilder, Snowflake } from 'discord.js';
+
+import type { Identifiable } from '../../../identity/Identifiable';
+import type { ChildableCommand } from './child/ChildableCommand';
 import type { SubCommand } from './SubCommand.js';
 import type { SubCommandGroup } from './SubCommandGroup.js';
 
@@ -33,4 +35,11 @@ import type { SubCommandGroup } from './SubCommandGroup.js';
  * cannot be executed by themselves, a subcommand must be specified.
  */
 export interface ParentCommand
-  extends ChildableCommand<ParentCommandData, SubCommand | SubCommandGroup> {}
+  extends ChildableCommand<
+      ReturnType<SlashCommandSubcommandsOnlyBuilder['toJSON']>,
+      SubCommand | SubCommandGroup
+    >,
+    Identifiable<string> {
+  /** Gets the guilds this command can be executed in. `null` for global commands. */
+  getGuilds(): ReadonlyArray<Snowflake> | null;
+}

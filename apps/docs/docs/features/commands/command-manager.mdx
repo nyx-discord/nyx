@@ -6,12 +6,12 @@ The `CommandManager` is the object that holds together the nyx event system.
 
 It consists of:
 
-* `CommandSubscriberContainer` for managing command-related subscribers.
-* `CommandCustomIdProcessor` for processing command customIds.
-* `CommandRouter` for routing command interactions to the respective command.
-* `CommandExecutor` for executing concrete commands.
-* `CommandRepository` for storing the registered commands and managing their registration at Discord.
-* `EventBus` for emitting command related events.
+* `CommandCustomIdCodec`: De/serializes commands names to/from customId strings, useful for creating message components that will trigger commands.
+* `CommandResolver`: Resolves the command data that a given command interaction refers to.
+* `CommandExecutor`: Executes command objects, checking its `CommandMiddlewareList` and passing any errors to its `ErrorHandler`.
+* `CommandRepository`: Stores all the currently registered commands and their command application mappings. It's also responsible for registering commands at Discord.
+* `CommandSubscriptionsContainer`: Stores the [📩 Event Subscribers](../events/event-subscriber) that are subscribed to the [👂 Client event bus](../events/event-manager.mdx#-client-event-bus) to listen for command interactions.
+* `EventBus`: An [📣 Event Bus](../events/event-bus) that emits command related events.
 
 As well as methods to interact with them.
 

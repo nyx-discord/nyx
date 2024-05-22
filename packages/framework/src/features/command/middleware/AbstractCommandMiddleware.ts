@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,14 +23,13 @@
  */
 
 import type {
-  CommandData,
+  AnyExecutableCommand,
   CommandExecutionArgs,
-  ExecutableCommand,
+  CommandMiddleware,
 } from '@nyx-discord/core';
 
 import { AbstractMiddleware } from '../../../middleware/AbstractMiddleware.js';
 
-export abstract class AbstractCommandMiddleware extends AbstractMiddleware<
-  ExecutableCommand<CommandData>,
-  CommandExecutionArgs
-> {}
+export abstract class AbstractCommandMiddleware
+  extends AbstractMiddleware<AnyExecutableCommand, CommandExecutionArgs>
+  implements CommandMiddleware {}

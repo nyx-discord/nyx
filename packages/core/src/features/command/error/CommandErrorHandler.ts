@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,8 @@
  */
 
 import type { ErrorHandler } from '../../../error/handler/ErrorHandler.js';
-import type { ExecutableCommand } from '../commands/abstract/ExecutableCommand.js';
-import type { CommandData } from '../data/command/CommandData.js';
+import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
 import type { CommandExecutionArgs } from '../execution/args/CommandExecutionArgs.js';
 
 export interface CommandErrorHandler
-  extends ErrorHandler<ExecutableCommand<CommandData>, CommandExecutionArgs> {}
+  extends ErrorHandler<AnyExecutableCommand, CommandExecutionArgs> {}

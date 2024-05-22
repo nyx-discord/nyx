@@ -58,8 +58,6 @@ You can create your own middleware by either:
 ```
 
 ```ts
-import { AbstractCommandMiddleware } from '@nyx-discord/framework';
-
 class MyCommandMiddleware extends AbstractCommandMiddleware {
   public check(command: ExecutableCommand<CommandData>, ...args: CommandExecutionArgs): MiddlewareResponse {
     return this.true();
@@ -77,8 +75,6 @@ bot.commands.getExecutor().getMiddleware().add(middleware);
 ```
 
 ```ts
-import { CommandMiddleware } from '@nyx-discord/core';
-
 class MyCommandMiddleware implements CommandMiddleware {
   // ...
 }

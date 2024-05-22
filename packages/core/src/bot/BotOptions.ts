@@ -46,7 +46,6 @@ export interface BotOptions<
   token: string;
   client: Client;
   id: Identifier;
-  refreshCommands: boolean;
 
   logger: ConcreteLogger;
   commands: ConcreteCommandManager;

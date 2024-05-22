@@ -9,15 +9,28 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 ```
 
-Parent commands are non-executable, top level commands that only serve to store children. These children can be either
-`SubCommands` or `SubCommandGroups`.
+Parent commands are non-executable, top level commands that only serve to store [`️🧩 SubCommands`](./subcommand) or [`🗂️ SubCommand Group`](./subcommand-group).
 
 ## 👷 Creation
 
-You can create a parent command by either:
+1. Create a parent command class by either:
 
 * Extending `AbstractParentCommand` from `@framework` (recommended).
 * Implementing the `ParentCommand` interface from `@core`.
+
+2. Implement `createData()` that returns the DJS `SlashCommandBuilder` that stores the command's data.
+
+:::danger
+**Do not** add your children as options inside the `SlashCommandBuilder`. The serialization will do that for you, and
+will actually throw an `AssertionError` if you do that.
+:::
+
+2. Add subcommand or subcommand group children by either:
+
+* Specifying them in the `children` property.
+* Adding them after instantiation with `ParentCommand#addChildren()`.
+
+3. Instantiate and register it to a bot's `CommandManager`.
 
 ```mdx-code-block
 <Tabs>
@@ -25,12 +38,11 @@ You can create a parent command by either:
 ```
 
 ```ts
-import { AbstractParentCommand } from '@nyx-discord/framework';
-
 class MyParentCommand extends AbstractParentCommand {
-  protected data: ParentCommandData = {
-    name: 'hello',
-    description: 'Hello world!',
+  protected createData() {
+    return new SlashCommandBuilder()
+      .setName('hello')
+      .setDescription('Hello world!');
   }
 
   protected children = [
@@ -39,7 +51,7 @@ class MyParentCommand extends AbstractParentCommand {
 }
 
 const command = new MyParentCommand();
-await bot.commands.addCommand(command);
+await bot.commands.addCommands(command);
 ```
 
 ```mdx-code-block
@@ -55,7 +67,7 @@ class MyParentCommand implements ParentCommand {
 }
 
 const command = new MyParentCommand();
-await bot.commands.addCommand(command);
+await bot.commands.addCommands(command);
 ```
 
 ```mdx-code-block
@@ -66,14 +78,14 @@ await bot.commands.addCommand(command);
 ## 🔀 Manipulating children
 
 Normally, a parent's children are created alongside the parent, but they can also be added (and removed) on runtime with
-`ParentCommand#addChild()`, `ParentCommand#removeChildByInstance()` and `ParentCommand#removeChildByName()`.
+`ParentCommand#addChildren()`, `ParentCommand#removeChildByInstance()` and `ParentCommand#removeChildByName()`.
 
 After updating a parent command, you must call `CommandManager#update()` on it in order to reflect the changes on
 Discord.
 
 ```ts
 const parentCommand = new MyParentCommand();
-await this.bot.commands.addCommand(parentCommand);
+await this.bot.commands.addCommands(parentCommand);
 
 // highlight-next-line
 // Adding a child
@@ -84,7 +96,7 @@ const mySubCommand = new MySubCommand(parentCommand);
 // Throws IllegalDuplicateError if a child with that name already exists
 // Throws RangeError if no more children can be added to this parent command (25)
 // Throws AssertionError if this child's parent is not parentCommand
-parentCommand.addChild(mySubCommand);
+parentCommand.addChildren(mySubCommand);
 // warn-end
 
 await this.bot.commands.updateCommand(parentCommand);
