@@ -53,10 +53,12 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
   }
 
   public static create(): ScheduleExecutor {
-    const middleware = ScheduleMiddlewareList.create();
-    const errorHandler = new BasicErrorHandler<Schedule, ScheduleTickArgs>();
-
-    return new DefaultScheduleExecutor(middleware, errorHandler);
+    return new DefaultScheduleExecutor(
+      ScheduleMiddlewareList.create(),
+      BasicErrorHandler.createWithFallbackLogger(
+        (_error, _sub, [meta]) => meta.getBot().logger,
+      ),
+    );
   }
 
   public async tick(schedule: Schedule, meta: ScheduleTickMeta): Promise<void> {
@@ -66,16 +68,13 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
       await this.checkMiddleware(schedule, args);
     } catch (error) {
       const wrapped = this.wrapMiddlewareError(error as Error, schedule, args);
-
-      const bot = meta.getBot();
-      await this.errorHandler.handle(wrapped, schedule, args, bot);
+      await this.errorHandler.handle(wrapped, schedule, args);
     }
 
     try {
       await schedule.tick(...args);
     } catch (error) {
-      const bot = meta.getBot();
-      await this.errorHandler.handle(error as object, schedule, args, bot);
+      await this.errorHandler.handle(error as object, schedule, args);
     }
   }
 
@@ -101,8 +100,7 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
         args,
       );
 
-      const bot = args[0].getBot();
-      await this.errorHandler.handle(wrappedError, schedule, args, bot);
+      await this.errorHandler.handle(wrappedError, schedule, args);
       return false;
     }
     return result;

@@ -55,7 +55,9 @@ export class BasicSyncEventDispatcher
 
   public static create(syncTimeout?: number | null): SyncEventDispatcher {
     return new BasicSyncEventDispatcher(
-      BasicErrorHandler.create(),
+      BasicErrorHandler.createWithFallbackLogger(
+        (_error, _sub, [meta]) => meta.getBot(true).logger,
+      ),
       SubscriberMiddlewareList.create(),
       syncTimeout,
     );
@@ -75,7 +77,6 @@ export class BasicSyncEventDispatcher
               timeout,
             );
 
-    const [meta] = args;
     for (const subscriber of subscribers) {
       try {
         const middlewareSuccess = await this.middleware.check(
@@ -92,23 +93,13 @@ export class BasicSyncEventDispatcher
           args,
         );
 
-        await this.errorHandler.handle(
-          wrappedError,
-          subscriber,
-          args,
-          meta.getBot(),
-        );
+        await this.errorHandler.handle(wrappedError, subscriber, args);
       }
 
       try {
         await callFunction(subscriber);
       } catch (error) {
-        await this.errorHandler.handle(
-          error as Error,
-          subscriber,
-          args,
-          meta.getBot(),
-        );
+        await this.errorHandler.handle(error as Error, subscriber, args);
       }
     }
   }

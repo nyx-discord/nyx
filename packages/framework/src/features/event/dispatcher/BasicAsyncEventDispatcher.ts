@@ -53,7 +53,9 @@ export class BasicAsyncEventDispatcher
 
   public static create(concurrencyLimit?: number | null): AsyncEventDispatcher {
     return new BasicAsyncEventDispatcher(
-      new BasicErrorHandler(),
+      BasicErrorHandler.createWithFallbackLogger(
+        (_error, _sub, [meta]) => meta.getBot(true).logger,
+      ),
       SubscriberMiddlewareList.create(),
       concurrencyLimit,
     );
@@ -92,12 +94,7 @@ export class BasicAsyncEventDispatcher
           await subscriber.handleEvent(meta, ...unknownArgs);
         })
         .catch(async (error) => {
-          await this.errorHandler.handle(
-            error,
-            subscriber,
-            args,
-            meta.getBot(),
-          );
+          await this.errorHandler.handle(error, subscriber, args);
         });
 
       pendingPromises.push(promise);
@@ -136,12 +133,10 @@ export class BasicAsyncEventDispatcher
           args,
         );
 
-        await this.errorHandler.handle(
-          wrappedError,
-          subscriber,
-          [meta, ...args],
-          meta.getBot(),
-        );
+        await this.errorHandler.handle(wrappedError, subscriber, [
+          meta,
+          ...args,
+        ]);
         return false;
       });
   }

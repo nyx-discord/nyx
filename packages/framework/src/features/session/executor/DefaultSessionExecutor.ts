@@ -82,9 +82,15 @@ export class DefaultSessionExecutor implements SessionExecutor {
       SessionStartMiddlewareList.create(),
       SessionUpdateMiddlewareList.create(),
 
-      BasicErrorHandler.create(),
-      BasicErrorHandler.create(),
-      BasicErrorHandler.create(),
+      BasicErrorHandler.createWithFallbackLogger(
+        (_error, session) => session.bot.logger,
+      ),
+      BasicErrorHandler.createWithFallbackLogger(
+        (_error, session) => session.bot.logger,
+      ),
+      BasicErrorHandler.createWithFallbackLogger(
+        (_error, session) => session.bot.logger,
+      ),
     );
   }
 
@@ -112,12 +118,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
               meta,
             );
 
-      await this.startErrorHandler.handle(
-        wrappedError,
-        session,
-        [meta],
-        session.bot,
-      );
+      await this.startErrorHandler.handle(wrappedError, session, [meta]);
 
       return false;
     }
@@ -127,12 +128,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
 
       return true;
     } catch (error) {
-      await this.startErrorHandler.handle(
-        error as object,
-        session,
-        [meta],
-        session.bot,
-      );
+      await this.startErrorHandler.handle(error as object, session, [meta]);
 
       const interaction = session.getStartInteraction();
       return interaction.replied;
@@ -167,24 +163,20 @@ export class DefaultSessionExecutor implements SessionExecutor {
               meta,
             );
 
-      await this.updateErrorHandler.handle(
-        wrappedError,
-        session,
-        [interaction, meta],
-        session.bot,
-      );
+      await this.updateErrorHandler.handle(wrappedError, session, [
+        interaction,
+        meta,
+      ]);
       return false;
     }
 
     try {
       return await session.onUpdate(interaction, meta);
     } catch (error) {
-      await this.updateErrorHandler.handle(
-        error as object,
-        session,
-        [interaction, meta],
-        session.bot,
-      );
+      await this.updateErrorHandler.handle(error as object, session, [
+        interaction,
+        meta,
+      ]);
 
       return false;
     }
@@ -213,12 +205,10 @@ export class DefaultSessionExecutor implements SessionExecutor {
 
       return endData;
     } catch (error) {
-      await this.endErrorHandler.handle(
-        error as object,
-        session,
-        [endData, meta],
-        session.bot,
-      );
+      await this.endErrorHandler.handle(error as object, session, [
+        endData,
+        meta,
+      ]);
 
       return endData;
     }

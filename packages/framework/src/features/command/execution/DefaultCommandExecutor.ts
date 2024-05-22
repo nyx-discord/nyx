@@ -38,12 +38,10 @@ import type {
 } from '@nyx-discord/core';
 import {
   CommandAutocompleteError,
-  CommandAutocompleteRespondError,
   CommandMiddlewareError,
   UncaughtCommandMiddlewareError,
 } from '@nyx-discord/core';
 import type {
-  ApplicationCommandOptionChoiceData,
   AutocompleteInteraction,
   Awaitable,
   ChatInputCommandInteraction,
@@ -69,7 +67,10 @@ export class DefaultCommandExecutor implements CommandExecutor {
 
   public static create(): CommandExecutor {
     return new DefaultCommandExecutor(
-      BasicErrorHandler.create<AnyExecutableCommand, CommandExecutionArgs>(),
+      BasicErrorHandler.createWithFallbackLogger<
+        AnyExecutableCommand,
+        CommandExecutionArgs
+      >((_error, _cmd, [_int, meta]) => meta.getBot().logger),
       CommandMiddlewareList.create(),
     );
   }
@@ -114,8 +115,6 @@ export class DefaultCommandExecutor implements CommandExecutor {
     interaction: AutocompleteInteraction,
     metadata: CommandExecutionMeta,
   ): Promise<void> {
-    const bot = metadata.getBot();
-
     try {
       await command.autocomplete(interaction, metadata);
     } catch (error) {
@@ -125,12 +124,10 @@ export class DefaultCommandExecutor implements CommandExecutor {
         interaction,
         metadata,
       );
-      await this.errorHandler.handle(
-        wrappedError,
-        command,
-        [interaction, metadata],
-        bot,
-      );
+      await this.errorHandler.handle(wrappedError, command, [
+        interaction,
+        metadata,
+      ]);
       return;
     }
   }
@@ -215,16 +212,12 @@ export class DefaultCommandExecutor implements CommandExecutor {
 
     try {
       const boundMethod = method.bind(command);
-
       await boundMethod(interaction, metadata);
     } catch (error) {
-      const bot = metadata.getBot();
-      await this.errorHandler.handle(
-        error as object,
-        command,
-        [interaction, metadata],
-        bot,
-      );
+      await this.errorHandler.handle(error as object, command, [
+        interaction,
+        metadata,
+      ]);
     }
   }
 
@@ -244,13 +237,10 @@ export class DefaultCommandExecutor implements CommandExecutor {
         meta,
       );
 
-      const bot = meta.getBot();
-      await this.errorHandler.handle(
-        wrappedError,
-        command,
-        [interaction, meta],
-        bot,
-      );
+      await this.errorHandler.handle(wrappedError, command, [
+        interaction,
+        meta,
+      ]);
 
       return false;
     }
@@ -283,46 +273,5 @@ export class DefaultCommandExecutor implements CommandExecutor {
     meta: CommandExecutionMeta,
   ): CommandError {
     return new CommandAutocompleteError(error, command, interaction, meta);
-  }
-
-  protected wrapAutocompleteRespondError(
-    error: Error,
-    command: AnyExecutableCommand,
-    interaction: AutocompleteInteraction,
-    meta: CommandExecutionMeta,
-  ): CommandError {
-    return new CommandAutocompleteRespondError(
-      error,
-      command,
-      interaction,
-      meta,
-    );
-  }
-
-  protected filterChoices(
-    choices: ApplicationCommandOptionChoiceData[],
-    interaction: AutocompleteInteraction,
-  ): ApplicationCommandOptionChoiceData[] {
-    const focused = interaction.options.getFocused();
-
-    const filteredChoices = focused.length
-      ? choices.filter((option) =>
-          String(option.value).toLowerCase().startsWith(focused.toLowerCase()),
-        )
-      : (choices as ApplicationCommandOptionChoiceData[]);
-
-    // Add the currently typed option as a first choice, for user convenience
-    if (
-      focused.length
-      && filteredChoices.length
-      && filteredChoices[0].name !== focused
-      && !filteredChoices.find(
-        (option) => option.name === focused || option.value === focused,
-      )
-    ) {
-      filteredChoices.unshift({ name: focused, value: focused });
-    }
-
-    return filteredChoices.slice(0, 25);
   }
 }

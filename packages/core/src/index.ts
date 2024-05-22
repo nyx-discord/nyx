@@ -41,7 +41,6 @@ export * from './features/command/deploy/CommandDeployer';
 export * from './features/command/deploy/ReadonlyCommandDeployer';
 export * from './features/command/error/CommandErrorHandler';
 export * from './features/command/errors/CommandAutocompleteError';
-export * from './features/command/errors/CommandAutocompleteRespondError';
 export * from './features/command/errors/CommandError';
 export * from './features/command/event/CommandSubscriptionsContainer';
 export * from './features/command/events/CommandEvent';
