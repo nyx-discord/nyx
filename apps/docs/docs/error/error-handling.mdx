@@ -21,9 +21,10 @@ errorHandler.setConsumer(
     error: MyError,
     command: ExecutableCommand<CommandData>,
     args: CommandExecutionArgs,
-    bot: NyxBot
   ) => {
-    const { logger } = bot;
+    const [meta] = args;
+    const bot = meta.getBot(true);
+
     const { name } = command.getData();
 
     logger.error(
@@ -54,9 +55,9 @@ errorHandler.setFallbackConsumer(
     error: object,
     command: ExecutableCommand<CommandData>,
     args: CommandExecutionArgs,
-    bot: NyxBot
   ) => {
-    const { logger } = bot;
+    const [meta] = args;
+    const bot = meta.getBot(true);
     const { name } = command.getData();
 
     logger.error(
