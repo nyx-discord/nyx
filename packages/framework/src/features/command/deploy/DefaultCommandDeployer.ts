@@ -45,20 +45,22 @@ export class DefaultCommandDeployer implements CommandDeployer {
     this.client = client;
   }
 
-  public async start(): Promise<this> {
+  public async deploy(): Promise<
+    ReadonlyCollection<string, ApplicationCommand>
+  > {
     if (this.pendingAdd === null) {
       throw new IllegalStateError('Already started.');
     }
 
-    await this.deploy(...this.pendingAdd);
+    await this.deployOnly(...this.pendingAdd);
     this.pendingAdd = null;
 
-    return this;
+    return this.mappings;
   }
 
-  public async addCommands(...commands: TopLevelCommand[]): Promise<this> {
+  public async deployCommands(...commands: TopLevelCommand[]): Promise<this> {
     if (this.pendingAdd === null) {
-      await this.deploy(...commands);
+      await this.deployOnly(...commands);
     } else {
       this.pendingAdd.push(...commands);
     }
@@ -149,7 +151,7 @@ export class DefaultCommandDeployer implements CommandDeployer {
     }
   }
 
-  protected async deploy(...commands: TopLevelCommand[]): Promise<void> {
+  protected async deployOnly(...commands: TopLevelCommand[]): Promise<void> {
     const applicationManager = this.client.application?.commands;
     if (!applicationManager) {
       throw new IllegalStateError('Cannot update commands while not started.');

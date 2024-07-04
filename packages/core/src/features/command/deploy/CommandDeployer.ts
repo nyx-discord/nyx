@@ -29,12 +29,12 @@ import type { TopLevelCommand } from '../commands/TopLevelCommand';
 
 export interface CommandDeployer extends IterableIterator<ApplicationCommand> {
   /**
-   * Notifies the deployer about the Client start, and deploys the commands.
+   * Deploys the commands.
    *
    * @throws {IllegalStateError} If the deployer has already started.
    * @throws {Error} If there was an error while deploying the commands.
    */
-  start(): Awaitable<this>;
+  deploy(): Awaitable<ReadonlyCollection<string, ApplicationCommand>>;
 
   /**
    * Registers commands on Discord if the deployer has started, otherwise
@@ -43,7 +43,7 @@ export interface CommandDeployer extends IterableIterator<ApplicationCommand> {
    * @throws {AssertionError} If a command is already registered.
    * @throws {Error} If there was an error while building or deploying the commands.
    */
-  addCommands(...commands: TopLevelCommand[]): Awaitable<this>;
+  deployCommands(...commands: TopLevelCommand[]): Awaitable<this>;
 
   /**
    * Unregisters commands on Discord if the deployer has started, otherwise

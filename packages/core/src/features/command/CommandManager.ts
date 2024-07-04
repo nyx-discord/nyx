@@ -101,6 +101,15 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
     subscriber: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>,
   ): Awaitable<void>;
 
+  /**
+   * Deploys the commands on Discord, if that wasn't already done on
+   * the start phase.
+   *
+   * @throws {IllegalStateError} If the deployer has already started.
+   * @throws {Error} If there was an error while deploying the commands.
+   */
+  deploy(): Awaitable<void>;
+
   /** Returns the {@link CommandSubscriptionsContainer} for this manager. */
   getSubscriptions(): CommandSubscriptionsContainer;
 

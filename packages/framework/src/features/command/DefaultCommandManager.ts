@@ -61,6 +61,7 @@ type CommandManagerOptions = {
   customIdCodec: CommandCustomIdCodec;
   deployer: CommandDeployer;
   eventBus: EventBus<CommandEventArgs>;
+  deploy: boolean;
 };
 
 export class DefaultCommandManager implements CommandManager {
@@ -80,6 +81,8 @@ export class DefaultCommandManager implements CommandManager {
 
   protected readonly eventBus: EventBus<CommandEventArgs>;
 
+  protected readonly deployOnStart: boolean;
+
   constructor(bot: NyxBot, options: CommandManagerOptions) {
     this.bot = bot;
     this.repository = options.repository;
@@ -89,15 +92,21 @@ export class DefaultCommandManager implements CommandManager {
     this.subscriptionsContainer = options.subscriptionsContainer;
     this.eventBus = options.eventBus;
     this.deployer = options.deployer;
+    this.deployOnStart = options.deploy;
   }
 
   public static create(
     bot: NyxBot,
     client: Client,
     clientBus: EventBus<ClientEvents>,
+    deploy: boolean,
     options?: Partial<CommandManagerOptions>,
   ): CommandManager {
     const constructorOptions: Partial<CommandManagerOptions> = options ?? {};
+
+    if (typeof constructorOptions.deploy === 'undefined') {
+      constructorOptions.deploy = deploy;
+    }
 
     if (!constructorOptions.eventBus) {
       const busId = Symbol('CommandManagerEventBus');
@@ -145,7 +154,9 @@ export class DefaultCommandManager implements CommandManager {
 
   public async onStart(): Promise<void> {
     await this.subscriptionsContainer.onStart();
-    await this.deployer.start();
+    if (this.deployOnStart) {
+      await this.deployer.deploy();
+    }
   }
 
   public async onSetup(): Promise<void> {
@@ -164,7 +175,7 @@ export class DefaultCommandManager implements CommandManager {
     }
 
     try {
-      await this.deployer.addCommands(...commands);
+      await this.deployer.deployCommands(...commands);
     } catch (error) {
       for (const command of commands) {
         this.repository.removeCommand(command);
@@ -348,6 +359,10 @@ export class DefaultCommandManager implements CommandManager {
     subscriber: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>,
   ): Promise<void> {
     await this.eventBus.subscribe(subscriber);
+  }
+
+  public async deploy(): Promise<void> {
+    await this.deployer.deploy();
   }
 
   public getExecutor(): CommandExecutor {
