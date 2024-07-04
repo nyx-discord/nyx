@@ -17,10 +17,12 @@
   "exports": {
     ".": {
       "require": {
+        "@nyx-discord/core": "./src/index.ts",
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       },
       "import": {
+        "@nyx-discord/core": "./src/index.ts",
         "types": "./dist/index.d.mts",
         "default": "./dist/index.mjs"
       }

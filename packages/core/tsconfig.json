@@ -1,4 +1,11 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "compilerOptions": {
+    "customConditions": [
+      "@nyx-discord/core"
+    ]
+  }
 }
