@@ -38,6 +38,7 @@ export class SessionStartMiddlewareList extends AbstractMiddlewareList<SessMiddl
     return new SessionStartMiddlewareList().add(filterMiddleware);
   }
 
+  /** Wraps a generic error in a {@link SessionStartMiddlewareError}. */
   protected wrapError(
     erroredMiddleware: SessMiddleware,
     error: Error,

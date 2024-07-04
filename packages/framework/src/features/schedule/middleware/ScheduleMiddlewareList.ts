@@ -39,6 +39,7 @@ export class ScheduleMiddlewareList extends AbstractMiddlewareList<ScheduleMiddl
     return new ScheduleMiddlewareList().add(filterMiddleware);
   }
 
+  /** Wraps a generic error in a {@link ScheduleMiddlewareError}. */
   protected wrapError(
     erroredMiddleware: ScheduleMiddleware,
     error: Error,

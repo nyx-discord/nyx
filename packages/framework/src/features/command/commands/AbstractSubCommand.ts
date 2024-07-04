@@ -80,5 +80,6 @@ export abstract class AbstractSubCommand
     return this.parent.getNameTree().concat(this.getName());
   }
 
+  /** Returns this subcommand's data. */
   protected abstract createData(): SlashCommandSubcommandBuilder;
 }

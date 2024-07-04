@@ -72,6 +72,7 @@ export class DefaultCommandResolver implements CommandResolver {
     return this.resolveFromCommandInteraction(interaction, repository);
   }
 
+  /** Finds a top level executable command inside a repository. */
   protected findTopLevelExecutable(
     commandName: string,
     repository: CommandRepository,

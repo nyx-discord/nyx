@@ -247,6 +247,10 @@ export class DefaultCommandExecutor implements CommandExecutor {
     return result;
   }
 
+  /**
+   * Wraps a middleware error in an {@link UncaughtCommandMiddlewareError} if
+   * it isn't an {@link CommandMiddlewareError}.
+   */
   protected wrapMiddlewareError(
     error: Error,
     command: AnyExecutableCommand,
@@ -266,6 +270,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
     );
   }
 
+  /** Wraps a middleware autocomplete error in a {@link CommandAutocompleteError}. */
   protected wrapAutocompleteError(
     error: Error,
     command: AnyExecutableCommand,

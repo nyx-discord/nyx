@@ -142,6 +142,7 @@ export class CustomIdBuilder {
     return this.build();
   }
 
+  /** Validates a given token. */
   protected validate(token: string) {
     if (token.includes(this.separator)) {
       throw new IllegalDuplicateError(

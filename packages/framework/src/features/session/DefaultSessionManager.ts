@@ -345,6 +345,7 @@ export class DefaultSessionManager implements SessionManager {
     });
   }
 
+  /** Checks if a new state is valid given a session's current state. */
   protected checkSessionState(
     session: Session<unknown>,
     newState: SessionState,

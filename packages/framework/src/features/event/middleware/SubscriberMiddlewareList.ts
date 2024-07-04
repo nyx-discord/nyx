@@ -47,6 +47,7 @@ export class SubscriberMiddlewareList extends AbstractMiddlewareList<SubMiddlewa
     );
   }
 
+  /** Wraps a generic error in a {@link EventSubscriberMiddlewareError}. */
   protected wrapError(
     erroredMiddleware: SubMiddleware,
     error: Error,

@@ -107,5 +107,6 @@ export abstract class AbstractCustomIdCodec<Serialized>
     return this.dataSeparator;
   }
 
+  /** Extracts the ID from the serialized object. */
   protected abstract getIdOf(serialized: Serialized): string;
 }

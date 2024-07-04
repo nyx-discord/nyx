@@ -70,6 +70,7 @@ export abstract class AbstractExecutableCommand<
     metadata: CommandExecutionMeta,
   ): Awaitable<void>;
 
+  /** Handles a {@link ButtonInteraction} whose customId matches this command. */
   protected handleButton(
     _interaction: ButtonInteraction,
     _metadata: CommandExecutionMeta,
@@ -77,6 +78,7 @@ export abstract class AbstractExecutableCommand<
     throw new NotImplementedError();
   }
 
+  /** Handles an {@link AnySelectMenuInteraction} whose customId matches this command. */
   protected handleSelectMenu(
     _interaction: AnySelectMenuInteraction,
     _metadata: CommandExecutionMeta,
@@ -84,6 +86,7 @@ export abstract class AbstractExecutableCommand<
     throw new NotImplementedError();
   }
 
+  /** Handles a {@link ModalSubmitInteraction} whose customId matches this command. */
   protected handleModal(
     _interaction: ModalSubmitInteraction,
     _metadata: CommandExecutionMeta,
@@ -91,10 +94,12 @@ export abstract class AbstractExecutableCommand<
     throw new NotImplementedError();
   }
 
+  /** Returns this command's {@link CustomIdBuilder} on the given bot. */
   protected getCustomIdBuilder(bot: NyxBot): CustomIdBuilder {
     return bot.commands.getCustomIdCodec().createCustomIdBuilder(this);
   }
 
+  /** Returns this command's customId on the given bot. */
   protected getCustomId(bot: NyxBot): string {
     return bot.commands.getCustomIdCodec().serializeToCustomId(this);
   }

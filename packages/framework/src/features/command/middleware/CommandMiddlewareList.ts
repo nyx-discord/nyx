@@ -39,6 +39,7 @@ export class CommandMiddlewareList extends AbstractMiddlewareList<CommandMiddlew
     return list;
   }
 
+  /** Wraps a generic error in a {@link CommandMiddlewareError}. */
   protected wrapError(
     erroredMiddleware: CommandMiddleware,
     error: Error,

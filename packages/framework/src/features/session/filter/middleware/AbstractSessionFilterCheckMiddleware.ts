@@ -50,6 +50,7 @@ export abstract class AbstractSessionFilterCheckMiddleware<
     return this.true();
   }
 
+  /** Extracts the filter from the session. */
   protected abstract extractFilter(
     session: Session<unknown>,
   ): SessionFilter<unknown, Args> | null;

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,10 +33,10 @@ import type {
   NyxBot,
 } from '@nyx-discord/core';
 import { EventEmitter } from 'events';
+import { BasicAsyncEventDispatcher } from '../dispatcher/BasicAsyncEventDispatcher.js';
+import { BasicSyncEventDispatcher } from '../dispatcher/BasicSyncEventDispatcher.js';
 
 import { BasicEventBus } from './BasicEventBus.js';
-import { BasicSyncEventDispatcher } from '../dispatcher/BasicSyncEventDispatcher.js';
-import { BasicAsyncEventDispatcher } from '../dispatcher/BasicAsyncEventDispatcher.js';
 
 export class BasicEventEmitterBus<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
@@ -125,6 +125,7 @@ export class BasicEventEmitterBus<
     return this.emitter;
   }
 
+  /** Listens a specific event in the emitter. */
   protected listenToEmitter(event: string): this {
     if (this.listenedEvents.has(event)) return this;
 
@@ -139,6 +140,7 @@ export class BasicEventEmitterBus<
     return this;
   }
 
+  /** Unlistents a specific event in the emitter. */
   protected unlistenFromEmitter(event: string): this {
     const currentSubscribers = this.subscribers.get(event);
 

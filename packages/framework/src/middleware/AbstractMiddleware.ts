@@ -61,14 +61,17 @@ export abstract class AbstractMiddleware<Check, Args extends readonly unknown[]>
     ...args: Args
   ): Awaitable<MiddlewareResponse>;
 
+  /** Creates a true {@link MiddlewareResponse}. */
   protected true(): MiddlewareResponse {
     return { allowed: true, checkNext: true };
   }
 
+  /** Creates a true {@link MiddlewareResponse} that forces the check to end there. */
   protected forceTrue(): MiddlewareResponse {
     return { allowed: true, checkNext: false };
   }
 
+  /** Creates a false {@link MiddlewareResponse}. */
   protected false(): MiddlewareResponse {
     return { allowed: false, checkNext: false };
   }

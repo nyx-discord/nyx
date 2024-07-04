@@ -73,5 +73,6 @@ export abstract class AbstractStandaloneCommand
     return [this.getName()];
   }
 
+  /** Returns this command's data. */
   protected abstract createData(): SlashCommandOptionsOnlyBuilder;
 }

@@ -197,6 +197,7 @@ export class DefaultCommandDeployer implements CommandDeployer {
     await Promise.all(deployPromises);
   }
 
+  /** Maps ApplicationCommands to their respective TopLevelCommand, and updates the mappings. */
   protected mapCommands(
     applications: IterableIterator<ApplicationCommand>,
     commands: TopLevelCommand[],

@@ -91,5 +91,6 @@ export abstract class AbstractParentCommand
     return [this.getName()];
   }
 
+  /** Returns this command's data. */
   protected abstract createData(): SlashCommandSubcommandsOnlyBuilder;
 }

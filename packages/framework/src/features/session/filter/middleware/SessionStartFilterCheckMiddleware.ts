@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +27,11 @@ import type {
   SessionFilter,
   SessionStartArgs as Args,
 } from '@nyx-discord/core';
+
 import { AbstractSessionFilterCheckMiddleware } from './AbstractSessionFilterCheckMiddleware.js';
 
 export class SessionStartFilterCheckMiddleware extends AbstractSessionFilterCheckMiddleware<Args> {
+  /** @inheritDoc */
   protected extractFilter(
     session: Session<unknown>,
   ): SessionFilter<unknown, Args> | null {

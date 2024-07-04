@@ -106,6 +106,10 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
     return result;
   }
 
+  /**
+   * Wraps a middleware error in an {@link UncaughtScheduleMiddlewareError} if
+   * it isn't an {@link ScheduleMiddlewareError}.
+   */
   protected wrapMiddlewareError(
     error: Error,
     schedule: Schedule,

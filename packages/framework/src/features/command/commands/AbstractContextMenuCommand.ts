@@ -81,8 +81,10 @@ export abstract class AbstractContextMenuCommand
     return [this.getName()];
   }
 
+  /** Returns this command's data. */
   protected abstract createData(): ContextMenuCommandBuilder;
 
+  /** Executes a {@link UserContextMenuCommandInteraction}. */
   protected executeUser(
     _interaction: UserContextMenuCommandInteraction,
     _metadata: CommandExecutionMeta,
@@ -90,6 +92,7 @@ export abstract class AbstractContextMenuCommand
     throw new NotImplementedError();
   }
 
+  /** Executes a {@link MessageContextMenuCommandInteraction}. */
   protected executeMessage(
     _interaction: MessageContextMenuCommandInteraction,
     _metadata: CommandExecutionMeta,

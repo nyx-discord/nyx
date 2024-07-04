@@ -182,6 +182,7 @@ export abstract class AbstractSession<Result = void>
     this.state = state;
   }
 
+  /** Handles a {@link ButtonInteraction} whose customId matches this session. */
   protected handleButton(
     _interaction: ButtonInteraction,
     _meta: SessionExecutionMeta,
@@ -189,6 +190,7 @@ export abstract class AbstractSession<Result = void>
     throw new NotImplementedError();
   }
 
+  /** Handles an {@link AnySelectMenuInteraction} whose customId matches this session. */
   protected handleSelectMenu(
     _interaction: AnySelectMenuInteraction,
     _meta: SessionExecutionMeta,
@@ -196,6 +198,7 @@ export abstract class AbstractSession<Result = void>
     throw new NotImplementedError();
   }
 
+  /** Handles a {@link ModalSubmitInteraction} whose customId matches this session. */
   protected handleModal(
     _interaction: ModalSubmitInteraction,
     _meta: SessionExecutionMeta,
@@ -203,6 +206,7 @@ export abstract class AbstractSession<Result = void>
     throw new NotImplementedError();
   }
 
+  /** Utility to self end this session. */
   protected async selfEnd(reason: string): Promise<void> {
     await this.bot.sessions.end(this, reason, SessionSelfEndCode);
   }

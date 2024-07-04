@@ -104,6 +104,7 @@ export abstract class AbstractStagePaginationSession<Result>
     return this.customId.clone();
   }
 
+  /** No longer used in stage pagination sessions. */
   protected updatePage(): Promise<boolean> {
     return Promise.resolve(false);
   }

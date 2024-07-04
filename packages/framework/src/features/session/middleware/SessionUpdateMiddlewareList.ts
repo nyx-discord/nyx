@@ -38,6 +38,7 @@ export class SessionUpdateMiddlewareList extends AbstractMiddlewareList<SesMiddl
     return new SessionUpdateMiddlewareList().add(filterMiddleware);
   }
 
+  /** Wraps a generic error in a {@link SessionUpdateMiddlewareError}. */
   protected wrapError(
     erroredMiddleware: SesMiddleware,
     error: Error,

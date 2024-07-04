@@ -58,6 +58,7 @@ export class DefaultCommandCustomIdCodec
     return this.namesSeparator;
   }
 
+  /** @inheritDoc */
   protected getIdOf(serialized: AnyExecutableCommand): string {
     return serialized.getNameTree().join(this.namesSeparator);
   }

@@ -61,6 +61,10 @@ export abstract class AbstractEventDispatcher implements EventDispatcher {
     args: Parameters<(typeof subscribers)[number]['handleEvent']>,
   ): Promise<void>;
 
+  /**
+   * Wraps a middleware error in an {@link UncaughtEventSubscriberMiddlewareError} if
+   * it isn't an {@link EventSubscriberMiddlewareError}.
+   */
   protected wrapMiddlewareError(
     error: Error,
     subscriber: AnyEventSubscriber,

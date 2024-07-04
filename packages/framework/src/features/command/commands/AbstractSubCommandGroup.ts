@@ -66,5 +66,6 @@ export abstract class AbstractSubCommandGroup
     return this.parent.getNameTree().concat(this.getName());
   }
 
+  /** Returns this group's data. */
   protected abstract createData(): SlashCommandSubcommandGroupBuilder;
 }
