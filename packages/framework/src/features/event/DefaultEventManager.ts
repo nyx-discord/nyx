@@ -117,36 +117,38 @@ export class DefaultEventManager implements EventManager {
     await this.clientBus.onUnregister();
   }
 
-  public async addEventBus(bus: AnyEventBus): Promise<this> {
-    const botBus = bus.getBot();
-    if (botBus && botBus !== this.bot) {
-      throw new AssertionError(
-        `Bus '${String(bus.getId())}' is not from this bot.`,
-      );
+  public async addEventBuses(...buses: AnyEventBus[]): Promise<this> {
+    for (const bus of buses) {
+      const botBus = bus.getBot();
+      if (botBus && botBus !== this.bot) {
+        throw new AssertionError(
+          `Bus '${String(bus.getId())}' is not from this bot.`,
+        );
+      }
+
+      const id = bus.getId();
+      const presentBus = this.buses.get(id);
+      if (presentBus) {
+        throw new IllegalDuplicateError(
+          presentBus,
+          bus,
+          `Bus '${String(id)}' is already registered.`,
+        );
+      }
+
+      this.buses.set(id, bus);
+
+      await bus.onRegister();
+
+      Promise.resolve(
+        this.managerBus.emit(EventManagerEventEnum.EventBusAdd, [bus]),
+      ).catch((error) => {
+        this.bot.logger.error(
+          `Uncaught bus error while emitting bus add of '${String(id)}'.`,
+          error,
+        );
+      });
     }
-
-    const id = bus.getId();
-    const presentBus = this.buses.get(id);
-    if (presentBus) {
-      throw new IllegalDuplicateError(
-        presentBus,
-        bus,
-        `Bus '${String(id)}' is already registered.`,
-      );
-    }
-
-    this.buses.set(id, bus);
-
-    await bus.onRegister();
-
-    Promise.resolve(
-      this.managerBus.emit(EventManagerEventEnum.EventBusAdd, [bus]),
-    ).catch((error) => {
-      this.bot.logger.error(
-        `Uncaught bus error while emitting bus add of '${String(id)}'.`,
-        error,
-      );
-    });
 
     return this;
   }
@@ -197,20 +199,27 @@ export class DefaultEventManager implements EventManager {
     return (this.buses.get(id) as Bus) ?? null;
   }
 
+  public isBusRegistered(eventBusOrId: Identifier | AnyEventBus): boolean {
+    const id = canBeIdentifier(eventBusOrId)
+      ? eventBusOrId
+      : eventBusOrId.getId();
+    return this.buses.has(id);
+  }
+
   public async subscribeClient(
-    subscriber: EventSubscriber<ClientEvents, keyof ClientEvents>,
+    ...subscribers: EventSubscriber<ClientEvents, keyof ClientEvents>[]
   ): Promise<this> {
-    await this.clientBus.subscribe(subscriber);
+    await this.clientBus.subscribe(...subscribers);
     return this;
   }
 
   public async subscribeManager(
-    subscriber: EventSubscriber<
+    ...subscribers: EventSubscriber<
       EventManagerEventsArgs,
       keyof EventManagerEventsArgs
-    >,
+    >[]
   ): Promise<this> {
-    await this.managerBus.subscribe(subscriber);
+    await this.managerBus.subscribe(...subscribers);
     return this;
   }
 

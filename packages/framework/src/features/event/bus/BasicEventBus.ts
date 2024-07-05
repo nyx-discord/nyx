@@ -108,31 +108,35 @@ export class BasicEventBus<
   }
 
   public async subscribe(
-    subscriber: AnyEventSubscriberFrom<EventArgsObject>,
+    ...subscribers: AnyEventSubscriberFrom<EventArgsObject>[]
   ): Promise<this> {
-    const eventName = subscriber.getEvent();
-    const id = subscriber.getId();
+    for (const subscriber of subscribers) {
+      const eventName = subscriber.getEvent();
+      const id = subscriber.getId();
 
-    const existingSubscribers = this.subscribers.get(eventName);
-    const presentSubscriber = existingSubscribers?.get(id);
-    if (presentSubscriber) {
-      throw new IllegalDuplicateError(
-        presentSubscriber,
+      const existingSubscribers = this.subscribers.get(eventName);
+      const presentSubscriber = existingSubscribers?.get(id);
+      if (presentSubscriber) {
+        throw new IllegalDuplicateError(
+          presentSubscriber,
+          subscriber,
+          'Subscriber with the same ID already exists',
+        );
+      }
+
+      const newSubscribers = existingSubscribers
+        ? existingSubscribers.set(id, subscriber)
+        : new Collection<Identifier, AnyEventSubscriberFrom<EventArgsObject>>([
+            [id, subscriber],
+          ]);
+
+      const newSortedSubscribers = newSubscribers.sort(this.sorter);
+      this.subscribers.set(eventName, newSortedSubscribers);
+
+      await this.emitBusEvent(EventBusEventEnum.EventSubscriberAdd, [
         subscriber,
-        'Subscriber with the same ID already exists',
-      );
+      ]);
     }
-
-    const newSubscribers = existingSubscribers
-      ? existingSubscribers.set(id, subscriber)
-      : new Collection<Identifier, AnyEventSubscriberFrom<EventArgsObject>>([
-          [id, subscriber],
-        ]);
-
-    const newSortedSubscribers = newSubscribers.sort(this.sorter);
-    this.subscribers.set(eventName, newSortedSubscribers);
-
-    await this.emitBusEvent(EventBusEventEnum.EventSubscriberAdd, [subscriber]);
 
     return this;
   }

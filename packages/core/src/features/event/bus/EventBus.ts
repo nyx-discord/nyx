@@ -24,6 +24,7 @@
 
 import type { Comparator, ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable } from 'discord.js';
+
 import type { NyxBot } from '../../../bot/NyxBot';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Identifier } from '../../../identity/Identifier.js';
@@ -52,7 +53,7 @@ export interface EventBus<
   onUnregister(): Awaitable<void>;
 
   /**
-   * Subscribes an {@link EventSubscriber}.
+   * Subscribes a list of {@link EventSubscriber}.
    *
    * @throws {IllegalDuplicateError} If a subscriber with that ID is already
    *   subscribed to the event.
@@ -61,7 +62,7 @@ export interface EventBus<
     const Sub extends EventSubscriber<ArgsRecord, keyof ArgsRecord & string>,
     const EventName extends ReturnType<Sub['getEvent']> & keyof ArgsRecord,
   >(
-    subscriber: EventSubscriber<ArgsRecord, EventName>,
+    ...subscribers: EventSubscriber<ArgsRecord, EventName>[]
   ): Awaitable<this>;
 
   /**
