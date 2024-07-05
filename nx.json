@@ -50,5 +50,6 @@
         "barrel"
       ]
     }
-  }
+  },
+  "useInferencePlugins": false
 }
