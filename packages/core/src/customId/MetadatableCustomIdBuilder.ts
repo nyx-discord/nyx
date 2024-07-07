@@ -135,6 +135,7 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
       objectId: this.objectId,
       dataSeparator: this.dataSeparator,
       separator: this.separator,
+      tokens: this.tokens,
     };
 
     return new MetadatableCustomIdBuilder(options);
