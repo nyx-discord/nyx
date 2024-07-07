@@ -122,7 +122,7 @@ export abstract class AbstractPaginationSession<Result>
 
     const newPage = codec.extractPageFromCustomId(interaction.customId);
 
-    if (!newPage === null || !interaction.isStringSelectMenu()) return newPage;
+    if (newPage !== null || !interaction.isStringSelectMenu()) return newPage;
 
     const firstValue = interaction.values[0];
     if (!firstValue || interaction.values.length > 1) return newPage;

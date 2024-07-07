@@ -73,7 +73,6 @@ export class BasicAsyncEventDispatcher
         && pendingPromises.length >= this.concurrencyLimit
       ) {
         /** It's assumed that all promises in pendingPromises have a catch statement, so catching here is not needed. */
-        // eslint-disable-next-line no-await-in-loop
         await Promise.race(pendingPromises);
       }
 
@@ -101,6 +100,7 @@ export class BasicAsyncEventDispatcher
       void promise.finally(() => {
         const index = pendingPromises.indexOf(promise);
         if (index !== -1) {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           pendingPromises.splice(index, 1);
         }
       });
