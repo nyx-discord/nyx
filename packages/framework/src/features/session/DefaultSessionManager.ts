@@ -40,9 +40,9 @@ import type {
 import {
   AssertionError,
   ObjectNotFoundError,
+  SessionEndCodes,
   SessionEventEnum,
   SessionExecutionMeta,
-  SessionExpiredCode,
   SessionStateEnum,
 } from '@nyx-discord/core';
 import type { ClientEvents, Events } from 'discord.js';
@@ -321,8 +321,8 @@ export class DefaultSessionManager implements SessionManager {
     const metadata = SessionExecutionMeta.fromSession(session);
     const data = await this.executor.end(
       session,
-      String(SessionExpiredCode),
-      SessionExpiredCode,
+      String(SessionEndCodes.Expired),
+      SessionEndCodes.Expired,
       metadata,
     );
     session.setState(SessionStateEnum.Ended);

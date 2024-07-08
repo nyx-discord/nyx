@@ -41,7 +41,7 @@ import type {
 } from '@nyx-discord/core';
 import {
   AssertionError,
-  SessionSelfEndCode,
+  SessionEndCodes,
   SessionStateEnum,
 } from '@nyx-discord/core';
 import type {
@@ -208,6 +208,6 @@ export abstract class AbstractSession<Result = void>
 
   /** Utility to self end this session. */
   protected async selfEnd(reason: string): Promise<void> {
-    await this.bot.sessions.end(this, reason, SessionSelfEndCode);
+    await this.bot.sessions.end(this, reason, SessionEndCodes.SelfEnded);
   }
 }
