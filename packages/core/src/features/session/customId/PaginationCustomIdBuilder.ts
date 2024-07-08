@@ -46,12 +46,12 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
   public static fromPaginatedString(
     string: string,
     separator: string,
-    dataSeparator: string,
+    metadataSeparator: string,
   ): PaginationCustomIdBuilder | null {
     const builder = MetadatableCustomIdBuilder.fromMetadatableString(
       string,
       separator,
-      dataSeparator,
+      metadataSeparator,
     );
 
     if (!builder) return null;
@@ -67,7 +67,7 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
     return new PaginationCustomIdBuilder({
       namespace: builder.getNamespace(),
       objectId: builder.getObjectId(),
-      metadataSeparator: dataSeparator,
+      metadataSeparator: metadataSeparator,
       separator,
       page,
     });

@@ -48,7 +48,7 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
 
     if (options.metadataSeparator === options.separator) {
       throw new AssertionError(
-        'The data separator cannot be the same as the string separator.',
+        'The metadata separator cannot be the same as the string separator.',
       );
     }
 
@@ -157,7 +157,7 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
   protected override validate(value: string): void {
     if (value.includes(this.metaSeparator)) {
       throw new AssertionError(
-        `The value "${value}" cannot contain the data separator "${this.metaSeparator}".`,
+        `The value "${value}" cannot contain the metadata separator "${this.metaSeparator}".`,
       );
     }
 

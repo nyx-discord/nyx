@@ -39,9 +39,9 @@ export class DefaultSessionCustomIdCodec
   constructor(
     prefix: string = DefaultSessionCustomIdCodec.DefaultNamespace,
     separator: string = DefaultSessionCustomIdCodec.DefaultSeparator,
-    dataSeparator: string = DefaultSessionCustomIdCodec.DefaultMetadataSeparator,
+    metadataSeparator: string = DefaultSessionCustomIdCodec.DefaultMetadataSeparator,
   ) {
-    super(prefix, separator, dataSeparator);
+    super(prefix, separator, metadataSeparator);
   }
 
   public static create(): SessionCustomIdCodec {
@@ -52,7 +52,7 @@ export class DefaultSessionCustomIdCodec
     const builder = PaginationCustomIdBuilder.fromPaginatedString(
       customId,
       this.separator,
-      this.dataSeparator,
+      this.metadataSeparator,
     );
 
     return builder ? builder.getPage() : null;
@@ -67,7 +67,7 @@ export class DefaultSessionCustomIdCodec
     return new PaginationCustomIdBuilder({
       namespace: this.namespace,
       objectId,
-      metadataSeparator: this.dataSeparator,
+      metadataSeparator: this.metadataSeparator,
       separator: this.separator,
       page,
     });

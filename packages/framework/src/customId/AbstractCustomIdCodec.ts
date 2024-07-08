@@ -40,18 +40,18 @@ export abstract class AbstractCustomIdCodec<Serialized>
 
   protected readonly separator: string;
 
-  protected readonly dataSeparator: string;
+  protected readonly metadataSeparator: string;
 
-  constructor(namespace: string, separator: string, dataSeparator: string) {
-    if (separator === dataSeparator) {
+  constructor(namespace: string, separator: string, metadataSeparator: string) {
+    if (separator === metadataSeparator) {
       throw new AssertionError(
-        'The data separator cannot be the same as the string separator.',
+        'The metadata separator cannot be the same as the string separator.',
       );
     }
 
     this.namespace = namespace;
     this.separator = separator;
-    this.dataSeparator = dataSeparator;
+    this.metadataSeparator = metadataSeparator;
   }
 
   public serializeToCustomId(serialized: Serialized): string {
@@ -64,7 +64,7 @@ export abstract class AbstractCustomIdCodec<Serialized>
     return new MetadatableCustomIdBuilder({
       namespace: this.namespace,
       objectId: id,
-      metadataSeparator: this.dataSeparator,
+      metadataSeparator: this.metadataSeparator,
       separator: this.separator,
     });
   }
@@ -73,7 +73,7 @@ export abstract class AbstractCustomIdCodec<Serialized>
     const builder = MetadatableCustomIdBuilder.fromMetadatableString(
       customId,
       this.separator,
-      this.dataSeparator,
+      this.metadataSeparator,
     );
 
     if (!builder || builder.getNamespace() !== this.namespace) return null;
@@ -87,7 +87,7 @@ export abstract class AbstractCustomIdCodec<Serialized>
     const builder = MetadatableCustomIdBuilder.fromMetadatableString(
       customId,
       this.separator,
-      this.dataSeparator,
+      this.metadataSeparator,
     );
 
     if (!builder || builder.getNamespace() !== this.namespace) return null;
