@@ -27,7 +27,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm --filter core install
+        run: pnpm install
 
       - name: Test core
         run: pmpn run test:core
