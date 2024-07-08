@@ -38,13 +38,4 @@ export interface CustomIdCodec<Serialized> {
 
   /** Creates a {@link StringIterator} from a customId, leaving only the data that is not related to the referred object. */
   createIteratorFromCustomId(customId: string): StringIterator | null;
-
-  /** Returns the separator used to separate the data in the customId. */
-  getSeparator(): string;
-
-  /** Returns the separator used to separate protected data in the customId. */
-  getDataSeparator(): string;
-
-  /** Returns the namespace used to identify the customId. */
-  getNamespace(): string;
 }

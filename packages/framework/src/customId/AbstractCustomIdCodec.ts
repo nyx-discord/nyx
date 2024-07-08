@@ -34,7 +34,7 @@ export abstract class AbstractCustomIdCodec<Serialized>
 {
   public static readonly DefaultSeparator: string = '႞';
 
-  public static readonly DefaultDataSeparator: string = '୵';
+  public static readonly DefaultMetadataSeparator: string = '୵';
 
   protected readonly namespace: string;
 
@@ -64,7 +64,7 @@ export abstract class AbstractCustomIdCodec<Serialized>
     return new MetadatableCustomIdBuilder({
       namespace: this.namespace,
       objectId: id,
-      dataSeparator: this.dataSeparator,
+      metadataSeparator: this.dataSeparator,
       separator: this.separator,
     });
   }
@@ -93,18 +93,6 @@ export abstract class AbstractCustomIdCodec<Serialized>
     if (!builder || builder.getNamespace() !== this.namespace) return null;
 
     return builder ? builder.getObjectId() : null;
-  }
-
-  public getNamespace(): string {
-    return this.namespace;
-  }
-
-  public getSeparator(): string {
-    return this.separator;
-  }
-
-  public getDataSeparator(): string {
-    return this.dataSeparator;
   }
 
   /** Extracts the ID from the serialized object. */

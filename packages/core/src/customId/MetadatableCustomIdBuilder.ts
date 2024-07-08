@@ -31,7 +31,7 @@ export interface MetadatableCustomIdBuilderOptions
   extends CustomIdBuilderOptions {
   namespace: string;
   objectId: string;
-  dataSeparator: string;
+  metadataSeparator: string;
 }
 
 export class MetadatableCustomIdBuilder extends CustomIdBuilder {
@@ -41,12 +41,12 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
 
   protected readonly metadata: string[];
 
-  protected readonly dataSeparator: string;
+  protected readonly metaSeparator: string;
 
   constructor(options: MetadatableCustomIdBuilderOptions) {
     super(options);
 
-    if (options.dataSeparator === options.separator) {
+    if (options.metadataSeparator === options.separator) {
       throw new AssertionError(
         'The data separator cannot be the same as the string separator.',
       );
@@ -54,7 +54,7 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
 
     this.namespace = options.namespace;
     this.objectId = options.objectId;
-    this.dataSeparator = options.dataSeparator;
+    this.metaSeparator = options.metadataSeparator;
 
     this.metadata = [];
   }
@@ -62,20 +62,20 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
   public static fromMetadatableString(
     string: string,
     separator: string,
-    dataSeparator: string,
+    metadataSeparator: string,
   ): MetadatableCustomIdBuilder | null {
     const tokens = string.split(separator);
     if (!tokens.length) return null;
 
     const [data, ...extraTokens] = tokens;
-    const [namespace, objectId, ...metadata] = data.split(dataSeparator);
+    const [namespace, objectId, ...metadata] = data.split(metadataSeparator);
     if (!namespace || !objectId) return null;
 
     const builder = new MetadatableCustomIdBuilder({
       namespace,
       objectId,
       separator,
-      dataSeparator,
+      metadataSeparator,
     });
 
     return builder.pushMeta(...metadata).push(...extraTokens);
@@ -129,11 +129,15 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
     return this.metadata;
   }
 
+  public getMetadataSeparator(): string {
+    return this.metaSeparator;
+  }
+
   public clone(): MetadatableCustomIdBuilder {
     const options: MetadatableCustomIdBuilderOptions = {
       namespace: this.namespace,
       objectId: this.objectId,
-      dataSeparator: this.dataSeparator,
+      metadataSeparator: this.metaSeparator,
       separator: this.separator,
       tokens: this.tokens,
     };
@@ -143,7 +147,7 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
 
   public build(): string {
     const dataValues = [this.namespace, this.objectId, ...this.metadata];
-    const dataString = dataValues.join(this.dataSeparator);
+    const dataString = dataValues.join(this.metaSeparator);
 
     const joinedTokens = super.build();
 
@@ -151,9 +155,9 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
   }
 
   protected override validate(value: string): void {
-    if (value.includes(this.dataSeparator)) {
+    if (value.includes(this.metaSeparator)) {
       throw new AssertionError(
-        `The value "${value}" cannot contain the data separator "${this.dataSeparator}".`,
+        `The value "${value}" cannot contain the data separator "${this.metaSeparator}".`,
       );
     }
 

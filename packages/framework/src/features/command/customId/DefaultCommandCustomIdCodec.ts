@@ -42,10 +42,10 @@ export class DefaultCommandCustomIdCodec
   constructor(
     prefix: string = DefaultCommandCustomIdCodec.DefaultNamespace,
     separator: string = DefaultCommandCustomIdCodec.DefaultSeparator,
-    dataSeparator: string = DefaultCommandCustomIdCodec.DefaultDataSeparator,
+    metadataSeparator: string = DefaultCommandCustomIdCodec.DefaultMetadataSeparator,
     namesSeparator: string = DefaultCommandCustomIdCodec.DefaultNamesSeparator,
   ) {
-    super(prefix, separator, dataSeparator);
+    super(prefix, separator, metadataSeparator);
 
     this.namesSeparator = namesSeparator;
   }

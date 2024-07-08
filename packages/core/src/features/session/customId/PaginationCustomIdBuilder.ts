@@ -67,7 +67,7 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
     return new PaginationCustomIdBuilder({
       namespace: builder.getNamespace(),
       objectId: builder.getObjectId(),
-      dataSeparator,
+      metadataSeparator: dataSeparator,
       separator,
       page,
     });
@@ -112,7 +112,7 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
     return new PaginationCustomIdBuilder({
       namespace: this.namespace,
       objectId: this.objectId,
-      dataSeparator: this.dataSeparator,
+      metadataSeparator: this.metaSeparator,
       separator: this.separator,
       page: this.page ?? undefined,
     });

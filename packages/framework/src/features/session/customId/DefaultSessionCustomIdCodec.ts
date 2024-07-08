@@ -39,7 +39,7 @@ export class DefaultSessionCustomIdCodec
   constructor(
     prefix: string = DefaultSessionCustomIdCodec.DefaultNamespace,
     separator: string = DefaultSessionCustomIdCodec.DefaultSeparator,
-    dataSeparator: string = DefaultSessionCustomIdCodec.DefaultDataSeparator,
+    dataSeparator: string = DefaultSessionCustomIdCodec.DefaultMetadataSeparator,
   ) {
     super(prefix, separator, dataSeparator);
   }
@@ -67,7 +67,7 @@ export class DefaultSessionCustomIdCodec
     return new PaginationCustomIdBuilder({
       namespace: this.namespace,
       objectId,
-      dataSeparator: this.dataSeparator,
+      metadataSeparator: this.dataSeparator,
       separator: this.separator,
       page,
     });
