@@ -115,6 +115,7 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
       metadataSeparator: this.metaSeparator,
       separator: this.separator,
       page: this.page ?? undefined,
+      tokens: this.tokens,
     });
   }
 }
