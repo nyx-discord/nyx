@@ -78,11 +78,18 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
       metadataSeparator,
     });
 
-    return builder.pushMeta(...metadata).push(...extraTokens);
+    builder.pushMeta(...metadata);
+    return builder.push(...extraTokens);
   }
 
-  /** Pushes a value to this builder's {@link metadata}. */
-  public pushMeta(...values: (string | number)[]): this {
+  /**
+   * Pushes a value to this builder's {@link metadata}.
+   *
+   * @returns {number} The index where the first value was pushed.
+   */
+  public pushMeta(...values: (string | number)[]): number {
+    const currentLength = this.metadata.length;
+
     this.metadata.push(
       ...values.map((value) => {
         const string = value.toString();
@@ -90,7 +97,8 @@ export class MetadatableCustomIdBuilder extends CustomIdBuilder {
         return string;
       }),
     );
-    return this;
+
+    return currentLength;
   }
 
   /**
