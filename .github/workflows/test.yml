@@ -30,7 +30,7 @@ jobs:
         run: pnpm install
 
       - name: Test core
-        run: pmpn run test:core
+        run: pnpm run test:core
 
       - name: Test framework
         run: pnpm run test:framework
