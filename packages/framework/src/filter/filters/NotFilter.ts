@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@ export class NotFilter extends AbstractFilter<unknown, unknown[]> {
   protected readonly filter: Filter<unknown, unknown[]>;
 
   /** We actually need to override the constructor to only accept one filter, not many. */
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(filter: Filter<unknown, unknown[]>) {
     super();
 

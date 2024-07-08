@@ -38,7 +38,6 @@ export abstract class AbstractMiddlewareList<
 
     for (const middleware of this.middlewares) {
       try {
-        // eslint-disable-next-line no-await-in-loop
         const result = await middleware.check(checked, ...args);
         if (!result.checkNext || !result.allowed) return result.allowed;
       } catch (error) {

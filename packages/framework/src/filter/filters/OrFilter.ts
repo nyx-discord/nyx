@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@ import { AbstractFilterAggregator } from './AbstractFilterAggregator.js';
 export class OrFilter extends AbstractFilterAggregator<unknown, unknown[]> {
   public async check(filtered: unknown, ...args: unknown[]): Promise<boolean> {
     for (const filter of this.filters) {
-      // eslint-disable-next-line no-await-in-loop
       const success = await filter.check(filtered, ...args);
       if (success) return success;
     }
