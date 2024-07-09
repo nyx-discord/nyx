@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 import type {
   ClassImplements,
   EventBus,
+  EventSubscriber,
   Identifier,
   NyxBot,
   Schedule,
@@ -222,6 +223,16 @@ export class DefaultScheduleManager implements ScheduleManager {
     const metadata = meta ?? ScheduleTickMeta.fromSchedule(schedule, this.bot);
     await this.executor.tick(schedule, metadata);
 
+    return this;
+  }
+
+  public async subscribe(
+    ...subscribers: EventSubscriber<
+      ScheduleEventArgs,
+      keyof ScheduleEventArgs
+    >[]
+  ): Promise<this> {
+    await this.bus.subscribe(...subscribers);
     return this;
   }
 

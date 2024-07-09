@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import type { Identifier } from '../../identity/Identifier.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { ClassImplements } from '../../types/ClassImplements.js';
 import type { EventBus } from '../event/bus/EventBus.js';
+import type { EventSubscriber } from '../event/subscriber/EventSubscriber';
 import type { PluginEventArgs } from './events/PluginEvent.js';
 import type { NyxPlugin } from './plugin/NyxPlugin.js';
 
@@ -49,6 +50,19 @@ export interface PluginManager extends BotAware, BotLifecycleObserver {
    * @throws {ObjectNotFoundError} If the plugin is not registered.
    */
   unregister(pluginOrId: NyxPlugin | Identifier): Awaitable<this>;
+
+  /**
+   * Subscribes a list of event subscribers to the manager's bus.
+   *
+   * Alias of:
+   * ```
+   * const managerBus = pluginManager.getEventBus();
+   * await managerBus.subscribe(subscriber);
+   * ```
+   */
+  subscribe(
+    ...subscribers: EventSubscriber<PluginEventArgs, keyof PluginEventArgs>[]
+  ): Awaitable<this>;
 
   /** Returns a plugin by its ID. */
   getPluginById(id: Identifier): NyxPlugin | null;

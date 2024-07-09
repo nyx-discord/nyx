@@ -89,7 +89,7 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
   editCommands(...commands: TopLevelCommand[]): Awaitable<this>;
 
   /**
-   * Subscribes an event subscriber to the manager's bus.
+   * Subscribes a list of event subscribers to the manager's bus.
    *
    * Alias of:
    * ```
@@ -98,8 +98,8 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
    * ```
    */
   subscribe(
-    subscriber: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>,
-  ): Awaitable<void>;
+    ...subscribers: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>[]
+  ): Awaitable<this>;
 
   /**
    * Deploys the commands on Discord, if that wasn't already done on

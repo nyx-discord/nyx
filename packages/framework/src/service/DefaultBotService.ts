@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ import type {
   BotServiceEventArgs,
   BotStatus,
   EventBus,
+  EventSubscriber,
   NyxBot,
 } from '@nyx-discord/core';
 import {
@@ -52,6 +53,13 @@ export class DefaultBotService implements BotService {
 
   protected status: BotStatus = BotStatusEnum.Unprepared;
 
+  constructor(bot: NyxBot, bus: EventBus<BotServiceEventArgs>) {
+    this.bot = bot;
+    this.bus = bus;
+
+    this.startPromise = DefaultBotService.createStartPromiseData();
+  }
+
   public static createStartPromiseData(): StartPromiseData {
     const startPromise: Partial<StartPromiseData> = {};
     startPromise.promise = new Promise<NyxBot>((resolve, reject) => {
@@ -60,13 +68,6 @@ export class DefaultBotService implements BotService {
     });
 
     return startPromise as StartPromiseData;
-  }
-
-  constructor(bot: NyxBot, bus: EventBus<BotServiceEventArgs>) {
-    this.bot = bot;
-    this.bus = bus;
-
-    this.startPromise = DefaultBotService.createStartPromiseData();
   }
 
   public static create(bot: NyxBot): BotService {
@@ -192,6 +193,16 @@ export class DefaultBotService implements BotService {
 
   public isRunning(): boolean {
     return this.status === BotStatusEnum.Running;
+  }
+
+  public async subscribe(
+    ...subscribers: EventSubscriber<
+      BotServiceEventArgs,
+      keyof BotServiceEventArgs
+    >[]
+  ): Promise<this> {
+    await this.bus.subscribe(...subscribers);
+    return this;
   }
 
   public getStartPromise(): Promise<NyxBot> {

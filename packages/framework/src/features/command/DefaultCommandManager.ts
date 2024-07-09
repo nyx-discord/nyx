@@ -356,9 +356,10 @@ export class DefaultCommandManager implements CommandManager {
   }
 
   public async subscribe(
-    subscriber: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>,
-  ): Promise<void> {
-    await this.eventBus.subscribe(subscriber);
+    ...subscribers: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>[]
+  ): Promise<this> {
+    await this.eventBus.subscribe(...subscribers);
+    return this;
   }
 
   public async deploy(): Promise<void> {

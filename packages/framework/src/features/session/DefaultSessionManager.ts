@@ -288,6 +288,13 @@ export class DefaultSessionManager implements SessionManager {
     return (await this.repository.get(sessionCustomId)) ?? null;
   }
 
+  public async subscribe(
+    ...subscribers: EventSubscriber<SessionEventArgs, keyof SessionEventArgs>[]
+  ): Promise<this> {
+    await this.bus.subscribe(...subscribers);
+    return this;
+  }
+
   public async setUpdateSubscriber(
     subscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>,
   ): Promise<this> {

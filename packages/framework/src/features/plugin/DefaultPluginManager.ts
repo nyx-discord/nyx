@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ import { Collection } from '@discordjs/collection';
 import type {
   ClassImplements,
   EventBus,
+  EventSubscriber,
   Identifier,
   NyxBot,
   NyxPlugin,
@@ -128,6 +129,13 @@ export class DefaultPluginManager implements PluginManager {
       );
     });
 
+    return this;
+  }
+
+  public async subscribe(
+    ...subscribers: EventSubscriber<PluginEventArgs, keyof PluginEventArgs>[]
+  ): Promise<this> {
+    await this.bus.subscribe(...subscribers);
     return this;
   }
 
