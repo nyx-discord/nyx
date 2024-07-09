@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ export class StringIterator {
   }
 
   /**
-   * Returns the string at the current position.
+   * Returns the string at the current position and increments it.
    * @param {boolean} [force=true] Whether to force the resolution of a string at the current position,
    *                               mainly for typing purposes.
    *                               If no string is found and it's set to `true`, an error is thrown. Otherwise, `null` is returned.
@@ -76,6 +76,28 @@ export class StringIterator {
         `Tried to access index ${this.index} of array [${this.tokens}], but no value was found.`,
       );
     }
+    this.index++;
+
+    return value ?? null;
+  }
+
+  /**
+   * Returns the string at the current position without incrementing it.
+   * @param {boolean} [force=true] Whether to force the resolution of a string at the current position,
+   *                               mainly for typing purposes.
+   *                               If no string is found and it's set to `true`, an error is thrown. Otherwise, `null` is returned.
+   * @throws {RangeError}          If {@link force} is `true`, and no string at this position exists.
+   */
+  public peek(force: true): string;
+  public peek(force?: false): string | null;
+  public peek(force = false): string | null {
+    const value = this.tokens[this.index] ?? null;
+    if (!value && force) {
+      throw new RangeError(
+        `Tried to access index ${this.index} of array [${this.tokens}], but no value was found.`,
+      );
+    }
+
     return value ?? null;
   }
 
@@ -83,18 +105,16 @@ export class StringIterator {
   public next(force: true): string;
   public next(force?: false): string | null;
   public next(force = false): string | null {
-    if (!this.hasNext()) return null;
     this.index += 1;
-    return this.get(force as true);
+    return this.peek(force as true);
   }
 
   /** Decrements the index and get the string at the new position. */
   public previous(force: true): string;
   public previous(force?: false): string | null;
   public previous(force = false): string | null {
-    if (!this.hasPrevious()) return null;
     this.index -= 1;
-    return this.get(force as true);
+    return this.peek(force as true);
   }
 
   /** Returns the next position, based on the current index. */
@@ -162,7 +182,7 @@ export class StringIterator {
 
   /** Filters the tokens of this iterator to a new iterator. */
   public filterToIterator(
-    callback: (value: string, index: number, array: string[]) => string,
+    callback: (value: string, index: number, array: string[]) => boolean,
   ): StringIterator {
     const newTokens = this.tokens.filter(callback);
     return new StringIterator(newTokens);
