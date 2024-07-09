@@ -237,6 +237,32 @@ export function runMetadatableTests<
       expect(builder.getMetadata()).toEqual(metaTokens);
     });
   });
+  describe('WHEN instantiating with a string with only metadata with .fromMetadatableString()', () => {
+    let builder: Builder;
+    const metaTokens = ['123', '456', '789'] as const;
+
+    const metaString = metaTokens.join(metadataSeparator);
+    const string = `${namespace}${metadataSeparator}${objectId}${metadataSeparator}${metaString}${separator}`;
+
+    beforeEach(() => {
+      builder = (
+        builderFactory({
+          separator,
+          namespace,
+          objectId,
+          metadataSeparator,
+        }).constructor as typeof MetadatableCustomIdBuilder
+      ).fromMetadatableString(string, separator, metadataSeparator) as Builder;
+    });
+
+    test('THEN the tokens array should be empty', () => {
+      expect(builder.getTokens()).toEqual([]);
+    });
+
+    test('THEN the metadata array should equal the original metadata', () => {
+      expect(builder.getMetadata()).toEqual(metaTokens);
+    });
+  });
 
   describe('WHEN instantiating with an empty string and empty separator with .fromMetadatableString()', () => {
     let builder: MetadatableCustomIdBuilder | null;

@@ -50,3 +50,26 @@ describe('WHEN using #push() and #pushMeta() with multiple values', () => {
     expect(builder.build()).toEqual(expectedString);
   });
 });
+
+describe('WHEN using only #pushMeta() with multiple values', () => {
+  const metaTokens = ['123', '456', '789'] as const;
+
+  const metaString = metaTokens.join(metadataSeparator);
+  const expectedString = `${namespace}${metadataSeparator}${objectId}${metadataSeparator}${metaString}${separator}`;
+
+  let builder: MetadatableCustomIdBuilder;
+
+  beforeEach(() => {
+    builder = new MetadatableCustomIdBuilder({
+      namespace,
+      objectId,
+      separator,
+      metadataSeparator,
+    });
+    builder.pushMeta(...metaTokens);
+  });
+
+  test('THEN using #build() should return the expected string', () => {
+    expect(builder.build()).toEqual(expectedString);
+  });
+});
