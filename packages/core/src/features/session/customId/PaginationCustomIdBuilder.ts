@@ -70,6 +70,7 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
       metadataSeparator: metadataSeparator,
       separator,
       page,
+      tokens: builder.getTokens() as string[],
     });
   }
 
