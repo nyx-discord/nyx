@@ -207,7 +207,8 @@ export abstract class AbstractSession<Result = void>
   }
 
   /** Utility to self end this session. */
-  protected async selfEnd(reason: string): Promise<void> {
-    await this.bot.sessions.end(this, reason, SessionEndCodes.SelfEnded);
+  protected async selfEnd(reason?: string): Promise<void> {
+    const endReason = reason ?? String(SessionEndCodes.SelfEnded);
+    await this.bot.sessions.end(this, endReason, SessionEndCodes.SelfEnded);
   }
 }
