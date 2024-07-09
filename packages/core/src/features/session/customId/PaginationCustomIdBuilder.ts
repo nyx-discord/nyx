@@ -79,7 +79,7 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
   }
 
   public setPage(page: number): this {
-    this.setMetaAt(PaginationCustomIdBuilder.PageIndex, page);
+    this.metadata[PaginationCustomIdBuilder.PageIndex] = page.toString();
     this.page = page;
 
     return this;
