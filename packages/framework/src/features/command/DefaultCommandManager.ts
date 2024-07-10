@@ -304,12 +304,9 @@ export class DefaultCommandManager implements CommandManager {
     } else {
       const { customId } = interaction;
 
-      const commandName = this.customIdCodec.deserializeToObjectId(customId);
-      if (!commandName) return false;
+      const names = this.customIdCodec.deserializeToNameTree(customId);
+      if (!names) return false;
 
-      const names = commandName.split(
-        this.customIdCodec.getNamesSeparator(),
-      ) as [string, ...string[]];
       const found = this.repository.locateByNameTree(...names);
       if (!found || found.isParent() || found.isSubCommandGroup()) {
         return false;

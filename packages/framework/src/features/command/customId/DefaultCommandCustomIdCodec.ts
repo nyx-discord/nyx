@@ -54,8 +54,15 @@ export class DefaultCommandCustomIdCodec
     return new DefaultCommandCustomIdCodec();
   }
 
-  public getNamesSeparator(): string {
-    return this.namesSeparator;
+  public getNameTreeFromId(id: string): [string, ...string[]] {
+    return id.split(this.namesSeparator) as [string, ...string[]];
+  }
+
+  public deserializeToNameTree(customId: string): [string, ...string[]] | null {
+    const id = this.deserializeToObjectId(customId);
+    if (!id) return null;
+
+    return this.getNameTreeFromId(id);
   }
 
   /** @inheritDoc */

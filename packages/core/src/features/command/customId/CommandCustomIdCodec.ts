@@ -71,6 +71,15 @@ export interface CommandCustomIdCodec
    */
   createIteratorFromCustomId(commandCustomId: string): StringIterator | null;
 
-  /** Returns the separator used to serialize names in command customIds. */
-  getNamesSeparator(): string;
+  /** Returns a name tree given the passed command id, extracted with {@link deserializeToObjectId}. */
+  getNameTreeFromId(id: string): [string, ...string[]];
+
+  /** Returns a name tree from a command customId.
+   * Alias of:
+   * ```ts
+   * const id = codec.deserializeToObjectId(interaction.customId);
+   * const nameTree = codec.getNameTreeFromId(id);
+   * ```
+   */
+  deserializeToNameTree(customId: string): [string, ...string[]] | null;
 }
