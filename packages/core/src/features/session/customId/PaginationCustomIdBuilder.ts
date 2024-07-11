@@ -46,12 +46,12 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
   public static fromPaginatedString(
     string: string,
     separator: string,
-    dataSeparator: string,
+    metadataSeparator: string,
   ): PaginationCustomIdBuilder | null {
     const builder = MetadatableCustomIdBuilder.fromMetadatableString(
       string,
       separator,
-      dataSeparator,
+      metadataSeparator,
     );
 
     if (!builder) return null;
@@ -67,9 +67,10 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
     return new PaginationCustomIdBuilder({
       namespace: builder.getNamespace(),
       objectId: builder.getObjectId(),
-      dataSeparator,
+      metadataSeparator: metadataSeparator,
       separator,
       page,
+      tokens: builder.getTokens() as string[],
     });
   }
 
@@ -78,7 +79,7 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
   }
 
   public setPage(page: number): this {
-    this.setMetaAt(PaginationCustomIdBuilder.PageIndex, page);
+    this.metadata[PaginationCustomIdBuilder.PageIndex] = page.toString();
     this.page = page;
 
     return this;
@@ -112,9 +113,10 @@ export class PaginationCustomIdBuilder extends MetadatableCustomIdBuilder {
     return new PaginationCustomIdBuilder({
       namespace: this.namespace,
       objectId: this.objectId,
-      dataSeparator: this.dataSeparator,
+      metadataSeparator: this.metaSeparator,
       separator: this.separator,
       page: this.page ?? undefined,
+      tokens: this.tokens,
     });
   }
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,15 +37,13 @@ import type { EventSubscriber } from './subscriber/EventSubscriber.js';
 /** An object that holds the objects and methods that make together a bot's event system. */
 export interface EventManager extends BotAware, BotLifecycleObserver {
   /**
-   * Adds an event bus to the manager.
+   * Adds event buses to the manager.
    *
-   * @emits EventManagerEventEnum#EventBusAdd On the manager's event bus.
-   * @throws {AssertionError}        If the bus does not belong to the same bot
-   *   as this manager.
-   * @throws {IllegalDuplicateError} If a bus with that ID is already
-   *   registered.
+   * @emits EventManagerEventEnum#EventBusAdd For each bus, on the manager's event bus.
+   * @throws {AssertionError}        If the bus does not belong to the same bot as this manager.
+   * @throws {IllegalDuplicateError} If a bus with that ID is already registered.
    */
-  addEventBus(bus: AnyEventBus): Awaitable<this>;
+  addEventBuses(...buses: AnyEventBus[]): Awaitable<this>;
 
   /**
    * Removes an event bus from the manager.
@@ -59,26 +57,29 @@ export interface EventManager extends BotAware, BotLifecycleObserver {
   /** Returns the registered EventBus that corresponds to the given ID or instance. */
   getBus<const Bus extends AnyEventBus>(busOrId: Identifier | Bus): Bus | null;
 
+  /** Returns whether an event bus with the given ID or instance is registered. */
+  isBusRegistered(eventBusOrId: Identifier | AnyEventBus): boolean;
+
   /** Returns the first registered EventBus that is an instance of the given class. */
   getBusByClass<const BusClass extends ClassImplements<AnyEventBus>>(
     BusClass: BusClass,
   ): InstanceType<BusClass> | null;
 
   /**
-   * Subscribes an event subscriber to the Client bus.
+   * Subscribes a list of event subscribers to the Client bus.
    *
    * Alias of:
    * ```
-   * const clientBus = bot.events.getClientBus();
+   * const clientBus = eventManager.getClientBus();
    * await clientBus.subscribe(subscriber);
    * ```
    */
   subscribeClient(
-    subscriber: EventSubscriber<ClientEvents, keyof ClientEvents>,
+    ...subscribers: EventSubscriber<ClientEvents, keyof ClientEvents>[]
   ): Awaitable<this>;
 
   /**
-   * Subscribes an event subscriber to the manager's bus.
+   * Subscribes a list of event subscribers to the manager's bus.
    *
    * Alias of:
    * ```
@@ -87,10 +88,10 @@ export interface EventManager extends BotAware, BotLifecycleObserver {
    * ```
    */
   subscribeManager(
-    subscriber: EventSubscriber<
+    ...subscribers: EventSubscriber<
       EventManagerEventsArgs,
       keyof EventManagerEventsArgs
-    >,
+    >[]
   ): Awaitable<this>;
 
   /** Returns the bot's Discord.js Client event bus. */

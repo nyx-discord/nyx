@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
  */
 
 import type { ClassImplements } from '../../../../types/ClassImplements.js';
-import type { StandaloneCommand } from '../StandaloneCommand.js';
+import type { StandaloneCommand } from '../StandaloneCommand';
 
 /** Type of class that implements the {@link StandaloneCommand} interface. */
 export type ImplementsStandaloneCommand = ClassImplements<StandaloneCommand>;

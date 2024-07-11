@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +22,29 @@
  * SOFTWARE.
  */
 
-import type { LinkedList } from '../../../../list/LinkedList.js';
-import type { ExecutableCommand } from '../../commands/abstract/ExecutableCommand.js';
-import type { CommandData } from '../../data/command/CommandData.js';
+import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
+import type { AnyExecutableCommand } from '../../commands/executable/AnyExecutableCommand';
 import { CommandError } from '../../errors/CommandError.js';
 import type { CommandExecutionMeta } from '../../execution/meta/CommandExecutionMeta.js';
 import type { CommandExecutableInteraction } from '../../interaction/CommandExecutableInteraction.js';
 import type { CommandMiddleware } from '../CommandMiddleware.js';
 
 export class UncaughtCommandMiddlewareError extends CommandError {
-  protected readonly middlewareLinkedList: LinkedList<CommandMiddleware>;
+  protected readonly middlewareList: MiddlewareList<CommandMiddleware>;
 
   constructor(
     error: Error,
-    middlewareLinkedList: LinkedList<CommandMiddleware>,
-    command: ExecutableCommand<CommandData>,
+    middlewareList: MiddlewareList<CommandMiddleware>,
+    command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
     meta: CommandExecutionMeta,
   ) {
     super(error, command, interaction, meta);
-    this.middlewareLinkedList = middlewareLinkedList;
+    this.middlewareList = middlewareList;
   }
 
   /** Returns the middleware list that threw this error. */
-  public getList(): LinkedList<CommandMiddleware> {
-    return this.middlewareLinkedList;
+  public getList(): MiddlewareList<CommandMiddleware> {
+    return this.middlewareList;
   }
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,11 +27,11 @@ import type {
   AsyncEventDispatcher,
   EventSubscriberErrorHandler,
   EventSubscriberMiddleware,
-  MiddlewareLinkedList,
+  MiddlewareList,
 } from '@nyx-discord/core';
 
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
-import { SubscriberMiddlewareLinkedList } from '../middleware/SubscriberMiddlewareLinkedList.js';
+import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList';
 import { AbstractEventDispatcher } from './AbstractEventDispatcher.js';
 
 export class BasicAsyncEventDispatcher
@@ -42,7 +42,7 @@ export class BasicAsyncEventDispatcher
 
   constructor(
     errorHandler: EventSubscriberErrorHandler,
-    middleware: MiddlewareLinkedList<EventSubscriberMiddleware>,
+    middleware: MiddlewareList<EventSubscriberMiddleware>,
     concurrencyLimit?: number | null,
   ) {
     super(errorHandler, middleware);
@@ -53,8 +53,10 @@ export class BasicAsyncEventDispatcher
 
   public static create(concurrencyLimit?: number | null): AsyncEventDispatcher {
     return new BasicAsyncEventDispatcher(
-      new BasicErrorHandler(),
-      SubscriberMiddlewareLinkedList.create(),
+      BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
+        meta.getBot(true).getLogger(),
+      ),
+      SubscriberMiddlewareList.create(),
       concurrencyLimit,
     );
   }
@@ -71,7 +73,6 @@ export class BasicAsyncEventDispatcher
         && pendingPromises.length >= this.concurrencyLimit
       ) {
         /** It's assumed that all promises in pendingPromises have a catch statement, so catching here is not needed. */
-        // eslint-disable-next-line no-await-in-loop
         await Promise.race(pendingPromises);
       }
 
@@ -92,18 +93,14 @@ export class BasicAsyncEventDispatcher
           await subscriber.handleEvent(meta, ...unknownArgs);
         })
         .catch(async (error) => {
-          await this.errorHandler.handle(
-            error,
-            subscriber,
-            args,
-            meta.getBot(),
-          );
+          await this.errorHandler.handle(error, subscriber, args);
         });
 
       pendingPromises.push(promise);
       void promise.finally(() => {
         const index = pendingPromises.indexOf(promise);
         if (index !== -1) {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           pendingPromises.splice(index, 1);
         }
       });
@@ -126,7 +123,7 @@ export class BasicAsyncEventDispatcher
     args: Parameters<AnyEventSubscriber['handleEvent']>,
   ): Promise<boolean> {
     return Promise.resolve()
-      .then(() => this.middleware.check(subscriber, args))
+      .then(() => this.middleware.check(subscriber, ...args))
       .catch(async (error) => {
         const [meta] = args;
 
@@ -136,12 +133,10 @@ export class BasicAsyncEventDispatcher
           args,
         );
 
-        await this.errorHandler.handle(
-          wrappedError,
-          subscriber,
-          [meta, ...args],
-          meta.getBot(),
-        );
+        await this.errorHandler.handle(wrappedError, subscriber, [
+          meta,
+          ...args,
+        ]);
         return false;
       });
   }

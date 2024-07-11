@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 Schedule interception refers to blocking a schedule from being executed. In nyx, there are two ways to do this:
 
-1. Add a `ScheduleMiddleware` to the `ScheduleMiddlewareLinkedList` in the `ScheduleExecutor` that handles
+1. Add a `ScheduleMiddleware` to the `ScheduleMiddlewareList` in the `ScheduleExecutor` that handles
 the schedule execution.
 2. Provide a `ScheduleFilter` in the `Schedule`.
 
@@ -15,7 +15,7 @@ Let's explore when and how to use each of these methods.
 
 ## 🚦 Schedule Middlewares
 
-`ScheduleMiddlewares` are objects stored on a `ScheduleMiddlewareLinkedList`, which is held and called by
+`ScheduleMiddlewares` are objects stored on a `ScheduleMiddlewareList`, which is held and called by
 the schedule executor when a schedule is about to be executed.
 
 It consists of:
@@ -25,10 +25,9 @@ It consists of:
 When being checked, a middleware is passed the schedule that is being checked and the tick metadata. The schedule then
 replies with a `MiddlewareResponse`, which can either:
 
-* Allow the execution (`{ allowed: true }`), with either:
-* Making the linked list check the next middleware (`{ allowed: true, checkNext: true }`).
-* Forcing the chain to end (`{ allowed: true, checkNext: false }`).
-* Deny the execution (`{ allowed: false, checkNext: false }`).
+* Make the list check the next middleware: `{ allowed: true, checkNext: true }`.
+* Forcing the execution to end as with an allowed result: `{ allowed: true, checkNext: false }`.
+* Deny the execution: `{ allowed: false, checkNext: false }`.
 
 The `AbstractMiddleware`, has `protected` utility methods to generate these responses. Specifically, `this.true()`,
 `this.false()` and `this.forceTrue()`.
@@ -62,14 +61,14 @@ You can create your own middleware by either:
 import { AbstractScheduleMiddleware } from '@nyx-discord/framework';
 
 class MyScheduleMiddleware extends AbstractScheduleMiddleware {
-  public check(schedule: Schedule, args: ScheduleTickArgs): MiddlewareResponse {
+  public check(schedule: Schedule, ...args: ScheduleTickArgs): MiddlewareResponse {
     return this.true();
   }
 }
 
 const middleware = new MyScheduleMiddleware();
 
-bot.schedules.getExecutor().getMiddleware().add(middleware);
+bot.getScheduleManager().getExecutor().getMiddleware().add(middleware);
 ```
 
 ```mdx-code-block
@@ -86,7 +85,7 @@ class MyScheduleMiddleware implements ScheduleMiddleware {
 
 const middleware = new MyScheduleMiddleware();
 
-bot.schedules.getExecutor().getMiddleware().add(middleware);
+bot.getScheduleManager().getExecutor().getMiddleware().add(middleware);
 ```
 
 ```mdx-code-block
@@ -94,7 +93,7 @@ bot.schedules.getExecutor().getMiddleware().add(middleware);
 </Tabs>
 ```
 
-By default, the following middleware chain is used:
+By default, the following middleware list is used:
 
 * `ScheduleFilterCheckMiddleware` - See [🚧 Schedule Filters](#-Schedule-filters).
 

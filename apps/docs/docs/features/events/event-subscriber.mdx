@@ -13,6 +13,9 @@ Subscribers don't depend on a specific bot or bus, and you can reuse the same in
 
 To get the bot that is calling an event, use the `EventDispatchMeta#getBot()` method on the meta passed for the event.
 
+Note it can be `null` if the bus doesn't have a bot. You can pass `true` to this method to throw an error if it's not present.
+In practice, all built-in event buses have a bot, it will only be `null` for your custom ones where you didn't pass a bot.
+
 The subscriber is also notified once it's subscribed to a bus (which contains the bot), on
 `EventSubscriber#onSubscribe()` , same when unsubscribed, on `#onUnsubscribe()`.
 Override these methods to perform setup or cleanup logic on the bus/bot.
@@ -39,7 +42,12 @@ class MyEventSubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent
   protected readonly event = 'someEvent';
 
   public handleEvent(meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) {
+    // Null if you didn't pass a bot while creating your bus
     const bot = meta.getBot();
+    if (!bot) {
+      console.log('Hello world');
+      return;
+    }
 
     bot.logger.log('Hello world');
   }
@@ -61,7 +69,12 @@ import { SubscriberCallbackWrapper } from '@nyx-discord/framework';
 const callbackSubscriber = new SubscriberCallbackWrapper < MyEventsArgs, 'someEvent'>(
   'someEvent',
   (meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) => {
+    // Null if you didn't pass a bot while creating your bus
     const bot = meta.getBot();
+    if (!bot) {
+      console.log('Hello world');
+      return;
+    }
 
     bot.logger.log('Hello world');
   }
@@ -82,7 +95,12 @@ class MyInterfaceEventSubscriber implements EventSubscriber {
   protected readonly event = 'someEvent';
 
   public handleEvent(meta: EventDispatchMeta, ...args: unknown[]): void {
+    // Null if you didn't pass a bot while creating your bus
     const bot = meta.getBot();
+    if (!bot) {
+      console.log('Hello world');
+      return;
+    }
 
     bot.logger.log('Hello world');
   }
@@ -105,7 +123,7 @@ To subscribe to a bus, you'll either need a reference to it or its ID.
 
 ```ts
 // Using the EventManager
-await bot.events.subscribe(subscriber, myBusId); // Can also pass the bus reference
+await bot.getEventManager().subscribe(subscriber, myBusId); // Can also pass the bus reference
 
 // Using an existing reference to the bus
 await myBus.subscribe(subscriber);
@@ -117,7 +135,7 @@ that the bus is currently registered on the bot. Otherwise, it will throw an `Ob
 ```ts
 const newBus = BasicEventBus.createSync(bot, Symbol('myBus'));
 // error-next-line
-await bot.events.subscribe(subscriber, newBus); // Throws ObjectNotFoundError
+await bot.getEventManager().subscribe(subscriber, newBus); // Throws ObjectNotFoundError
 ```
 
 ## 🧱 Event Dispatch Meta
@@ -135,6 +153,10 @@ It's also passed to the `EventMiddleware`, and can be used as a way to share dat
 Apart from the keys saved by the caller or the middleware, the dispatch meta contains:
 
 * The bot that called the event, via `#getBot()`.
+
+Note it can be `null` if the bus doesn't have a bot. You can pass `true` to this method to throw an error if it's not present.
+In practice, all built-in event buses have a bot, it will only be `null` for your custom ones where you didn't pass a bot.
+
 * The bus where the event was emitted, via `#getBus()`.
 * Whether the event has been marked as handled by another subscriber, via `#isHandled()`.
 
@@ -165,7 +187,7 @@ class HighestEventSubscriber extends AbstractEventSubscriber {
   public handleEvent(meta: EventDispatchMeta): void {
     // some logic
 
-    const bot = meta.getBot();
+    const bot = meta.getBot(true);
 
     bot.logger.log('Called HighestEventSubscriber!');
     meta.setHandled();
@@ -180,7 +202,7 @@ class LowestEventSubscriber extends AbstractEventSubscriber {
   protected readonly priority = PriorityEnum.Lowest;
 
   public handleEvent(meta: EventDispatchMeta): void {
-    const bot = meta.getBot();
+    const bot = meta.getBot(true);
 
     bot.logger.log('Called LowestEventSubscriber!');
   }
@@ -197,7 +219,7 @@ class LowestNotIgnoredEventSubscriber extends AbstractEventSubscriber {
   protected readonly ignoreHandled = false;
 
   public handleEvent(meta: EventDispatchMeta): void {
-    const bot = meta.getBot();
+    const bot = meta.getBot(true);
 
     bot.logger.log('Called LowestNotIgnoredEventSubscriber!');
   }
@@ -253,7 +275,7 @@ class OnEventSubscriber extends AbstractEventSubscriber {
   protected readonly lifetime = EventSubscriberLifetimeEnum.On;
 
   public handleEvent(meta: EventDispatchMeta): void {
-    const bot = meta.getBot();
+    const bot = meta.getBot(true);
 
     bot.logger.log('Hello from On subscriber!');
   }
@@ -271,7 +293,7 @@ class OnceEventSubscriber extends AbstractEventSubscriber {
   }
 
   public handleEvent(meta: EventDispatchMeta): void {
-    const bot = meta.getBot();
+    const bot = meta.getBot(true);
 
     bot.logger.log('Hello from On subscriber!');
   }
@@ -335,7 +357,7 @@ class HighestEventSubscriber extends AbstractEventSubscriber {
   protected readonly priority = PriorityEnum.Highest;
 
   public handleEvent(meta: EventDispatchMeta): void {
-    const bot = meta.getBot();
+    const bot = meta.getBot(true);
 
     bot.logger.log('First!');
   }
@@ -348,7 +370,7 @@ class LowestEventSubscriber extends AbstractEventSubscriber {
   protected readonly priority = PriorityEnum.Lowest;
 
   public handleEvent(meta: EventDispatchMeta): void {
-    const bot = meta.getBot();
+    const bot = meta.getBot(true);
 
     bot.logger.log('Last!');
   }

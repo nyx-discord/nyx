@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,19 +23,19 @@
  */
 
 import { FeatureError } from '../../../../errors/FeatureError.js';
-import type { LinkedList } from '../../../../list/LinkedList.js';
+import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import type { ScheduleTickMeta } from '../../execution/meta/ScheduleTickMeta.js';
 import type { Schedule } from '../../schedule/Schedule.js';
 import type { ScheduleMiddleware } from '../ScheduleMiddleware.js';
 
 export class UncaughtScheduleMiddlewareError extends FeatureError<Schedule> {
-  protected readonly middlewareLinkedList: LinkedList<ScheduleMiddleware>;
+  protected readonly middlewareList: MiddlewareList<ScheduleMiddleware>;
 
   protected readonly meta: ScheduleTickMeta;
 
   constructor(
     error: Error,
-    middlewareLinkedList: LinkedList<ScheduleMiddleware>,
+    middlewareList: MiddlewareList<ScheduleMiddleware>,
     schedule: Schedule,
     meta: ScheduleTickMeta,
   ) {
@@ -44,13 +44,13 @@ export class UncaughtScheduleMiddlewareError extends FeatureError<Schedule> {
       schedule,
       'There was an uncaught error while executing an schedule middleware.',
     );
-    this.middlewareLinkedList = middlewareLinkedList;
+    this.middlewareList = middlewareList;
     this.meta = meta;
   }
 
   /** Returns the middleware that threw this error. */
-  public getList(): LinkedList<ScheduleMiddleware> {
-    return this.middlewareLinkedList;
+  public getList(): MiddlewareList<ScheduleMiddleware> {
+    return this.middlewareList;
   }
 
   /** Returns the ScheduleTickMeta passed when executing the middleware. */

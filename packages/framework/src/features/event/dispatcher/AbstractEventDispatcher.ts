@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,10 +24,11 @@
 
 import type {
   AnyEventSubscriber,
+  EventDispatchArgs,
   EventDispatcher,
   EventSubscriberErrorHandler,
   EventSubscriberMiddleware,
-  MiddlewareLinkedList,
+  MiddlewareList,
 } from '@nyx-discord/core';
 import {
   EventSubscriberMiddlewareError,
@@ -37,11 +38,11 @@ import {
 export abstract class AbstractEventDispatcher implements EventDispatcher {
   protected readonly errorHandler: EventSubscriberErrorHandler;
 
-  protected readonly middleware: MiddlewareLinkedList<EventSubscriberMiddleware>;
+  protected readonly middleware: MiddlewareList<EventSubscriberMiddleware>;
 
   constructor(
     errorHandler: EventSubscriberErrorHandler,
-    middleware: MiddlewareLinkedList<EventSubscriberMiddleware>,
+    middleware: MiddlewareList<EventSubscriberMiddleware>,
   ) {
     this.errorHandler = errorHandler;
     this.middleware = middleware;
@@ -51,7 +52,7 @@ export abstract class AbstractEventDispatcher implements EventDispatcher {
     return this.errorHandler;
   }
 
-  public getMiddleware(): MiddlewareLinkedList<EventSubscriberMiddleware> {
+  public getMiddleware(): MiddlewareList<EventSubscriberMiddleware> {
     return this.middleware;
   }
 
@@ -60,10 +61,14 @@ export abstract class AbstractEventDispatcher implements EventDispatcher {
     args: Parameters<(typeof subscribers)[number]['handleEvent']>,
   ): Promise<void>;
 
+  /**
+   * Wraps a middleware error in an {@link UncaughtEventSubscriberMiddlewareError} if
+   * it isn't an {@link EventSubscriberMiddlewareError}.
+   */
   protected wrapMiddlewareError(
     error: Error,
     subscriber: AnyEventSubscriber,
-    args: unknown[],
+    args: EventDispatchArgs,
   ): Error {
     if (error instanceof EventSubscriberMiddlewareError) {
       return error;

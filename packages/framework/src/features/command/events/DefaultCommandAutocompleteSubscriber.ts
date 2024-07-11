@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,9 +37,11 @@ export class DefaultCommandAutocompleteSubscriber extends Subscriber<Events.Inte
   ): Promise<void> {
     if (!interaction.isAutocomplete()) return;
 
-    const bot = meta.getBot();
+    const bot = meta.getBot(true);
 
-    const handled: boolean = await bot.commands.autocomplete(interaction);
+    const handled: boolean = await bot
+      .getCommandManager()
+      .autocomplete(interaction);
     if (handled || interaction.responded) meta.setHandled();
   }
 }

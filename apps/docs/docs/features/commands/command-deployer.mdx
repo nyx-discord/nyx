@@ -1,0 +1,53 @@
+---
+title: 🪐 Command Deployer
+---
+
+The `CommandDeployer` is the object responsible for deploying commands. It's stored by a `CommandManager`, and you can get
+it via `CommandManager#getDeployer()`.
+
+You can't modify the repository directly since the `CommandManager` returns a `ReadonlyCommandDeployer` type, but the
+hidden methods are available at the `CommandManager`. This is because adding, removing and updating a command needs more
+logic than just modifying the repository, and the manager is responsible for coordinating this.
+
+## 👷 Creation
+
+You can create a command deployer by either:
+
+* Extending `DefaultCommandDeployer` from `@framework` (recommended).
+* Implementing the `CommandDeployer` interface from `@core`.
+
+```mdx-code-block
+<Tabs>
+<TabItem value="Extending DefaultCommandDeployer">
+```
+
+```ts
+class MyCommandDeployer extends DefaultCommandDeployer {
+  // ...
+}
+
+const myBot = Bot.create((bot) => ({
+  commands: DefaultCommandManager.create(bot, client, clientBus, { deployer: myDeployer }),
+}))
+```
+
+```mdx-code-block
+</TabItem>
+<TabItem value="Implementing CommandDeployer">
+```
+
+```ts
+class MyCommandDeployer implements CommandDeployer {
+  // ...
+}
+
+const myBot = Bot.create((bot) => ({
+  commands: DefaultCommandManager.create(bot, client, clientBus, { deployer: myDeployer }),
+}))
+```
+
+```mdx-code-block
+</TabItem>
+</Tabs>
+```
+

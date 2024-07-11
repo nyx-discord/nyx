@@ -10,7 +10,7 @@ import TabItem from '@theme/TabItem';
 ```
 
 Subcommand groups are non-executable commands inside [️👨‍👧‍👦 Parent Commands](./parent-command), whose only purpose is to
-store subcommands.
+store [`️🧩 SubCommands`](./subcommand).
 
 :::note
 While SubCommand Groups don't depend on a specific bot, they do depend on their `ParentCommand`.
@@ -18,10 +18,22 @@ While SubCommand Groups don't depend on a specific bot, they do depend on their 
 
 ## 👷 Creation
 
-You can create a sub command group command by either:
+1. Create a sub command group class by either:
 
 * Extending `AbstractSubCommandGroup` from `@framework` (recommended).
 * Implementing the `SubCommandGroup` interface from `@core`.
+
+2. Implement `createData()` that returns the DJS `SlashCommandSubcommandGroupBuilder` that stores the group's data.
+
+:::danger
+**Do not** add your children as options inside the `SlashCommandBuilder`. The serialization will do that for you, and
+will actually throw an `AssertionError` if you do that.
+:::
+
+2. Add subcommand children by either:
+
+* Specifying them in the `children` property.
+* Adding them after instantiation with `SubCommandGroup#addChildren()`.
 
 ```mdx-code-block
 <Tabs>
@@ -29,12 +41,11 @@ You can create a sub command group command by either:
 ```
 
 ```ts
-import { AbstractSubCommandGroup } from '@nyx-discord/framework';
-
 class MySubCommandGroup extends AbstractSubCommandGroup {
-  protected data: SubCommandGroupData = {
-    name: 'hello',
-    description: 'Hello world!',
+  protected createData(): SlashCommandSubcommandGroupBuilder {
+    return new SlashCommandSubcommandGroupBuilder()
+      .setName('hello')
+      .setDescription('Hello world!');
   }
 
   protected children = [
@@ -44,15 +55,15 @@ class MySubCommandGroup extends AbstractSubCommandGroup {
 
 // highlight-next-line
 // The parentCommand variable is the ParentCommand that will contain this group
-
+// highlight-next-line
 const subCommandGroup = new MySubCommandGroup(parentCommand);
 
 // warn-start
 // Throws IllegalDuplicateError if a child with that name already exists
 // Throws RangeError if no more children can be added to this command (25)
 // Throws AssertionError if this child's parent is not subCommandParent
+parentCommand.addChildren(subCommandGroup);
 // warn-end
-parentCommand.addChild(subCommandGroup);
 ```
 
 ```mdx-code-block
@@ -61,8 +72,6 @@ parentCommand.addChild(subCommandGroup);
 ```
 
 ```ts
-import { SubCommandGroup } from '@nyx-discord/core';
-
 class MySubCommandGroup implements SubCommandGroup {
   // ...
 }
@@ -77,7 +86,7 @@ const subCommandGroup = new MySubCommandGroup(parentCommand);
 // Throws RangeError if no more children can be added to this command (25)
 // Throws AssertionError if this child's parent is not subCommandParent
 // warn-end
-parentCommand.addChild(subCommandGroup);
+parentCommand.addChildren(subCommandGroup);
 ```
 
 ```mdx-code-block
@@ -88,14 +97,14 @@ parentCommand.addChild(subCommandGroup);
 ## 🔀 Manipulating children
 
 Normally, a parent's children are created alongside the parent, but they can also be added (and removed) on runtime with
-`SubCommandGroup#addChild()`, `SubCommandGroup#removeChildByInstance()` and `SubCommandGroup#removeChildByName()`.
+`SubCommandGroup#addChildren()`, `SubCommandGroup#removeChildByInstance()` and `SubCommandGroup#removeChildByName()`.
 
 After updating a subcommand group, you must call `CommandManager#update()` on its parent in order to reflect the changes
 on Discord.
 
 ```ts
 const subCommandGroup = new MySubCommandGroup(parentCommand);
-parentCommand.addChild(subCommandGroup);
+parentCommand.addChildren(subCommandGroup);
 
 // highlight-next-line
 // Adding a subcommand
@@ -107,9 +116,9 @@ const mySubcommand = new MySubCommand(subCommandGroup);
 // Throws RangeError if no more children can be added to this group (25)
 // Throws AssertionError if this subcommand's parent is not subCommandGroup
 // warn-end
-subCommandGroup.addChild(mySubcommand);
+subCommandGroup.addChildren(mySubcommand);
 
-await this.bot.commands.updateCommand(parentCommand);
+await this.bot.getCommandManager().updateCommand(parentCommand);
 
 // highlight-next-line
 // Removing a subcommand
@@ -119,5 +128,5 @@ await this.bot.commands.updateCommand(parentCommand);
 // warn-next-line
 subCommandGroup.removeChildByInstance(mySubcommand);
 
-await this.bot.commands.updateCommand(parentCommand);
+await this.bot.getCommandManager().updateCommand(parentCommand);
 ```

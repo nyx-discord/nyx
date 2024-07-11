@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,10 @@
  */
 
 import type { Awaitable } from 'discord.js';
-import type { NyxBot } from '../../bot/NyxBot.js';
 
 /** An Error consumer function. Gets passed the Error instance and the ErrorHandler this consumer belongs to. */
 export type ErrorConsumer<ErrorType, ErroredObject, Args extends unknown[]> = (
   error: ErrorType,
   object: ErroredObject,
   args: Args,
-  bot: NyxBot,
 ) => Awaitable<void>;

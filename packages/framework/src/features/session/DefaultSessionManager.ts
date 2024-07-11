@@ -40,9 +40,9 @@ import type {
 import {
   AssertionError,
   ObjectNotFoundError,
+  SessionEndCodes,
   SessionEventEnum,
   SessionExecutionMeta,
-  SessionExpiredCode,
   SessionStateEnum,
 } from '@nyx-discord/core';
 import type { ClientEvents, Events } from 'discord.js';
@@ -141,7 +141,7 @@ export class DefaultSessionManager implements SessionManager {
   public async onSetup() {
     await this.repository.onSetup();
 
-    const bus = this.bot.events.getClientBus();
+    const bus = this.bot.getEventManager().getClientBus();
     await bus.subscribe(this.subscriber);
   }
 
@@ -175,10 +175,12 @@ export class DefaultSessionManager implements SessionManager {
       ).catch((error) => {
         const executionId = String(metadata.getId());
 
-        this.bot.logger.error(
-          `Uncaught event bus error while emitting session start '${executionId}'.`,
-          error,
-        );
+        this.bot
+          .getLogger()
+          .error(
+            `Uncaught event bus error while emitting session start '${executionId}'.`,
+            error,
+          );
       });
 
       return true;
@@ -230,10 +232,12 @@ export class DefaultSessionManager implements SessionManager {
     ).catch((error) => {
       const executionId = String(metadata.getId());
 
-      this.bot.logger.error(
-        `Uncaught event bus error while emitting session update '${executionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught event bus error while emitting session update '${executionId}'.`,
+          error,
+        );
     });
 
     return true;
@@ -268,10 +272,12 @@ export class DefaultSessionManager implements SessionManager {
     ).catch((error) => {
       const sessionId = String(session.getId());
 
-      this.bot.logger.error(
-        `Uncaught bus error while emitting session end '${sessionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught bus error while emitting session end '${sessionId}'.`,
+          error,
+        );
     });
 
     return this;
@@ -288,10 +294,17 @@ export class DefaultSessionManager implements SessionManager {
     return (await this.repository.get(sessionCustomId)) ?? null;
   }
 
+  public async subscribe(
+    ...subscribers: EventSubscriber<SessionEventArgs, keyof SessionEventArgs>[]
+  ): Promise<this> {
+    await this.bus.subscribe(...subscribers);
+    return this;
+  }
+
   public async setUpdateSubscriber(
     subscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>,
   ): Promise<this> {
-    const bus = this.bot.events.getClientBus();
+    const bus = this.bot.getEventManager().getClientBus();
 
     this.subscriber.unlock();
     await bus.unsubscribe(this.subscriber);
@@ -332,8 +345,8 @@ export class DefaultSessionManager implements SessionManager {
     const metadata = SessionExecutionMeta.fromSession(session);
     const data = await this.executor.end(
       session,
-      String(SessionExpiredCode),
-      SessionExpiredCode,
+      String(SessionEndCodes.Expired),
+      SessionEndCodes.Expired,
       metadata,
     );
     session.setState(SessionStateEnum.Ended);
@@ -349,13 +362,16 @@ export class DefaultSessionManager implements SessionManager {
     ).catch((error) => {
       const sessionId = String(session.getId());
 
-      this.bot.logger.error(
-        `Uncaught bus error while emitting session expire '${sessionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught bus error while emitting session expire '${sessionId}'.`,
+          error,
+        );
     });
   }
 
+  /** Checks if a new state is valid given a session's current state. */
   protected checkSessionState(
     session: Session<unknown>,
     newState: SessionState,

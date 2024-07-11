@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,10 +22,9 @@
  * SOFTWARE.
  */
 
-import type { CommandData, ExecutableCommand } from '@nyx-discord/core';
+import type { AnyExecutableCommand } from '@nyx-discord/core';
 
 import { BasicFilterCheckMiddleware } from '../../../../filter/middleware/BasicFilterCheckMiddleware.js';
 
-export class CommandFilterCheckMiddleware extends BasicFilterCheckMiddleware<
-  ExecutableCommand<CommandData>
-> {}
+// eslint-disable-next-line max-len
+export class CommandFilterCheckMiddleware extends BasicFilterCheckMiddleware<AnyExecutableCommand> {}

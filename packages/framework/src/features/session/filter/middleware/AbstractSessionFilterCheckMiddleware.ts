@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ export abstract class AbstractSessionFilterCheckMiddleware<
 
   public async check(
     session: Session<unknown>,
-    args: Args,
+    ...args: Args
   ): Promise<MiddlewareResponse> {
     const filter = this.extractFilter(session);
     if (!filter) return this.true();
@@ -50,6 +50,7 @@ export abstract class AbstractSessionFilterCheckMiddleware<
     return this.true();
   }
 
+  /** Extracts the filter from the session. */
   protected abstract extractFilter(
     session: Session<unknown>,
   ): SessionFilter<unknown, Args> | null;

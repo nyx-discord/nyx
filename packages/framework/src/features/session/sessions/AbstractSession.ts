@@ -41,7 +41,7 @@ import type {
 } from '@nyx-discord/core';
 import {
   AssertionError,
-  SessionSelfEndCode,
+  SessionEndCodes,
   SessionStateEnum,
 } from '@nyx-discord/core';
 import type {
@@ -93,12 +93,16 @@ export abstract class AbstractSession<Result = void>
     this.id = id;
     this.startInteraction = startInteraction;
 
-    this.codec = bot.sessions.getCustomIdCodec();
+    this.codec = bot.getSessionManager().getCustomIdCodec();
     this.customId = this.codec.createCustomIdBuilder(this);
     if (ttl !== undefined) this.ttl = ttl;
   }
 
-  public async update(
+  public async start(): Promise<void> {
+    await this.bot.getSessionManager().start(this);
+  }
+
+  public async onUpdate(
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,
   ): Promise<boolean> {
@@ -107,7 +111,7 @@ export abstract class AbstractSession<Result = void>
     return this.handleSelectMenu(interaction, meta);
   }
 
-  public abstract start(meta: SessionExecutionMeta): Awaitable<void>;
+  public abstract onStart(meta: SessionExecutionMeta): Awaitable<void>;
 
   public abstract onEnd(
     reason: string,
@@ -120,9 +124,10 @@ export abstract class AbstractSession<Result = void>
   }
 
   public getEndPromise(): Promise<SessionEndData<Result>> {
-    return this.bot.sessions.getPromiseRepository().getPromise(this) as Promise<
-      SessionEndData<Result>
-    >;
+    return this.bot
+      .getSessionManager()
+      .getPromiseRepository()
+      .getPromise(this) as Promise<SessionEndData<Result>>;
   }
 
   public getMeta(): ReadonlyMetaCollection {
@@ -178,6 +183,7 @@ export abstract class AbstractSession<Result = void>
     this.state = state;
   }
 
+  /** Handles a {@link ButtonInteraction} whose customId matches this session. */
   protected handleButton(
     _interaction: ButtonInteraction,
     _meta: SessionExecutionMeta,
@@ -185,6 +191,7 @@ export abstract class AbstractSession<Result = void>
     throw new NotImplementedError();
   }
 
+  /** Handles an {@link AnySelectMenuInteraction} whose customId matches this session. */
   protected handleSelectMenu(
     _interaction: AnySelectMenuInteraction,
     _meta: SessionExecutionMeta,
@@ -192,6 +199,7 @@ export abstract class AbstractSession<Result = void>
     throw new NotImplementedError();
   }
 
+  /** Handles a {@link ModalSubmitInteraction} whose customId matches this session. */
   protected handleModal(
     _interaction: ModalSubmitInteraction,
     _meta: SessionExecutionMeta,
@@ -199,9 +207,11 @@ export abstract class AbstractSession<Result = void>
     throw new NotImplementedError();
   }
 
+  /** Utility to self end this session. */
   protected async selfEnd(reason?: string): Promise<void> {
-    const endReason = reason ?? SessionSelfEndCode.toString();
-
-    await this.bot.sessions.end(this, endReason, SessionSelfEndCode);
+    const endReason = reason ?? String(SessionEndCodes.SelfEnded);
+    await this.bot
+      .getSessionManager()
+      .end(this, endReason, SessionEndCodes.SelfEnded);
   }
 }

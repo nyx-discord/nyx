@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,26 +34,12 @@ import type { Awaitable } from 'discord.js';
 export abstract class AbstractMiddleware<Check, Args extends readonly unknown[]>
   implements Middleware<Check, Args>
 {
-  protected next: Middleware<Check, Args> | undefined;
-
   protected locked = false;
 
   protected readonly priority: Priority = PriorityEnum.Normal;
 
   public getPriority(): Priority {
     return this.priority;
-  }
-
-  public getLast(): Middleware<Check, Args> {
-    return this.next ? this.next.getLast() : this;
-  }
-
-  public getNext(): Middleware<Check, Args> | null {
-    return this.next ?? null;
-  }
-
-  public setNext(next: Middleware<Check, Args>) {
-    this.next = next;
   }
 
   public lock(): this {
@@ -70,20 +56,23 @@ export abstract class AbstractMiddleware<Check, Args extends readonly unknown[]>
     return this.locked;
   }
 
+  public abstract check(
+    checked: Check,
+    ...args: Args
+  ): Awaitable<MiddlewareResponse>;
+
+  /** Creates a true {@link MiddlewareResponse}. */
   protected true(): MiddlewareResponse {
     return { allowed: true, checkNext: true };
   }
 
+  /** Creates a true {@link MiddlewareResponse} that forces the check to end there. */
   protected forceTrue(): MiddlewareResponse {
     return { allowed: true, checkNext: false };
   }
 
+  /** Creates a false {@link MiddlewareResponse}. */
   protected false(): MiddlewareResponse {
     return { allowed: false, checkNext: false };
   }
-
-  public abstract check(
-    checked: Check,
-    args: Args,
-  ): Awaitable<MiddlewareResponse>;
 }

@@ -24,85 +24,55 @@
 
 import type {
   CommandExecutionMeta,
-  CommandVisitor,
   StandaloneCommand,
-  StandaloneCommandData,
-  StandaloneCommandReferenceData,
 } from '@nyx-discord/core';
-import { ResolvedCommandType } from '@nyx-discord/core';
 import type {
+  AutocompleteInteraction,
   Awaitable,
-  MessageContextMenuCommandInteraction,
-  UserContextMenuCommandInteraction,
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+  SlashCommandOptionsOnlyBuilder,
+  Snowflake,
 } from 'discord.js';
-import { ApplicationCommandType } from 'discord.js';
 
-import { NotImplementedError } from '../../../errors/NotImplementedError.js';
-import { AbstractExecutableCommand } from './abstract/AbstractExecutableCommand.js';
+import { AbstractExecutableCommand } from './executable/AbstractExecutableCommand';
 
 export abstract class AbstractStandaloneCommand
-  extends AbstractExecutableCommand<StandaloneCommandData>
+  extends AbstractExecutableCommand<
+    ReturnType<SlashCommandOptionsOnlyBuilder['toJSON']>,
+    ChatInputCommandInteraction
+  >
   implements StandaloneCommand
 {
-  public static readonly DefaultContextData: ReadonlyArray<ApplicationCommandType> =
-    [ApplicationCommandType.ChatInput];
-
-  protected contexts: ApplicationCommandType[] = [
-    ...AbstractStandaloneCommand.DefaultContextData,
-  ];
-
-  public getContexts(): ReadonlyArray<ApplicationCommandType> {
-    return this.contexts;
+  public getName(): string {
+    return this.createData().name;
   }
 
-  public override acceptVisitor(visitor: CommandVisitor<unknown>): void {
-    visitor.visitStandaloneCommand(this);
+  public getData(): ReturnType<SlashCommandBuilder['toJSON']> {
+    return this.createData().toJSON();
   }
 
-  public override isStandaloneCommand(): this is StandaloneCommand {
+  public getGuilds(): ReadonlyArray<Snowflake> | null {
+    return null;
+  }
+
+  public getId(): string {
+    return this.createData().name;
+  }
+
+  public override isStandalone(): this is StandaloneCommand {
     return true;
   }
 
-  public executeUser(
-    _interaction: UserContextMenuCommandInteraction,
-    _metadata: CommandExecutionMeta,
-  ): Awaitable<void> {
-    throw new NotImplementedError();
+  public abstract autocomplete(
+    interaction: AutocompleteInteraction,
+    metadata: CommandExecutionMeta,
+  ): Awaitable<void>;
+
+  public getNameTree(): ReadonlyArray<string> {
+    return [this.getName()];
   }
 
-  public executeMessage(
-    _interaction: MessageContextMenuCommandInteraction,
-    _metadata: CommandExecutionMeta,
-  ): Awaitable<void> {
-    throw new NotImplementedError();
-  }
-
-  public override getId(): string {
-    const { name } = this.data;
-    const contextBitmask = this.generateContextBitmask();
-    return `${name}/${contextBitmask}`;
-  }
-
-  public override getData(): Readonly<StandaloneCommandData> {
-    return this.data;
-  }
-
-  /** Generates a bitmask for the command's {@link contexts} data. */
-  protected generateContextBitmask(): string {
-    let bitmask = 0;
-
-    for (const value of this.contexts) {
-      bitmask |= value;
-    }
-
-    return bitmask.toString(10);
-  }
-
-  public toReferenceData(): StandaloneCommandReferenceData {
-    return {
-      type: ResolvedCommandType.StandaloneCommand,
-      root: this.data.name,
-      commandType: this.contexts[0],
-    };
-  }
+  /** Returns this command's data. */
+  protected abstract createData(): SlashCommandOptionsOnlyBuilder;
 }

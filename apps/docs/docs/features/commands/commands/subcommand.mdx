@@ -7,7 +7,7 @@ title: ️🧩 SubCommand
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-Subcommands are executable commands that are stored inside a `ParentCommand` or a `SubCommandGroup`.
+Subcommands are executable commands that are stored inside a [`👨‍👧‍👦 Parent Command`](./parent-command) or a [`🗂️ SubCommand Group`](./subcommand-group).
 
 :::note
 While SubCommands don't depend on a specific bot, they do depend on their parent (`ParentCommand` or `SubCommandGroup`).
@@ -15,10 +15,14 @@ While SubCommands don't depend on a specific bot, they do depend on their parent
 
 ## 👷 Creation
 
-You can create a subcommand by either:
+1. Create a subcommand class by either:
 
 * Extending `AbstractSubCommand` from `@framework` (recommended).
 * Implementing the `SubCommand` interface from `@core`.
+
+2. Implement `createData()` that returns the DJS `SlashCommandSubcommandBuilder` that stores the subcommand's data, and `execute()` that executes the subcommand.
+
+3. Add it to a `ParentCommand` or `SubCommandGroup` with `#addChildren()`, or by overriding `children` on its fields.
 
 ```mdx-code-block
 <Tabs>
@@ -26,28 +30,36 @@ You can create a subcommand by either:
 ```
 
 ```ts
-import { AbstractSubCommand } from '@nyx-discord/framework';
-
 class MySubCommand extends AbstractSubCommand {
-  protected data: SubCommandData = {
-    name: 'hello',
-    description: 'Hello world!',
+  protected createData() {
+    return new SlashCommandSubcommandBuilder()
+      .setName('hello')
+      .setDescription('Hello world!');
+  }
+
+  public async execute(
+    interaction: ChatInputCommandInteraction,
+    meta: CommandExecutionMeta
+  ) {
+    const bot = meta.getBot();
+    const botId = bot.getId();
+
+    await interaction.reply(`Hello from Bot ${String(botId)} from MySubCommand!`);
   }
 }
 
 // highlight-start
 // The subCommandParent variable is the parent that will contain this subcommand,
 // whether a ParentCommand or a SubCommandGroup
-// highlight-end
-
 const subCommand = new MySubCommand(subCommandParent);
+// highlight-end
 
 // warn-start
 // Throws IllegalDuplicateError if a child with that name already exists
 // Throws RangeError if no more children can be added to this command (25)
 // Throws AssertionError if this child's parent is not subCommandParent
+subCommandParent.addChildren(subCommand);
 // warn-end
-subCommandParent.addChild(subCommand);
 ```
 
 ```mdx-code-block
@@ -56,8 +68,6 @@ subCommandParent.addChild(subCommand);
 ```
 
 ```ts
-import { SubCommand } from '@nyx-discord/core';
-
 class MySubCommand implements SubCommand {
   // ...
 }
@@ -65,16 +75,15 @@ class MySubCommand implements SubCommand {
 // highlight-start
 // The subCommandParent variable is the parent that will contain this subcommand,
 // whether a ParentCommand or a SubCommandGroup
-// highlight-end
-
 const subCommand = new MySubCommand(subCommandParent);
+// highlight-end
 
 // warn-start
 // Throws IllegalDuplicateError if a child with that name already exists
 // Throws RangeError if no more children can be added to this command (25)
 // Throws AssertionError if this child's parent is not subCommandParent
+subCommandParent.addChildren(subCommand);
 // warn-end
-subCommandParent.addChild(subCommand);
 ```
 
 ```mdx-code-block

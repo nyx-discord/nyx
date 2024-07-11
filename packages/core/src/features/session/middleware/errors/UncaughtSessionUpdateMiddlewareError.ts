@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,19 @@
  * SOFTWARE.
  */
 
-import type { Session } from '../../session/Session.js';
-import type { SessionExecutionMeta } from '../../execution/meta/SessionExecutionMeta.js';
-import type { LinkedList } from '../../../../list/LinkedList.js';
+import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import { SessionUpdateError } from '../../errors/SessionUpdateError.js';
-import type { SessionUpdateMiddleware } from '../SessionUpdateMiddleware.js';
+import type { SessionExecutionMeta } from '../../execution/meta/SessionExecutionMeta.js';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction.js';
+import type { Session } from '../../session/Session.js';
+import type { SessionUpdateMiddleware } from '../SessionUpdateMiddleware.js';
 
 export class UncaughtSessionUpdateMiddlewareError extends SessionUpdateError {
-  protected readonly middlewareList: LinkedList<SessionUpdateMiddleware>;
+  protected readonly middlewareList: MiddlewareList<SessionUpdateMiddleware>;
 
   constructor(
     error: Error,
-    middlewareList: LinkedList<SessionUpdateMiddleware>,
+    middlewareList: MiddlewareList<SessionUpdateMiddleware>,
     session: Session<unknown>,
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,
@@ -44,7 +44,7 @@ export class UncaughtSessionUpdateMiddlewareError extends SessionUpdateError {
   }
 
   /** Returns the middleware list that threw this error. */
-  public getMiddlewareList(): LinkedList<SessionUpdateMiddleware> {
+  public getMiddlewareList(): MiddlewareList<SessionUpdateMiddleware> {
     return this.middlewareList;
   }
 }

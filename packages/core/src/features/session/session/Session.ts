@@ -47,11 +47,18 @@ export interface Session<Result>
     Identifiable<string>,
     Metadatable {
   /**
-   * Starts the session.
+   * Starts the session. Alias of `SessionManager#start(this)`.
    *
    * @throws {IllegalStateError} If the session has already started.
    */
-  start(meta: SessionExecutionMeta): Awaitable<void>;
+  start(): Awaitable<void>;
+
+  /**
+   * Notifies the session about its start.
+   *
+   * @throws {IllegalStateError} If the session has already started.
+   */
+  onStart(meta: SessionExecutionMeta): Awaitable<void>;
 
   /**
    * Updates the session's state with an interaction.
@@ -61,7 +68,7 @@ export interface Session<Result>
    * @returns {boolean} Whether the session's TTL should be reset after this
    *                    update.
    */
-  update(
+  onUpdate(
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,
   ): Awaitable<boolean>;

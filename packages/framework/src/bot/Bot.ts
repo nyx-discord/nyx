@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@ import type {
   CommandManager,
   EventManager,
   Identifier,
-  Logger,
   NyxBot,
+  NyxLogger,
   PluginManager,
   ScheduleManager,
   SessionManager,
@@ -44,13 +44,14 @@ import { DefaultSessionManager } from '../features/session/DefaultSessionManager
 import { DefaultBotService } from '../service/DefaultBotService.js';
 
 type BotOptionsWithDefaults<
-  ConcreteLogger extends Logger,
+  ConcreteLogger extends NyxLogger,
   ConcreteCommandManager extends CommandManager,
   ConcreteEventManager extends EventManager,
   ConcreteScheduleManager extends ScheduleManager,
   ConcreteSessionManager extends SessionManager,
   ConcretePluginManager extends PluginManager,
   ConcreteBotService extends BotService,
+  ConcreteClient extends Client,
 > = Partial<
   BotOptions<
     ConcreteLogger,
@@ -59,7 +60,8 @@ type BotOptionsWithDefaults<
     ConcreteScheduleManager,
     ConcreteSessionManager,
     ConcretePluginManager,
-    ConcreteBotService
+    ConcreteBotService,
+    ConcreteClient
   >
 > &
   Pick<
@@ -72,37 +74,48 @@ type BotOptionsWithDefaults<
       ConcretePluginManager,
       ConcreteBotService
     >,
-    'logger' | 'client' | 'id' | 'token'
+    'logger' | 'client' | 'id' | 'token' | 'deployCommands'
   >;
 
 /** The main Bot class. */
 export class Bot<
-  ConcreteLogger extends Logger,
+  ConcreteLogger extends NyxLogger,
   ConcreteCommandManager extends CommandManager,
   ConcreteEventManager extends EventManager,
   ConcreteScheduleManager extends ScheduleManager,
   ConcreteSessionManager extends SessionManager,
   ConcretePluginManager extends PluginManager,
   ConcreteBotService extends BotService,
-> implements NyxBot
+  ConcreteClient extends Client,
+> implements
+    NyxBot<
+      ConcreteLogger,
+      ConcreteCommandManager,
+      ConcreteEventManager,
+      ConcreteScheduleManager,
+      ConcreteSessionManager,
+      ConcretePluginManager,
+      ConcreteBotService,
+      ConcreteClient
+    >
 {
-  public readonly logger: ConcreteLogger;
+  protected readonly logger: ConcreteLogger;
 
-  public readonly commands: ConcreteCommandManager;
+  protected readonly commands: ConcreteCommandManager;
 
-  public readonly events: ConcreteEventManager;
+  protected readonly events: ConcreteEventManager;
 
-  public readonly schedules: ConcreteScheduleManager;
+  protected readonly schedules: ConcreteScheduleManager;
 
-  public readonly sessions: ConcreteSessionManager;
+  protected readonly sessions: ConcreteSessionManager;
 
-  public readonly plugins: ConcretePluginManager;
+  protected readonly plugins: ConcretePluginManager;
 
-  public readonly service: ConcreteBotService;
+  protected readonly service: ConcreteBotService;
 
-  public readonly id: Identifier;
+  protected readonly id: Identifier;
 
-  public readonly client: Client<true>;
+  protected readonly client: ConcreteClient;
 
   protected readonly token: string;
 
@@ -116,12 +129,13 @@ export class Bot<
       ConcreteScheduleManager,
       ConcreteSessionManager,
       ConcretePluginManager,
-      ConcreteBotService
+      ConcreteBotService,
+      ConcreteClient
     >,
   ) {
     const options = optionsGenerator(this);
 
-    this.client = options.client as Client<true>;
+    this.client = options.client;
     this.token = options.token;
     this.id = options.id;
 
@@ -135,13 +149,14 @@ export class Bot<
   }
 
   public static create<
-    ConcreteLogger extends Logger,
+    ConcreteLogger extends NyxLogger,
     ConcreteCommandManager extends CommandManager,
     ConcreteEventManager extends EventManager,
     ConcreteScheduleManager extends ScheduleManager,
     ConcreteSessionManager extends SessionManager,
     ConcretePluginManager extends PluginManager,
     ConcreteBotService extends BotService,
+    ConcreteClient extends Client,
   >(
     generator: (
       bot: NyxBot,
@@ -152,7 +167,8 @@ export class Bot<
       ConcreteScheduleManager,
       ConcreteSessionManager,
       ConcretePluginManager,
-      ConcreteBotService
+      ConcreteBotService,
+      ConcreteClient
     >,
   ): NyxBot<
     ConcreteLogger,
@@ -161,7 +177,8 @@ export class Bot<
     ConcreteScheduleManager,
     ConcreteSessionManager,
     ConcretePluginManager,
-    ConcreteBotService
+    ConcreteBotService,
+    ConcreteClient
   > {
     return new Bot((bot) => {
       const generatedOptions = generator(bot);
@@ -169,16 +186,18 @@ export class Bot<
         bot,
         generatedOptions.id,
         generatedOptions.client,
+        generatedOptions.deployCommands,
       );
 
-      return { ...defaultOptions, ...generator(bot) } as BotOptions<
+      return { ...defaultOptions, ...generatedOptions } as BotOptions<
         ConcreteLogger,
         ConcreteCommandManager,
         ConcreteEventManager,
         ConcreteScheduleManager,
         ConcreteSessionManager,
         ConcretePluginManager,
-        ConcreteBotService
+        ConcreteBotService,
+        ConcreteClient
       >;
     });
   }
@@ -187,6 +206,7 @@ export class Bot<
     bot: NyxBot,
     id: Identifier,
     client: Client,
+    deployCommands: boolean,
   ) => {
     const eventManager = DefaultEventManager.create(bot, client);
 
@@ -196,6 +216,7 @@ export class Bot<
         bot,
         client,
         eventManager.getClientBus(),
+        deployCommands,
       ),
       schedules: DefaultScheduleManager.create(bot),
       sessions: DefaultSessionManager.create(bot),
@@ -224,7 +245,39 @@ export class Bot<
     return this.token;
   }
 
+  public getClient(): ConcreteClient {
+    return this.client;
+  }
+
+  public getCommandManager(): ConcreteCommandManager {
+    return this.commands;
+  }
+
+  public getEventManager(): ConcreteEventManager {
+    return this.events;
+  }
+
   public getId(): Identifier {
     return this.id;
+  }
+
+  public getLogger(): ConcreteLogger {
+    return this.logger;
+  }
+
+  public getPluginManager(): ConcretePluginManager {
+    return this.plugins;
+  }
+
+  public getScheduleManager(): ConcreteScheduleManager {
+    return this.schedules;
+  }
+
+  public getService(): ConcreteBotService {
+    return this.service;
+  }
+
+  public getSessionManager(): ConcreteSessionManager {
+    return this.sessions;
   }
 }

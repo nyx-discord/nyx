@@ -6,3 +6,5 @@ node_modules
 **/dist/*
 dist
 tsup.config.ts
+
+/.nx/workspace-data

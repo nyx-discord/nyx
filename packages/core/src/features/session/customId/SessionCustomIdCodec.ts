@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ export interface SessionCustomIdCodec extends CustomIdCodec<Session<unknown>> {
    * // the page 3.
    *
    * // Writing:
-   * const customIdCodec = this.bot.sessions.getCustomIdProcessor();
+   * const customIdCodec = this.bot.getSessionManager().getCustomIdProcessor();
    * const builder: PaginationCustomIdBuilder = customIdProcessor
    *   .createPageCustomIdBuilder(this)
    *   .setAt(0, 'amgelo563')
@@ -72,7 +72,7 @@ export interface SessionCustomIdCodec extends CustomIdCodec<Session<unknown>> {
    * // Let's say you want to make a component that when used, it routes to the
    *   current session, with 'Amgelo#1106' as an extra data.
    *
-   * const customIdCodec = this.bot.sessions.getCustomIdProcessor();
+   * const customIdCodec = this.bot.getSessionManager().getCustomIdProcessor();
    *
    * const builder = customIdProcessor.createCustomIdBuilder(this);
    * builder.add('Amgelo#1106');
@@ -92,7 +92,7 @@ export interface SessionCustomIdCodec extends CustomIdCodec<Session<unknown>> {
    * // This is obtained from an Interaction, declared here for demonstration
    *   purposes. const customId = '$SSN_someSessionId_Amgelo#1106_extraInfo';
    *
-   * const customIdCodec = this.bot.sessions.getCustomIdCodec();
+   * const customIdCodec = this.bot.getSessionManager().getCustomIdCodec();
    * const iterator = customIdCodec.createIteratorFromCustomId(customId);
    *
    * console.log(iterator.getTokens()) // ['Amgelo#1106', 'extraInfo']

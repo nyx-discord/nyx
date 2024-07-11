@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 import type { Comparator, ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable } from 'discord.js';
 
-import type { BotAware } from '../../../bot/BotAware.js';
+import type { NyxBot } from '../../../bot/NyxBot';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Identifier } from '../../../identity/Identifier.js';
 import type { Lockable } from '../../../lock/Lockable.js';
@@ -40,10 +40,12 @@ import type { AnyEventSubscriberFrom } from '../subscriber/types/AnyEventSubscri
 /** An object that holds methods for subscribing to and emitting events, and getting information about the subscribers and subscribed events. */
 export interface EventBus<
   ArgsRecord extends Record<keyof ArgsRecord & string, unknown[]>,
-> extends BotAware,
-    Lockable,
+> extends Lockable,
     Identifiable,
     Metadatable {
+  /** Returns the saved bot for this bus, if any. */
+  getBot(): NyxBot | null;
+
   /** Called by the {@link EventManager} after this bus is registered on it. */
   onRegister(): Awaitable<void>;
 
@@ -51,7 +53,7 @@ export interface EventBus<
   onUnregister(): Awaitable<void>;
 
   /**
-   * Subscribes an {@link EventSubscriber}.
+   * Subscribes a list of {@link EventSubscriber}.
    *
    * @throws {IllegalDuplicateError} If a subscriber with that ID is already
    *   subscribed to the event.
@@ -60,7 +62,7 @@ export interface EventBus<
     const Sub extends EventSubscriber<ArgsRecord, keyof ArgsRecord & string>,
     const EventName extends ReturnType<Sub['getEvent']> & keyof ArgsRecord,
   >(
-    subscriber: EventSubscriber<ArgsRecord, EventName>,
+    ...subscribers: EventSubscriber<ArgsRecord, EventName>[]
   ): Awaitable<this>;
 
   /**

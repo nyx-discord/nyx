@@ -12,6 +12,9 @@ that are subscribed to the [Client Event Bus](../events/event-manager#-client-ev
 
 With this object you can override the manager's command subscribers, letting you add your own custom logic in runtime.
 
+Specifically, it stores the `CommandInteractionSubscriber` and `DefaultCommandAutocompleteSubscriber`.
+The first listens for command and component interactions, routing them to `CommandManager#execute()` and the second
+listens for autocomplete interactions, routing them to `CommandManager#autocomplete()`.
 
 ## 👷 Creation
 
@@ -26,8 +29,6 @@ You can create a command subscriptions container by either:
 ```
 
 ```ts
-import { DefaultCommandSubscriptionsContainer } from '@nyx-discord/framework';
-
 class MyCommandSubscriptionsContainer extends DefaultCommandSubscriptionsContainer {
   // ...
 }
@@ -45,8 +46,6 @@ const myBot = Bot.create((bot) => ({
 ```
 
 ```ts
-import { CommandSubscriptionsContainer } from '@nyx-discord/core';
-
 class MyCommandSubscriptionsContainer implements CommandSubscriptionsContainer {
   // ...
 }
@@ -72,8 +71,6 @@ For more information about creating subscribers, check the [📩 Event Subscribe
 :::
 
 ```ts
-import { AbstractDJSClientSubscriber } from 'discord.js';
-
 class MyCommandInteractionSubscriber extends AbstractDJSClientSubscriber<'interactionCreate'> {
   protected override readonly event = Events.InteractionCreate;
 
@@ -86,13 +83,13 @@ class MyCommandInteractionSubscriber extends AbstractDJSClientSubscriber<'intera
 }
 
 const subscriber = new MyCommandInteractionSubscriber();
-await bot.commands.getSubscriptions().setInteractionSubscriber(subscriber);
+await bot.getCommandManager().getSubscriptions().setInteractionSubscriber(subscriber);
 ```
 
 :::danger
 This will completely override the default subscriber. If your custom subscriber doesn't perform the logic that it
 should, your bot could ignore commands completely.
 
-You can check the `DefaultCommandInteractionSubscriber` and `DefaultCommandAutocompleteSubscriber` to see how a
+You can check the `DefaultCommandInteractionSubscriber` and `DefaultCommandAutocompleteSubscriber` source to see how a
 command subscriber should work.
 :::

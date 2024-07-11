@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,22 +30,25 @@ import type { PluginManager } from '../features/plugin/PluginManager.js';
 import type { ScheduleManager } from '../features/schedule/ScheduleManager.js';
 import type { SessionManager } from '../features/session/SessionManager.js';
 import type { Identifier } from '../identity/Identifier.js';
-import type { Logger } from '../log/Logger.js';
+import type { NyxLogger } from '../log/NyxLogger';
 import type { BotService } from '../service/BotService.js';
 
 /** Type of options to create a bot. */
 export interface BotOptions<
-  ConcreteLogger extends Logger = Logger,
+  ConcreteLogger extends NyxLogger = NyxLogger,
   ConcreteCommandManager extends CommandManager = CommandManager,
   ConcreteEventManager extends EventManager = EventManager,
   ConcreteScheduleManager extends ScheduleManager = ScheduleManager,
   ConcreteSessionManager extends SessionManager = SessionManager,
   ConcretePluginManager extends PluginManager = PluginManager,
   ConcreteBotService extends BotService = BotService,
+  ConcreteClient extends Client = Client,
 > {
   token: string;
-  client: Client;
+  client: ConcreteClient;
   id: Identifier;
+  deployCommands: boolean;
+
   logger: ConcreteLogger;
   commands: ConcreteCommandManager;
   events: ConcreteEventManager;

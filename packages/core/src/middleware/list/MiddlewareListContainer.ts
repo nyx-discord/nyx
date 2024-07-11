@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +22,13 @@
  * SOFTWARE.
  */
 
-import type { LinkedListNode } from '../../list/LinkedListNode.js';
 import type { Middleware } from '../Middleware.js';
-import type { MiddlewareLinkedList } from './MiddlewareLinkedList.js';
+import type { MiddlewareList } from './MiddlewareList';
 
-/** An object that contains a middleware linked list. */
+/** An object that contains a middleware list. */
 export interface MiddlewareListContainer<
-  MiddlewareType extends Middleware<any, any> & LinkedListNode<MiddlewareType>,
+  MiddlewareType extends Middleware<any, any>,
 > {
-  /** Returns this object's middleware linked list. */
-  getMiddleware(): MiddlewareLinkedList<MiddlewareType>;
+  /** Returns this object's middleware list. */
+  getMiddleware(): MiddlewareList<MiddlewareType>;
 }

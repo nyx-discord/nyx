@@ -19,5 +19,5 @@ class MyPlugin implements NyxPlugin {
 
 const myPlugin = new MyPlugin();
 
-await bot.plugins.register(myPlugin);
+await bot.getPluginManager().register(myPlugin);
 ```

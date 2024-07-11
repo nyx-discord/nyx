@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,36 +22,17 @@
  * SOFTWARE.
  */
 
-import type {
-  Awaitable,
-  MessageContextMenuCommandInteraction,
-  UserContextMenuCommandInteraction,
-} from 'discord.js';
-import type { ApplicationCommandType } from 'discord.js';
-import type { StandaloneCommandData } from '../data/command/StandaloneCommandData.js';
-import type { CommandExecutionMeta } from '../execution/meta/CommandExecutionMeta.js';
-import type { ExecutableCommand } from './abstract/ExecutableCommand.js';
+import type { SlashCommandOptionsOnlyBuilder, Snowflake } from 'discord.js';
 
-/**
- * A fully executable top level command.
- *
- * Can include whether to support
- * {@link https://discord.com/developers/docs/interactions/application-commands#user-commands User Context Menus} and {@link https://discord.com/developers/docs/interactions/application-commands#message-commands Message Context Menus} as well, or even to only support them.
- */
+import type { Identifiable } from '../../../identity/Identifiable';
+import type { ChatExecutableCommand } from './executable/ChatExecutableCommand';
+
+/** A standalone command, i.e. a slash command with no children. */
 export interface StandaloneCommand
-  extends ExecutableCommand<StandaloneCommandData> {
-  /** Returns the {@link StandaloneCommandContextData contexts} that the command supports. */
-  getContexts(): ReadonlyArray<ApplicationCommandType>;
-
-  /** Execute a user context menu interaction. */
-  executeUser(
-    interaction: UserContextMenuCommandInteraction,
-    metadata: CommandExecutionMeta,
-  ): Awaitable<void>;
-
-  /** Execute a message context menu interaction. */
-  executeMessage(
-    interaction: MessageContextMenuCommandInteraction,
-    metadata: CommandExecutionMeta,
-  ): Awaitable<void>;
+  extends ChatExecutableCommand<
+      ReturnType<SlashCommandOptionsOnlyBuilder['toJSON']>
+    >,
+    Identifiable<string> {
+  /** Gets the guilds this command can be executed in. `null` for global commands. */
+  getGuilds(): ReadonlyArray<Snowflake> | null;
 }

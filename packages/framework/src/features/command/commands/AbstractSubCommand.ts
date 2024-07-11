@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,20 +23,27 @@
  */
 
 import type {
-  CommandReferenceData,
-  CommandVisitor,
+  CommandExecutionMeta,
   ParentCommand,
   SubCommand,
-  SubCommandData,
   SubCommandGroup,
 } from '@nyx-discord/core';
-import { ResolvedCommandType } from '@nyx-discord/core';
+import type {
+  AutocompleteInteraction,
+  Awaitable,
+  ChatInputCommandInteraction,
+  SlashCommandSubcommandBuilder,
+} from 'discord.js';
+import { NotImplementedError } from '../../../errors/NotImplementedError';
 
-import { AbstractExecutableCommand } from './abstract/AbstractExecutableCommand.js';
+import { AbstractExecutableCommand } from './executable/AbstractExecutableCommand';
 
 /** A child, executable command that belongs to an {@link ParentCommand} or {@link SubCommandGroup}. */
 export abstract class AbstractSubCommand
-  extends AbstractExecutableCommand<SubCommandData>
+  extends AbstractExecutableCommand<
+    SlashCommandSubcommandBuilder,
+    ChatInputCommandInteraction
+  >
   implements SubCommand
 {
   protected readonly parent: ParentCommand | SubCommandGroup;
@@ -46,39 +53,33 @@ export abstract class AbstractSubCommand
     this.parent = parent;
   }
 
-  public getParent(): ParentCommand | SubCommandGroup {
-    return this.parent;
+  public getName(): string {
+    return this.createData().name;
   }
 
-  public override acceptVisitor(visitor: CommandVisitor<unknown>): void {
-    visitor.visitSubCommand(this);
+  public getParent(): ParentCommand | SubCommandGroup {
+    return this.parent;
   }
 
   public override isSubCommand(): this is SubCommand {
     return true;
   }
 
-  public override getReadableName(): string {
-    const names: string[] = [this.parent.getReadableName(), this.data.name];
-    return names.join('/');
+  public autocomplete(
+    _interaction: AutocompleteInteraction,
+    _metadata: CommandExecutionMeta,
+  ): Awaitable<void> {
+    throw new NotImplementedError();
   }
 
-  public toReferenceData(): CommandReferenceData {
-    if (this.parent.isParentCommand()) {
-      return {
-        type: ResolvedCommandType.SubCommand,
-        root: this.parent.getData().name,
-        subCommand: this.data.name,
-      };
-    } else {
-      const root = this.parent.getParent();
-
-      return {
-        type: ResolvedCommandType.SubCommandOnGroup,
-        root: root.getData().name,
-        group: this.parent.getData().name,
-        subCommand: this.data.name,
-      };
-    }
+  public getData(): SlashCommandSubcommandBuilder {
+    return this.createData();
   }
+
+  public getNameTree(): ReadonlyArray<string> {
+    return this.parent.getNameTree().concat(this.getName());
+  }
+
+  /** Returns this subcommand's data. */
+  protected abstract createData(): SlashCommandSubcommandBuilder;
 }

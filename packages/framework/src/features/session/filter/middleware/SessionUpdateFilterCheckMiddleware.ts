@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@ import type {
 import { AbstractSessionFilterCheckMiddleware } from './AbstractSessionFilterCheckMiddleware.js';
 
 export class SessionUpdateFilterCheckMiddleware extends AbstractSessionFilterCheckMiddleware<Args> {
+  /** @inheritDoc */
   protected extractFilter(
     session: Session<unknown>,
   ): SessionFilter<unknown, Args> | null {

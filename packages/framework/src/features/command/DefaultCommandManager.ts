@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,9 @@
  */
 
 import type {
+  AnyExecutableCommand,
   CommandCustomIdCodec,
-  CommandData,
+  CommandDeployer,
   CommandEventArgs,
   CommandExecutableInteraction,
   CommandExecutor,
@@ -34,9 +35,8 @@ import type {
   CommandSubscriptionsContainer,
   EventBus,
   EventSubscriber,
-  ExecutableCommand,
   NyxBot,
-  ParentCommand,
+  ReadonlyCommandDeployer,
   TopLevelCommand,
 } from '@nyx-discord/core';
 import { CommandEventEnum, CommandExecutionMeta } from '@nyx-discord/core';
@@ -45,12 +45,13 @@ import { InteractionType } from 'discord.js';
 
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultCommandCustomIdCodec } from './customId/DefaultCommandCustomIdCodec.js';
+import { DefaultCommandDeployer } from './deploy/DefaultCommandDeployer';
 import { DefaultCommandAutocompleteSubscriber } from './events/DefaultCommandAutocompleteSubscriber.js';
 import { DefaultCommandInteractionSubscriber } from './events/DefaultCommandInteractionSubscriber.js';
 import { DefaultCommandSubscriptionsContainer } from './events/DefaultCommandSubscriptionsContainer.js';
-import { DefaultCommandExecutor } from './executor/DefaultCommandExecutor.js';
+import { DefaultCommandExecutor } from './execution/DefaultCommandExecutor.js';
 import { DefaultCommandRepository } from './repository/DefaultCommandRepository.js';
-import { DefaultCommandResolver } from './resolver/DefaultCommandResolver.js';
+import { DefaultCommandResolver } from './resolve/DefaultCommandResolver';
 
 type CommandManagerOptions = {
   subscriptionsContainer: CommandSubscriptionsContainer;
@@ -58,7 +59,9 @@ type CommandManagerOptions = {
   repository: CommandRepository;
   executor: CommandExecutor;
   customIdCodec: CommandCustomIdCodec;
+  deployer: CommandDeployer;
   eventBus: EventBus<CommandEventArgs>;
+  deploy: boolean;
 };
 
 export class DefaultCommandManager implements CommandManager {
@@ -74,7 +77,11 @@ export class DefaultCommandManager implements CommandManager {
 
   protected readonly customIdCodec: CommandCustomIdCodec;
 
+  protected readonly deployer: CommandDeployer;
+
   protected readonly eventBus: EventBus<CommandEventArgs>;
+
+  protected readonly deployOnStart: boolean;
 
   constructor(bot: NyxBot, options: CommandManagerOptions) {
     this.bot = bot;
@@ -84,15 +91,22 @@ export class DefaultCommandManager implements CommandManager {
     this.resolver = options.resolver;
     this.subscriptionsContainer = options.subscriptionsContainer;
     this.eventBus = options.eventBus;
+    this.deployer = options.deployer;
+    this.deployOnStart = options.deploy;
   }
 
   public static create(
     bot: NyxBot,
     client: Client,
     clientBus: EventBus<ClientEvents>,
+    deploy: boolean,
     options?: Partial<CommandManagerOptions>,
   ): CommandManager {
     const constructorOptions: Partial<CommandManagerOptions> = options ?? {};
+
+    if (typeof constructorOptions.deploy === 'undefined') {
+      constructorOptions.deploy = deploy;
+    }
 
     if (!constructorOptions.eventBus) {
       const busId = Symbol('CommandManagerEventBus');
@@ -104,7 +118,7 @@ export class DefaultCommandManager implements CommandManager {
     }
 
     if (!constructorOptions.repository) {
-      constructorOptions.repository = DefaultCommandRepository.create(client);
+      constructorOptions.repository = DefaultCommandRepository.create();
     }
 
     if (!constructorOptions.executor) {
@@ -128,6 +142,10 @@ export class DefaultCommandManager implements CommandManager {
         );
     }
 
+    if (!constructorOptions.deployer) {
+      constructorOptions.deployer = new DefaultCommandDeployer(client);
+    }
+
     return new DefaultCommandManager(
       bot,
       constructorOptions as CommandManagerOptions,
@@ -136,57 +154,94 @@ export class DefaultCommandManager implements CommandManager {
 
   public async onStart(): Promise<void> {
     await this.subscriptionsContainer.onStart();
-    await this.repository.onStart();
+    if (this.deployOnStart) {
+      await this.deployer.deploy();
+    }
   }
 
   public async onSetup(): Promise<void> {
-    await this.repository.onSetup();
     await this.subscriptionsContainer.onSetup();
     await this.eventBus.onRegister();
   }
 
   public async onStop(): Promise<void> {
-    await this.repository.onStop();
     await this.subscriptionsContainer.onStop();
     await this.eventBus.onUnregister();
   }
 
-  public async addCommand(command: TopLevelCommand): Promise<this> {
-    await this.repository.addCommand(command);
+  public async addCommands(...commands: TopLevelCommand[]): Promise<this> {
+    for (const command of commands) {
+      this.repository.addCommand(command);
+    }
 
-    Promise.resolve(
-      this.eventBus.emit(CommandEventEnum.CommandAdd, [command]),
-    ).catch((error) => {
-      const id = command.getId();
+    try {
+      await this.deployer.deployCommands(...commands);
+    } catch (error) {
+      for (const command of commands) {
+        this.repository.removeCommand(command);
+      }
 
-      this.bot.logger.error(
-        `'Uncaught bus error while emitting command add '${id}'.`,
-        error,
-      );
-    });
+      throw error;
+    }
+
+    for (const command of commands) {
+      Promise.resolve(
+        this.eventBus.emit(CommandEventEnum.CommandAdd, [command]),
+      ).catch((error) => {
+        const id = command.getId();
+
+        this.bot
+          .getLogger()
+          .error(
+            `'Uncaught bus error while emitting command add '${id}'.`,
+            error,
+          );
+      });
+    }
 
     return this;
   }
 
-  public async removeCommand(command: TopLevelCommand): Promise<this> {
-    await this.repository.removeCommand(command);
+  public async removeCommands(...commands: TopLevelCommand[]): Promise<this> {
+    for (const command of commands) {
+      this.repository.removeCommand(command);
+    }
 
-    Promise.resolve(
-      this.eventBus.emit(CommandEventEnum.CommandRemove, [command]),
-    ).catch((error) => {
-      const id = command.getId();
+    try {
+      await this.deployer.removeCommands(...commands);
+    } catch (error) {
+      for (const command of commands) {
+        this.repository.addCommand(command);
+      }
 
-      this.bot.logger.error(
-        `'Uncaught bus error while emitting command remove '${id}'.`,
-        error,
-      );
-    });
+      throw error;
+    }
+
+    for (const command of commands) {
+      Promise.resolve(
+        this.eventBus.emit(CommandEventEnum.CommandRemove, [command]),
+      ).catch((error) => {
+        const id = command.getId();
+
+        this.bot
+          .getLogger()
+          .error(
+            `'Uncaught bus error while emitting command remove '${id}'.`,
+            error,
+          );
+      });
+    }
 
     return this;
   }
 
-  public async updateParentCommand(command: ParentCommand): Promise<this> {
-    await this.repository.updateParentCommand(command);
+  public async editCommands(...commands: TopLevelCommand[]): Promise<this> {
+    for (const command of commands) {
+      this.repository.removeCommand(command);
+      this.repository.addCommand(command);
+    }
+
+    await this.deployer.editCommands(...commands);
 
     return this;
   }
@@ -195,11 +250,10 @@ export class DefaultCommandManager implements CommandManager {
     interaction: AutocompleteInteraction,
     meta?: CommandExecutionMeta,
   ): Promise<boolean> {
-    const resolvedCommandData =
-      this.resolver.resolveFromAutocompleteInteraction(interaction);
-    if (!resolvedCommandData) return false;
-
-    const command = this.repository.locateByData(resolvedCommandData);
+    const command = this.resolver.resolveFromAutocompleteInteraction(
+      interaction,
+      this.repository,
+    );
     if (!command) return false;
 
     const metadata =
@@ -211,14 +265,17 @@ export class DefaultCommandManager implements CommandManager {
       );
 
     try {
+      if (!command.isSubCommand() && !command.isStandalone()) return false;
       await this.executor.autocomplete(command, interaction, metadata);
     } catch (error) {
       const executionId = String(metadata.getId());
 
-      this.bot.logger.error(
-        `Uncaught executor error while autocompleting command '${executionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught executor error while autocompleting command '${executionId}'.`,
+          error,
+        );
     }
 
     Promise.resolve(
@@ -230,10 +287,12 @@ export class DefaultCommandManager implements CommandManager {
     ).catch((error) => {
       const executionId = String(metadata.getId());
 
-      this.bot.logger.error(
-        `Uncaught event bus error while emitting command autocomplete '${executionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught event bus error while emitting command autocomplete '${executionId}'.`,
+          error,
+        );
     });
 
     return interaction.responded;
@@ -243,22 +302,25 @@ export class DefaultCommandManager implements CommandManager {
     interaction: CommandExecutableInteraction,
     meta?: CommandExecutionMeta,
   ): Promise<boolean> {
-    let command: ExecutableCommand<CommandData> | null;
+    let command: AnyExecutableCommand | null;
 
     if (interaction.type === InteractionType.ApplicationCommand) {
-      const data = this.resolver.resolveFromCommandInteraction(interaction);
-      if (!data) return false;
-      command = this.repository.locateByData(data);
+      command = this.resolver.resolveFromCommandInteraction(
+        interaction,
+        this.repository,
+      );
     } else {
       const { customId } = interaction;
 
-      const commandData = this.customIdCodec.deserializeToData(customId);
-      if (!commandData) return false;
+      const names = this.customIdCodec.deserializeToNameTree(customId);
+      if (!names) return false;
 
-      const foundCommand = this.repository.locateByData(commandData);
-      if (!foundCommand || !foundCommand.isExecutable()) return false;
+      const found = this.repository.locateByNameTree(...names);
+      if (!found || found.isParent() || found.isSubCommandGroup()) {
+        return false;
+      }
 
-      command = foundCommand;
+      command = found;
     }
 
     if (!command) return false;
@@ -272,10 +334,12 @@ export class DefaultCommandManager implements CommandManager {
     } catch (error) {
       const executionId = String(metadata.getId());
 
-      this.bot.logger.error(
-        `Uncaught executor error while executing command '${executionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught executor error while executing command '${executionId}'.`,
+          error,
+        );
 
       return interaction.replied;
     }
@@ -289,19 +353,26 @@ export class DefaultCommandManager implements CommandManager {
     ).catch((error) => {
       const executionId = String(metadata.getId());
 
-      this.bot.logger.error(
-        `Uncaught event bus error while emitting command run '${executionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught event bus error while emitting command run '${executionId}'.`,
+          error,
+        );
     });
 
     return true;
   }
 
   public async subscribe(
-    subscriber: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>,
-  ): Promise<void> {
-    await this.eventBus.subscribe(subscriber);
+    ...subscribers: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>[]
+  ): Promise<this> {
+    await this.eventBus.subscribe(...subscribers);
+    return this;
+  }
+
+  public async deploy(): Promise<void> {
+    await this.deployer.deploy();
   }
 
   public getExecutor(): CommandExecutor {
@@ -326,5 +397,9 @@ export class DefaultCommandManager implements CommandManager {
 
   public getEventBus(): EventBus<CommandEventArgs> {
     return this.eventBus;
+  }
+
+  public getDeployer(): ReadonlyCommandDeployer {
+    return this.deployer;
   }
 }

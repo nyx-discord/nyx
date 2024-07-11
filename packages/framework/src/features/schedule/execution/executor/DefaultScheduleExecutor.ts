@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
  */
 
 import type {
-  MiddlewareLinkedList,
+  MiddlewareList,
   Schedule,
   ScheduleErrorHandler,
   ScheduleExecutor,
@@ -37,15 +37,15 @@ import {
 } from '@nyx-discord/core';
 
 import { BasicErrorHandler } from '../../../../error/BasicErrorHandler.js';
-import { ScheduleMiddlewareLinkedList } from '../../middleware/ScheduleMiddlewareLinkedList.js';
+import { ScheduleMiddlewareList } from '../../middleware/ScheduleMiddlewareList';
 
 export class DefaultScheduleExecutor implements ScheduleExecutor {
-  protected readonly middleware: MiddlewareLinkedList<ScheduleMiddleware>;
+  protected readonly middleware: MiddlewareList<ScheduleMiddleware>;
 
   protected readonly errorHandler: ScheduleErrorHandler;
 
   constructor(
-    middleware: MiddlewareLinkedList<ScheduleMiddleware>,
+    middleware: MiddlewareList<ScheduleMiddleware>,
     errorHandler: ScheduleErrorHandler,
   ) {
     this.middleware = middleware;
@@ -53,10 +53,12 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
   }
 
   public static create(): ScheduleExecutor {
-    const middleware = ScheduleMiddlewareLinkedList.create();
-    const errorHandler = new BasicErrorHandler<Schedule, ScheduleTickArgs>();
-
-    return new DefaultScheduleExecutor(middleware, errorHandler);
+    return new DefaultScheduleExecutor(
+      ScheduleMiddlewareList.create(),
+      BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
+        meta.getBot().getLogger(),
+      ),
+    );
   }
 
   public async tick(schedule: Schedule, meta: ScheduleTickMeta): Promise<void> {
@@ -66,20 +68,17 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
       await this.checkMiddleware(schedule, args);
     } catch (error) {
       const wrapped = this.wrapMiddlewareError(error as Error, schedule, args);
-
-      const bot = meta.getBot();
-      await this.errorHandler.handle(wrapped, schedule, args, bot);
+      await this.errorHandler.handle(wrapped, schedule, args);
     }
 
     try {
       await schedule.tick(...args);
     } catch (error) {
-      const bot = meta.getBot();
-      await this.errorHandler.handle(error as object, schedule, args, bot);
+      await this.errorHandler.handle(error as object, schedule, args);
     }
   }
 
-  public getMiddleware(): MiddlewareLinkedList<ScheduleMiddleware> {
+  public getMiddleware(): MiddlewareList<ScheduleMiddleware> {
     return this.middleware;
   }
 
@@ -93,7 +92,7 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
   ): Promise<boolean> {
     let result;
     try {
-      result = await this.middleware.check(schedule, args);
+      result = await this.middleware.check(schedule, ...args);
     } catch (error) {
       const wrappedError = this.wrapMiddlewareError(
         error as Error,
@@ -101,13 +100,16 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
         args,
       );
 
-      const bot = args[0].getBot();
-      await this.errorHandler.handle(wrappedError, schedule, args, bot);
+      await this.errorHandler.handle(wrappedError, schedule, args);
       return false;
     }
     return result;
   }
 
+  /**
+   * Wraps a middleware error in an {@link UncaughtScheduleMiddlewareError} if
+   * it isn't an {@link ScheduleMiddlewareError}.
+   */
   protected wrapMiddlewareError(
     error: Error,
     schedule: Schedule,

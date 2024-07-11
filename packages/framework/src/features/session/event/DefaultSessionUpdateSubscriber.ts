@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,8 +45,8 @@ export class DefaultSessionUpdateSubscriber extends Subscriber<Events.Interactio
       return;
     }
 
-    const bot = meta.getBot();
-    const handled = await bot.sessions.update(interaction);
+    const bot = meta.getBot(true);
+    const handled = await bot.getSessionManager().update(interaction);
     if (handled) meta.setHandled();
   }
 }

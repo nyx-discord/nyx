@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,18 +23,15 @@
  */
 
 import type { Awaitable } from 'discord.js';
-
-import type { LinkedListNode } from '../list/LinkedListNode.js';
 import type { Lockable } from '../lock/Lockable.js';
 import type { Priority } from '../priority/Priority.js';
 import type { MiddlewareResponse } from './response/MiddlewareResponse.js';
 
 /** An object that intercepts and validates/decorates the execution of something. */
 export interface Middleware<Checked, Args extends readonly unknown[]>
-  extends LinkedListNode<Middleware<Checked, Args>>,
-    Lockable {
+  extends Lockable {
   /** Checks whether the checked object's execution should pass, given the execution arguments. */
-  check(checked: Checked, args: Args): Awaitable<MiddlewareResponse>;
+  check(checked: Checked, ...args: Args): Awaitable<MiddlewareResponse>;
 
   /** Returns the priority of this object. */
   getPriority(): Priority;

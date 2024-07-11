@@ -84,6 +84,19 @@ export interface SessionManager extends BotAware, BotLifecycleObserver {
     subscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>,
   ): Awaitable<this>;
 
+  /**
+   * Subscribes a list of event subscribers to the manager's bus.
+   *
+   * Alias of:
+   * ```
+   * const managerBus = sessionManager.getEventBus();
+   * await managerBus.subscribe(subscriber);
+   * ```
+   */
+  subscribe(
+    ...subscribers: EventSubscriber<SessionEventArgs, keyof SessionEventArgs>[]
+  ): Awaitable<this>;
+
   /** Returns the {@link SessionPromiseRepository} for this manager. */
   getPromiseRepository(): SessionPromiseRepository;
 

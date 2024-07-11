@@ -23,7 +23,7 @@
  */
 
 import type { Awaitable } from 'discord.js';
-import type { MiddlewareLinkedList } from '../../../../middleware/list/MiddlewareLinkedList.js';
+import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import type { SessionEndCode } from '../../end/SessionEndCode';
 import type { SessionEndData } from '../../end/SessionEndData';
 import type { SessionErrorHandler } from '../../error/SessionErrorHandler.js';
@@ -86,10 +86,10 @@ export interface SessionExecutor {
   ): void;
 
   /** Returns the middleware used when a session is started. */
-  getStartMiddleware(): MiddlewareLinkedList<SessionStartMiddleware>;
+  getStartMiddleware(): MiddlewareList<SessionStartMiddleware>;
 
   /** Returns the middleware used when a session is updated. */
-  getUpdateMiddleware(): MiddlewareLinkedList<SessionUpdateMiddleware>;
+  getUpdateMiddleware(): MiddlewareList<SessionUpdateMiddleware>;
 
   /** Returns the {@link SessionErrorHandler} for errors thrown when a session is started. */
   getStartErrorHandler(): SessionErrorHandler<SessionStartArgs>;

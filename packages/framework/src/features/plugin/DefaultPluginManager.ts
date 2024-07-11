@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ import { Collection } from '@discordjs/collection';
 import type {
   ClassImplements,
   EventBus,
+  EventSubscriber,
   Identifier,
   NyxBot,
   NyxPlugin,
@@ -78,30 +79,34 @@ export class DefaultPluginManager implements PluginManager {
     await this.bus.onRegister();
   }
 
-  public async register(plugin: NyxPlugin): Promise<this> {
-    const id = plugin.getId();
+  public async register(...plugins: NyxPlugin[]): Promise<this> {
+    for (const plugin of plugins) {
+      const id = plugin.getId();
 
-    const presentPlugin = this.plugins.get(id);
-    if (presentPlugin) {
-      throw new IllegalDuplicateError(
-        presentPlugin,
-        plugin,
-        `Plugin with ID ${String(id)} has already been registered.`,
+      const presentPlugin = this.plugins.get(id);
+      if (presentPlugin) {
+        throw new IllegalDuplicateError(
+          presentPlugin,
+          plugin,
+          `Plugin with ID ${String(id)} has already been registered.`,
+        );
+      }
+      this.plugins.set(id, plugin);
+      await plugin.onRegister();
+
+      Promise.resolve(this.bus.emit(PluginEventEnum.PluginAdd, [plugin])).catch(
+        (error) => {
+          const pluginId = String(plugin.getId());
+
+          this.bot
+            .getLogger()
+            .error(
+              `Uncaught bus error while emitting plugin add '${pluginId}'.`,
+              error,
+            );
+        },
       );
     }
-    this.plugins.set(id, plugin);
-    await plugin.onRegister();
-
-    Promise.resolve(this.bus.emit(PluginEventEnum.PluginAdd, [plugin])).catch(
-      (error) => {
-        const pluginId = String(plugin.getId());
-
-        this.bot.logger.error(
-          `Uncaught bus error while emitting plugin add '${pluginId}'.`,
-          error,
-        );
-      },
-    );
 
     return this;
   }
@@ -122,12 +127,21 @@ export class DefaultPluginManager implements PluginManager {
     ).catch((error) => {
       const pluginId = String(presentPlugin.getId());
 
-      this.bot.logger.error(
-        `Uncaught bus error while emitting plugin remove '${pluginId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught bus error while emitting plugin remove '${pluginId}'.`,
+          error,
+        );
     });
 
+    return this;
+  }
+
+  public async subscribe(
+    ...subscribers: EventSubscriber<PluginEventArgs, keyof PluginEventArgs>[]
+  ): Promise<this> {
+    await this.bus.subscribe(...subscribers);
     return this;
   }
 

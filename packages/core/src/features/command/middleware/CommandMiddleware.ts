@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,9 @@
  */
 
 import type { Middleware } from '../../../middleware/Middleware.js';
-import type { ExecutableCommand } from '../commands/abstract/ExecutableCommand.js';
-import type { CommandData } from '../data/command/CommandData.js';
+import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
 import type { CommandExecutionArgs } from '../execution/args/CommandExecutionArgs.js';
 
 /** {@link Middleware} that can handle {@link ExecutableCommand} executions. */
 export interface CommandMiddleware
-  extends Middleware<ExecutableCommand<CommandData>, CommandExecutionArgs> {}
+  extends Middleware<AnyExecutableCommand, CommandExecutionArgs> {}

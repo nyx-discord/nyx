@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,54 +23,50 @@
  */
 
 import type {
+  AnyExecutableCommand,
   CommandCustomIdCodec,
-  CommandData,
-  CommandReferenceData,
-  ExecutableCommand,
 } from '@nyx-discord/core';
-import { CommandCustomIdBuilder } from '@nyx-discord/core';
-import { BasicCustomIdCodec } from '../../../customId/BasicCustomIdCodec.js';
+
+import { AbstractCustomIdCodec } from '../../../customId/AbstractCustomIdCodec';
 
 export class DefaultCommandCustomIdCodec
-  extends BasicCustomIdCodec<ExecutableCommand<CommandData>>
+  extends AbstractCustomIdCodec<AnyExecutableCommand>
   implements CommandCustomIdCodec
 {
   public static readonly DefaultNamespace = 'CMD';
 
+  public static readonly DefaultNamesSeparator = ':';
+
+  protected readonly namesSeparator: string;
+
   constructor(
     prefix: string = DefaultCommandCustomIdCodec.DefaultNamespace,
     separator: string = DefaultCommandCustomIdCodec.DefaultSeparator,
-    dataSeparator: string = DefaultCommandCustomIdCodec.DefaultDataSeparator,
+    metadataSeparator: string = DefaultCommandCustomIdCodec.DefaultMetadataSeparator,
+    namesSeparator: string = DefaultCommandCustomIdCodec.DefaultNamesSeparator,
   ) {
-    super(prefix, separator, dataSeparator);
+    super(prefix, separator, metadataSeparator);
+
+    this.namesSeparator = namesSeparator;
   }
 
   public static create(): CommandCustomIdCodec {
     return new DefaultCommandCustomIdCodec();
   }
 
-  public override createCustomIdBuilder(
-    command: ExecutableCommand<CommandData>,
-  ) {
-    const id = command.getId();
-    const data = command.toReferenceData();
-
-    return new CommandCustomIdBuilder({
-      data,
-      namespace: this.namespace,
-      objectId: id,
-      dataSeparator: this.dataSeparator,
-      separator: this.separator,
-    });
+  public getNameTreeFromId(id: string): [string, ...string[]] {
+    return id.split(this.namesSeparator) as [string, ...string[]];
   }
 
-  public deserializeToData(customId: string): CommandReferenceData | null {
-    return (
-      CommandCustomIdBuilder.fromCommandCustomId(
-        customId,
-        this.separator,
-        this.dataSeparator,
-      )?.getReferenceData() ?? null
-    );
+  public deserializeToNameTree(customId: string): [string, ...string[]] | null {
+    const id = this.deserializeToObjectId(customId);
+    if (!id) return null;
+
+    return this.getNameTreeFromId(id);
+  }
+
+  /** @inheritDoc */
+  protected getIdOf(serialized: AnyExecutableCommand): string {
+    return serialized.getNameTree().join(this.namesSeparator);
   }
 }

@@ -24,7 +24,7 @@
 
 import type {
   Identifier,
-  MiddlewareLinkedList,
+  MiddlewareList,
   Session,
   SessionEndArgs,
   SessionEndData,
@@ -48,8 +48,8 @@ import {
 
 import { ActionRowList } from '../../../discord/ActionRowList.js';
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
-import { SessionStartMiddlewareLinkedList } from '../middleware/SessionStartMiddlewareLinkedList.js';
-import { SessionUpdateMiddlewareLinkedList } from '../middleware/SessionUpdateMiddlewareLinkedList.js';
+import { SessionStartMiddlewareList } from '../middleware/SessionStartMiddlewareList';
+import { SessionUpdateMiddlewareList } from '../middleware/SessionUpdateMiddlewareList';
 
 export class DefaultSessionExecutor implements SessionExecutor {
   protected readonly startErrorHandler: SessionErrorHandler<SessionStartArgs>;
@@ -58,13 +58,13 @@ export class DefaultSessionExecutor implements SessionExecutor {
 
   protected readonly endErrorHandler: SessionErrorHandler<SessionEndArgs>;
 
-  protected readonly startMiddleware: MiddlewareLinkedList<SessionStartMiddleware>;
+  protected readonly startMiddleware: MiddlewareList<SessionStartMiddleware>;
 
-  protected readonly updateMiddleware: MiddlewareLinkedList<SessionUpdateMiddleware>;
+  protected readonly updateMiddleware: MiddlewareList<SessionUpdateMiddleware>;
 
   constructor(
-    startMiddleware: MiddlewareLinkedList<SessionStartMiddleware>,
-    updateMiddleware: MiddlewareLinkedList<SessionUpdateMiddleware>,
+    startMiddleware: MiddlewareList<SessionStartMiddleware>,
+    updateMiddleware: MiddlewareList<SessionUpdateMiddleware>,
     createErrorHandler: SessionErrorHandler<SessionStartArgs>,
     updateErrorHandler: SessionErrorHandler<SessionUpdateArgs>,
     stopErrorHandler: SessionErrorHandler<SessionEndArgs>,
@@ -79,12 +79,18 @@ export class DefaultSessionExecutor implements SessionExecutor {
 
   public static create(): SessionExecutor {
     return new DefaultSessionExecutor(
-      SessionStartMiddlewareLinkedList.create(),
-      SessionUpdateMiddlewareLinkedList.create(),
+      SessionStartMiddlewareList.create(),
+      SessionUpdateMiddlewareList.create(),
 
-      BasicErrorHandler.create(),
-      BasicErrorHandler.create(),
-      BasicErrorHandler.create(),
+      BasicErrorHandler.createWithFallbackLogger((_error, session) =>
+        session.bot.getLogger(),
+      ),
+      BasicErrorHandler.createWithFallbackLogger((_error, session) =>
+        session.bot.getLogger(),
+      ),
+      BasicErrorHandler.createWithFallbackLogger((_error, session) =>
+        session.bot.getLogger(),
+      ),
     );
   }
 
@@ -99,7 +105,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
     }
 
     try {
-      const result = await this.startMiddleware.check(session, [meta]);
+      const result = await this.startMiddleware.check(session, meta);
       if (!result) return false;
     } catch (error) {
       const wrappedError =
@@ -112,27 +118,17 @@ export class DefaultSessionExecutor implements SessionExecutor {
               meta,
             );
 
-      await this.startErrorHandler.handle(
-        wrappedError,
-        session,
-        [meta],
-        session.bot,
-      );
+      await this.startErrorHandler.handle(wrappedError, session, [meta]);
 
       return false;
     }
 
     try {
-      await session.start(meta);
+      await session.onStart(meta);
 
       return true;
     } catch (error) {
-      await this.startErrorHandler.handle(
-        error as object,
-        session,
-        [meta],
-        session.bot,
-      );
+      await this.startErrorHandler.handle(error as object, session, [meta]);
 
       const interaction = session.getStartInteraction();
       return interaction.replied;
@@ -149,10 +145,11 @@ export class DefaultSessionExecutor implements SessionExecutor {
     }
 
     try {
-      const result = await this.updateMiddleware.check(session, [
+      const result = await this.updateMiddleware.check(
+        session,
         interaction,
         meta,
-      ]);
+      );
       if (!result) return false;
     } catch (error) {
       const wrappedError =
@@ -166,24 +163,20 @@ export class DefaultSessionExecutor implements SessionExecutor {
               meta,
             );
 
-      await this.updateErrorHandler.handle(
-        wrappedError,
-        session,
-        [interaction, meta],
-        session.bot,
-      );
+      await this.updateErrorHandler.handle(wrappedError, session, [
+        interaction,
+        meta,
+      ]);
       return false;
     }
 
     try {
-      return await session.update(interaction, meta);
+      return await session.onUpdate(interaction, meta);
     } catch (error) {
-      await this.updateErrorHandler.handle(
-        error as object,
-        session,
-        [interaction, meta],
-        session.bot,
-      );
+      await this.updateErrorHandler.handle(error as object, session, [
+        interaction,
+        meta,
+      ]);
 
       return false;
     }
@@ -212,22 +205,20 @@ export class DefaultSessionExecutor implements SessionExecutor {
 
       return endData;
     } catch (error) {
-      await this.endErrorHandler.handle(
-        error as object,
-        session,
-        [endData, meta],
-        session.bot,
-      );
+      await this.endErrorHandler.handle(error as object, session, [
+        endData,
+        meta,
+      ]);
 
       return endData;
     }
   }
 
-  public getStartMiddleware(): MiddlewareLinkedList<SessionStartMiddleware> {
+  public getStartMiddleware(): MiddlewareList<SessionStartMiddleware> {
     return this.startMiddleware;
   }
 
-  public getUpdateMiddleware(): MiddlewareLinkedList<SessionUpdateMiddleware> {
+  public getUpdateMiddleware(): MiddlewareList<SessionUpdateMiddleware> {
     return this.updateMiddleware;
   }
 

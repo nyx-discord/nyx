@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -166,6 +166,7 @@ export class DefaultScheduleExecutionScheduler
     return this.jobs.get(id) ?? null;
   }
 
+  /** Creates a job for the passed schedule. */
   protected createJob(schedule: Schedule): ScheduleJobAdapter<CronJob> {
     const parameters = this.createJobParameters(schedule);
 
@@ -175,13 +176,14 @@ export class DefaultScheduleExecutionScheduler
     return new CronJobAdapter(job, interval);
   }
 
+  /** Creates the job parameters for the passed schedule. */
   protected createJobParameters(schedule: Schedule): CronJobParams {
     let interval = schedule.getInterval();
     if (typeof interval === 'number') {
       interval = this.millisecondsToCron(interval);
     }
 
-    const parameters = {
+    const parameters: CronJobParams = {
       cronTime: interval,
       onTick: async () => {
         const meta = this.metaFactory(schedule);
@@ -192,11 +194,9 @@ export class DefaultScheduleExecutionScheduler
     return { ...this.jobParameters, ...parameters } as CronJobParams;
   }
 
+  /** Parses a number of milliseconds into a cron string. */
   protected millisecondsToCron(intervalMs: number): string {
-    const seconds = Math.floor(intervalMs / 1000) % 60;
-    const minutes = Math.floor(intervalMs / 60000) % 60;
-    const hours = Math.floor(intervalMs / 3600000) % 24;
-
-    return `${seconds} ${minutes} ${hours} * * *`;
+    const interval = Math.round(intervalMs / 1000);
+    return `*/${interval} * * * * *`;
   }
 }

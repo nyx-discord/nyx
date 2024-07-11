@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,7 @@
  * SOFTWARE.
  */
 
-import type { ExecutableCommand } from '../../commands/abstract/ExecutableCommand.js';
-import type { CommandData } from '../../data/command/CommandData.js';
+import type { AnyExecutableCommand } from '../../commands/executable/AnyExecutableCommand';
 import { CommandError } from '../../errors/CommandError.js';
 import type { CommandExecutionMeta } from '../../execution/meta/CommandExecutionMeta.js';
 import type { CommandResolvableInteraction } from '../../interaction/CommandResolvableInteraction.js';
@@ -35,7 +34,7 @@ export class CommandMiddlewareError extends CommandError {
   constructor(
     error: Error,
     middleware: CommandMiddleware,
-    command: ExecutableCommand<CommandData>,
+    command: AnyExecutableCommand,
     interaction: CommandResolvableInteraction,
     meta: CommandExecutionMeta,
   ) {

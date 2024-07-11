@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -60,7 +60,7 @@ export abstract class AbstractSchedule implements Schedule {
     bot: NyxBot,
     force = true,
   ): UndestroyableScheduleJobAdapter<unknown> | null {
-    const job = bot.schedules.getJobForSchedule(this);
+    const job = bot.getScheduleManager().getJobForSchedule(this);
     if (!job && force) {
       const scheduleId = String(this.id);
       const botId = String(bot.getId());

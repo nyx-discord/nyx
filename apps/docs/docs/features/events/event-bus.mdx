@@ -17,14 +17,6 @@ An `EventBus` consists of:
 
 As well as methods to interact with them.
 
-:::note
-Buses are bot aware, meaning that they belong to only one bot, which is passed on the constructor by default.
-The same event bus instance cannot be registered with two different bots.
-
-The bus is also notified once it's registered on an `EventManager`, on `EventSubscriber#onRegister()`, same when
-unsubscribed, on `#onUnregister()`. Override these methods to perform setup or cleanup logic on the bot.
-:::
-
 ## 👷 Creation
 
 You can create an event bus by either:
@@ -42,18 +34,18 @@ You can create an event bus by either:
 import { BasicEventBus } from '@nyx-discord/framework';
 
 // Uses an AsyncEventDispatcher
-const asyncBus = BasicEventBus<MyEventsArgs>.createAsync(
-  bot,
+const asyncBus = BasicEventBus.createAsync(
+  bot, // Can be null
   Symbol('myAsyncBus'), // Bus ID
 );
 
 // Uses a SyncEventDispatcher
-const syncBus = BasicEventBus<MyEventsArgs>.createSync(
-  bot,
+const syncBus = BasicEventBus.createSync(
+  bot, // Can be null
   Symbol('mySyncBus'), // Bus ID
 );
 
-await bot.events
+await bot.getEventManager()
   .addEventBus(asyncBus)
   .addEventBus(syncBus);
 ```
@@ -64,7 +56,7 @@ await bot.events
 ```
 
 ```ts
-import {EventBus} from '@nyx-discord/core';
+import { EventBus } from '@nyx-discord/core';
 
 class MyInterfaceEventBus implements EventBus<MyEventsArgs> {
   // ...
@@ -72,7 +64,7 @@ class MyInterfaceEventBus implements EventBus<MyEventsArgs> {
 
 const interfaceBus = new MyInterfaceEventBus();
 
-await bot.events.addEventBus(interfaceBus);
+await bot.getEventManager().addEventBus(interfaceBus);
 ```
 
 ```mdx-code-block
@@ -189,12 +181,12 @@ const myEventBus = BasicEventBus.createAsync<MyEventsArgs>(bot, Symbol('MyEventB
 // highlight-next-line
 myEventBus.lock();
 
-await bot.events.addEventBus(myEventBus);
+await bot.getEventManager().addEventBus(myEventBus);
 // error-next-line
-await bot.events.removeEventBus(myEventBus); // throws LockedObjectError
+await bot.getEventManager().removeEventBus(myEventBus); // throws LockedObjectError
 
 myEventBus.unlock();
-await bot.events.removeEventBus(myEventBus); // passes
+await bot.getEventManager().removeEventBus(myEventBus); // passes
 ```
 
 ## ⏰ Using EventEmitters
@@ -219,22 +211,22 @@ You can create such buses by either:
 import { BasicEventEmitterBus } from '@nyx-discord/framework';
 
 // Example using the client emitter
-const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventsArgs>(
-  bot,
+const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArgs>(
+  bot, // Can be null
   Symbol('ClientEventBus'),
   // highlight-next-line
   bot.client
 );
 
 // Example using a custom event emitter
-const myEventEmitterBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventsArgs>(
-  bot,
+const myEventEmitterBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArgs>(
+  bot, // Can be null
   Symbol('MyEventEmitterBus'),
   // highlight-next-line
   new EventEmitter(),
 )
 
-await bot.events
+await bot.getEventManager()
   .addEventBus(clientEventBus)
   .addEventBus(myEventEmitterBus);
 ```
@@ -253,7 +245,7 @@ class MyEventEmitterBus implements EventEmitterBus<MyEventsArgs> {
 
 const bus = new MyEventEmitterBus();
 
-await bot.events.addEventBus(bus);
+await bot.getEventManager().addEventBus(bus);
 ```
 
 ```mdx-code-block

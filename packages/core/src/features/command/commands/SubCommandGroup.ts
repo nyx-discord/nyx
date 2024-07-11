@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-import type { SubCommandGroupData } from '../data/command/SubCommandGroupData.js';
-import type { ChildableCommand } from './abstract/ChildableCommand.js';
-import type { ChildCommand } from './abstract/ChildCommand.js';
+import type { SlashCommandSubcommandGroupBuilder } from 'discord.js';
+import type { ChildableCommand } from './child/ChildableCommand';
+import type { ChildCommand } from './child/ChildCommand';
 import type { ParentCommand } from './ParentCommand.js';
 import type { SubCommand } from './SubCommand.js';
 
@@ -33,5 +33,5 @@ import type { SubCommand } from './SubCommand.js';
  * This cannot be executed by itself and merely exists for grouping {@link SubCommand subcommands}.
  */
 export interface SubCommandGroup
-  extends ChildableCommand<SubCommandGroupData, SubCommand>,
-    ChildCommand<SubCommandGroupData, ParentCommand> {}
+  extends ChildableCommand<SlashCommandSubcommandGroupBuilder, SubCommand>,
+    ChildCommand<SlashCommandSubcommandGroupBuilder, ParentCommand> {}

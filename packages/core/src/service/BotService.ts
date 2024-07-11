@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@ import type { Awaitable } from 'discord.js';
 import type { BotAware } from '../bot/BotAware.js';
 import type { NyxBot } from '../bot/NyxBot.js';
 import type { EventBus } from '../features/event/bus/EventBus.js';
+import type { EventSubscriber } from '../features/event/subscriber/EventSubscriber';
 import type { BotStatus } from './BotStatus.js';
 import type { BotServiceEventArgs } from './events/BotServiceEvent.js';
 
@@ -69,6 +70,23 @@ export interface BotService extends BotAware {
    */
   isRunning(): boolean;
 
+  /**
+   * Subscribes a list of event subscribers to the service's bus.
+   *
+   * Alias of:
+   * ```
+   * const managerBus = botService.getEventBus();
+   * await managerBus.subscribe(subscriber);
+   * ```
+   */
+  subscribe(
+    ...subscribers: EventSubscriber<
+      BotServiceEventArgs,
+      keyof BotServiceEventArgs
+    >[]
+  ): Awaitable<this>;
+
+  /** Returns the {@link EventBus} for the bot's service events. */
   getEventBus(): EventBus<BotServiceEventArgs>;
 
   /** Returns the current status of the bot. */

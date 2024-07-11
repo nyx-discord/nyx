@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,14 @@ import type {
   EventDispatchArgs,
   EventSubscriberErrorHandler,
   EventSubscriberMiddleware,
-  MiddlewareLinkedList,
+  MiddlewareList,
   SyncEventDispatcher,
 } from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
 
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
+import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList';
 import { AbstractEventDispatcher } from './AbstractEventDispatcher.js';
-import { SubscriberMiddlewareLinkedList } from '../middleware/SubscriberMiddlewareLinkedList.js';
 
 export class BasicSyncEventDispatcher
   extends AbstractEventDispatcher
@@ -44,7 +44,7 @@ export class BasicSyncEventDispatcher
 
   constructor(
     errorHandler: EventSubscriberErrorHandler,
-    middleware: MiddlewareLinkedList<EventSubscriberMiddleware>,
+    middleware: MiddlewareList<EventSubscriberMiddleware>,
     syncTimeout?: number | null,
   ) {
     super(errorHandler, middleware);
@@ -55,8 +55,10 @@ export class BasicSyncEventDispatcher
 
   public static create(syncTimeout?: number | null): SyncEventDispatcher {
     return new BasicSyncEventDispatcher(
-      BasicErrorHandler.create(),
-      SubscriberMiddlewareLinkedList.create(),
+      BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
+        meta.getBot(true).getLogger(),
+      ),
+      SubscriberMiddlewareList.create(),
       syncTimeout,
     );
   }
@@ -75,10 +77,12 @@ export class BasicSyncEventDispatcher
               timeout,
             );
 
-    const [meta] = args;
     for (const subscriber of subscribers) {
       try {
-        const middlewareSuccess = await this.middleware.check(subscriber, args);
+        const middlewareSuccess = await this.middleware.check(
+          subscriber,
+          ...args,
+        );
         if (!middlewareSuccess) {
           continue;
         }
@@ -89,23 +93,13 @@ export class BasicSyncEventDispatcher
           args,
         );
 
-        await this.errorHandler.handle(
-          wrappedError,
-          subscriber,
-          args,
-          meta.getBot(),
-        );
+        await this.errorHandler.handle(wrappedError, subscriber, args);
       }
 
       try {
         await callFunction(subscriber);
       } catch (error) {
-        await this.errorHandler.handle(
-          error as Error,
-          subscriber,
-          args,
-          meta.getBot(),
-        );
+        await this.errorHandler.handle(error as Error, subscriber, args);
       }
     }
   }

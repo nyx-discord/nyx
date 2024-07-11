@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,22 @@
  * SOFTWARE.
  */
 
-import type { EventSubscriberMiddleware } from '../EventSubscriberMiddleware.js';
-import type { LinkedList } from '../../../../list/LinkedList.js';
 import { FeatureError } from '../../../../errors/FeatureError.js';
+import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
+import type { EventDispatchArgs } from '../../dispatch/args/EventDispatchArgs';
 import type { AnyEventSubscriber } from '../../subscriber/types/AnyEventSubscriber';
+import type { EventSubscriberMiddleware } from '../EventSubscriberMiddleware.js';
 
 export class UncaughtEventSubscriberMiddlewareError extends FeatureError<AnyEventSubscriber> {
-  protected readonly middlewareList: LinkedList<EventSubscriberMiddleware>;
+  protected readonly middlewareList: MiddlewareList<EventSubscriberMiddleware>;
 
-  protected readonly args: unknown[];
+  protected readonly args: EventDispatchArgs;
 
   constructor(
     error: Error,
-    middlewareList: LinkedList<EventSubscriberMiddleware>,
+    middlewareList: MiddlewareList<EventSubscriberMiddleware>,
     subscriber: AnyEventSubscriber,
-    args: unknown[],
+    args: EventDispatchArgs,
   ) {
     super(
       error,
@@ -48,12 +49,12 @@ export class UncaughtEventSubscriberMiddlewareError extends FeatureError<AnyEven
   }
 
   /** Returns the arguments that were passed to the event subscriber when the error occurred. */
-  public getArgs(): ReadonlyArray<unknown> {
+  public getArgs(): EventDispatchArgs {
     return this.args;
   }
 
   /** Returns the middleware list that threw this error. */
-  public getList(): LinkedList<EventSubscriberMiddleware> {
+  public getList(): MiddlewareList<EventSubscriberMiddleware> {
     return this.middlewareList;
   }
 }

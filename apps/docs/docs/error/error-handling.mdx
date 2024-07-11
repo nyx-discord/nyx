@@ -13,7 +13,7 @@ and the bot.
 To add a consumer, use `ErrorHandler#setConsumer()`:
 
 ```ts
-const errorHandler = bot.commands.getExecutor().getErrorHandler();
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
 
 errorHandler.setConsumer(
   MyError,
@@ -21,9 +21,10 @@ errorHandler.setConsumer(
     error: MyError,
     command: ExecutableCommand<CommandData>,
     args: CommandExecutionArgs,
-    bot: NyxBot
   ) => {
-    const { logger } = bot;
+    const [meta] = args;
+    const bot = meta.getBot(true);
+
     const { name } = command.getData();
 
     logger.error(
@@ -37,7 +38,7 @@ errorHandler.setConsumer(
 To remove a consumer, use `ErrorHandler#removeConsumer()`:
 
 ```ts
-const errorHandler = bot.commands.getExecutor().getErrorHandler();
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
 
 errorHandler.removeConsumer(MyError);
 ```
@@ -47,16 +48,16 @@ errorHandler.removeConsumer(MyError);
 The `ErrorHandler` has a fallback consumer, which is used if no consumer was found for a given error.
 
 ```ts
-const errorHandler = bot.commands.getExecutor().getErrorHandler();
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
 
 errorHandler.setFallbackConsumer(
   (
     error: object,
     command: ExecutableCommand<CommandData>,
     args: CommandExecutionArgs,
-    bot: NyxBot
   ) => {
-    const { logger } = bot;
+    const [meta] = args;
+    const bot = meta.getBot(true);
     const { name } = command.getData();
 
     logger.error(

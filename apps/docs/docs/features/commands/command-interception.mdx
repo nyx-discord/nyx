@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 Command interception refers to blocking a command from being executed. In nyx, there are two ways to do this:
 
-1. Add a `CommandMiddleware` to the `CommandMiddlewareLinkedList` in the `CommandExecutor` that handles
+1. Add a `CommandMiddleware` to the `CommandMiddlewareList` in the `CommandExecutor` that handles
 the command execution.
 2. Provide a `CommandFilter` in the `ExecutableCommand`.
 
@@ -15,7 +15,7 @@ Let's explore when and how to use each of these methods.
 
 ## 🚦 Command Middlewares
 
-`CommandMiddlewares` are objects stored on a `CommandMiddlewareLinkedList`, which is held and called by
+`CommandMiddlewares` are objects stored on a `CommandMiddlewareList`, which is held and called by
 the command executor when a command is about to be executed.
 
 It consists of:
@@ -25,10 +25,9 @@ It consists of:
 When being checked, a middleware is passed the command that is being checked and the arguments that would be
 used to call it. The middleware then replies with a `MiddlewareResponse`, which can either:
 
-* Allow the execution (`{ allowed: true }`), with either:
-* Making the linked list check the next middleware (`{ allowed: true, checkNext: true }`).
-* Forcing the chain to end (`{ allowed: true, checkNext: false }`).
-* Deny the execution (`{ allowed: false, checkNext: false }`).
+* Make the list check the next middleware: `{ allowed: true, checkNext: true }`.
+* Forcing the execution to end as with an allowed result: `{ allowed: true, checkNext: false }`.
+* Deny the execution: `{ allowed: false, checkNext: false }`.
 
 The `AbstractMiddleware`, has `protected` utility methods to generate these responses. Specifically, `this.true()`,
 `this.false()` and `this.forceTrue()`.
@@ -59,17 +58,15 @@ You can create your own middleware by either:
 ```
 
 ```ts
-import { AbstractCommandMiddleware } from '@nyx-discord/framework';
-
 class MyCommandMiddleware extends AbstractCommandMiddleware {
-  public check(command: ExecutableCommand<CommandData>, args: CommandExecutionArgs): MiddlewareResponse {
+  public check(command: ExecutableCommand<CommandData>, ...args: CommandExecutionArgs): MiddlewareResponse {
     return this.true();
   }
 }
 
 const middleware = new MyCommandMiddleware();
 
-bot.commands.getExecutor().getMiddleware().add(middleware);
+bot.getCommandManager().getExecutor().getMiddleware().add(middleware);
 ```
 
 ```mdx-code-block
@@ -78,15 +75,13 @@ bot.commands.getExecutor().getMiddleware().add(middleware);
 ```
 
 ```ts
-import { CommandMiddleware } from '@nyx-discord/core';
-
 class MyCommandMiddleware implements CommandMiddleware {
   // ...
 }
 
 const middleware = new MyCommandMiddleware();
 
-bot.commands.getExecutor().getMiddleware().add(middleware);
+bot.getCommandManager().getExecutor().getMiddleware().add(middleware);
 ```
 
 ```mdx-code-block
@@ -94,7 +89,7 @@ bot.commands.getExecutor().getMiddleware().add(middleware);
 </Tabs>
 ```
 
-By default, the following middleware chain is used:
+By default, the following middleware list is used:
 
 * `CommandFilterCheckMiddleware` - See [🚧 Command Filters](#-command-filters).
 

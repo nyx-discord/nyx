@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,6 @@
  */
 
 import type { Awaitable } from 'discord.js';
-import type { NyxBot } from '../../bot/NyxBot.js';
 
 import type { AnyClass } from '../../types/AnyClass.js';
 import type { ReadonlyCollectionFrom } from '../../types/ReadonlyCollectionFrom.js';
@@ -68,6 +67,5 @@ export interface ErrorHandler<
     error: object,
     erroredObject: ErroredObject,
     args: Args,
-    bot: NyxBot,
   ): Awaitable<void>;
 }

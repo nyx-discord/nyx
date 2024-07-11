@@ -40,17 +40,17 @@ export abstract class AbstractStagePaginationSession<Result>
 {
   protected abstract readonly stages: SessionStageArray;
 
-  public start(meta: SessionExecutionMeta): Awaitable<void> {
+  public onStart(meta: SessionExecutionMeta): Awaitable<void> {
     const stage = this.stages[0];
 
     return stage.onStart(this.startInteraction, meta);
   }
 
-  public override async update(
+  public override async onUpdate(
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,
   ): Promise<boolean> {
-    const codec = this.bot.sessions.getCustomIdCodec();
+    const codec = this.bot.getSessionManager().getCustomIdCodec();
     const newPage = codec.extractPageFromCustomId(interaction.customId);
     const newStage = this.stages[newPage ?? -1];
 
@@ -104,6 +104,7 @@ export abstract class AbstractStagePaginationSession<Result>
     return this.customId.clone();
   }
 
+  /** No longer used in stage pagination sessions. */
   protected updatePage(): Promise<boolean> {
     return Promise.resolve(false);
   }

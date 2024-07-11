@@ -15,7 +15,7 @@ You can use this object to create a promise that will be resolved with its end d
 ## ⌛ Obtaining a promise
 
 ```ts
-const repository = bot.sessions.getPromiseRepository();
+const repository = botgetSessionManager().getPromiseRepository();
 
 const promise = repository.getPromise(session);
 // Or:

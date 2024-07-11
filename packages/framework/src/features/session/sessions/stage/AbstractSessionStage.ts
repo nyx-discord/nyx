@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -91,6 +91,7 @@ export abstract class AbstractSessionStage<Result = void>
     return this.result;
   }
 
+  /** Handles a {@link ButtonInteraction} whose customId matches this session stage. */
   protected handleButton(
     _interaction: ButtonInteraction,
     _meta: SessionExecutionMeta,
@@ -98,6 +99,7 @@ export abstract class AbstractSessionStage<Result = void>
     throw new NotImplementedError();
   }
 
+  /** Handles an {@link AnySelectMenuInteraction} whose customId matches this session stage. */
   protected handleSelect(
     _interaction: AnySelectMenuInteraction,
     _meta: SessionExecutionMeta,
@@ -105,6 +107,7 @@ export abstract class AbstractSessionStage<Result = void>
     throw new NotImplementedError();
   }
 
+  /** Handles a {@link ModalSubmitInteraction} whose customId matches this session stage. */
   protected handleModal(
     _interaction: ModalSubmitInteraction,
     _meta: SessionExecutionMeta,
@@ -112,6 +115,7 @@ export abstract class AbstractSessionStage<Result = void>
     throw new NotImplementedError();
   }
 
+  /** Utility to build a pagination ActionRow, considering next/previous pages and disabling buttons accordingly. */
   protected buildDefaultPageRow(): ActionRowData<InteractionButtonComponentData> {
     const currentPage = this.session.getCurrentPage();
 
@@ -139,6 +143,7 @@ export abstract class AbstractSessionStage<Result = void>
     };
   }
 
+  /** Builds a customId for a given stage. */
   protected buildCustomIdForStage(stage: SessionStage<unknown>): string {
     const page = this.session.getStages().indexOf(stage);
 
@@ -149,6 +154,7 @@ export abstract class AbstractSessionStage<Result = void>
     return this.buildCustomIdForPage(page);
   }
 
+  /** Builds a customId for a given page. */
   protected buildCustomIdForPage(page: number): string {
     return this.customId.clone().setPage(page).build();
   }

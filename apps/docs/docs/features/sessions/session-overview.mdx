@@ -34,7 +34,7 @@ Specifically, the session related objects are:
 * `SessionCustomIdCodec`: De/serializes session ids to/from customId strings, to create session components. This component allows you to create and manipulate `customIds` programatically, with no "magic values".
 * `SessionRepository`: Temporarily stores sessions until their TTL is over, and notifies the manager when that happens.
 * `SessionPromiseRepository`: Stores session promises that will be resolved once a given session ends.
-* `SessionExecutor`: Executes sessions, checking its `SessionMiddlewareLinkedList` and passing any errors to its `ErrorHandler`.
+* `SessionExecutor`: Executes sessions, checking its `SessionMiddlewareList` and passing any errors to its `ErrorHandler`.
 * `SessionUpdateSubscriber`: An [📩 Event Subscriber](../events/event-subscriber) that listens for interactions that can refer to sessions.
 * `EventBus`: An [📣 Event Bus](../events/event-bus) that emits session related events.
 
@@ -53,7 +53,7 @@ There are three utility session types that derive from the main `Session` interf
   `Session#getEndPromise()` to wait for the session to end.
   3. The `SessionManager` saves the session on the repository, which will expire it later if needed.
   4. The `SessionManager` uses the `SessionExecutor` to start the session.
-  5. The `SessionExecutor` checks its `SessionStartMiddlewareLinkedList` which will allow or deny the start.
+  5. The `SessionExecutor` checks its `SessionStartMiddlewareList` which will allow or deny the start.
   This includes checking the filter on `Session#getStartFilter()`.
   6. If the execution is allowed, the session is started, passing any errors to its `SessionStartErrorHandler`.
   7. The `SessionManager` uses the `EventBus` to emit a `SessionStart` event asynchronously, passing the session.
@@ -68,7 +68,7 @@ There are three utility session types that derive from the main `Session` interf
   `SessionExecutor#handleMissing()`, which will handle the interaction referring to a missing (probably expired)
   session. If it does exist, it continues.
   4. The `SessionManager` calls `SessionExecutor#update()` to handle the update, passing the interaction and session.
-  5. The `SessionExecutor` checks its `SessionMiddlewareLinkedList` which will allow or deny the execution.
+  5. The `SessionExecutor` checks its `SessionMiddlewareList` which will allow or deny the execution.
   This includes checking the filter on `Session#getUpdateFilter()`.
   6. If the execution is allowed, the session is updated via `Session#update()`, passing any errors to its
   `SessionUpdateErrorHandler`, and returning what `Session#update()` returns.
@@ -141,7 +141,7 @@ participant "SessionCustomIdCodec" as codec
 participant "SessionRepository" as repository
 participant "SessionExecutor" as executor
 participant "Session" as session
-participant "SessionMiddlewareLinkedList" as middleware
+participant "SessionMiddlewareList" as middleware
 participant "EventBus" as eventBus
 
 component -> subscriber : Emit interactionCreate
@@ -303,7 +303,7 @@ class MySession extends AbstractSession<void> {
     await interaction.showModal(myModal);
 
     // You can also get the extra 'button' token (or any added token) here.
-    const codec = this.bot.sessions.getCustomIdCodec();
+    const codec = this.botgetSessionManager().getCustomIdCodec();
     const iterator = codec.createIteratorFromCustomId(interaction.customId);
     this.bot.logger.log(iterator.getTokens()); // ['button']
   }
@@ -331,7 +331,7 @@ class MySession extends AbstractSession<void> {
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MySession(bot, sessionId, interaction);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 
 // `await` for the session to end
 await session.getEndPromise();
@@ -417,7 +417,7 @@ class MyPaginationSession extends AbstractPaginationSession<void> {
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MyPaginationSession(bot, sessionId, interaction);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 
 // `await` for the session to end
 await session.getEndPromise();
@@ -482,7 +482,7 @@ class MyListPaginationSession extends AbstractListPaginationSession<number, void
 const sessionItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MyListPaginationSession(bot, sessionId, interaction, sessionItems);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 
 // `await` for the session to end
 await session.getEndPromise();
@@ -620,7 +620,7 @@ class Stage2 extends AbstractSessionStage<void> {
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MyStageSession(bot, sessionId, interaction);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 
 // `await` for the session to end
 await session.getEndPromise();

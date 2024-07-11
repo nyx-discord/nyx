@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,77 +23,85 @@
  */
 
 import type { ReadonlyCollection } from '@discordjs/collection';
-import type { ApplicationCommand, Awaitable } from 'discord.js';
-import type { ArrayMinLength } from '../../../types/ArrayMinLength';
-
-import type { BotLifecycleObserver } from '../../../types/BotLifecycleObserver';
 import type { ClassImplements } from '../../../types/ClassImplements.js';
-import type { Command } from '../commands/abstract/Command.js';
-import type { ExecutableCommand } from '../commands/abstract/ExecutableCommand.js';
+import type { Command } from '../commands/Command';
 import type { ImplementsParentCommand } from '../commands/implements/ImplementsParentCommand.js';
 import type { ImplementsStandaloneCommand } from '../commands/implements/ImplementsStandaloneCommand.js';
 import type { ImplementsSubCommand } from '../commands/implements/ImplementsSubCommand.js';
 import type { ImplementsSubCommandGroup } from '../commands/implements/ImplementsSubCommandGroup.js';
-import type { ParentCommand } from '../commands/ParentCommand';
+import type { SubCommand } from '../commands/SubCommand';
+import type { SubCommandGroup } from '../commands/SubCommandGroup';
 import type { TopLevelCommand } from '../commands/TopLevelCommand.js';
-import type { CommandData } from '../data/command/CommandData.js';
-import type { CommandReferenceData } from '../resolver/CommandReferenceData.js';
 
-/** An object responsible for storing commands and their correspondent Discord application mappings. */
+/** An object responsible for storing commands. */
 export interface CommandRepository
-  extends BotLifecycleObserver,
-    IterableIterator<[string, TopLevelCommand]> {
+  extends IterableIterator<[string, TopLevelCommand]> {
   /** Returns the number of stored commands. */
   readonly size: number;
 
   /**
-   * Adds a {@link TopLevelCommand command} and registers it on Discord, if the
-   * bot has started.
+   * Adds a {@link TopLevelCommand command}.
    *
    * @throws {IllegalDuplicateError} If a command with that same data exists.
    */
-  addCommand(command: TopLevelCommand): Awaitable<this>;
+  addCommand(command: TopLevelCommand): this;
 
   /**
-   * Removes a {@link TopLevelCommand command} and unregisters it from Discord,
-   * if the bot has started.
+   * Removes a {@link TopLevelCommand command}.
    *
    * @throws {ObjectNotFoundError} If that command is not registered.
    */
-  removeCommand(command: TopLevelCommand): Awaitable<this>;
-
-  /** Updates a parent command on Discord, after its children have changed. */
-  updateParentCommand(command: ParentCommand): Awaitable<this>;
+  removeCommand(command: TopLevelCommand): this;
 
   /** Returns whether the passed ID belongs to a registered command. */
   isCommandId(id: string): boolean;
 
   /** Returns whether the passed command is registered. */
-  isCommandInstance(instance: Command<CommandData>): boolean;
+  isCommandInstance(instance: TopLevelCommand): boolean;
 
-  /** Returns the command associated with the passed ID. */
-  getCommandById(id: string): Command<CommandData> | null;
-
-  /** Locates an executable command by its reference data. */
-  locateByData(
-    data: CommandReferenceData,
-  ): ExecutableCommand<CommandData> | null;
+  /** Returns the command associated with the passed name. */
+  getCommandByName(id: string): TopLevelCommand | null;
 
   /**
-   * Locates a {@link SubCommandGroup} by its declaration tree, passing its
+   * Locates a {@link TopLevelCommand} by its name tree.
+   * Equal to {@link CommandRepository#getCommandByName}.
+   */
+  locateByNameTree(name: string): TopLevelCommand | null;
+
+  /** Locates a {@link SubCommand} or {@link SubCommandGroup} by its name tree. */
+  locateByNameTree(
+    parent: string,
+    child: string,
+  ): SubCommand | SubCommandGroup | null;
+
+  /** Locates a {@link SubCommand} by its name tree. */
+  locateByNameTree(
+    parent: string,
+    group: string,
+    subCommand: string,
+  ): SubCommand | null;
+
+  /** Locates a {@link Command} by its name tree. */
+  locateByNameTree(
+    parent: string,
+    firstChild?: string,
+    secondChild?: string,
+  ): TopLevelCommand | SubCommand | SubCommandGroup | null;
+
+  /**
+   * Locates a {@link SubCommandGroup} by its class tree, passing its
    * parent and its class and returning the stored instance.
    * @example
    * // Suppose the structure:
    * // - SomeParentCommand
    * //  -- SomeSubCommandGroup
    *
-   * const locate = this.bot.commands.getRepository().locateByTree;
+   * const repo = this.bot.getCommandManager().getRepository();
    *
-   * locate(SomeSubCommandGroup); // null
-   * locate(SomeParentCommand, SomeSubCommandGroup); // Stored instance of
-   *   SomeSubCommandGroup
+   * repo.locateByClassTree(SomeSubCommandGroup); // null
+   * repo.locateByClassTree(SomeParentCommand, SomeSubCommandGroup); // Stored instance of SomeSubCommandGroup
    */
-  locateByTree<T extends ImplementsSubCommandGroup>(
+  locateByClassTree<T extends ImplementsSubCommandGroup>(
     ParentCommandClass: ImplementsParentCommand,
     SubCommandGroupClass: T,
   ): InstanceType<T> | null;
@@ -107,14 +115,13 @@ export interface CommandRepository
    * //  -- SomeSubCommandGroup
    * //    --- ChildSubCommand
    *
-   * const locate = this.bot.commands.getRepository().locateByTtre;
+   * const repo = this.bot.getCommandManager().getRepository();
    *
-   * locate(ChildSubCommand); // null
-   * locate(SomeParentCommand, ChildSubCommand); // null
-   * locate(SomeParentCommand, SomeSubCommandGroup, ChildSubCommand); // Stored
-   *   instance of ChildSubCommand
+   * repo.locateByClassTree(ChildSubCommand); // null
+   * repo.locateByClassTree(SomeParentCommand, ChildSubCommand); // null
+   * repo.locateByClassTree(SomeParentCommand, SomeSubCommandGroup, ChildSubCommand); // Stored instance of ChildSubCommand
    */
-  locateByTree<T extends ImplementsSubCommand>(
+  locateByClassTree<T extends ImplementsSubCommand>(
     ParentCommandClass: ImplementsParentCommand,
     SubCommandGroupClass: ImplementsSubCommandGroup,
     SubCommandClass: T,
@@ -128,13 +135,12 @@ export interface CommandRepository
    * // - SomeParentCommand
    * //  -- SomeSubCommand
    *
-   * const locate = this.bot.commands.getRepository().locateByTtre;
+   * const repo = this.bot.getCommandManager().getRepository();
    *
-   * locate(SomeSubCommand); // null
-   * locate(SomeParentCommand, SomeSubCommand); // Stored instance of
-   *   SomeSubCommand
+   * repo.locateByClassTree(SomeSubCommand); // null
+   * repo.locateByClassTree(SomeParentCommand, SomeSubCommand); // Stored instance of SomeSubCommand
    */
-  locateByTree<T extends ImplementsSubCommand>(
+  locateByClassTree<T extends ImplementsSubCommand>(
     ParentCommandClass: ImplementsParentCommand,
     SubCommandClass: T,
   ): InstanceType<T> | null;
@@ -146,11 +152,11 @@ export interface CommandRepository
    * // Suppose the structure:
    * // - SomeParentCommand
    *
-   * const locate = this.bot.commands.getRepository().locateByTree;
+   * const repo = this.bot.getCommandManager().getRepository();
    *
-   * locate(SomeParentCommand); // Stored instance of SomeParentCommand
+   * repo.locateByClassTree(SomeParentCommand); // Stored instance of SomeParentCommand
    */
-  locateByTree<T extends ImplementsParentCommand>(
+  locateByClassTree<T extends ImplementsParentCommand>(
     ParentCommandClass: T,
   ): InstanceType<T> | null;
 
@@ -161,11 +167,11 @@ export interface CommandRepository
    * // Suppose the structure:
    * // - SomeStandaloneCommand
    *
-   * const locate = this.bot.commands.getRepository().locateByTree;
+   * const repo = this.bot.getCommandManager().getRepository();
    *
-   * locate(SomeStandaloneCommand); // Stored instance of SomeStandaloneCommand
+   * repo.locateByClassTree(SomeStandaloneCommand); // Stored instance of SomeStandaloneCommand
    */
-  locateByTree<T extends ImplementsStandaloneCommand>(
+  locateByClassTree<T extends ImplementsStandaloneCommand>(
     StandaloneCommandClass: T,
   ): InstanceType<T> | null;
 
@@ -180,14 +186,14 @@ export interface CommandRepository
    * //  -- SomeSubCommandGroup
    * //    --- ChildSubCommand
    *
-   * const locate = this.bot.commands.getRepository().locateByTree;
+   * const repo = this.bot.getCommandManager().getRepository();
    *
-   * locate(SomeStandaloneCommand); // Stored instance of SomeStandaloneCommand
-   * locate(SomeParentCommand); // Stored instance of SomeParentCommand
-   * locate(SomeParentCommand, SomeSubCommandGroup); // Stored instance of
-   *   SomeSubCommandGroup locate(SomeParentCommand, ChildSubCommand); // null
+   * repo.locateByClassTree(SomeStandaloneCommand); // Stored instance of SomeStandaloneCommand
+   * repo.locateByClassTree(SomeParentCommand); // Stored instance of SomeParentCommand
+   * repo.locateByClassTree(SomeParentCommand, SomeSubCommandGroup); // Stored instance of SomeSubCommandGroup
+   * repo.locateByClassTree(SomeParentCommand, ChildSubCommand); // null
    */
-  locateByTree<T extends ClassImplements<Command<CommandData>>>(
+  locateByClassTree<T extends ClassImplements<Command<unknown>>>(
     TopLevelCommandClass: ClassImplements<TopLevelCommand>,
     FirstChildClass?: ImplementsSubCommandGroup | ImplementsSubCommand,
     SecondChildClass?: ImplementsSubCommand,
@@ -195,12 +201,6 @@ export interface CommandRepository
 
   /** Returns the currently stored top level commands, keyed by their ID. */
   getCommands(): ReadonlyCollection<string, TopLevelCommand>;
-
-  /** Returns the Discord Application mappings of the currently stored commands. */
-  getMappings(): ReadonlyCollection<
-    string,
-    ArrayMinLength<ApplicationCommand, 1>
-  >;
 
   values(): IterableIterator<TopLevelCommand>;
 

@@ -27,7 +27,6 @@ const sidebars: SidebarsConfig = {
   // By default, Docusaurus generates a sidebar from the docs folder structure
   nyxSidebar: [
     'welcome',
-    'intro',
     'start',
 
     {
@@ -61,9 +60,10 @@ const sidebars: SidebarsConfig = {
           items: [
             {
               type: 'category',
-              label: '💻 Command types',
+              label: '📖 Command types',
               items: [
                 'features/commands/commands/standalone-command',
+                'features/commands/commands/context-menu-command',
                 'features/commands/commands/parent-command',
                 'features/commands/commands/subcommand',
                 'features/commands/commands/subcommand-group',
@@ -74,6 +74,7 @@ const sidebars: SidebarsConfig = {
             'features/commands/command-customid-codec',
             'features/commands/command-executor',
             'features/commands/command-repository',
+            'features/commands/command-deployer',
             'features/commands/command-resolver',
             'features/commands/command-subscribers',
             'features/commands/command-bus',

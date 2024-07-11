@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,10 +24,11 @@
 
 import type {
   AnyEventSubscriber,
-  EventDispatchArgs,
+  EventDispatchMeta,
   MiddlewareResponse,
 } from '@nyx-discord/core';
 import { PriorityEnum } from '@nyx-discord/core';
+
 import { AbstractEventSubscriberMiddleware } from '../middleware/AbstractEventSubscriberMiddleware.js';
 
 export class HandleCheckEventMiddleware extends AbstractEventSubscriberMiddleware {
@@ -37,9 +38,8 @@ export class HandleCheckEventMiddleware extends AbstractEventSubscriberMiddlewar
 
   public check(
     checked: AnyEventSubscriber,
-    args: EventDispatchArgs,
+    meta: EventDispatchMeta,
   ): MiddlewareResponse {
-    const [meta] = args;
     if (meta.isHandled() && checked.ignoresHandledEvents()) {
       return this.false();
     }

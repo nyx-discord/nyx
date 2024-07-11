@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,11 +28,10 @@ import type {
   SessionCustomIdCodec,
 } from '@nyx-discord/core';
 import { PaginationCustomIdBuilder } from '@nyx-discord/core';
-
-import { BasicCustomIdCodec } from '../../../customId/BasicCustomIdCodec.js';
+import { IdentifiableCustomIdCodec } from '../../../customId/IdentifiableCustomIdCodec';
 
 export class DefaultSessionCustomIdCodec
-  extends BasicCustomIdCodec<Session<unknown>>
+  extends IdentifiableCustomIdCodec<Session<unknown>>
   implements SessionCustomIdCodec
 {
   public static readonly DefaultNamespace = 'SSN';
@@ -40,9 +39,9 @@ export class DefaultSessionCustomIdCodec
   constructor(
     prefix: string = DefaultSessionCustomIdCodec.DefaultNamespace,
     separator: string = DefaultSessionCustomIdCodec.DefaultSeparator,
-    dataSeparator: string = DefaultSessionCustomIdCodec.DefaultDataSeparator,
+    metadataSeparator: string = DefaultSessionCustomIdCodec.DefaultMetadataSeparator,
   ) {
-    super(prefix, separator, dataSeparator);
+    super(prefix, separator, metadataSeparator);
   }
 
   public static create(): SessionCustomIdCodec {
@@ -53,7 +52,7 @@ export class DefaultSessionCustomIdCodec
     const builder = PaginationCustomIdBuilder.fromPaginatedString(
       customId,
       this.separator,
-      this.dataSeparator,
+      this.metadataSeparator,
     );
 
     return builder ? builder.getPage() : null;
@@ -68,7 +67,7 @@ export class DefaultSessionCustomIdCodec
     return new PaginationCustomIdBuilder({
       namespace: this.namespace,
       objectId,
-      dataSeparator: this.dataSeparator,
+      metadataSeparator: this.metadataSeparator,
       separator: this.separator,
       page,
     });

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,13 +56,14 @@ export abstract class AbstractPaginationSession<Result>
     ttl?: number,
   ) {
     super(bot, id, createInteraction, ttl);
-    this.customId = bot.sessions
+    this.customId = bot
+      .getSessionManager()
       .getCustomIdCodec()
       .createPageCustomIdBuilder(this);
     this.currentPage = 0;
   }
 
-  public override async update(
+  public override async onUpdate(
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,
   ): Promise<boolean> {
@@ -70,7 +71,7 @@ export abstract class AbstractPaginationSession<Result>
 
     /** Not a page switch interaction, handle as normal. */
     if (newPage === null) {
-      return super.update(interaction, meta);
+      return super.onUpdate(interaction, meta);
     }
 
     /** Switch page interaction. */
@@ -90,6 +91,7 @@ export abstract class AbstractPaginationSession<Result>
     return this.currentPage == 0 ? null : this.currentPage - 1;
   }
 
+  /** Extracts the referred page in an update interaction, if any. */
   protected extractPageFromInteraction(
     interaction: SessionUpdateInteraction,
   ): number | null {
@@ -104,22 +106,24 @@ export abstract class AbstractPaginationSession<Result>
     return this.extractPageFromModal(interaction);
   }
 
+  /** Extracts the referred page in a ButtonInteraction, if any. */
   protected extractPageFromButton(
     interaction: ButtonInteraction,
   ): number | null {
-    const codec = this.bot.sessions.getCustomIdCodec();
+    const codec = this.bot.getSessionManager().getCustomIdCodec();
 
     return codec.extractPageFromCustomId(interaction.customId);
   }
 
+  /** Extracts the referred page in an AnySelectMenuInteraction, if any. */
   protected extractPageFromSelectMenu(
     interaction: AnySelectMenuInteraction,
   ): number | null {
-    const codec = this.bot.sessions.getCustomIdCodec();
+    const codec = this.bot.getSessionManager().getCustomIdCodec();
 
     const newPage = codec.extractPageFromCustomId(interaction.customId);
 
-    if (!newPage === null || !interaction.isStringSelectMenu()) return newPage;
+    if (newPage !== null || !interaction.isStringSelectMenu()) return newPage;
 
     const firstValue = interaction.values[0];
     if (!firstValue || interaction.values.length > 1) return newPage;
@@ -127,13 +131,14 @@ export abstract class AbstractPaginationSession<Result>
     return codec.extractPageFromCustomId(firstValue);
   }
 
+  /** Extracts the referred page in an ModalMessageModalSubmitInteraction, if any. */
   protected extractPageFromModal(
     interaction: ModalMessageModalSubmitInteraction,
   ): number | null {
-    const codec = this.bot.sessions.getCustomIdCodec();
+    const codec = this.bot.getSessionManager().getCustomIdCodec();
 
     const newPage = codec.extractPageFromCustomId(interaction.customId);
-    if (!newPage === null) return newPage;
+    if (newPage !== null) return newPage;
 
     const components = interaction.components.flatMap((row) => row.components);
     for (const component of components) {
@@ -148,9 +153,10 @@ export abstract class AbstractPaginationSession<Result>
       return pageNumber;
     }
 
-    return newPage;
+    return null;
   }
 
+  /** Utility to build a pagination ActionRow, considering next/previous pages and disabling buttons accordingly. */
   protected buildDefaultPageRow(
     hasNextPage?: boolean,
   ): ActionRowData<InteractionButtonComponentData> {
@@ -170,9 +176,7 @@ export abstract class AbstractPaginationSession<Result>
         {
           type: ComponentType.Button,
           style: ButtonStyle.Secondary,
-          customId: hasNextPage
-            ? this.buildCustomIdForPage(nextPage)
-            : Math.random().toString(),
+          customId: hasNextPage ? this.buildCustomIdForPage(nextPage) : 'NaN',
           emoji: '➡',
           disabled: !hasNextPage,
         },
@@ -180,10 +184,12 @@ export abstract class AbstractPaginationSession<Result>
     };
   }
 
+  /** Builds a customId for a given page. */
   protected buildCustomIdForPage(page: number): string {
     return this.customId.clone().setPage(page).build();
   }
 
+  /** Handles a page update. */
   protected abstract updatePage(
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,

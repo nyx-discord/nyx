@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ import type {
   BotServiceEventArgs,
   BotStatus,
   EventBus,
+  EventSubscriber,
   NyxBot,
 } from '@nyx-discord/core';
 import {
@@ -52,6 +53,13 @@ export class DefaultBotService implements BotService {
 
   protected status: BotStatus = BotStatusEnum.Unprepared;
 
+  constructor(bot: NyxBot, bus: EventBus<BotServiceEventArgs>) {
+    this.bot = bot;
+    this.bus = bus;
+
+    this.startPromise = DefaultBotService.createStartPromiseData();
+  }
+
   public static createStartPromiseData(): StartPromiseData {
     const startPromise: Partial<StartPromiseData> = {};
     startPromise.promise = new Promise<NyxBot>((resolve, reject) => {
@@ -60,13 +68,6 @@ export class DefaultBotService implements BotService {
     });
 
     return startPromise as StartPromiseData;
-  }
-
-  constructor(bot: NyxBot, bus: EventBus<BotServiceEventArgs>) {
-    this.bot = bot;
-    this.bus = bus;
-
-    this.startPromise = DefaultBotService.createStartPromiseData();
   }
 
   public static create(bot: NyxBot): BotService {
@@ -88,30 +89,29 @@ export class DefaultBotService implements BotService {
 
     try {
       const token = this.bot.getToken();
-      await this.bot.client.login(token);
+      await this.bot.getClient().login(token);
 
-      await this.bot.events.onStart();
+      await this.bot.getEventManager().onStart();
 
       await Promise.all([
-        await this.bot.commands.onStart(),
-        await this.bot.schedules.onStart(),
-        await this.bot.sessions.onStart(),
-        await this.bot.plugins.onStart(),
+        await this.bot.getCommandManager().onStart(),
+        await this.bot.getScheduleManager().onStart(),
+        await this.bot.getSessionManager().onStart(),
+        await this.bot.getPluginManager().onStart(),
       ]);
 
       this.status = BotStatusEnum.Running;
 
       Promise.resolve(this.bus.emit(BotServiceEventEnum.Start, [])).catch(
         (error) => {
-          this.bot.logger.error(
-            'Uncaught bus error while emitting start event.',
-            error,
-          );
+          this.bot
+            .getLogger()
+            .error('Uncaught bus error while emitting start event.', error);
         },
       );
     } catch (error) {
       try {
-        this.bot.logger.error('Error while starting bot:', error);
+        this.bot.getLogger().error('Error while starting bot:', error);
       } finally {
         this.startPromise.reject(error);
         this.status = BotStatusEnum.Killed;
@@ -130,13 +130,13 @@ export class DefaultBotService implements BotService {
     }
 
     try {
-      await this.bot.events.onSetup();
+      await this.bot.getEventManager().onSetup();
 
       await Promise.all([
-        await this.bot.commands.onSetup(),
-        await this.bot.schedules.onSetup(),
-        await this.bot.sessions.onSetup(),
-        await this.bot.plugins.onSetup(),
+        await this.bot.getCommandManager().onSetup(),
+        await this.bot.getScheduleManager().onSetup(),
+        await this.bot.getSessionManager().onSetup(),
+        await this.bot.getPluginManager().onSetup(),
         await this.bus.onRegister(),
       ]);
 
@@ -144,10 +144,9 @@ export class DefaultBotService implements BotService {
 
       Promise.resolve(this.bus.emit(BotServiceEventEnum.Setup, [])).catch(
         (error) => {
-          this.bot.logger.error(
-            'Uncaught bus error while emitting setup event.',
-            error,
-          );
+          this.bot
+            .getLogger()
+            .error('Uncaught bus error while emitting setup event.', error);
         },
       );
 
@@ -164,34 +163,42 @@ export class DefaultBotService implements BotService {
     }
 
     await Promise.all([
-      await this.bot.events.onStop(),
-      await this.bot.commands.onStop(),
-      await this.bot.schedules.onStop(),
-      await this.bot.events.onStop(),
-      await this.bot.sessions.onStop(),
-      await this.bot.plugins.onStop(),
+      await this.bot.getEventManager().onStop(),
+      await this.bot.getCommandManager().onStop(),
+      await this.bot.getScheduleManager().onStop(),
+      await this.bot.getEventManager().onStop(),
+      await this.bot.getSessionManager().onStop(),
+      await this.bot.getPluginManager().onStop(),
     ]);
 
     this.status = BotStatusEnum.Stopped;
 
     Promise.resolve(this.bus.emit(BotServiceEventEnum.Stop, [reason])).catch(
       (error) => {
-        this.bot.logger.error(
-          'Uncaught bus error while emitting stop event.',
-          error,
-        );
+        this.bot
+          .getLogger()
+          .error('Uncaught bus error while emitting stop event.', error);
       },
     );
 
     await this.bus.onUnregister();
-
-    await this.bot.client.destroy();
+    await this.bot.getClient().destroy();
 
     return this;
   }
 
   public isRunning(): boolean {
     return this.status === BotStatusEnum.Running;
+  }
+
+  public async subscribe(
+    ...subscribers: EventSubscriber<
+      BotServiceEventArgs,
+      keyof BotServiceEventArgs
+    >[]
+  ): Promise<this> {
+    await this.bus.subscribe(...subscribers);
+    return this;
   }
 
   public getStartPromise(): Promise<NyxBot> {

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +25,11 @@
 import type { CustomIdBuilder } from '../../../customId/CustomIdBuilder';
 import type { CustomIdCodec } from '../../../customId/CustomIdCodec.js';
 import type { StringIterator } from '../../../string/StringIterator';
-import type { ExecutableCommand } from '../commands/abstract/ExecutableCommand.js';
-import type { CommandData } from '../data/command/CommandData.js';
-import type { CommandReferenceData } from '../resolver/CommandReferenceData';
+import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
 
 /** An object responsible for creating and manipulating customIds that refer to command names. */
 export interface CommandCustomIdCodec
-  extends CustomIdCodec<ExecutableCommand<CommandData>> {
+  extends CustomIdCodec<AnyExecutableCommand> {
   /**
    * Creates a {@link CustomIdBuilder} that can be used to start a
    * customId that refers to the passed command.
@@ -39,12 +37,11 @@ export interface CommandCustomIdCodec
    * // Let's say you want to make a component that when used, it routes to the
    * // userinfo command, with 'Amgelo#1106' as an extra data.
    *
-   * const commandManager = myBot.commands;
-   *
-   * const commandRouter = commandManager.getRouter();
+   * const commandManager = myBot.getCommandManager();
+   * const repository = commandManager.getRepository();
    *
    * const userInfoCommand =
-   *   commandRouter.locateCommandByTree(UserInfoCommandClass);
+   *   repository.locateCommandByTree(UserInfoCommandClass);
    * if (!userInfoCommand) return;
    *
    * const customIdCodec = commandManager.getCustomIdCodec();
@@ -55,9 +52,7 @@ export interface CommandCustomIdCodec
    * // Use this for your component's customId.
    * const customId: string = builder.build();
    */
-  createCustomIdBuilder(
-    command: ExecutableCommand<CommandData>,
-  ): CustomIdBuilder;
+  createCustomIdBuilder(command: AnyExecutableCommand): CustomIdBuilder;
 
   /**
    * Creates a {@link StringIterator} from a command customId, leaving only the
@@ -69,13 +64,22 @@ export interface CommandCustomIdCodec
    * // This is obtained from an Interaction, declared here for demonstration
    *   purposes. const customId = '$CMD_userinfo_Amgelo#1106_extraInfo';
    *
-   * const customIdCodec = myBot.commands.getCustomIdCodec();
+   * const customIdCodec = myBot.getCommandManager().getCustomIdCodec();
    * const iterator = customIdCodec.createIteratorFromCustomId(customId);
    *
    * console.log(iterator.getTokens()) // ['Amgelo#1106', 'extraInfo']
    */
   createIteratorFromCustomId(commandCustomId: string): StringIterator | null;
 
-  /** Extracts the reference data from the passed command customId. */
-  deserializeToData(customId: string): CommandReferenceData | null;
+  /** Returns a name tree given the passed command id, extracted with {@link deserializeToObjectId}. */
+  getNameTreeFromId(id: string): [string, ...string[]];
+
+  /** Returns a name tree from a command customId.
+   * Alias of:
+   * ```ts
+   * const id = codec.deserializeToObjectId(interaction.customId);
+   * const nameTree = codec.getNameTreeFromId(id);
+   * ```
+   */
+  deserializeToNameTree(customId: string): [string, ...string[]] | null;
 }
