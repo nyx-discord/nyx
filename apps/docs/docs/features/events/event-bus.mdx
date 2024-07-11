@@ -2,10 +2,10 @@
 title: 📣 Event Buses
 ---
 
-# 📣 Event Buses
-
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+
+# 📣 Event Buses
 
 `EventBuses` are objects responsible for containing and notifying subscribed `EventSubscribers` about events. These
 events can be emitted internally, typically via an EventEmitter, or externally, via `EventBus#emit()`.
@@ -58,7 +58,7 @@ await bot.getEventManager()
 ```ts
 import { EventBus } from '@nyx-discord/core';
 
-class MyInterfaceEventBus implements EventBus {
+class MyInterfaceEventBus implements EventBus<MyEventsArgs> {
   // ...
 }
 
@@ -98,8 +98,8 @@ Read the [📩 Event Subscribers](./event-subscriber) documentation for more det
 To ensure type safety when emitting events, event buses take a generic type of `Record<string, unknown[]>`, that
 represents the events that the bus emits, and their arguments.
 
-A typed event bus will also cause a type error when trying to add a `EventSubscriber` whose arguments don't match any
-event that the bus emits.
+A typed event bus will also cause a type error when trying to add a `EventSubscriber` whose arguments for the
+event they listen don't match the event arguments on the bus.
 
 ```ts
 import { BasicEventBus } from '@nyx-discord/framework';
@@ -239,7 +239,7 @@ await bot.getEventManager()
 ```ts
 import { EventEmitterBus } from '@nyx-discord/core';
 
-class MyEventEmitterBus implements EventEmitterBus<MyEventArgs> {
+class MyEventEmitterBus implements EventEmitterBus<MyEventsArgs> {
   // ...
 }
 

@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.5.0...@nyx-discord/core@1.5.1) (2024-02-19)
+
+### Bug Fixes
+
+- fix MetadatableCustomIdBuilder omitting non empty token ([4d5d4c5](https://github.com/nyx-discord/nyx/commit/4d5d4c5f1ffba0662383507b2acb752c93d29272))
+
+## [1.5.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.4.0...@nyx-discord/core@1.5.0) (2024-02-19)
+
+### Features
+
+- add SessionManager[#resolve](https://github.com/nyx-discord/nyx/issues/resolve)() ([99007a1](https://github.com/nyx-discord/nyx/commit/99007a1a4d6dba4df9a6e08f2831c59410b09381))
+
+### Bug Fixes
+
+- filter empty string if there's only metadata in a built MetadatableCustomId ([126d334](https://github.com/nyx-discord/nyx/commit/126d3349d7c6a939c881cb8afe814612618b9d8d))
+
+## [1.4.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.3.0...@nyx-discord/core@1.4.0) (2024-02-13)
+
+### Features
+
+- add PaginationCustomIdBuilder next and previous page methods ([5f7abad](https://github.com/nyx-discord/nyx/commit/5f7abad5ab7e7db8096d2d63e7a37e8d95783ee9))
+
+### Bug Fixes
+
+- fix MetadatableCustomIdBuilder meta methods changing non metadata tokens ([a0bb9d2](https://github.com/nyx-discord/nyx/commit/a0bb9d224c5da16e86b674363650ac475747c561))
+
 ## [1.3.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.2.3...@nyx-discord/core@1.3.0) (2024-01-14)
 
 ### Features

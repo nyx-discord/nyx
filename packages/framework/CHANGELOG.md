@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.5.0...@nyx-discord/framework@1.5.1) (2024-02-19)
+
+**Note:** Version bump only for package @nyx-discord/framework
+
+## [1.5.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.4.0...@nyx-discord/framework@1.5.0) (2024-02-19)
+
+### Features
+
+- add SessionManager[#resolve](https://github.com/nyx-discord/nyx/issues/resolve)() ([99007a1](https://github.com/nyx-discord/nyx/commit/99007a1a4d6dba4df9a6e08f2831c59410b09381))
+- make AbstractSession[#self](https://github.com/nyx-discord/nyx/issues/self)End() reason optional ([9908b38](https://github.com/nyx-discord/nyx/commit/9908b384073a152559c4c86ace0434369a59b176))
+
+### Bug Fixes
+
+- handle undefined return type in SessionRepository ([9e8bea9](https://github.com/nyx-discord/nyx/commit/9e8bea92abe8862d5e6feb4d3a627d6e878d61e6))
+
+## [1.4.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.3.0...@nyx-discord/framework@1.4.0) (2024-02-13)
+
+### Features
+
+- add ActionRowWrapper[#edit](https://github.com/nyx-discord/nyx/issues/edit)Component() ([39f7bf0](https://github.com/nyx-discord/nyx/commit/39f7bf05aedeab03e6473b249a6c9e8913f18888))
+
+### Bug Fixes
+
+- fix ActionRowWrapper[#edit](https://github.com/nyx-discord/nyx/issues/edit)Where() editing unmatched entries ([dec24e5](https://github.com/nyx-discord/nyx/commit/dec24e59fd3a23804de8d44865d9bbcf350842f6))
+
 ## [1.3.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.2.6...@nyx-discord/framework@1.3.0) (2024-01-19)
 
 ### Features
