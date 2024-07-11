@@ -68,7 +68,7 @@ class MyScheduleMiddleware extends AbstractScheduleMiddleware {
 
 const middleware = new MyScheduleMiddleware();
 
-bot.schedules.getExecutor().getMiddleware().add(middleware);
+bot.getScheduleManager().getExecutor().getMiddleware().add(middleware);
 ```
 
 ```mdx-code-block
@@ -85,7 +85,7 @@ class MyScheduleMiddleware implements ScheduleMiddleware {
 
 const middleware = new MyScheduleMiddleware();
 
-bot.schedules.getExecutor().getMiddleware().add(middleware);
+bot.getScheduleManager().getExecutor().getMiddleware().add(middleware);
 ```
 
 ```mdx-code-block

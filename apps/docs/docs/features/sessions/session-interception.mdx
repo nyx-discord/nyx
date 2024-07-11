@@ -73,7 +73,7 @@ class MySessionStartMiddleware extends AbstractSessionStartMiddleware {
 }
 
 const startMiddleware = new MySessionStartMiddleware();
-bot.sessions.getExecutor().getStartMiddleware().add(startMiddleware);
+botgetSessionManager().getExecutor().getStartMiddleware().add(startMiddleware);
 
 class MySessionUpdateMiddleware extends AbstractSessionUpdateMiddleware {
   public check(session: Session, ...args: SessionUpdateArgs): MiddlewareResponse {
@@ -82,7 +82,7 @@ class MySessionUpdateMiddleware extends AbstractSessionUpdateMiddleware {
 }
 
 const updateMiddleware = new MySessionUpdateMiddleware();
-bot.sessions.getExecutor().getUpdateMiddleware().add(updateMiddleware);
+botgetSessionManager().getExecutor().getUpdateMiddleware().add(updateMiddleware);
 ```
 
 ```mdx-code-block
@@ -98,14 +98,14 @@ class MySessionStartMiddleware implements SessionStartMiddleware {
 }
 
 const startMiddleware = new MySessionStartMiddleware();
-bot.sessions.getExecutor().getStartMiddleware().add(startMiddleware);
+botgetSessionManager().getExecutor().getStartMiddleware().add(startMiddleware);
 
 class MySessionUpdateMiddleware implements SessionUpdateMiddleware {
   // ...
 }
 
 const updateMiddleware = new MySessionUpdateMiddleware();
-bot.sessions.getExecutor().getUpdateMiddleware().add(updateMiddleware);
+botgetSessionManager().getExecutor().getUpdateMiddleware().add(updateMiddleware);
 ```
 
 ```mdx-code-block

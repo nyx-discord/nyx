@@ -82,14 +82,14 @@ export class DefaultSessionExecutor implements SessionExecutor {
       SessionStartMiddlewareList.create(),
       SessionUpdateMiddlewareList.create(),
 
-      BasicErrorHandler.createWithFallbackLogger(
-        (_error, session) => session.bot.logger,
+      BasicErrorHandler.createWithFallbackLogger((_error, session) =>
+        session.bot.getLogger(),
       ),
-      BasicErrorHandler.createWithFallbackLogger(
-        (_error, session) => session.bot.logger,
+      BasicErrorHandler.createWithFallbackLogger((_error, session) =>
+        session.bot.getLogger(),
       ),
-      BasicErrorHandler.createWithFallbackLogger(
-        (_error, session) => session.bot.logger,
+      BasicErrorHandler.createWithFallbackLogger((_error, session) =>
+        session.bot.getLogger(),
       ),
     );
   }

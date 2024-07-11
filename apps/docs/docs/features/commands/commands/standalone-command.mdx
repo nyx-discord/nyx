@@ -46,7 +46,7 @@ class MyStandaloneCommand extends AbstractStandaloneCommand {
 }
 
 const command = new MyStandaloneCommand();
-await bot.commands.addCommands(command);
+await bot.getCommandManager().addCommands(command);
 ```
 
 ```mdx-code-block
@@ -60,7 +60,7 @@ class MyStandaloneCommand implements StandaloneCommand {
 }
 
 const command = new MyStandaloneCommand();
-await bot.commands.addCommands(command);
+await bot.getCommandManager().addCommands(command);
 ```
 
 ```mdx-code-block

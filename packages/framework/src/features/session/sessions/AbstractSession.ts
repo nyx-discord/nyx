@@ -93,13 +93,13 @@ export abstract class AbstractSession<Result = void>
     this.id = id;
     this.startInteraction = startInteraction;
 
-    this.codec = bot.sessions.getCustomIdCodec();
+    this.codec = bot.getSessionManager().getCustomIdCodec();
     this.customId = this.codec.createCustomIdBuilder(this);
     if (ttl !== undefined) this.ttl = ttl;
   }
 
   public async start(): Promise<void> {
-    await this.bot.sessions.start(this);
+    await this.bot.getSessionManager().start(this);
   }
 
   public async onUpdate(
@@ -124,9 +124,10 @@ export abstract class AbstractSession<Result = void>
   }
 
   public getEndPromise(): Promise<SessionEndData<Result>> {
-    return this.bot.sessions.getPromiseRepository().getPromise(this) as Promise<
-      SessionEndData<Result>
-    >;
+    return this.bot
+      .getSessionManager()
+      .getPromiseRepository()
+      .getPromise(this) as Promise<SessionEndData<Result>>;
   }
 
   public getMeta(): ReadonlyMetaCollection {
@@ -209,6 +210,8 @@ export abstract class AbstractSession<Result = void>
   /** Utility to self end this session. */
   protected async selfEnd(reason?: string): Promise<void> {
     const endReason = reason ?? String(SessionEndCodes.SelfEnded);
-    await this.bot.sessions.end(this, endReason, SessionEndCodes.SelfEnded);
+    await this.bot
+      .getSessionManager()
+      .end(this, endReason, SessionEndCodes.SelfEnded);
   }
 }

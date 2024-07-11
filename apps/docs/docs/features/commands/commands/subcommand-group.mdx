@@ -118,7 +118,7 @@ const mySubcommand = new MySubCommand(subCommandGroup);
 // warn-end
 subCommandGroup.addChildren(mySubcommand);
 
-await this.bot.commands.updateCommand(parentCommand);
+await this.bot.getCommandManager().updateCommand(parentCommand);
 
 // highlight-next-line
 // Removing a subcommand
@@ -128,5 +128,5 @@ await this.bot.commands.updateCommand(parentCommand);
 // warn-next-line
 subCommandGroup.removeChildByInstance(mySubcommand);
 
-await this.bot.commands.updateCommand(parentCommand);
+await this.bot.getCommandManager().updateCommand(parentCommand);
 ```

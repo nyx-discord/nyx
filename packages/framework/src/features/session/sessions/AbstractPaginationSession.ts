@@ -56,7 +56,8 @@ export abstract class AbstractPaginationSession<Result>
     ttl?: number,
   ) {
     super(bot, id, createInteraction, ttl);
-    this.customId = bot.sessions
+    this.customId = bot
+      .getSessionManager()
       .getCustomIdCodec()
       .createPageCustomIdBuilder(this);
     this.currentPage = 0;
@@ -109,7 +110,7 @@ export abstract class AbstractPaginationSession<Result>
   protected extractPageFromButton(
     interaction: ButtonInteraction,
   ): number | null {
-    const codec = this.bot.sessions.getCustomIdCodec();
+    const codec = this.bot.getSessionManager().getCustomIdCodec();
 
     return codec.extractPageFromCustomId(interaction.customId);
   }
@@ -118,7 +119,7 @@ export abstract class AbstractPaginationSession<Result>
   protected extractPageFromSelectMenu(
     interaction: AnySelectMenuInteraction,
   ): number | null {
-    const codec = this.bot.sessions.getCustomIdCodec();
+    const codec = this.bot.getSessionManager().getCustomIdCodec();
 
     const newPage = codec.extractPageFromCustomId(interaction.customId);
 
@@ -134,7 +135,7 @@ export abstract class AbstractPaginationSession<Result>
   protected extractPageFromModal(
     interaction: ModalMessageModalSubmitInteraction,
   ): number | null {
-    const codec = this.bot.sessions.getCustomIdCodec();
+    const codec = this.bot.getSessionManager().getCustomIdCodec();
 
     const newPage = codec.extractPageFromCustomId(interaction.customId);
     if (newPage !== null) return newPage;

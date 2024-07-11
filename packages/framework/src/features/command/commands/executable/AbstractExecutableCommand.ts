@@ -96,11 +96,14 @@ export abstract class AbstractExecutableCommand<
 
   /** Returns this command's {@link CustomIdBuilder} on the given bot. */
   protected getCustomIdBuilder(bot: NyxBot): CustomIdBuilder {
-    return bot.commands.getCustomIdCodec().createCustomIdBuilder(this);
+    return bot
+      .getCommandManager()
+      .getCustomIdCodec()
+      .createCustomIdBuilder(this);
   }
 
   /** Returns this command's customId on the given bot. */
   protected getCustomId(bot: NyxBot): string {
-    return bot.commands.getCustomIdCodec().serializeToCustomId(this);
+    return bot.getCommandManager().getCustomIdCodec().serializeToCustomId(this);
   }
 }

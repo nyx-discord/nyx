@@ -46,7 +46,7 @@ class MyContextMenuCommand extends AbstractContextMenuCommand {
 }
 
 const command = new MyContextMenuCommand();
-await bot.commands.addCommands(command);
+await bot.getCommandManager().addCommands(command);
 ```
 
 ```mdx-code-block
@@ -61,6 +61,6 @@ class MyContextMenuCommand implements ContextMenuCommand {
 }
 
 const command = new MyContextMenuCommand();
-await bot.commands.addCommands(command);
+await bot.getCommandManager().addCommands(command);
 ```
 

@@ -96,7 +96,7 @@ export interface CommandRepository
    * // - SomeParentCommand
    * //  -- SomeSubCommandGroup
    *
-   * const repo = this.bot.commands.getRepository();
+   * const repo = this.bot.getCommandManager().getRepository();
    *
    * repo.locateByClassTree(SomeSubCommandGroup); // null
    * repo.locateByClassTree(SomeParentCommand, SomeSubCommandGroup); // Stored instance of SomeSubCommandGroup
@@ -115,7 +115,7 @@ export interface CommandRepository
    * //  -- SomeSubCommandGroup
    * //    --- ChildSubCommand
    *
-   * const repo = this.bot.commands.getRepository();
+   * const repo = this.bot.getCommandManager().getRepository();
    *
    * repo.locateByClassTree(ChildSubCommand); // null
    * repo.locateByClassTree(SomeParentCommand, ChildSubCommand); // null
@@ -135,7 +135,7 @@ export interface CommandRepository
    * // - SomeParentCommand
    * //  -- SomeSubCommand
    *
-   * const repo = this.bot.commands.getRepository();
+   * const repo = this.bot.getCommandManager().getRepository();
    *
    * repo.locateByClassTree(SomeSubCommand); // null
    * repo.locateByClassTree(SomeParentCommand, SomeSubCommand); // Stored instance of SomeSubCommand
@@ -152,7 +152,7 @@ export interface CommandRepository
    * // Suppose the structure:
    * // - SomeParentCommand
    *
-   * const repo = this.bot.commands.getRepository();
+   * const repo = this.bot.getCommandManager().getRepository();
    *
    * repo.locateByClassTree(SomeParentCommand); // Stored instance of SomeParentCommand
    */
@@ -167,7 +167,7 @@ export interface CommandRepository
    * // Suppose the structure:
    * // - SomeStandaloneCommand
    *
-   * const repo = this.bot.commands.getRepository();
+   * const repo = this.bot.getCommandManager().getRepository();
    *
    * repo.locateByClassTree(SomeStandaloneCommand); // Stored instance of SomeStandaloneCommand
    */
@@ -186,7 +186,7 @@ export interface CommandRepository
    * //  -- SomeSubCommandGroup
    * //    --- ChildSubCommand
    *
-   * const repo = this.bot.commands.getRepository();
+   * const repo = this.bot.getCommandManager().getRepository();
    *
    * repo.locateByClassTree(SomeStandaloneCommand); // Stored instance of SomeStandaloneCommand
    * repo.locateByClassTree(SomeParentCommand); // Stored instance of SomeParentCommand

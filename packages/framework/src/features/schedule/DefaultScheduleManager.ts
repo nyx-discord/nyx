@@ -150,20 +150,24 @@ export class DefaultScheduleManager implements ScheduleManager {
       ).catch((error) => {
         const scheduleId = String(schedule.getId());
 
-        this.bot.logger.error(
-          `Uncaught bus error while emitting schedule add '${scheduleId}'.`,
-          error,
-        );
+        this.bot
+          .getLogger()
+          .error(
+            `Uncaught bus error while emitting schedule add '${scheduleId}'.`,
+            error,
+          );
       });
 
       return job;
     } catch (error) {
-      this.bot.logger.error(
-        `There was an error while adding schedule '${String(
-          schedule.getId(),
-        )}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `There was an error while adding schedule '${String(
+            schedule.getId(),
+          )}'.`,
+          error,
+        );
 
       throw error;
     }
@@ -192,16 +196,20 @@ export class DefaultScheduleManager implements ScheduleManager {
       ).catch((error) => {
         const scheduleId = String(schedule.getId());
 
-        this.bot.logger.error(
-          `Uncaught bus error while emitting schedule remove '${scheduleId}'.`,
-          error,
-        );
+        this.bot
+          .getLogger()
+          .error(
+            `Uncaught bus error while emitting schedule remove '${scheduleId}'.`,
+            error,
+          );
       });
     } catch (error) {
-      this.bot.logger.error(
-        `There was an error while removing schedule '${String(id)}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `There was an error while removing schedule '${String(id)}'.`,
+          error,
+        );
     }
 
     return this;

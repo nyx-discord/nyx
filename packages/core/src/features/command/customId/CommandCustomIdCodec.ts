@@ -37,7 +37,7 @@ export interface CommandCustomIdCodec
    * // Let's say you want to make a component that when used, it routes to the
    * // userinfo command, with 'Amgelo#1106' as an extra data.
    *
-   * const commandManager = myBot.commands;
+   * const commandManager = myBot.getCommandManager();
    * const repository = commandManager.getRepository();
    *
    * const userInfoCommand =
@@ -64,7 +64,7 @@ export interface CommandCustomIdCodec
    * // This is obtained from an Interaction, declared here for demonstration
    *   purposes. const customId = '$CMD_userinfo_Amgelo#1106_extraInfo';
    *
-   * const customIdCodec = myBot.commands.getCustomIdCodec();
+   * const customIdCodec = myBot.getCommandManager().getCustomIdCodec();
    * const iterator = customIdCodec.createIteratorFromCustomId(customId);
    *
    * console.log(iterator.getTokens()) // ['Amgelo#1106', 'extraInfo']

@@ -97,10 +97,12 @@ export class DefaultPluginManager implements PluginManager {
       (error) => {
         const pluginId = String(plugin.getId());
 
-        this.bot.logger.error(
-          `Uncaught bus error while emitting plugin add '${pluginId}'.`,
-          error,
-        );
+        this.bot
+          .getLogger()
+          .error(
+            `Uncaught bus error while emitting plugin add '${pluginId}'.`,
+            error,
+          );
       },
     );
 
@@ -123,10 +125,12 @@ export class DefaultPluginManager implements PluginManager {
     ).catch((error) => {
       const pluginId = String(presentPlugin.getId());
 
-      this.bot.logger.error(
-        `Uncaught bus error while emitting plugin remove '${pluginId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught bus error while emitting plugin remove '${pluginId}'.`,
+          error,
+        );
     });
 
     return this;

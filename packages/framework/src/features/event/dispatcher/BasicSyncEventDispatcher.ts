@@ -55,8 +55,8 @@ export class BasicSyncEventDispatcher
 
   public static create(syncTimeout?: number | null): SyncEventDispatcher {
     return new BasicSyncEventDispatcher(
-      BasicErrorHandler.createWithFallbackLogger(
-        (_error, _sub, [meta]) => meta.getBot(true).logger,
+      BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
+        meta.getBot(true).getLogger(),
       ),
       SubscriberMiddlewareList.create(),
       syncTimeout,

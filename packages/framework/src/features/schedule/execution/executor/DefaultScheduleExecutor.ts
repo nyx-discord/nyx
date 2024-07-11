@@ -55,8 +55,8 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
   public static create(): ScheduleExecutor {
     return new DefaultScheduleExecutor(
       ScheduleMiddlewareList.create(),
-      BasicErrorHandler.createWithFallbackLogger(
-        (_error, _sub, [meta]) => meta.getBot().logger,
+      BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
+        meta.getBot().getLogger(),
       ),
     );
   }

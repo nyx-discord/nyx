@@ -83,7 +83,7 @@ class MyCommandInteractionSubscriber extends AbstractDJSClientSubscriber<'intera
 }
 
 const subscriber = new MyCommandInteractionSubscriber();
-await bot.commands.getSubscriptions().setInteractionSubscriber(subscriber);
+await bot.getCommandManager().getSubscriptions().setInteractionSubscriber(subscriber);
 ```
 
 :::danger

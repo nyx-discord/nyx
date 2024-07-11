@@ -66,7 +66,7 @@ class MyCommandMiddleware extends AbstractCommandMiddleware {
 
 const middleware = new MyCommandMiddleware();
 
-bot.commands.getExecutor().getMiddleware().add(middleware);
+bot.getCommandManager().getExecutor().getMiddleware().add(middleware);
 ```
 
 ```mdx-code-block
@@ -81,7 +81,7 @@ class MyCommandMiddleware implements CommandMiddleware {
 
 const middleware = new MyCommandMiddleware();
 
-bot.commands.getExecutor().getMiddleware().add(middleware);
+bot.getCommandManager().getExecutor().getMiddleware().add(middleware);
 ```
 
 ```mdx-code-block

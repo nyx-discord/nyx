@@ -45,7 +45,7 @@ const syncBus = BasicEventBus.createSync(
   Symbol('mySyncBus'), // Bus ID
 );
 
-await bot.events
+await bot.getEventManager()
   .addEventBus(asyncBus)
   .addEventBus(syncBus);
 ```
@@ -64,7 +64,7 @@ class MyInterfaceEventBus implements EventBus {
 
 const interfaceBus = new MyInterfaceEventBus();
 
-await bot.events.addEventBus(interfaceBus);
+await bot.getEventManager().addEventBus(interfaceBus);
 ```
 
 ```mdx-code-block
@@ -181,12 +181,12 @@ const myEventBus = BasicEventBus.createAsync<MyEventsArgs>(bot, Symbol('MyEventB
 // highlight-next-line
 myEventBus.lock();
 
-await bot.events.addEventBus(myEventBus);
+await bot.getEventManager().addEventBus(myEventBus);
 // error-next-line
-await bot.events.removeEventBus(myEventBus); // throws LockedObjectError
+await bot.getEventManager().removeEventBus(myEventBus); // throws LockedObjectError
 
 myEventBus.unlock();
-await bot.events.removeEventBus(myEventBus); // passes
+await bot.getEventManager().removeEventBus(myEventBus); // passes
 ```
 
 ## ⏰ Using EventEmitters
@@ -226,7 +226,7 @@ const myEventEmitterBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventArg
   new EventEmitter(),
 )
 
-await bot.events
+await bot.getEventManager()
   .addEventBus(clientEventBus)
   .addEventBus(myEventEmitterBus);
 ```
@@ -245,7 +245,7 @@ class MyEventEmitterBus implements EventEmitterBus<MyEventArgs> {
 
 const bus = new MyEventEmitterBus();
 
-await bot.events.addEventBus(bus);
+await bot.getEventManager().addEventBus(bus);
 ```
 
 ```mdx-code-block

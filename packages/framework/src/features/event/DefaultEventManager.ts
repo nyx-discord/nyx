@@ -143,10 +143,12 @@ export class DefaultEventManager implements EventManager {
       Promise.resolve(
         this.managerBus.emit(EventManagerEventEnum.EventBusAdd, [bus]),
       ).catch((error) => {
-        this.bot.logger.error(
-          `Uncaught bus error while emitting bus add of '${String(id)}'.`,
-          error,
-        );
+        this.bot
+          .getLogger()
+          .error(
+            `Uncaught bus error while emitting bus add of '${String(id)}'.`,
+            error,
+          );
       });
     }
 
@@ -181,10 +183,12 @@ export class DefaultEventManager implements EventManager {
     ).catch((error) => {
       const busId = String(presentBus.getId());
 
-      this.bot.logger.error(
-        `Uncaught bus error while emitting event bus remove '${busId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught bus error while emitting event bus remove '${busId}'.`,
+          error,
+        );
     });
 
     return this;

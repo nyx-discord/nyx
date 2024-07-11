@@ -51,7 +51,7 @@ class MyParentCommand extends AbstractParentCommand {
 }
 
 const command = new MyParentCommand();
-await bot.commands.addCommands(command);
+await bot.getCommandManager().addCommands(command);
 ```
 
 ```mdx-code-block
@@ -67,7 +67,7 @@ class MyParentCommand implements ParentCommand {
 }
 
 const command = new MyParentCommand();
-await bot.commands.addCommands(command);
+await bot.getCommandManager().addCommands(command);
 ```
 
 ```mdx-code-block
@@ -85,7 +85,7 @@ Discord.
 
 ```ts
 const parentCommand = new MyParentCommand();
-await this.bot.commands.addCommands(parentCommand);
+await this.bot.getCommandManager().addCommands(parentCommand);
 
 // highlight-next-line
 // Adding a child
@@ -99,7 +99,7 @@ const mySubCommand = new MySubCommand(parentCommand);
 parentCommand.addChildren(mySubCommand);
 // warn-end
 
-await this.bot.commands.updateCommand(parentCommand);
+await this.bot.getCommandManager().updateCommand(parentCommand);
 
 // highlight-next-line
 // Removing a child
@@ -109,5 +109,5 @@ await this.bot.commands.updateCommand(parentCommand);
 // warn-next-line
 parentCommand.removeChildByInstance(mySubCommand);
 
-await this.bot.commands.updateCommand(parentCommand);
+await this.bot.getCommandManager().updateCommand(parentCommand);
 ```

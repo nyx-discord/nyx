@@ -95,7 +95,7 @@ class MyReferralCommand extends AbstractStandaloneCommand {
     metadata: CommandExecutionMeta,
   ) {
     const bot = metadata.getBot();
-    const commandManager = bot.commands;
+    const commandManager = bot.getCommandManager();
 
     // Get the command instance
     const pingCommand = commandManager.getRepository().locateByTree(PingCommand);
@@ -103,7 +103,7 @@ class MyReferralCommand extends AbstractStandaloneCommand {
 
     // highlight-start
     // Get the customId
-    const customIdCodec = bot.commands.getCustomIdCodec();
+    const customIdCodec = bot.getCommandManager().getCustomIdCodec();
     const customId = customIdCodec.serializeToCustomId(pingCommand);
     // highlight-end
 
@@ -137,14 +137,14 @@ class AdminListCommand extends AbstractStandaloneCommand {
     metadata: CommandExecutionMeta,
   ) {
     const bot = metadata.getBot();
-    const commandManager = bot.commands;
+    const commandManager = bot.getCommandManager();
 
     // Get the command instance
     const userInfoCommand = commandManager.getRepository().locateByTree(UserInfoCommand);
     if (!userInfoCommand) throw new Error('User info command not found');
 
     // Get the customId builder
-    const customIdCodec = bot.commands.getCustomIdCodec();
+    const customIdCodec = bot.getCommandManager().getCustomIdCodec();
     const customIdBuilder = customIdCodec.createCustomIdBuilder(userInfoCommand);
 
     // Create customIds by cloning the builder, adding the ID and building
@@ -180,7 +180,7 @@ class UserInfoCommand extends AbstractStandaloneCommand {
     metadata: CommandExecutionMeta,
   ) {
     const bot = metadata.getBot();
-    const customIdCodec = bot.commands.getCustomIdCodec();
+    const customIdCodec = bot.getCommandManager().getCustomIdCodec();
 
     // Build a StringIterator to extract the extra data
     const iterator = customIdCodec.createIteratorFromCustomId(interaction.customId);

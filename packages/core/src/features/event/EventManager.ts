@@ -70,7 +70,7 @@ export interface EventManager extends BotAware, BotLifecycleObserver {
    *
    * Alias of:
    * ```
-   * const clientBus = bot.events.getClientBus();
+   * const clientBus = eventManager.getClientBus();
    * await clientBus.subscribe(subscriber);
    * ```
    */

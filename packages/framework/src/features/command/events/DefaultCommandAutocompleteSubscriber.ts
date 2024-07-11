@@ -39,7 +39,9 @@ export class DefaultCommandAutocompleteSubscriber extends Subscriber<Events.Inte
 
     const bot = meta.getBot(true);
 
-    const handled: boolean = await bot.commands.autocomplete(interaction);
+    const handled: boolean = await bot
+      .getCommandManager()
+      .autocomplete(interaction);
     if (handled || interaction.responded) meta.setHandled();
   }
 }

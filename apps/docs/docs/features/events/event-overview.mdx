@@ -86,7 +86,7 @@ class InteractionCreateSubscriber
 }
 
 const subscriber = new InteractionCreateSubscriber();
-await bot.events.subscribeClient(subscriber);
+await bot.getEventManager().subscribeClient(subscriber);
 ```
 
 ```mdx-code-block
@@ -104,7 +104,7 @@ const myBus = BasicEventBus.createAsync(
   Symbol('myBus'), // Bus ID
 );
 
-await bot.events.addEventBus(myBus);
+await bot.getEventManager().addEventBus(myBus);
 ```
 
 ```mdx-code-block
@@ -133,7 +133,7 @@ class CommandCallSubscriber
   }
 }
 
-await bot.commands.getEventBus().subscribe(subscriber);
+await bot.getCommandManager().getEventBus().subscribe(subscriber);
 ```
 
 ```mdx-code-block
@@ -258,7 +258,7 @@ class InteractionCreateSubscriber
 }
 
 const subscriber = new InteractionCreateSubscriber();
-await bot.events.subscribeClient(subscriber);
+await bot.getEventManager().subscribeClient(subscriber);
 ```
 
 ## 🚌 Creating an event bus
@@ -306,7 +306,7 @@ const syncBus = BasicEventBus.createSync(
   Symbol('mySyncBus'), // Bus ID
 );
 
-await bot.events
+await bot.getEventManager()
   .addEventBus(asyncBus)
   .addEventBus(syncBus);
 ```
@@ -325,7 +325,7 @@ class MyInterfaceEventBus implements EventBus {
 
 const interfaceBus = new MyInterfaceEventBus();
 
-await bot.events.addEventBus(interfaceBus);
+await bot.getEventManager().addEventBus(interfaceBus);
 ```
 
 ```mdx-code-block

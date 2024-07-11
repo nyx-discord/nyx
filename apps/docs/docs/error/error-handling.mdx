@@ -13,7 +13,7 @@ and the bot.
 To add a consumer, use `ErrorHandler#setConsumer()`:
 
 ```ts
-const errorHandler = bot.commands.getExecutor().getErrorHandler();
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
 
 errorHandler.setConsumer(
   MyError,
@@ -38,7 +38,7 @@ errorHandler.setConsumer(
 To remove a consumer, use `ErrorHandler#removeConsumer()`:
 
 ```ts
-const errorHandler = bot.commands.getExecutor().getErrorHandler();
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
 
 errorHandler.removeConsumer(MyError);
 ```
@@ -48,7 +48,7 @@ errorHandler.removeConsumer(MyError);
 The `ErrorHandler` has a fallback consumer, which is used if no consumer was found for a given error.
 
 ```ts
-const errorHandler = bot.commands.getExecutor().getErrorHandler();
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
 
 errorHandler.setFallbackConsumer(
   (

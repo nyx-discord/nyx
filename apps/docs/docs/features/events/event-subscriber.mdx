@@ -123,7 +123,7 @@ To subscribe to a bus, you'll either need a reference to it or its ID.
 
 ```ts
 // Using the EventManager
-await bot.events.subscribe(subscriber, myBusId); // Can also pass the bus reference
+await bot.getEventManager().subscribe(subscriber, myBusId); // Can also pass the bus reference
 
 // Using an existing reference to the bus
 await myBus.subscribe(subscriber);
@@ -135,7 +135,7 @@ that the bus is currently registered on the bot. Otherwise, it will throw an `Ob
 ```ts
 const newBus = BasicEventBus.createSync(bot, Symbol('myBus'));
 // error-next-line
-await bot.events.subscribe(subscriber, newBus); // Throws ObjectNotFoundError
+await bot.getEventManager().subscribe(subscriber, newBus); // Throws ObjectNotFoundError
 ```
 
 ## 🧱 Event Dispatch Meta

@@ -68,7 +68,7 @@ class MySession extends AbstractSession {
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MySession(bot, sessionId, interaction);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 ```
 
 ```mdx-code-block
@@ -84,7 +84,7 @@ class MySession implements Session {
 }
 
 const session = new MySession(/** ... */);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 ```
 
 ```mdx-code-block
@@ -125,7 +125,7 @@ Additionally, it can generate a `CustomIdBuilder`, which you can use to append e
 receiving it, you can use the codec again to extract the extra tokens using a `StringIterator`.
 
 ```ts
-const codec = bot.sessions.getCustomIdCodec();
+const codec = botgetSessionManager().getCustomIdCodec();
 
 // Creating a simple customId.
 const simpleCustomId = codec.deserializeToObjectId(session);
@@ -243,7 +243,7 @@ class MySession extends AbstractSession<number> {
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MySession(bot, sessionId, interaction);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 
 const endData = await session.getEndPromise();
 endData.result; // 1

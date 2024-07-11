@@ -117,7 +117,7 @@ class StatusSchedule extends AbstractSchedule {
 }
 
 const schedule = new StatusSchedule();
-await bot.schedules.addSchedule(schedule);
+await bot.getScheduleManager().addSchedule(schedule);
 ```
 
 ```mdx-code-block
@@ -135,9 +135,9 @@ await bot.schedules.addSchedule(schedule);
 
 ```ts
 // One of:
-const job = bot.schedules.getScheduler().getJobForSchedule(schedule);
+const job = bot.getScheduleManager().getScheduler().getJobForSchedule(schedule);
 const job = schedule.getJob(bot);
-const job = await bot.schedules.addSchedule(schedule);
+const job = await bot.getScheduleManager().addSchedule(schedule);
 
 // Then:
 await job.pause();

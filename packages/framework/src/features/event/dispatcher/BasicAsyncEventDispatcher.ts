@@ -53,8 +53,8 @@ export class BasicAsyncEventDispatcher
 
   public static create(concurrencyLimit?: number | null): AsyncEventDispatcher {
     return new BasicAsyncEventDispatcher(
-      BasicErrorHandler.createWithFallbackLogger(
-        (_error, _sub, [meta]) => meta.getBot(true).logger,
+      BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
+        meta.getBot(true).getLogger(),
       ),
       SubscriberMiddlewareList.create(),
       concurrencyLimit,

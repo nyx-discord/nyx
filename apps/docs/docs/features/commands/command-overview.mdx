@@ -140,7 +140,7 @@ class PingCommand extends AbstractStandaloneCommand {
 }
 
 const command = new PingCommand();
-await bot.commands.addCommands(command);
+await bot.getCommandManager().addCommands(command);
 ```
 
 ```mdx-code-block
@@ -169,7 +169,7 @@ class NameContextMenuCommand extends AbstractContextMenuCommand {
 }
 
 const command = new NameContextMenuCommand();
-await bot.commands.addCommands(command);
+await bot.getCommandManager().addCommands(command);
 ```
 
 * Message Context Menu:
@@ -189,7 +189,7 @@ class MessageContentContextMenuCommand extends AbstractContextMenuCommand {
 }
 
 const command = new MessageContentContextMenuCommand();
-await bot.commands.addCommands(command);
+await bot.getCommandManager().addCommands(command);
 ```
 
 :::danger
@@ -240,7 +240,7 @@ class NameSubCommand extends AbstractSubCommand {
 }
 
 const parent = new UserParentCommand();
-await bot.commands.addCommands(parent);
+await bot.getCommandManager().addCommands(parent);
 ```
 
 :::tip
@@ -253,7 +253,7 @@ const parent = new UserParentCommand();
 const subCommand = new NameSubCommand(group);
 group.addChildren(subCommand);
 
-await bot.commands.addCommands(parent);
+await bot.getCommandManager().addCommands(parent);
 ```
 :::
 
@@ -319,7 +319,7 @@ class DogSubCommand extends AbstractSubCommand {
 }
 
 const parent = new PhotoParentCommand();
-await bot.commands.addCommands(parent);
+await bot.getCommandManager().addCommands(parent);
 ```
 
 :::tip
@@ -338,7 +338,7 @@ parent.addChildren(group);
 const subCommand = new DogSubCommand(group);
 group.addChildren(subCommand);
 
-await bot.commands.addCommands(parent);
+await bot.getCommandManager().addCommands(parent);
 ```
 :::
 

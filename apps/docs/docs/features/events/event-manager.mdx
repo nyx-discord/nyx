@@ -36,7 +36,7 @@ const myBot = Bot.create((bot: NyxBot) => ({
 }));
 
 // highlight-next-line
-myBot.events.myCustomPublicMethod() // Works!
+myBot.getEventManager().myCustomPublicMethod() // Works!
 ```
 
 The `Bot` class is able to infer the type of your custom manager via generics, so accessing any custom public method or
@@ -71,9 +71,9 @@ class InteractionCreateSubscriber
 }
 
 const subscriber = new InteractionCreateSubscriber();
-await bot.events.subscribeClient(subscriber);
+await bot.getEventManager().subscribeClient(subscriber);
 
 // same as:
-const bus = bot.events.getClientBus();
+const bus = bot.getEventManager().getClientBus();
 await bus.subscribe(subscriber);
 ```

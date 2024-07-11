@@ -42,9 +42,10 @@ export interface BotOptions<
   ConcreteSessionManager extends SessionManager = SessionManager,
   ConcretePluginManager extends PluginManager = PluginManager,
   ConcreteBotService extends BotService = BotService,
+  ConcreteClient extends Client = Client,
 > {
   token: string;
-  client: Client;
+  client: ConcreteClient;
   id: Identifier;
   deployCommands: boolean;
 

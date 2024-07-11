@@ -50,7 +50,7 @@ export abstract class AbstractStagePaginationSession<Result>
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,
   ): Promise<boolean> {
-    const codec = this.bot.sessions.getCustomIdCodec();
+    const codec = this.bot.getSessionManager().getCustomIdCodec();
     const newPage = codec.extractPageFromCustomId(interaction.customId);
     const newStage = this.stages[newPage ?? -1];
 

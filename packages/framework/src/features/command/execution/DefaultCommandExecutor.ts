@@ -70,7 +70,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
       BasicErrorHandler.createWithFallbackLogger<
         AnyExecutableCommand,
         CommandExecutionArgs
-      >((_error, _cmd, [_int, meta]) => meta.getBot().logger),
+      >((_error, _cmd, [_int, meta]) => meta.getBot().getLogger()),
       CommandMiddlewareList.create(),
     );
   }

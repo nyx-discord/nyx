@@ -46,7 +46,7 @@ export class DefaultSessionUpdateSubscriber extends Subscriber<Events.Interactio
     }
 
     const bot = meta.getBot(true);
-    const handled = await bot.sessions.update(interaction);
+    const handled = await bot.getSessionManager().update(interaction);
     if (handled) meta.setHandled();
   }
 }

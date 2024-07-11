@@ -190,10 +190,12 @@ export class DefaultCommandManager implements CommandManager {
       ).catch((error) => {
         const id = command.getId();
 
-        this.bot.logger.error(
-          `'Uncaught bus error while emitting command add '${id}'.`,
-          error,
-        );
+        this.bot
+          .getLogger()
+          .error(
+            `'Uncaught bus error while emitting command add '${id}'.`,
+            error,
+          );
       });
     }
 
@@ -221,10 +223,12 @@ export class DefaultCommandManager implements CommandManager {
       ).catch((error) => {
         const id = command.getId();
 
-        this.bot.logger.error(
-          `'Uncaught bus error while emitting command remove '${id}'.`,
-          error,
-        );
+        this.bot
+          .getLogger()
+          .error(
+            `'Uncaught bus error while emitting command remove '${id}'.`,
+            error,
+          );
       });
     }
 
@@ -266,10 +270,12 @@ export class DefaultCommandManager implements CommandManager {
     } catch (error) {
       const executionId = String(metadata.getId());
 
-      this.bot.logger.error(
-        `Uncaught executor error while autocompleting command '${executionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught executor error while autocompleting command '${executionId}'.`,
+          error,
+        );
     }
 
     Promise.resolve(
@@ -281,10 +287,12 @@ export class DefaultCommandManager implements CommandManager {
     ).catch((error) => {
       const executionId = String(metadata.getId());
 
-      this.bot.logger.error(
-        `Uncaught event bus error while emitting command autocomplete '${executionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught event bus error while emitting command autocomplete '${executionId}'.`,
+          error,
+        );
     });
 
     return interaction.responded;
@@ -326,10 +334,12 @@ export class DefaultCommandManager implements CommandManager {
     } catch (error) {
       const executionId = String(metadata.getId());
 
-      this.bot.logger.error(
-        `Uncaught executor error while executing command '${executionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught executor error while executing command '${executionId}'.`,
+          error,
+        );
 
       return interaction.replied;
     }
@@ -343,10 +353,12 @@ export class DefaultCommandManager implements CommandManager {
     ).catch((error) => {
       const executionId = String(metadata.getId());
 
-      this.bot.logger.error(
-        `Uncaught event bus error while emitting command run '${executionId}'.`,
-        error,
-      );
+      this.bot
+        .getLogger()
+        .error(
+          `Uncaught event bus error while emitting command run '${executionId}'.`,
+          error,
+        );
     });
 
     return true;

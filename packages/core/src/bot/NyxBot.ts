@@ -30,7 +30,6 @@ import type { PluginManager } from '../features/plugin/PluginManager.js';
 import type { ScheduleManager } from '../features/schedule/ScheduleManager.js';
 import type { SessionManager } from '../features/session/SessionManager.js';
 import type { Identifiable } from '../identity/Identifiable.js';
-import type { Identifier } from '../identity/Identifier';
 import type { NyxLogger } from '../log/NyxLogger';
 import type { BotService } from '../service/BotService.js';
 
@@ -45,32 +44,29 @@ export interface NyxBot<
   ConcreteService extends BotService = BotService,
   ConcreteClient extends Client = Client,
 > extends Identifiable {
-  /** The logger of this bot for console output. */
-  readonly logger: ConcreteLogger;
+  /** Returns the logger of this bot for console output. */
+  getLogger(): ConcreteLogger;
 
-  /** The Discord.js {@link Client} of this bot. */
-  readonly client: ConcreteClient;
+  /** Returns the Discord.js {@link Client} of this bot. */
+  getClient(): ConcreteClient;
 
-  /** The {@link CommandManager} of this bot for {@link Command} managing. */
-  readonly commands: ConcreteCommandManager;
+  /** Returns the {@link CommandManager} of this bot for {@link Command} managing. */
+  getCommandManager(): ConcreteCommandManager;
 
-  /** The {@link EventManager} of this bot for event managing. */
-  readonly events: ConcreteEventManager;
+  /** Returns the {@link EventManager} of this bot for event managing. */
+  getEventManager(): ConcreteEventManager;
 
-  /** The {@link ScheduleManager} of this bot for {@link Schedule} managing. */
-  readonly schedules: ConcreteScheduleManager;
+  /** Returns the {@link ScheduleManager} of this bot for {@link Schedule} managing. */
+  getScheduleManager(): ConcreteScheduleManager;
 
-  /** The {@link SessionManager} of this bot for {@link Session} managing. */
-  readonly sessions: ConcreteSessionManager;
+  /** Returns the {@link SessionManager} of this bot for {@link Session} managing. */
+  getSessionManager(): ConcreteSessionManager;
 
-  /** The {@link PluginManager} of this bot for {@link NyxPlugin} managing. */
-  readonly plugins: ConcretePluginManager;
+  /** Returns the {@link PluginManager} of this bot for {@link NyxPlugin} managing. */
+  getPluginManager(): ConcretePluginManager;
 
-  /** The {@link BotService} of this bot for managing bot status. */
-  readonly service: ConcreteService;
-
-  /** The ID of this bot. */
-  readonly id: Identifier;
+  /** Returns the {@link BotService} of this bot for managing bot status. */
+  getService(): ConcreteService;
 
   /** Starts the bot. Alias for {@link BotService#start}. */
   start(): Awaitable<this>;

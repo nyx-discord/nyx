@@ -303,7 +303,7 @@ class MySession extends AbstractSession<void> {
     await interaction.showModal(myModal);
 
     // You can also get the extra 'button' token (or any added token) here.
-    const codec = this.bot.sessions.getCustomIdCodec();
+    const codec = this.botgetSessionManager().getCustomIdCodec();
     const iterator = codec.createIteratorFromCustomId(interaction.customId);
     this.bot.logger.log(iterator.getTokens()); // ['button']
   }
@@ -331,7 +331,7 @@ class MySession extends AbstractSession<void> {
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MySession(bot, sessionId, interaction);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 
 // `await` for the session to end
 await session.getEndPromise();
@@ -417,7 +417,7 @@ class MyPaginationSession extends AbstractPaginationSession<void> {
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MyPaginationSession(bot, sessionId, interaction);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 
 // `await` for the session to end
 await session.getEndPromise();
@@ -482,7 +482,7 @@ class MyListPaginationSession extends AbstractListPaginationSession<number, void
 const sessionItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MyListPaginationSession(bot, sessionId, interaction, sessionItems);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 
 // `await` for the session to end
 await session.getEndPromise();
@@ -620,7 +620,7 @@ class Stage2 extends AbstractSessionStage<void> {
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MyStageSession(bot, sessionId, interaction);
-await bot.sessions.start(session);
+await botgetSessionManager().start(session);
 
 // `await` for the session to end
 await session.getEndPromise();
