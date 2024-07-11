@@ -37,12 +37,12 @@ import type { NyxPlugin } from './plugin/NyxPlugin.js';
 /** An object that holds the objects and methods that make together a bot's plugin system. */
 export interface PluginManager extends BotAware, BotLifecycleObserver {
   /**
-   * Registers a new plugin.
+   * Registers a list of plugins.
    *
    * @throws {IllegalDuplicateError} If a plugin with that ID is already
    *   registered.
    */
-  register(plugin: NyxPlugin): Awaitable<this>;
+  register(...plugins: NyxPlugin[]): Awaitable<this>;
 
   /**
    * Unregisters a plugin given its instance or ID.

@@ -79,32 +79,34 @@ export class DefaultPluginManager implements PluginManager {
     await this.bus.onRegister();
   }
 
-  public async register(plugin: NyxPlugin): Promise<this> {
-    const id = plugin.getId();
+  public async register(...plugins: NyxPlugin[]): Promise<this> {
+    for (const plugin of plugins) {
+      const id = plugin.getId();
 
-    const presentPlugin = this.plugins.get(id);
-    if (presentPlugin) {
-      throw new IllegalDuplicateError(
-        presentPlugin,
-        plugin,
-        `Plugin with ID ${String(id)} has already been registered.`,
+      const presentPlugin = this.plugins.get(id);
+      if (presentPlugin) {
+        throw new IllegalDuplicateError(
+          presentPlugin,
+          plugin,
+          `Plugin with ID ${String(id)} has already been registered.`,
+        );
+      }
+      this.plugins.set(id, plugin);
+      await plugin.onRegister();
+
+      Promise.resolve(this.bus.emit(PluginEventEnum.PluginAdd, [plugin])).catch(
+        (error) => {
+          const pluginId = String(plugin.getId());
+
+          this.bot
+            .getLogger()
+            .error(
+              `Uncaught bus error while emitting plugin add '${pluginId}'.`,
+              error,
+            );
+        },
       );
     }
-    this.plugins.set(id, plugin);
-    await plugin.onRegister();
-
-    Promise.resolve(this.bus.emit(PluginEventEnum.PluginAdd, [plugin])).catch(
-      (error) => {
-        const pluginId = String(plugin.getId());
-
-        this.bot
-          .getLogger()
-          .error(
-            `Uncaught bus error while emitting plugin add '${pluginId}'.`,
-            error,
-          );
-      },
-    );
 
     return this;
   }
