@@ -46,6 +46,7 @@ const myBot = Bot.create((bot) => ({
   client,
   id: Symbol('My bot'),
   logger: console, // Can be your own logger
+  deployCommands: true, // Whether to deploy commands to Discord on start
 
   // For example, if you had a custom command manager:
   // commands: new MyCustomCommandManager(bot),
@@ -67,6 +68,8 @@ const myBot = new Bot((bot) => ({
   client,
   id: Symbol('My bot'),
   logger: console,
+  deployCommands: true,
+
   events: DefaultEventManager.create(bot, client),
   plugins: DefaultPluginManager.create(bot),
   // and so on
@@ -133,6 +136,7 @@ const bot = Bot.create(() => ({
   client,
   id: Symbol('Bot'),
   logger: console,
+  deployCommands: true,
 }));
 
 // Make sure you're on an async context to be able to await

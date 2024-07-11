@@ -102,7 +102,8 @@ deactivate manager
 The overall process of creating a command is to instantiate and register it to a `CommandManager`.
 
 If the bot has started, it will immediately be deployed to Discord, and its `ApplicationCommand` mapping will be
-available on the `CommandDeployer`. If the bot hasn't started, it will be queued to be deployed once it starts.
+available on the `CommandDeployer`. If the bot hasn't started, it will be queued to be deployed once it starts if
+`deployCommands` is true.
 
 Aditionally, commands don't depend on a specific bot, and you can reuse the same instance for many.
 
