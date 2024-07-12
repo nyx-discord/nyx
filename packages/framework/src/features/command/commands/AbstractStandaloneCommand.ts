@@ -35,6 +35,7 @@ import type {
   Snowflake,
 } from 'discord.js';
 
+import { NotImplementedError } from '../../../errors/NotImplementedError';
 import { AbstractExecutableCommand } from './executable/AbstractExecutableCommand';
 
 export abstract class AbstractStandaloneCommand
@@ -64,10 +65,12 @@ export abstract class AbstractStandaloneCommand
     return true;
   }
 
-  public abstract autocomplete(
-    interaction: AutocompleteInteraction,
-    metadata: CommandExecutionMeta,
-  ): Awaitable<void>;
+  public autocomplete(
+    _interaction: AutocompleteInteraction,
+    _metadata: CommandExecutionMeta,
+  ): Awaitable<void> {
+    throw new NotImplementedError();
+  }
 
   public getNameTree(): ReadonlyArray<string> {
     return [this.getName()];
