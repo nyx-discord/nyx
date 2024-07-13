@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.0.0...@nyx-discord/framework@2.1.0) (2024-07-13)
+
+### Features
+
+- **commands:** fallback to ChatInput when a command's type isn't found ([0fa8c61](https://github.com/nyx-discord/nyx/commit/0fa8c615d72e2f0e75591d0dfaea1b7a5f3f16fd))
+
 ## [2.0.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@1.5.1...@nyx-discord/framework@2.0.0) (2024-07-11)
 
 ### ⚠ BREAKING CHANGES
