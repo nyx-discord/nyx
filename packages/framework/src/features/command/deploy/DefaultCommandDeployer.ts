@@ -31,6 +31,7 @@ import {
   ObjectNotFoundError,
 } from '@nyx-discord/core';
 import type { ApplicationCommand, Client, Snowflake } from 'discord.js';
+import { ApplicationCommandType } from 'discord.js';
 
 export class DefaultCommandDeployer implements CommandDeployer {
   protected readonly client: Client;
@@ -206,7 +207,9 @@ export class DefaultCommandDeployer implements CommandDeployer {
       const name = application.name;
       const command = commands.find((command) => {
         const data = command.getData();
-        return data.name === name && data.type === application.type;
+        const type = data.type ?? ApplicationCommandType.ChatInput;
+
+        return data.name === name && type === application.type;
       });
 
       if (!command) {
