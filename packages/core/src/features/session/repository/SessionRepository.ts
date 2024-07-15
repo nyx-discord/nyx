@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,16 @@
  * SOFTWARE.
  */
 
+import type { ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable } from 'discord.js';
 import type { BotLifecycleObserver } from '../../../types/BotLifecycleObserver';
 
 import type { Session } from '../session/Session.js';
 
 /** An object for temporal storage of {@link Session} instances. */
-export interface SessionRepository extends BotLifecycleObserver {
+export interface SessionRepository
+  extends BotLifecycleObserver,
+    IterableIterator<[string, Session<unknown>]> {
   /** Returns a session by its ID. */
   get(id: string): Awaitable<Session<unknown> | null | undefined>;
 
@@ -55,4 +58,16 @@ export interface SessionRepository extends BotLifecycleObserver {
   setExpirationCallback(
     callback: (value: Session<unknown>) => Awaitable<void>,
   ): void;
+
+  /** Returns all registered sessions. */
+  getSessions(): ReadonlyCollection<string, Session<unknown>>;
+
+  /** Returns an iterator of all {@link Session}s. */
+  values(): IterableIterator<Session<unknown>>;
+
+  /** Returns an iterator of all session IDs. */
+  keys(): IterableIterator<string>;
+
+  /** Returns an iterator of all [ID, {@link Session}] pairs. */
+  entries(): IterableIterator<[string, Session<unknown>]>;
 }

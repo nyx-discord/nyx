@@ -202,9 +202,12 @@ export interface CommandRepository
   /** Returns the currently stored top level commands, keyed by their ID. */
   getCommands(): ReadonlyCollection<string, TopLevelCommand>;
 
+  /** Returns an iterator of all {@link TopLevelCommand}s. */
   values(): IterableIterator<TopLevelCommand>;
 
+  /** Returns an iterator of all command IDs. */
   keys(): IterableIterator<string>;
 
+  /** Returns an iterator of all [ID, {@link TopLevelCommand}] pairs. */
   entries(): IterableIterator<[string, TopLevelCommand]>;
 }

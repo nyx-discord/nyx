@@ -35,7 +35,10 @@ import type { PluginEventArgs } from './events/PluginEvent.js';
 import type { NyxPlugin } from './plugin/NyxPlugin.js';
 
 /** An object that holds the objects and methods that make together a bot's plugin system. */
-export interface PluginManager extends BotAware, BotLifecycleObserver {
+export interface PluginManager
+  extends BotAware,
+    BotLifecycleObserver,
+    IterableIterator<[Identifier, NyxPlugin]> {
   /**
    * Registers a list of plugins.
    *
@@ -72,9 +75,18 @@ export interface PluginManager extends BotAware, BotLifecycleObserver {
     PluginClass: ClassImplements<NyxPlugin>,
   ): InstanceType<typeof PluginClass> | null;
 
-  /** Returns all registered plugins. */
-  getPlugins(): ReadonlyCollection<string | symbol, NyxPlugin>;
-
   /** Returns the {@link EventBus} for this manager. */
   getEventBus(): EventBus<PluginEventArgs>;
+
+  /** Returns all registered plugins. */
+  getPlugins(): ReadonlyCollection<Identifier, NyxPlugin>;
+
+  /** Returns an iterator of all {@link NyxPlugin}s. */
+  values(): IterableIterator<NyxPlugin>;
+
+  /** Returns an iterator of all {@link Identifier}s. */
+  keys(): IterableIterator<Identifier>;
+
+  /** Returns an iterator of all [{@link Identifier}, {@link NyxPlugin}] pairs. */
+  entries(): IterableIterator<[Identifier, NyxPlugin]>;
 }

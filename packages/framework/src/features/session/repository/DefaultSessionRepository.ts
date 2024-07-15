@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+import type { ReadonlyCollection } from '@discordjs/collection';
+import { Collection } from '@discordjs/collection';
 import TTLCache from '@isaacs/ttlcache';
 import type { Session, SessionRepository } from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
@@ -36,19 +38,17 @@ export class DefaultSessionRepository extends TTLCache<
   string,
   Session<unknown>
 > {
-  protected dispose: SessionExpirationCallback = () => {};
-
-  public static create(
-    onExpire?: SessionExpirationCallback,
-  ): SessionRepository {
-    return new DefaultSessionRepository(onExpire);
-  }
-
   constructor(onExpire?: SessionExpirationCallback) {
     super({
       updateAgeOnGet: false,
       dispose: onExpire,
     });
+  }
+
+  public static create(
+    onExpire?: SessionExpirationCallback,
+  ): SessionRepository {
+    return new DefaultSessionRepository(onExpire);
   }
 
   public onSetup(): Awaitable<void> {
@@ -86,4 +86,18 @@ export class DefaultSessionRepository extends TTLCache<
   public getTTL(id: string): Awaitable<number | null> {
     return this.getRemainingTTL(id) + Date.now();
   }
+
+  public getSessions(): ReadonlyCollection<string, Session<unknown>> {
+    return new Collection(this.entries());
+  }
+
+  public next(): IteratorResult<[string, Session<unknown>]> {
+    return this.entries().next();
+  }
+
+  public [Symbol.iterator](): IterableIterator<[string, Session<unknown>]> {
+    return this.entries();
+  }
+
+  protected dispose: SessionExpirationCallback = () => {};
 }

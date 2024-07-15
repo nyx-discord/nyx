@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,9 @@ import type { ClassImplements } from '../../../types/ClassImplements.js';
 import type { Schedule } from '../schedule/Schedule.js';
 
 /** An object responsible for storing schedules. */
-export interface ScheduleRepository extends BotLifecycleObserver {
+export interface ScheduleRepository
+  extends BotLifecycleObserver,
+    IterableIterator<[Identifier, Schedule]> {
   /** Returns the number of stored schedules. */
   readonly size: number;
 
@@ -57,9 +59,18 @@ export interface ScheduleRepository extends BotLifecycleObserver {
     ScheduleClass: ClassImplements<Schedule>,
   ): InstanceType<typeof ScheduleClass> | null;
 
+  /** Returns whether a {@link Schedule} with the given ID exists. */
+  has(id: Identifier): boolean;
+
   /** Returns all {@link Schedule}s. */
   getSchedules(): ReadonlyCollection<Identifier, Schedule>;
 
-  /** Returns whether a {@link Schedule} with the given ID exists. */
-  has(id: Identifier): boolean;
+  /** Returns an iterator of all {@link Schedule}s. */
+  values(): IterableIterator<Schedule>;
+
+  /** Returns an iterator of all {@link Identifier}s. */
+  keys(): IterableIterator<Identifier>;
+
+  /** Returns an iterator of all [{@link Identifier}, {@link Schedule}] pairs. */
+  entries(): IterableIterator<[Identifier, Schedule]>;
 }

@@ -165,4 +165,24 @@ export class DefaultPluginManager implements PluginManager {
   public getEventBus(): EventBus<PluginEventArgs> {
     return this.bus;
   }
+
+  public *values(): IterableIterator<NyxPlugin> {
+    yield* this.plugins.values();
+  }
+
+  public *keys(): IterableIterator<Identifier> {
+    yield* this.plugins.keys();
+  }
+
+  public *entries(): IterableIterator<[Identifier, NyxPlugin]> {
+    yield* this.plugins.entries();
+  }
+
+  public next(): IteratorResult<[Identifier, NyxPlugin]> {
+    return this.entries().next();
+  }
+
+  public [Symbol.iterator](): IterableIterator<[Identifier, NyxPlugin]> {
+    return this.entries();
+  }
 }

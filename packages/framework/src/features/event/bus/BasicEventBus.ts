@@ -285,6 +285,32 @@ export class BasicEventBus<
     return this;
   }
 
+  public *values(): IterableIterator<AnyEventSubscriberFrom<EventArgsObject>> {
+    yield* this.getSubscribers().values();
+  }
+
+  public *keys(): IterableIterator<Identifier> {
+    yield* this.getSubscribers().keys();
+  }
+
+  public *entries(): IterableIterator<
+    [Identifier, AnyEventSubscriberFrom<EventArgsObject>]
+  > {
+    yield* this.getSubscribers().entries();
+  }
+
+  public next(): IteratorResult<
+    [Identifier, AnyEventSubscriberFrom<EventArgsObject>]
+  > {
+    return this.entries().next();
+  }
+
+  public [Symbol.iterator](): IterableIterator<
+    [Identifier, AnyEventSubscriberFrom<EventArgsObject>]
+  > {
+    return this.entries();
+  }
+
   /** Generates the args for a given event. */
   protected generateArgsForEvent<Args extends unknown[]>(
     eventName: string,

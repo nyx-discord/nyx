@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,12 +41,12 @@ export class DefaultScheduleRepository implements ScheduleRepository {
   protected readonly schedules: Collection<Identifier, Schedule> =
     new Collection();
 
-  public static create(): ScheduleRepository {
-    return new DefaultScheduleRepository();
-  }
-
   public get size() {
     return this.schedules.size;
+  }
+
+  public static create(): ScheduleRepository {
+    return new DefaultScheduleRepository();
   }
 
   public onSetup(): Awaitable<void> {
@@ -135,11 +135,11 @@ export class DefaultScheduleRepository implements ScheduleRepository {
     }
   }
 
-  public next(): IteratorResult<Schedule> {
-    return this.values().next();
+  public next(): IteratorResult<[Identifier, Schedule]> {
+    return this.entries().next();
   }
 
-  public [Symbol.iterator](): IterableIterator<Schedule> {
-    return this.values();
+  public [Symbol.iterator](): IterableIterator<[Identifier, Schedule]> {
+    return this.entries();
   }
 }

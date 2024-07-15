@@ -42,7 +42,8 @@ export interface EventBus<
   ArgsRecord extends Record<keyof ArgsRecord & string, unknown[]>,
 > extends Lockable,
     Identifiable,
-    Metadatable {
+    Metadatable,
+    IterableIterator<[Identifier, AnyEventSubscriberFrom<ArgsRecord>]> {
   /** Returns the saved bot for this bus, if any. */
   getBot(): NyxBot | null;
 
@@ -116,4 +117,13 @@ export interface EventBus<
   getSubscribedEvents(): ReadonlyCollectionFrom<
     EventSubscriberCollection<ArgsRecord>
   >;
+
+  /** Returns an iterator of all {@link EventSubscriber}s. */
+  values(): IterableIterator<AnyEventSubscriberFrom<ArgsRecord>>;
+
+  /** Returns an iterator of all {@link Identifier}s. */
+  keys(): IterableIterator<Identifier>;
+
+  /** Returns an iterator of all [{@link Identifier}, {@link EventSubscriber}] pairs. */
+  entries(): IterableIterator<[Identifier, AnyEventSubscriberFrom<ArgsRecord>]>;
 }
