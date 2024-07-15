@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@2.0.0...@nyx-discord/core@2.1.0) (2024-07-15)
+
+### Features
+
+- add iterators to repositories, buses and plugin manager ([4854343](https://github.com/nyx-discord/nyx/commit/4854343725d7495e723c4c7fd5802135b529b6a7))
+
 ## [2.0.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/core@1.5.1...@nyx-discord/core@2.0.0) (2024-07-11)
 
 ### ⚠ BREAKING CHANGES
