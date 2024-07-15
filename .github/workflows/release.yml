@@ -28,8 +28,6 @@ jobs:
 
       - name: Use pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 8
 
       - name: Setup Node.js with GitHub Packages
         uses: actions/setup-node@v4
