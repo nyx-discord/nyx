@@ -22,18 +22,20 @@
  * SOFTWARE.
  */
 
+import { IllegalDuplicateError } from '@nyx-discord/core';
 import type {
-  ActionRow,
   ActionRowBuilder,
   ActionRowComponentData,
   ActionRowData,
   Message,
-  MessageActionRowComponent,
   MessageActionRowComponentBuilder,
   MessageActionRowComponentData,
   ModalActionRowComponentBuilder,
 } from 'discord.js';
+import { isJSONEncodable } from 'discord.js';
+
 import { ActionRowWrapper } from './ActionRowWrapper.js';
+import type { RowAssignable } from './RowAssignable';
 
 type RowComponentEditCallback<ComponentData extends ActionRowComponentData> = (
   component: ComponentData,
@@ -42,12 +44,13 @@ type RowComponentEditCallback<ComponentData extends ActionRowComponentData> = (
 
 /** An object for easy manipulation of multiple action row components. */
 export class ActionRowList<ComponentData extends ActionRowComponentData> {
+  protected readonly limit: number = 5;
+
   protected readonly rows: ActionRowWrapper<ComponentData>[];
 
-  constructor(...data: ActionRowData<ComponentData>[]) {
-    this.rows = data.map(
-      (row) => new ActionRowWrapper<ComponentData>(...row.components),
-    );
+  constructor(...data: RowAssignable<ComponentData>[]) {
+    this.rows = [];
+    this.push(...data);
   }
 
   /** Creates an ActionRowList from a {@link Message}. */
@@ -55,13 +58,65 @@ export class ActionRowList<ComponentData extends ActionRowComponentData> {
     message: Message<boolean>,
   ): ActionRowList<MessageActionRowComponentData> {
     return new ActionRowList<MessageActionRowComponentData>(
-      ...(message.components.map((row) => ({
-        ...row,
-        components: row.components.map((component) => ({
-          ...component.data,
-        })),
-      })) as ActionRow<MessageActionRowComponent>[]),
+      ...message.components,
     );
+  }
+
+  /**
+   * Pushes new action rows to the list.
+   *
+   * @throws {RangeError} If the amount of passed rows plus the rows in the list exceeds the limit (5).
+   */
+  public push(...rows: RowAssignable<ComponentData>[]): this {
+    if (this.rows.length + rows.length > this.limit) {
+      throw new RangeError(
+        `Cannot push more than ${this.limit} action rows to an ActionRowList`,
+      );
+    }
+
+    const mapped = rows.map(this.wrapRowAssignable);
+    this.rows.push(...mapped);
+
+    return this;
+  }
+
+  /**
+   * Sets the action row at the given index to the passed row.
+   *
+   * @throws {RangeError} If the index is out of bounds (0 <= index < 5), or if there isn't a row at the previous index.
+   * @throws {IllegalDuplicateError} If there's a row already at the given index.
+   */
+  public setAt(index: number, row: RowAssignable<ComponentData>): this {
+    if (index < 0 || index >= this.limit) {
+      throw new RangeError(
+        `Index ${index} out of bounds (0 <= index < ${this.limit}).`,
+      );
+    }
+
+    if (index > 0 && !this.rows[index - 1]) {
+      throw new RangeError(`No action row at the previous index ${index - 1}.`);
+    }
+
+    if (this.rows[index]) {
+      throw new IllegalDuplicateError(
+        this.rows[index],
+        row,
+        `An action row already exists at index ${index}.`,
+      );
+    }
+
+    this.rows[index] = this.wrapRowAssignable(row);
+    return this;
+  }
+
+  /** Removes and returns the last action row from the list. */
+  public pop(): ActionRowWrapper<ComponentData> | undefined {
+    return this.rows.pop();
+  }
+
+  /** Returns a shalow copy of the action rows in the list, selected from start to end indexes. */
+  public slice(start?: number, end?: number): ActionRowList<ComponentData> {
+    return new ActionRowList<ComponentData>(...this.rows.slice(start, end));
   }
 
   /** Sets disabled state of the components of all the contained action rows. */
@@ -126,5 +181,21 @@ export class ActionRowList<ComponentData extends ActionRowComponentData> {
   /** Returns the contained rows. */
   public getRows(): ReadonlyArray<ActionRowWrapper<ComponentData>> {
     return this.rows;
+  }
+
+  /** Wraps a {@link RowAssignable} in an {@link ActionRowWrapper}. */
+  protected wrapRowAssignable(
+    row: RowAssignable<ComponentData>,
+  ): ActionRowWrapper<ComponentData> {
+    return row instanceof ActionRowWrapper
+      ? row
+      : new ActionRowWrapper<ComponentData>(
+          // Map each component in the row to its raw data, if it's a JSONEncodable then it's a builder
+          ...row.components.map((component) => {
+            return isJSONEncodable(component)
+              ? (component.toJSON() as ComponentData)
+              : component;
+          }),
+        );
   }
 }

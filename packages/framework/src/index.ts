@@ -7,6 +7,8 @@ export * from './customId/AbstractCustomIdCodec';
 export * from './customId/IdentifiableCustomIdCodec';
 export * from './discord/ActionRowList';
 export * from './discord/ActionRowWrapper';
+export * from './discord/ExtractTypeFromComponentData';
+export * from './discord/RowAssignable';
 export * from './error/BasicErrorHandler';
 export * from './errors/NotImplementedError';
 export * from './features/command/DefaultCommandManager';
