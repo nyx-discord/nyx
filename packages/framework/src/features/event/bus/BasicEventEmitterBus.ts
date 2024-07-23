@@ -91,14 +91,16 @@ export class BasicEventEmitterBus<
   }
 
   public override async subscribe(
-    subscriber: AnyEventSubscriberFrom<EventArgsObject>,
+    ...subscribers: AnyEventSubscriberFrom<EventArgsObject>[]
   ): Promise<this> {
-    await super.subscribe(subscriber);
+    for (const subscriber of subscribers) {
+      await super.subscribe(subscriber);
 
-    const event = subscriber.getEvent();
-    this.listenToEmitter(
-      event as (keyof EventArgsObject | keyof EventBusEventArgs) & string,
-    );
+      const event = subscriber.getEvent();
+      this.listenToEmitter(
+        event as (keyof EventArgsObject | keyof EventBusEventArgs) & string,
+      );
+    }
     return this;
   }
 
