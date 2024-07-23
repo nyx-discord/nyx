@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.2.0...@nyx-discord/framework@2.3.0) (2024-07-23)
+
+### Features
+
+- **ActionRowList:** add push, setAt, slice and pop methods ([9bf0af1](https://github.com/nyx-discord/nyx/commit/9bf0af1a71e35b76acffde77863728ff5665c2cd))
+
+### Bug Fixes
+
+- fix BasicEventEmitterBus omitting rest subscribers ([0a750a2](https://github.com/nyx-discord/nyx/commit/0a750a2552201b9f9e72e310d01ec3d0e7f6dd79))
+
 ## [2.2.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.1.0...@nyx-discord/framework@2.2.0) (2024-07-15)
 
 ### Features
