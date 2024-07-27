@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.1](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.3.0...@nyx-discord/framework@2.3.1) (2024-07-27)
+
+### Bug Fixes
+
+- fix DefaultCommandResolver skipping subcommand autocompletes ([30989c0](https://github.com/nyx-discord/nyx/commit/30989c03b34809d830b9a7bd0c5e6ef18d2be66f))
+
 ## [2.3.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.2.0...@nyx-discord/framework@2.3.0) (2024-07-23)
 
 ### Features
