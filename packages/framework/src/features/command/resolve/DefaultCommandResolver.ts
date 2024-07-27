@@ -40,7 +40,7 @@ export class DefaultCommandResolver implements CommandResolver {
     repository: CommandRepository,
   ): AnyExecutableCommand | null {
     const { commandName } = interaction;
-    if (!interaction.isChatInputCommand()) {
+    if (!interaction.isChatInputCommand() && !interaction.isAutocomplete()) {
       return this.findTopLevelExecutable(commandName, repository);
     }
 
