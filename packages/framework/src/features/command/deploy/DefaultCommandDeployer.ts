@@ -59,6 +59,18 @@ export class DefaultCommandDeployer implements CommandDeployer {
     return this.mappings;
   }
 
+  public async setCommands(...commands: TopLevelCommand[]): Promise<this> {
+    if (this.pendingAdd === null) {
+      this.mappings.clear();
+      await this.deployOnly(...commands);
+
+      return this;
+    }
+
+    this.pendingAdd = commands;
+    return this;
+  }
+
   public async deployCommands(...commands: TopLevelCommand[]): Promise<this> {
     if (this.pendingAdd === null) {
       await this.deployOnly(...commands);

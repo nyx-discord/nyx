@@ -29,12 +29,19 @@ import type { TopLevelCommand } from '../commands/TopLevelCommand';
 
 export interface CommandDeployer extends IterableIterator<ApplicationCommand> {
   /**
-   * Deploys the commands.
+   * Deploys pending commands, or all of them it the deployer hasn't started.
    *
    * @throws {IllegalStateError} If the deployer has already started.
    * @throws {Error} If there was an error while deploying the commands.
    */
   deploy(): Awaitable<ReadonlyCollection<string, ApplicationCommand>>;
+
+  /**
+   * Sets this deployer's commands, or the pending ones if it hasn't started.
+   *
+   * @throws {Error} If there was an error while deploying the commands.
+   */
+  setCommands(...commands: TopLevelCommand[]): Awaitable<this>;
 
   /**
    * Registers commands on Discord if the deployer has started, otherwise
