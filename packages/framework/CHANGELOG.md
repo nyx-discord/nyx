@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.3.1...@nyx-discord/framework@2.4.0) (2024-08-23)
+
+### Features
+
+- add CommandDeployer[#set](https://github.com/nyx-discord/nyx/issues/set)Commands() ([7086561](https://github.com/nyx-discord/nyx/commit/7086561795eaf53aa39df5d769e38d1edc5e4ce5))
+
 ## [2.3.1](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.3.0...@nyx-discord/framework@2.3.1) (2024-07-27)
 
 ### Bug Fixes
