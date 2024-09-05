@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.4.0...@nyx-discord/framework@2.5.0) (2024-09-05)
+
+### Features
+
+- add CommandManager[#set](https://github.com/nyx-discord/nyx/issues/set)Commands() and default impl ([78a7373](https://github.com/nyx-discord/nyx/commit/78a73732cee10f0d076856403a0999fa0c412e80))
+- add CommandRepository[#clear](https://github.com/nyx-discord/nyx/issues/clear)() ([4cfefd5](https://github.com/nyx-discord/nyx/commit/4cfefd5f80feb1f6fcd4a5a39e8a07c810ddfb5d))
+- make DefaultCommandManager[#set](https://github.com/nyx-discord/nyx/issues/set)Commands() emit add and remove events ([af91a96](https://github.com/nyx-discord/nyx/commit/af91a9623454fa86d5c2b91997b23c5b86a99ee7))
+
 ## [2.4.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.3.1...@nyx-discord/framework@2.4.0) (2024-08-23)
 
 ### Features
