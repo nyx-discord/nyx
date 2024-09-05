@@ -67,6 +67,7 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
    * Adds {@link TopLevelCommand commands} and registers them on Discord, if the
    * bot has started.
    *
+   * @fires CommandEvent#CommandAdd
    * @throws {IllegalDuplicateError} If a command with that same data exists.
    */
   addCommands(...commands: TopLevelCommand[]): Awaitable<this>;
@@ -75,6 +76,7 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
    * Removes a {@link TopLevelCommand command} and unregisters it from Discord,
    * if the bot has started.
    *
+   * @fires CommandEvent#CommandRemove
    * @throws {ObjectNotFoundError} If that command is not registered.
    */
   removeCommands(...commands: TopLevelCommand[]): Awaitable<this>;
@@ -91,6 +93,8 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
   /**
    * Sets commands on Discord, or the pending ones if the bot hasn't started.
    *
+   * @fires CommandEvent#CommandAdd For each command that was added.
+   * @fires CommandEvent#CommandRemove For each command that was removed.
    * @throws {Error} If the bot has already started, and there was an error while setting the commands.
    */
   setCommands(...commands: TopLevelCommand[]): Awaitable<this>;

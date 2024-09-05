@@ -247,10 +247,36 @@ export class DefaultCommandManager implements CommandManager {
   }
 
   public async setCommands(...commands: TopLevelCommand[]): Promise<this> {
-    this.repository.clear();
+    for (const repoCommand of this.repository.values()) {
+      this.repository.removeCommand(repoCommand);
+      Promise.resolve(
+        this.eventBus.emit(CommandEventEnum.CommandRemove, [repoCommand]),
+      ).catch((error) => {
+        const id = repoCommand.getId();
 
-    for (const command of commands) {
-      this.repository.addCommand(command);
+        this.bot
+          .getLogger()
+          .error(
+            `'Uncaught bus error while emitting command remove due to set '${id}'.`,
+            error,
+          );
+      });
+    }
+
+    for (const setCommand of commands) {
+      this.repository.addCommand(setCommand);
+      Promise.resolve(
+        this.eventBus.emit(CommandEventEnum.CommandAdd, [setCommand]),
+      ).catch((error) => {
+        const id = setCommand.getId();
+
+        this.bot
+          .getLogger()
+          .error(
+            `'Uncaught bus error while emitting command add due to set '${id}'.`,
+            error,
+          );
+      });
     }
 
     await this.deployer.setCommands(...commands);
