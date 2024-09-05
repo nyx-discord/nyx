@@ -246,6 +246,17 @@ export class DefaultCommandManager implements CommandManager {
     return this;
   }
 
+  public async setCommands(...commands: TopLevelCommand[]): Promise<this> {
+    this.repository.clear();
+
+    for (const command of commands) {
+      this.repository.addCommand(command);
+    }
+
+    await this.deployer.setCommands(...commands);
+    return this;
+  }
+
   public async autocomplete(
     interaction: AutocompleteInteraction,
     meta?: CommandExecutionMeta,

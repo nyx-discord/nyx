@@ -89,6 +89,13 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
   editCommands(...commands: TopLevelCommand[]): Awaitable<this>;
 
   /**
+   * Sets commands on Discord, or the pending ones if the bot hasn't started.
+   *
+   * @throws {Error} If the bot has already started, and there was an error while setting the commands.
+   */
+  setCommands(...commands: TopLevelCommand[]): Awaitable<this>;
+
+  /**
    * Subscribes a list of event subscribers to the manager's bus.
    *
    * Alias of:
