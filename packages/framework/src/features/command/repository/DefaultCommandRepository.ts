@@ -171,6 +171,10 @@ export class DefaultCommandRepository implements CommandRepository {
     return this.commands;
   }
 
+  public clear() {
+    this.commands.clear();
+  }
+
   public *entries(): IterableIterator<[string, TopLevelCommand]> {
     yield* this.commands.entries();
   }

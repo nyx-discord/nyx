@@ -210,4 +210,7 @@ export interface CommandRepository
 
   /** Returns an iterator of all [ID, {@link TopLevelCommand}] pairs. */
   entries(): IterableIterator<[string, TopLevelCommand]>;
+
+  /** Removes all stored commands. */
+  clear(): void;
 }

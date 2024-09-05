@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Amgelo563
+ * Copyright (c) 2024 Amgelo563
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,4 +26,4 @@ import type { CommandRepository } from './CommandRepository.js';
 
 /** Type of immutable {@link CommandRepository}. */
 export interface ReadonlyCommandRepository
-  extends Omit<CommandRepository, 'addCommand' | 'removeCommand'> {}
+  extends Omit<CommandRepository, 'addCommand' | 'removeCommand' | 'clear'> {}
