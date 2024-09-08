@@ -305,7 +305,7 @@ class MySession extends AbstractSession<void> {
     // You can also get the extra 'button' token (or any added token) here.
     const codec = this.botgetSessionManager().getCustomIdCodec();
     const iterator = codec.createIteratorFromCustomId(interaction.customId);
-    this.bot.logger.log(iterator.getTokens()); // ['button']
+    this.bot.getLogger().log(iterator.getTokens()); // ['button']
   }
 
   /**
@@ -584,7 +584,7 @@ class Stage1 extends AbstractSessionStartStage<void> {
     nextStage: SessionStage<unknown>,
     _meta: SessionExecutionMeta
   ) {
-    this.bot.logger.log('Left first stage. Went to: ', nextStage);
+    this.bot.getLogger().log('Left first stage. Went to: ', nextStage);
   }
 
   protected async handleButton(
@@ -612,7 +612,7 @@ class Stage2 extends AbstractSessionStage<void> {
   }
 
   public onLeave(): void {
-    this.bot.logger.log('Left second stage');
+    this.bot.getLogger().log('Left second stage');
   }
 }
 

@@ -79,7 +79,7 @@ class MyStage extends AbstractSessionStage<void> {
     nextStage: SessionStage<unknown>,
     _meta: SessionExecutionMeta
   ) {
-    this.bot.logger.log('Left MyStage. Went to: ', nextStage);
+    this.bot.getLogger().log('Left MyStage. Went to: ', nextStage);
   }
 
   protected async handleButton(

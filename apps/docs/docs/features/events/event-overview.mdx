@@ -81,7 +81,7 @@ class InteractionCreateSubscriber
   ): void {
     const bot = meta.getBot(true);
 
-    bot.logger.info(`Interaction ${interaction.id} received.`);
+    bot.getLogger().info(`Interaction ${interaction.id} received.`);
   }
 }
 
@@ -129,7 +129,7 @@ class CommandCallSubscriber
   ) {
   const bot = commandMeta.getBot(true);
 
-  bot.logger.info(`Command '${command.getData().name}' called.`);
+  bot.getLogger().info(`Command '${command.getData().name}' called.`);
   }
 }
 
@@ -173,7 +173,7 @@ class MyEventSubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent
       return;
     }
 
-    bot.logger.log('Hello world');
+    bot.getLogger().log('Hello world');
   }
 }
 
@@ -200,7 +200,7 @@ const callbackSubscriber = new SubscriberCallbackWrapper < MyEventsArgs, 'someEv
       return;
     }
 
-    bot.logger.log('Hello world');
+    bot.getLogger().log('Hello world');
   }
 );
 
@@ -253,7 +253,7 @@ class InteractionCreateSubscriber
   public handleEvent(meta: EventDispatchMeta, interaction: Interaction) {
     const bot = meta.getBot(true);
 
-    bot.logger.info(`Interaction ${interaction.id} received.`);
+    bot.getLogger().info(`Interaction ${interaction.id} received.`);
   }
 }
 

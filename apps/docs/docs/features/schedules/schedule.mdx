@@ -46,7 +46,7 @@ class MySchedule extends AbstractSchedule {
   public async tick(meta: ScheduleTickMeta) {
     const bot = meta.getBot();
 
-    bot.logger.log("Hello world!");
+    bot.getLogger().log("Hello world!");
   }
 }
 

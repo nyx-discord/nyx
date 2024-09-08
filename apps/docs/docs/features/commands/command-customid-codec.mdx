@@ -63,7 +63,7 @@ const iterator = customIdCodec.createIteratorFromCustomId(interaction.customId);
 
 // Get at index 0, true to throw an error if not present
 const extraData = iterator.getAt(0, true);
-bot.logger.log(extraData); // 'Extra data'
+bot.getLogger().log(extraData); // 'Extra data'
 ```
 
 ```mdx-code-block

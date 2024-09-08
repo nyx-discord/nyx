@@ -49,7 +49,7 @@ class MyEventSubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent
       return;
     }
 
-    bot.logger.log('Hello world');
+    bot.getLogger().log('Hello world');
   }
 }
 
@@ -76,7 +76,7 @@ const callbackSubscriber = new SubscriberCallbackWrapper < MyEventsArgs, 'someEv
       return;
     }
 
-    bot.logger.log('Hello world');
+    bot.getLogger().log('Hello world');
   }
 );
 
@@ -102,7 +102,7 @@ class MyInterfaceEventSubscriber implements EventSubscriber {
       return;
     }
 
-    bot.logger.log('Hello world');
+    bot.getLogger().log('Hello world');
   }
   // ...
 }
@@ -189,7 +189,7 @@ class HighestEventSubscriber extends AbstractEventSubscriber {
 
     const bot = meta.getBot(true);
 
-    bot.logger.log('Called HighestEventSubscriber!');
+    bot.getLogger().log('Called HighestEventSubscriber!');
     meta.setHandled();
   }
 }
@@ -204,7 +204,7 @@ class LowestEventSubscriber extends AbstractEventSubscriber {
   public handleEvent(meta: EventDispatchMeta): void {
     const bot = meta.getBot(true);
 
-    bot.logger.log('Called LowestEventSubscriber!');
+    bot.getLogger().log('Called LowestEventSubscriber!');
   }
 }
 
@@ -221,7 +221,7 @@ class LowestNotIgnoredEventSubscriber extends AbstractEventSubscriber {
   public handleEvent(meta: EventDispatchMeta): void {
     const bot = meta.getBot(true);
 
-    bot.logger.log('Called LowestNotIgnoredEventSubscriber!');
+    bot.getLogger().log('Called LowestNotIgnoredEventSubscriber!');
   }
 }
 
@@ -277,7 +277,7 @@ class OnEventSubscriber extends AbstractEventSubscriber {
   public handleEvent(meta: EventDispatchMeta): void {
     const bot = meta.getBot(true);
 
-    bot.logger.log('Hello from On subscriber!');
+    bot.getLogger().log('Hello from On subscriber!');
   }
 }
 
@@ -289,13 +289,13 @@ class OnceEventSubscriber extends AbstractEventSubscriber {
 
   public override onUnsubscribe(bus: EventBus): void {
     // highlight-next-line
-    bus.bot.logger.log('Unsubscribed OnceEventSubscriber.');
+    bus.bot.getLogger().log('Unsubscribed OnceEventSubscriber.');
   }
 
   public handleEvent(meta: EventDispatchMeta): void {
     const bot = meta.getBot(true);
 
-    bot.logger.log('Hello from On subscriber!');
+    bot.getLogger().log('Hello from On subscriber!');
   }
 }
 
@@ -359,7 +359,7 @@ class HighestEventSubscriber extends AbstractEventSubscriber {
   public handleEvent(meta: EventDispatchMeta): void {
     const bot = meta.getBot(true);
 
-    bot.logger.log('First!');
+    bot.getLogger().log('First!');
   }
 }
 
@@ -372,7 +372,7 @@ class LowestEventSubscriber extends AbstractEventSubscriber {
   public handleEvent(meta: EventDispatchMeta): void {
     const bot = meta.getBot(true);
 
-    bot.logger.log('Last!');
+    bot.getLogger().log('Last!');
   }
 }
 
