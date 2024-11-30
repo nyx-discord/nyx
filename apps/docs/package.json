@@ -15,9 +15,10 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "3.0.1",
-    "@docusaurus/preset-classic": "3.0.1",
-    "@docusaurus/remark-plugin-npm2yarn": "3.0.1",
+    "@docusaurus/core": "3.6.3",
+    "@docusaurus/preset-classic": "3.6.3",
+    "@docusaurus/remark-plugin-npm2yarn": "3.6.3",
+    "@docusaurus/theme-common": "3.6.3",
     "@iconify/react": "4.1.1",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^1.2.1",
@@ -28,10 +29,10 @@
     "remark-kroki": "0.3.1"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.0.1",
-    "@docusaurus/plugin-content-docs": "3.0.1",
-    "@docusaurus/tsconfig": "3.0.1",
-    "@docusaurus/types": "3.0.1",
+    "@docusaurus/module-type-aliases": "3.6.3",
+    "@docusaurus/plugin-content-docs": "3.6.3",
+    "@docusaurus/tsconfig": "3.6.3",
+    "@docusaurus/types": "3.6.3",
     "@playwright/test": "1.39.0",
     "@types/react": "^18.2.29",
     "cheerio": "1.0.0-rc.12",
