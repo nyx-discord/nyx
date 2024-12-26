@@ -23,6 +23,7 @@
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.cdnfonts.com/css/segoe-tv');
 
 /**
  * Any CSS included here will be global. The classic template
@@ -42,6 +43,9 @@
 
   --docusaurus-error-code-line-bg: red;
   --docusaurus-error-code-line-border: darkred;
+  --xy-handle-background-color: transparent;
+  --xy-handle-border-color: transparent;
+  --xy-edge-stroke-width: 2;
 }
 
 [data-theme='dark']:root {
@@ -59,6 +63,8 @@
   --docusaurus-error-code-line-border: #bd0000;
   --docusaurus-warn-code-line-bg: #2b2b20;
   --docusaurus-warn-code-line-border: #bdba00;
+
+  --xy-edge-stroke: #b1b1b7;
 }
 
 [data-theme='light']:root {
@@ -259,3 +265,158 @@ blockquote {
   -webkit-filter: invert(1);
   filter: invert(1);
 }
+
+/* === react-flow start === */
+
+.react-flow__node ul {
+  margin: inherit;
+}
+
+.react-flow__node div {
+  font-family: 'Segoe TV', sans-serif;
+}
+
+.react-flow__node div p {
+  --ifm-paragraph-margin-bottom: 0px;
+}
+
+[data-theme='dark'] .react-flow__node-group {
+  --xy-node-group-background-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='light'] .react-flow__node-group {
+  --xy-node-group-background-color: rgba(0, 0, 0, 0.1);
+}
+
+.actor-node__body {
+  border-radius: 2px;
+}
+
+.actor-node__label {
+  left: 15px;
+  top: 7px;
+  position: absolute;
+  font-size: 20px;
+  font-weight: 400;
+  overflow: visible;
+  width: auto;
+}
+
+.step-node__tooltip {
+  flex-grow: 1;
+  border-radius: 100%;
+  display: flex;
+  width: 30px;
+  height: 30px;
+  transform: translate(50%, -50%);
+  justify-content: center;
+  align-items: center;
+  right: 0;
+  position: absolute;
+  top: 0;
+  cursor: help;
+}
+
+.step-node__tooltip-icon {
+  background-color: var(--ifm-color-primary);
+  box-shadow: 1px 1px 4px 1px var(--ifm-color-primary);
+
+  color: white;
+  border-radius: 100%;
+
+  display: flex;
+  transform-origin: center center;
+  padding: 1px;
+  z-index: 1;
+}
+
+.step-node__tooltip .step-node__tooltip-label {
+  --ifm-code-padding-vertical: 0rem;
+  --ifm-code-padding-horizontal: 0rem;
+
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 0.3s,
+    visibility 0s 0.3s;
+
+  background-color: white;
+  border-style: solid;
+  border-color: var(--ifm-color-primary);
+  border-radius: 6px;
+
+  text-align: center;
+  font-size: 1em;
+
+  transform: translate(0%, -100%);
+  position: absolute;
+  z-index: 1;
+
+  min-height: 30px;
+  width: auto;
+
+  white-space: nowrap;
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 8px 12px;
+}
+
+[data-theme='dark'] .step-node__tooltip-label {
+  color: white;
+  background-color: #212121;
+}
+
+[data-theme='light'] .step-node__tooltip-label {
+  color: #3c4257;
+  background-color: white;
+}
+
+.step-node__tooltip .step-node__tooltip-label p > code {
+  vertical-align: 1px;
+}
+
+.step-node:hover .step-node__tooltip-label {
+  visibility: visible;
+  transition: opacity 0.3s;
+  opacity: 1;
+}
+
+.step-node__tooltip .step-node__tooltip-label::after {
+  content: '  ';
+  position: absolute;
+  top: 105%;
+  left: 50%;
+  margin-left: -9px;
+  border-width: 9px;
+  border-style: solid;
+  border-color: var(--ifm-color-primary) transparent transparent transparent;
+}
+
+.step-node__label {
+  min-height: 70px;
+  border-radius: 8px;
+  border: none;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  font-size: 17px;
+  overflow: hidden;
+  padding: 8px;
+  text-align: center;
+}
+
+[data-theme='dark'] .step-node__label {
+  color: white;
+  background-color: #1e1e1e;
+  box-shadow: 1px 1px 4px 1px rgba(256, 256, 256, 0.4);
+}
+
+[data-theme='light'] .step-node__label {
+  color: #3c4257;
+  background-color: white;
+  box-shadow: 1px 1px 4px 1px rgba(1, 1, 1, 0.4);
+}
+
+/* === react-flow end === */

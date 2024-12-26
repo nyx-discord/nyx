@@ -24,37 +24,16 @@ of these objects.
 `SubscriberMiddlewareList` and passing any errors to its `ErrorHandler`.
 * `EventSubscribers`: Objects that subscribe to an event emitted by an `EventBus`.
 
-<details>
-  <summary>Event emitting process description</summary>
+## 🔢 Event call sequence
 
-  1. An object executes the `EventBus#emit()` method on an event bus, passing the emitted event and its arguments.
-  2. The bus gets the currently registered subscribers to said event.
-  3. The subscribers list and arguments are passed to the bus' `EventDispatcher`.
-  4. For every subscriber, the dispatcher checks its `SubscriberMiddlewareList` which will allow or deny its
-  notification to that subscriber. This includes checking the filter on `EventSubscriber#getFilter()`.
-  5. If allowed, the dispatcher will notify the subscriber, routing any errors to its `EventSubscriberErrorHandler`.
+:::tip
+- A dashed step means it's executed asynchronously, so the next one is inmediately executed.
+- You can hover over steps with `(?)` to see extra details.
+:::
 
-</details>
+import EventOverviewDiagram from '@site/src/components/sequence-diagram/diagrams/EventOverviewDiagram';
 
-```kroki type=plantuml
-@startuml
-!theme cyborg-outline
-
-actor Object
-
-Object -> EventBus : Emit event with args
-EventBus -> EventBus : Get subscribers for event
-EventBus -> EventDispatcher : Pass subscribers and args
-
-loop For each subscriber
-  EventDispatcher -> EventSubscriberMiddlewareList : Check Middleware
-  EventSubscriberMiddlewareList --> EventDispatcher : Allow/Deny call
-  EventDispatcher -> EventSubscriber : Notify Subscriber
-  EventSubscriber --> EventSubscriberErrorHandler : Handle Errors
-end
-
-@enduml
-```
+<EventOverviewDiagram/>
 
 ## ✨ Quick examples
 

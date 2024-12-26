@@ -34,68 +34,16 @@ As well as the actual commands:
 * [`🧩 SubCommand`](./commands/subcommand.mdx): An executable command inside a `ParentCommand`. Can only be executed via a slash command.
 * [`🗂️ SubCommand Group`](./commands/subcommand-group.mdx): An non-executable command inside a `ParentCommand` that only serves to store subcommands.
 
-<details>
-  <summary>Command handling process overview</summary>
+## 🔢 Slash command execution sequence
 
-  Here's a high-level overview of how the system works, using a `ChatInputCommandInteraction` as an example:
+:::tip
+- A dashed step means it's executed asynchronously, so the next one is inmediately executed.
+- You can hover over steps with `(?)` to see extra details.
+:::
 
-  1. A user triggers a command in Discord.
-  2. The `interactionCreate` event is emitted by
-  the [Discord.js Client](https://discord.js.org/#/docs/discord.js/main/class/Client), passing the interaction as an
-  argument.
-  3. The [`ClientEventBus`](../events/event-overview#-subscribing-to-the-client) receives it and starts notifying its subscribers.
-  4. One of these subscribers is the [`CommandInteractionSubscriber`](./command-subscribers), stored on
-  the `CommandSubscriptionsContainer`.
-  5. The subscriber passes the interaction to the [`CommandManager`](./command-manager).
-  6. The manager uses the [`CommandResolver`](./command-resolver) to extract to what command the interaction refers to,
-  passing the currently registered commands from the [`CommandRepository`](./command-repository).
-  8. If a command is found, the manager passes the execution to the [`CommandExecutor`](./command-executor).
-  9. The executor checks what method it should execute according to the interaction. In this
-  case, `ExecutableCommand#execute()`.
-  10. Once it knows what it should execute, it checks its `CommandMiddlewareList` which determines whether to
-  allow
-  or deny the command's execution. If it's allowed, the command is called.
-  11. If any errors occur, they are passed to its [`ErrorHandler`](../../error/error-handling).
-  12. The `CommandManager` uses the `EventBus` to emit a `CommandRun` event asynchronously, passing the executed command
-  and its arguments.
+import CommandOverviewDiagram from '@site/src/components/sequence-diagram/diagrams/CommandOverviewDiagram';
 
-</details>
-
-```kroki type=plantuml
-@startuml
-!theme cyborg-outline
-
-participant "Client" as discordjs
-participant "ClientEventBus" as eventbus
-participant "CommandInteractionSubscriber" as subscriber
-participant "CommandManager" as manager
-participant "CommandRepository" as repository
-participant "CommandResolver" as resolver
-participant "CommandExecutor" as executor
-participant "EventBus" as eventbus2
-discordjs -> eventbus : Emit 'interactionCreate'
-eventbus -> subscriber : Notify Subscribers
-subscriber -> manager : Pass Interaction
-activate manager
-manager -> repository : Get all commands
-activate repository
-repository -> manager
-deactivate repository
-manager -> resolver : Search executable command
-activate resolver
-resolver -> manager
-deactivate resolver
-manager -> executor : Execute found command
-activate executor
-executor -> executor : Check Middleware
-executor -> executor : Execute command
-executor -> executor : Handle errors
-executor -> manager : Finish execution
-deactivate executor
-manager --> eventbus2 : Emit event
-deactivate manager
-@enduml
-```
+<CommandOverviewDiagram/>
 
 ## 📚 Creating a command
 

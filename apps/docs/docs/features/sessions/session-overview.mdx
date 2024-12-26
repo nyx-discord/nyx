@@ -43,6 +43,8 @@ There are three utility session types that derive from the main `Session` interf
 * `ListPaginationSession` Paginates a list of items, showing a given amount of them per page.
 * `StagePaginationSession`: Paginates through "stages", which act like nested sessions.
 
+## 🔢 Session sequences
+
 <details>
   <summary>Session process overview</summary>
 
@@ -89,138 +91,28 @@ There are three utility session types that derive from the main `Session` interf
 
 </details>
 
-#### Session start process
+:::tip
+- A dashed step means it's executed asynchronously, so the next one is inmediately executed.
+- You can hover over steps with `(?)` to see extra details.
+:::
 
-```kroki type=plantuml
-@startuml
-!theme cyborg-outline
+#### Start sequence
 
-participant "User" as user
-participant "Command" as command
-participant "Session" as session
-participant "SessionManager" as manager
-participant "SessionRepository" as repository
-participant "SessionExecutor" as executor
-participant "SessionStartMiddlewareList" as middleware
-participant "EventBus" as eventBus
+import SessionStartDiagram from '@site/src/components/sequence-diagram/diagrams/session/SessionStartDiagram';
 
-user -> command : Trigger Session Creation
-activate command
-command -> session : Instantiate Session
-session -> command
-command -> manager : Register to manager
-deactivate command
-activate manager
-manager -> repository : Save Session
-manager -> executor : Start Session
-activate executor
-executor -> middleware : Check Start Middleware
-activate middleware
-middleware -> executor : Allow/Deny start
-deactivate middleware
-executor -> session : Start Session
-executor -> executor : Handle errors
-executor -> manager : Session Started
-deactivate executor
-manager --> eventBus : Emit event
-deactivate manager
-deactivate command
-@enduml
-```
+<SessionStartDiagram/>
 
-#### Session Update process
+#### Update sequence
 
-```kroki type=plantuml
-@startuml
-!theme cyborg-outline
+import SessionUpdateDiagram from '@site/src/components/sequence-diagram/diagrams/session/SessionUpdateDiagram';
 
-participant "SessionComponent" as component
-participant "SessionUpdateSubscriber" as subscriber
-participant "SessionManager" as manager
-participant "SessionCustomIdCodec" as codec
-participant "SessionRepository" as repository
-participant "SessionExecutor" as executor
-participant "Session" as session
-participant "SessionMiddlewareList" as middleware
-participant "EventBus" as eventBus
+<SessionUpdateDiagram/>
 
-component -> subscriber : Emit interactionCreate
-activate subscriber
-subscriber -> manager : Pass to SessionManager
-activate manager
-manager -> codec : Extract Session ID
-activate codec
-codec -> manager : Return Session ID
-deactivate codec
-manager -> repository : Get Session from Repository
-activate repository
-repository -> manager : Session exists or missing
-deactivate repository
-alt Session Exists
-  manager -> executor : Call session update
-  activate executor
-  executor -> middleware : Check Update Middleware
-  activate middleware
-  middleware -> session : Check Update Filter
-  activate session
-  session -> middleware : Filter Passed
-  deactivate session
-  middleware -> executor : Middleware Passed
-  deactivate middleware
-  activate session
-  executor -> session : Update Session
-  session -> executor : Request TTL Refresh
-  deactivate session
-  executor -> manager : Request TTL Refresh
-  deactivate executor
-  manager --> repository : Refresh Session TTL
-  manager --> eventBus : Emit Event
-else Missing Session
-  manager --> executor : Handle missing session
-end
-deactivate manager
-deactivate subscriber
-@enduml
-```
+#### Expire sequence
 
-#### Session Expiration Process
+import SessionExpirationDiagram from '@site/src/components/sequence-diagram/diagrams/session/SessionExpirationDiagram';
 
-```kroki type=plantuml
-@startuml
-!theme cyborg-outline
-
-participant "SessionRepository" as repository
-participant "SessionManager" as sessionManager
-participant "SessionExecutor" as sessionExecutor
-participant "Session" as session
-participant "SessionPromiseRepository" as promiseRepository
-participant "EventBus" as eventBus
-
-activate repository
-repository -> repository : Remove Expired Session
-repository --> sessionManager : Notify Session Expiration
-deactivate repository
-
-activate sessionManager
-sessionManager -> sessionManager: Create SessionEndData
-sessionManager -> sessionExecutor : End session
-activate sessionExecutor
-sessionExecutor -> session : Notify end
-activate session
-session -> session : Cleanup, calculate result
-sessionExecutor -> session : Get result
-session -> sessionExecutor : Return result
-deactivate session
-sessionExecutor -> sessionExecutor : Fill EndData with result
-sessionExecutor -> sessionManager : Return EndData
-deactivate sessionExecutor
-
-sessionManager --> promiseRepository : Resolve EndPromise
-
-sessionManager --> eventBus : Emit Event
-deactivate sessionManager
-@enduml
-```
+<SessionExpirationDiagram/>
 
 ## ✨ Quick Examples
 

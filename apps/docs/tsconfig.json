@@ -3,6 +3,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "jsx": "react",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "lib": [
+      "dom",
+      "es2023"
+    ],
+    "target": "es2015",
+    "moduleResolution": "node"
   }
 }

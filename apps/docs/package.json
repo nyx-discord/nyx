@@ -21,6 +21,7 @@
     "@docusaurus/theme-common": "3.6.3",
     "@iconify/react": "4.1.1",
     "@mdx-js/react": "^3.0.0",
+    "@xyflow/react": "12.3.5",
     "clsx": "^1.2.1",
     "docusaurus-plugin-image-zoom": "1.0.1",
     "node-fetch": "3.3.2",

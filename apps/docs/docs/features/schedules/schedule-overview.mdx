@@ -45,52 +45,16 @@ use all of these objects. All objects below are contained here.
 its `ErrorHandler`.
 * `EventBus`: An [📣 Event Bus](../events/event-bus) that emits schedule related events.
 
-<details>
-  <summary>Schedule process overview</summary>
+## 🔢 Schedule tick sequence
 
-  When the Schedule is added:
+:::tip
+- A dashed step means it's executed asynchronously, so the next one is inmediately executed.
+- You can hover over steps with `(?)` to see extra details.
+:::
 
-  1. A schedule is added via `ScheduleManager#addSchedule()`.
-  2. The manager adds the schedule is added to the `ScheduleRepository`.
-  3. The manager tells the `ScheduleExecutionScheduler` to create a new `ScheduleJobAdapter` for it.
-  4. The `ScheduleManager` uses the `EventBus` to emit a `ScheduleAdd` event asynchronously, passing the added schedule.
+import ScheduleOverviewDiagram from '@site/src/components/sequence-diagram/diagrams/ScheduleOverviewDiagram';
 
-  When the job determines that the schedule should be called:
-
-  1. The `ScheduleJobAdapter` tells the `ScheduleExecutor` to execute the schedule.
-  2. The `ScheduleExecutor` checks its `ScheduleMiddlewareList` which will allow or deny the execution.
-  This includes checking the filter on `Schedule#getFilter()`.
-  3. If the execution is allowed, the schedule is called, passing any errors to its `ErrorHandler`.
-
-</details>
-
-```kroki type=plantuml
-@startuml
-!theme cyborg-outline
-
-participant ScheduleManager
-participant ScheduleRepository
-participant ScheduleExecutionScheduler
-participant ScheduleJobAdapter
-participant ScheduleExecutor
-participant ScheduleMiddlewareList
-participant ErrorHandler
-
-ScheduleManager -> ScheduleRepository: Add Schedule
-activate ScheduleManager
-ScheduleManager -> ScheduleExecutionScheduler: Track Schedule
-ScheduleExecutionScheduler -> ScheduleJobAdapter: Create
-ScheduleJobAdapter -> ScheduleManager: Return job
-deactivate ScheduleManager
-
-note over ScheduleJobAdapter: Job Signals Schedule Call
-ScheduleJobAdapter -> ScheduleExecutor: Execute Schedule
-ScheduleExecutor -> ScheduleMiddlewareList: Check Middleware
-ScheduleMiddlewareList -> ScheduleExecutor: Execution Allowed?
-ScheduleExecutor -> ScheduleJobAdapter: Call Schedule
-ScheduleJobAdapter -> ErrorHandler: Pass Errors
-@enduml
-```
+<ScheduleOverviewDiagram/>
 
 ## ✨ Quick examples
 
