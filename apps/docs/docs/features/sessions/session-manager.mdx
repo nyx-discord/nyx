@@ -38,7 +38,7 @@ const myBot = Bot.create((bot: NyxBot) => ({
 }));
 
 // highlight-next-line
-myBotgetSessionManager().myCustomPublicMethod() // works!
+mybot.getSessionManager().myCustomPublicMethod() // works!
 ```
 
 The `Bot` class is able to infer the type of your custom manager via generics, so accessing any custom public method or

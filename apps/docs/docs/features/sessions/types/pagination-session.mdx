@@ -87,7 +87,7 @@ class MyPaginationSession extends AbstractPaginationSession {
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MyPaginationSession(bot, sessionId, interaction);
-await botgetSessionManager().start(session);
+await bot.getSessionManager().start(session);
 ```
 
 ```mdx-code-block
@@ -103,7 +103,7 @@ class MyPaginationSession implements PaginationSession {
 }
 
 const session = new MyPaginationSession(/** ... */);
-await botgetSessionManager().start(session);
+await bot.getSessionManager().start(session);
 ```
 
 ```mdx-code-block
@@ -117,7 +117,7 @@ When using a pagination session the `SessionCustomIdCodec` can generate a `Pagin
 `CustomIdBuilder` that supports adding a page reference to the customId being built.
 
 ```ts
-const codec = botgetSessionManager().getCustomIdCodec();
+const codec = bot.getSessionManager().getCustomIdCodec();
 
 const builder = codec.createPageCustomIdBuilder(session);
 builder.push('foo').push('bar').setPage(1);

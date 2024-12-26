@@ -145,7 +145,7 @@ class MyStageSession extends AbstractStagePaginationSession {
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
 const session = new MyStageSession(bot, sessionId, interaction);
-await botgetSessionManager().start(session);
+await bot.getSessionManager().start(session);
 ```
 
 ```mdx-code-block
@@ -161,7 +161,7 @@ class MyStageSession implements StagePaginationSession {
 }
 
 const session = new MyStageSession(/** ... */);
-await botgetSessionManager().start(session);
+await bot.getSessionManager().start(session);
 ```
 
 ```mdx-code-block
