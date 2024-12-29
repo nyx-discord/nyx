@@ -274,10 +274,19 @@ blockquote {
 
 .react-flow__node div {
   font-family: 'Segoe TV', sans-serif;
+  cursor: grab;
+}
+
+.react-flow__node div:active {
+  cursor: grabbing;
 }
 
 .react-flow__node div p {
   --ifm-paragraph-margin-bottom: 0px;
+}
+
+.react-flow__node-group:active {
+  cursor: grabbing;
 }
 
 [data-theme='dark'] .react-flow__node-group {

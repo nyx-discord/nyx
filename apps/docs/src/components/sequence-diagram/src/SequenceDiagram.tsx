@@ -62,6 +62,9 @@ export const SequenceDiagram = <ActorIds extends string>(
         colorMode={colorMode}
         edgesReconnectable={false}
         elementsSelectable={false}
+        nodesDraggable={false}
+        onNodeMouseEnter={(_event, node) => (node.data.isHovering = true)}
+        onNodeMouseLeave={(_event, node) => (node.data.isHovering = false)}
         nodeTypes={nodeTypes}
         minZoom={0}
         fitView={props.defaultViewport === undefined}
@@ -77,6 +80,7 @@ export const SequenceDiagram = <ActorIds extends string>(
         <Controls
           className="sequence-diagram__controls"
           fitViewOptions={{ duration: 200 }}
+          showInteractive={false}
         />
       </ReactFlowComponent>
     </div>

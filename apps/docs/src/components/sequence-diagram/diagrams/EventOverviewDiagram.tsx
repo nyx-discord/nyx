@@ -149,6 +149,7 @@ export default function EventOverviewDiagram() {
       position: { x: 790, y: 440 },
       data: {},
       style: {
+        cursor: 'grab',
         width: 980,
         height: 670,
       },
@@ -166,6 +167,7 @@ export default function EventOverviewDiagram() {
         textShadow: 'var(--ifm-color-emphasis-100) 1px 0 10px',
         fontFamily: 'Segoe TV, sans-serif',
         backgroundColor: 'transparent',
+        cursor: 'grab',
       },
     },
   ];
