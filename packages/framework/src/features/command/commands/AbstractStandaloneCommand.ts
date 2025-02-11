@@ -1,16 +1,17 @@
 import type {
+  CommandCustomIdData,
   CommandExecutionMeta,
   StandaloneCommand,
 } from '@nyx-discord/core';
-import type {
-  AutocompleteInteraction,
-  Awaitable,
-  ChatInputCommandInteraction,
-  SlashCommandBuilder,
-  SlashCommandOptionsOnlyBuilder,
-  Snowflake,
+import {
+  ApplicationCommandType,
+  type AutocompleteInteraction,
+  type Awaitable,
+  type ChatInputCommandInteraction,
+  type SlashCommandBuilder,
+  type SlashCommandOptionsOnlyBuilder,
+  type Snowflake,
 } from 'discord.js';
-
 import { NotImplementedError } from '../../../errors/NotImplementedError';
 import { AbstractExecutableCommand } from './executable/AbstractExecutableCommand';
 
@@ -21,6 +22,14 @@ export abstract class AbstractStandaloneCommand
   >
   implements StandaloneCommand
 {
+  protected readonly customIdData: CommandCustomIdData = {
+    type: ApplicationCommandType.ChatInput,
+    name: this.getName(),
+    extra: null,
+    subcommand: null,
+    group: null,
+  };
+
   public getName(): string {
     return this.createData().name;
   }

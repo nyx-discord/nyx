@@ -1,6 +1,5 @@
 import type {
   NyxBot,
-  PaginationCustomIdBuilder,
   PaginationSession,
   SessionExecutionMeta,
   SessionStartInteraction,
@@ -14,28 +13,21 @@ import type {
   ModalMessageModalSubmitInteraction,
 } from 'discord.js';
 import { ButtonStyle, ComponentType } from 'discord.js';
-
 import { AbstractSession } from './AbstractSession.js';
 
 export abstract class AbstractPaginationSession<Result>
   extends AbstractSession<Result>
   implements PaginationSession<Result>
 {
-  protected override customId: PaginationCustomIdBuilder;
-
   protected currentPage: number;
 
-  constructor(
-    bot: NyxBot,
-    id: string,
-    createInteraction: SessionStartInteraction,
-    ttl?: number,
-  ) {
-    super(bot, id, createInteraction, ttl);
-    this.customId = bot
-      .getSessionManager()
-      .getCustomIdCodec()
-      .createPageCustomIdBuilder(this);
+  constructor(options: {
+    bot: NyxBot;
+    id: string;
+    startInteraction: SessionStartInteraction;
+    ttl?: number;
+  }) {
+    super(options);
     this.currentPage = 0;
   }
 
@@ -67,6 +59,14 @@ export abstract class AbstractPaginationSession<Result>
     return this.currentPage == 0 ? null : this.currentPage - 1;
   }
 
+  public buildPageCustomId(page: number, extra?: string): string {
+    return this.codec.serialize({
+      ...this.customIdData,
+      page,
+      extra: extra ?? null,
+    });
+  }
+
   /** Extracts the referred page in an update interaction, if any. */
   protected extractPageFromInteraction(
     interaction: SessionUpdateInteraction,
@@ -87,24 +87,24 @@ export abstract class AbstractPaginationSession<Result>
     interaction: ButtonInteraction,
   ): number | null {
     const codec = this.bot.getSessionManager().getCustomIdCodec();
-
-    return codec.extractPageFromCustomId(interaction.customId);
+    return codec.deserialize(interaction.customId)?.page ?? null;
   }
 
   /** Extracts the referred page in an AnySelectMenuInteraction, if any. */
   protected extractPageFromSelectMenu(
     interaction: AnySelectMenuInteraction,
   ): number | null {
-    const codec = this.bot.getSessionManager().getCustomIdCodec();
-
-    const newPage = codec.extractPageFromCustomId(interaction.customId);
-
-    if (newPage !== null || !interaction.isStringSelectMenu()) return newPage;
+    const newPage = this.extractPageFromCustomId(interaction.customId);
+    if (newPage !== null || !interaction.isStringSelectMenu()) {
+      return newPage;
+    }
 
     const firstValue = interaction.values[0];
-    if (!firstValue || interaction.values.length > 1) return newPage;
+    if (!firstValue || interaction.values.length > 1) {
+      return newPage;
+    }
 
-    return codec.extractPageFromCustomId(firstValue);
+    return this.extractPageFromCustomId(firstValue);
   }
 
   /** Extracts the referred page in an ModalMessageModalSubmitInteraction, if any. */
@@ -113,13 +113,13 @@ export abstract class AbstractPaginationSession<Result>
   ): number | null {
     const codec = this.bot.getSessionManager().getCustomIdCodec();
 
-    const newPage = codec.extractPageFromCustomId(interaction.customId);
+    const newPage = this.extractPageFromCustomId(interaction.customId);
     if (newPage !== null) return newPage;
 
     const components = interaction.components.flatMap((row) => row.components);
     for (const component of components) {
-      const id = codec.deserializeToObjectId(component.customId);
-      if (!id) continue;
+      const data = codec.deserialize(component.customId);
+      if (!data) continue;
 
       const pageString = component.value;
       const pageNumber = parseInt(pageString);
@@ -133,7 +133,7 @@ export abstract class AbstractPaginationSession<Result>
   }
 
   /** Utility to build a pagination ActionRow, considering next/previous pages and disabling buttons accordingly. */
-  protected buildDefaultPageRow(
+  protected buildBasicPageRow(
     hasNextPage?: boolean,
   ): ActionRowData<InteractionButtonComponentData> {
     const nextPage = this.currentPage + 1;
@@ -144,7 +144,7 @@ export abstract class AbstractPaginationSession<Result>
       components: [
         {
           type: ComponentType.Button,
-          customId: this.buildCustomIdForPage(previousPage),
+          customId: this.buildPageCustomId(previousPage),
           emoji: '⬅',
           style: ButtonStyle.Secondary,
           disabled: this.currentPage === 0,
@@ -152,7 +152,7 @@ export abstract class AbstractPaginationSession<Result>
         {
           type: ComponentType.Button,
           style: ButtonStyle.Secondary,
-          customId: hasNextPage ? this.buildCustomIdForPage(nextPage) : 'NaN',
+          customId: hasNextPage ? this.buildPageCustomId(nextPage) : 'NaN',
           emoji: '➡',
           disabled: !hasNextPage,
         },
@@ -160,9 +160,8 @@ export abstract class AbstractPaginationSession<Result>
     };
   }
 
-  /** Builds a customId for a given page. */
-  protected buildCustomIdForPage(page: number): string {
-    return this.customId.clone().setPage(page).build();
+  protected extractPageFromCustomId(customId: string): number | null {
+    return this.codec.deserialize(customId)?.page ?? null;
   }
 
   /** Handles a page update. */

@@ -1,15 +1,16 @@
 import type {
+  CommandCustomIdData,
   CommandExecutionMeta,
   ContextMenuCommand,
 } from '@nyx-discord/core';
-import type {
-  Awaitable,
-  ContextMenuCommandBuilder,
-  MessageContextMenuCommandInteraction,
-  Snowflake,
-  UserContextMenuCommandInteraction,
+import {
+  ApplicationCommandType,
+  type Awaitable,
+  type ContextMenuCommandBuilder,
+  type MessageContextMenuCommandInteraction,
+  type Snowflake,
+  type UserContextMenuCommandInteraction,
 } from 'discord.js';
-
 import { NotImplementedError } from '../../../errors/NotImplementedError';
 import { AbstractExecutableCommand } from './executable/AbstractExecutableCommand';
 
@@ -20,6 +21,14 @@ export abstract class AbstractContextMenuCommand
   >
   implements ContextMenuCommand
 {
+  protected readonly customIdData: CommandCustomIdData = {
+    type: ApplicationCommandType.Message,
+    name: this.getName(),
+    extra: null,
+    subcommand: null,
+    group: null,
+  };
+
   public execute(
     interaction:
       | MessageContextMenuCommandInteraction

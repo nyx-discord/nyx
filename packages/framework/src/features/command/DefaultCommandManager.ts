@@ -18,7 +18,6 @@ import type {
 import { CommandEventEnum, CommandExecutionMeta } from '@nyx-discord/core';
 import type { AutocompleteInteraction, Client, ClientEvents } from 'discord.js';
 import { InteractionType } from 'discord.js';
-
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultCommandCustomIdCodec } from './customId/DefaultCommandCustomIdCodec.js';
 import { DefaultCommandDeployer } from './deploy/DefaultCommandDeployer';
@@ -325,10 +324,10 @@ export class DefaultCommandManager implements CommandManager {
     } else {
       const { customId } = interaction;
 
-      const names = this.customIdCodec.deserializeToNameTree(customId);
-      if (!names) return false;
+      const data = this.customIdCodec.deserialize(customId);
+      if (!data) return false;
 
-      const found = this.repository.locateByNameTree(...names);
+      const found = this.repository.locateExecutableByCustomIdData(data);
       if (!found || found.isParent() || found.isSubCommandGroup()) {
         return false;
       }

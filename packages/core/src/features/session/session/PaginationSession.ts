@@ -10,4 +10,7 @@ export interface PaginationSession<Result> extends Session<Result> {
 
   /** Returns the previous page of this session, or `null` if there is no previous page. */
   getPreviousPage(): number | null;
+
+  /** Builds this session's custom id to a specific page, optionally with extra data. */
+  buildPageCustomId(page: number, extra?: string): string;
 }

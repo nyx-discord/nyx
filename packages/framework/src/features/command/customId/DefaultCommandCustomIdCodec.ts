@@ -1,48 +1,30 @@
 import type {
-  AnyExecutableCommand,
   CommandCustomIdCodec,
+  CommandCustomIdData,
 } from '@nyx-discord/core';
-
+import { Schema, t } from '@sapphire/string-store';
 import { AbstractCustomIdCodec } from '../../../customId/AbstractCustomIdCodec';
+import { SerializableFeatureEnum } from '../../../customId/SerializableFeatureEnum';
 
 export class DefaultCommandCustomIdCodec
-  extends AbstractCustomIdCodec<AnyExecutableCommand>
+  extends AbstractCustomIdCodec<CommandCustomIdData>
   implements CommandCustomIdCodec
 {
-  public static readonly DefaultNamespace = 'CMD';
-
-  public static readonly DefaultNamesSeparator = ':';
-
-  protected readonly namesSeparator: string;
-
-  constructor(
-    prefix: string = DefaultCommandCustomIdCodec.DefaultNamespace,
-    separator: string = DefaultCommandCustomIdCodec.DefaultSeparator,
-    metadataSeparator: string = DefaultCommandCustomIdCodec.DefaultMetadataSeparator,
-    namesSeparator: string = DefaultCommandCustomIdCodec.DefaultNamesSeparator,
-  ) {
-    super(prefix, separator, metadataSeparator);
-
-    this.namesSeparator = namesSeparator;
-  }
+  protected override readonly schema = new Schema(
+    SerializableFeatureEnum.Command,
+  )
+    // Currently technically a uint2 is just the enough size, but I'm making it 4 for future-proofing
+    .uint4('type')
+    .string('name')
+    .nullable('extra', t.string)
+    .nullable('subcommand', t.string)
+    .nullable(
+      'group',
+      t.string,
+      // The union makes this not match the schema, type asserting here
+    ) as AbstractCustomIdCodec<CommandCustomIdData>['schema'];
 
   public static create(): CommandCustomIdCodec {
     return new DefaultCommandCustomIdCodec();
-  }
-
-  public getNameTreeFromId(id: string): [string, ...string[]] {
-    return id.split(this.namesSeparator) as [string, ...string[]];
-  }
-
-  public deserializeToNameTree(customId: string): [string, ...string[]] | null {
-    const id = this.deserializeToObjectId(customId);
-    if (!id) return null;
-
-    return this.getNameTreeFromId(id);
-  }
-
-  /** @inheritDoc */
-  protected getIdOf(serialized: AnyExecutableCommand): string {
-    return serialized.getNameTree().join(this.namesSeparator);
   }
 }

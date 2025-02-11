@@ -50,7 +50,7 @@ class MyListPaginationSession extends AbstractListPaginationSession<number> {
 
   protected createPage() {
     const currentNumbers = this.getCurrentPageElements();
-    const row = this.buildDefaultPageRow();
+    const row = this.buildBasicPageRow();
 
     return {
       content: `Current numbers: ${currentNumbers.join(', ')}`,

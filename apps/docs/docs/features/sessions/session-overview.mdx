@@ -131,16 +131,8 @@ menu, or modal). You can of course override this method to your liking.
 // A session with no result (void).
 class MySession extends AbstractSession<void> {
   public async start() {
-    const customIdBuilder = this.customId.clone();
-
-    /**
-     * The builder allows you to create customIds that will route to this session.
-     * The 'select' and 'button' parts are not needed for routing,
-     * but they're there to avoid duplicated customIds, which aren't allowed by Discord.
-     */
-
     // Creating a select menu
-    const selectMenuId = customIdBuilder.push('select').build();
+    const selectMenuId = this.buildCustomId('select');
     const mySelectMenu = new StringSelectMenuBuilder()
       .setCustomId(selectMenuId)
       .setPlaceholder('A select menu!')
@@ -157,7 +149,7 @@ class MySession extends AbstractSession<void> {
       ]);
 
     // Creating a button
-    const buttonId = customIdBuilder.push('button').build();
+    const buttonId = this.buildCustomId('button');
     const myButton = new ButtonBuilder()
       .setCustomId(buttonId)
       .setLabel('Click to open a modal!')
@@ -176,10 +168,13 @@ class MySession extends AbstractSession<void> {
    * Called when updating the session, and `Session#update()`
    * has determined that it's a button interaction.
    */
-  protected async handleButton(interaction: ButtonInteraction) {
-    const modalId = customIdBuilder.push('modal').build();
+  protected async handleButton(
+    interaction: ButtonInteraction,
+    meta: SessionExecutionMeta,
+  ) {
+    const modalId = this.buildCustomId('modal');
     const myModal = new ModalBuilder()
-      .setCustomId(modalId)
+      .setCustomId(modalId);
       .setTitle('My modal!')
       .addComponents([
         new ActionRowBuilder()
@@ -194,10 +189,8 @@ class MySession extends AbstractSession<void> {
 
     await interaction.showModal(myModal);
 
-    // You can also get the extra 'button' token (or any added token) here.
-    const codec = this.bot.getSessionManager().getCustomIdCodec();
-    const iterator = codec.createIteratorFromCustomId(interaction.customId);
-    this.bot.getLogger().log(iterator.getTokens()); // ['button']
+    // You can also get the extra 'button' string here.
+    const extra = meta.get(TypedKeys.CustomIdExtra); // 'button'
   }
 
   /**
@@ -222,7 +215,7 @@ class MySession extends AbstractSession<void> {
 // Somewhere in your code, like inside a command...
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
-const session = new MySession(bot, sessionId, interaction);
+const session = new MySession({ bot, id: sessionId, startInteraction });
 await bot.getSessionManager().start(session);
 
 // `await` for the session to end
@@ -236,16 +229,14 @@ await interaction.editReply('Session ended!');
 <TabItem value="Pagination session">
 ```
 
-A pagination session contains more options to accommodate page routing, like the `PaginationCustomIdBuilder`. You can use
-this builder to create page switch components. If you don't specify a page, it will be routed by default to the correspondent
-handler (`#handleSelectMenu()`, `#handleButton()` or `#handleModal()`).
+A pagination session can serialize pagination information into customIds to create page switch components.
+If you don't specify a page, it will be routed by default to the correspondent handler (`#handleSelectMenu()`, `#handleButton()` or `#handleModal()`).
 
 ```ts
 class MyPaginationSession extends AbstractPaginationSession<void> {
   // Called when starting the session.
   public async start() {
     const page = this.createPage();
-
     await this.startInteraction.reply(page);
   }
 
@@ -255,7 +246,7 @@ class MyPaginationSession extends AbstractPaginationSession<void> {
   *
   * At this step, `this.currentPage` has already been updated.
   */
-  protected async updatePage(interaction: SessionUpdateInteraction) {
+  protected override async updatePage(interaction: SessionUpdateInteraction) {
     /** Only let the user who started the session update the page. */
     if (interaction.user.id !== this.startInteraction.user.id) {
       await interaction.reply('You can\'t do this!');
@@ -272,17 +263,8 @@ class MyPaginationSession extends AbstractPaginationSession<void> {
   protected createPage() {
     const randomPage = Math.floor(Math.random() * 10);
 
-    /**
-    * Use this session's customIdBuilder to generate a customId
-    * that will route to this session.
-    */
-    const customIdBuilder = this.customId.clone();
-
-    /**
-    * PaginationSessions have a special `PaginationCustomIdBuilder`
-    * with page manipulation methods.
-    */
-    const customId = customIdBuilder.setPage(randomPage).build();
+    /** AbstractPaginationSessions have protected page manipulation methods. */
+    const customId = this.buildPageCustomId(randomPage);
 
     const button = new ButtonBuilder()
       .setCustomId(customId)
@@ -291,12 +273,11 @@ class MyPaginationSession extends AbstractPaginationSession<void> {
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 
     /**
-    * Builds an ActionRow with some default "Next page"
-    * and "Previous page" buttons.
+    * Builds an ActionRow with basic next and previous buttons.
     *
-    * Equivalent to the example above, but with page this.currentPage -+ 1
+    * Similar to the example above, but with pages this.currentPage -+ 1
     */
-    const pageRow = this.buildDefaultPageRow();
+    const pageRow = this.buildBasicPageRow();
 
     return {
       content: `You're on page ${this.currentPage}`,
@@ -308,7 +289,7 @@ class MyPaginationSession extends AbstractPaginationSession<void> {
 // Somewhere in your code, like inside a command...
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
-const session = new MyPaginationSession(bot, sessionId, interaction);
+const session = new MyPaginationSession({ bot, id: sessionId, startInteraction });
 await bot.getSessionManager().start(session);
 
 // `await` for the session to end
@@ -360,7 +341,7 @@ class MyListPaginationSession extends AbstractListPaginationSession<number, void
 
   protected createPage() {
     const currentNumbers = this.getCurrentPageElements();
-    const row = this.buildDefaultPageRow();
+    const row = this.buildBasicPageRow();
 
     return {
       content: `Current numbers: ${currentNumbers.join(', ')}`,
@@ -371,9 +352,9 @@ class MyListPaginationSession extends AbstractListPaginationSession<number, void
 
 // Somewhere in your code, like inside a command...
 
-const sessionItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const sessionId = 'mySessionId'; // Ideally randomly generated
-const session = new MyListPaginationSession(bot, sessionId, interaction, sessionItems);
+const session = new MyListPaginationSession({ bot, sessionId, interaction, items });
 await bot.getSessionManager().start(session);
 
 // `await` for the session to end
@@ -413,7 +394,7 @@ class Stage1 extends AbstractSessionStartStage<void> {
     interaction: SessionStartInteraction,
   ): Promise<void> {
     const nextPage = this.session.getCurrentPage() + 1;
-    const nextPageId = this.session.getCustomId().setPage(nextPage).build();
+    const nextPageId = this.session.buildPageCustomId(nextPage);
     const pageButton = new ButtonBuilder()
       .setStyle(1)
       .setLabel('Next stage')
@@ -423,15 +404,14 @@ class Stage1 extends AbstractSessionStartStage<void> {
       pageButton,
     );
 
-    const buttonId = this.customId.clone().push('button').build();
+    const buttonId = this.buildCustomId('button');
     const button = new ButtonBuilder()
       .setStyle(1)
       .setLabel('Click me')
       .setCustomId(buttonId);
 
-    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      button,
-    );
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>()
+      .addComponents(button);
 
     await interaction.reply({
       components: [pageRow, buttonRow],
@@ -445,21 +425,20 @@ class Stage1 extends AbstractSessionStartStage<void> {
     _oldStage: SessionStage<unknown>,
     _meta: SessionExecutionMeta,
   ): Promise<boolean> {
-    const row = this.buildDefaultPageRow();
+    const row = this.buildBasicPageRow();
 
-    const buttonId = this.customId.push('test').build();
+    const buttonId = this.customId.buildCustomId('test');
     const button = new ButtonBuilder()
       .setStyle(1)
       .setLabel('test')
       .setCustomId(buttonId);
 
-    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      button,
-    );
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>()
+      .addComponents(button);
 
     await interaction.update({
       components: [row, buttonRow],
-      content: 'test switch',
+      content: 'Switched',
     });
 
     return true;
@@ -493,7 +472,7 @@ class Stage2 extends AbstractSessionStage<void> {
   public async onSwitch(
     interaction: SessionUpdateInteraction,
   ): Promise<boolean> {
-    const row = this.buildDefaultPageRow();
+    const row = this.buildBasicPageRow();
 
     await interaction.update({
       components: [row],
@@ -511,13 +490,13 @@ class Stage2 extends AbstractSessionStage<void> {
 // Somewhere in your code, like inside a command...
 
 const sessionId = 'mySessionId'; // Ideally randomly generated
-const session = new MyStageSession(bot, sessionId, interaction);
+const session = new MyStageSession({ bot, id: sessionId, startInteraction });
 await bot.getSessionManager().start(session);
 
 // `await` for the session to end
 await session.getEndPromise();
 
-await interaction.editReply('Session ended!');
+await startInteraction.editReply('Session ended!');
 ```
 
 ```mdx-code-block

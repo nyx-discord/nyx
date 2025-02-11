@@ -64,9 +64,7 @@ class MyPaginationSession extends AbstractPaginationSession {
 
   protected createPage() {
     const randomPage = Math.floor(Math.random() * 10);
-
-    const customIdBuilder = this.customId.clone();
-    const customId = customIdBuilder.setPage(randomPage).build();
+    const customId = this.buildPageCustomId(randomPage);
 
     const button = new ButtonBuilder()
       .setCustomId(customId)
@@ -74,7 +72,7 @@ class MyPaginationSession extends AbstractPaginationSession {
       .setStyle(ButtonStyle.Primary);
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 
-    const pageRow = this.buildDefaultPageRow();
+    const pageRow = this.buildBasicPageRow();
 
     return {
       content: `You're on page ${this.currentPage}`,
@@ -113,16 +111,10 @@ await bot.getSessionManager().start(session);
 
 ## 💬 Pagination Custom Ids
 
-When using a pagination session the `SessionCustomIdCodec` can generate a `PaginationCustomIdBuilder`, an extension of
-`CustomIdBuilder` that supports adding a page reference to the customId being built.
-
+The `CustomIdCodec` supports serializing pages into customIds.
 ```ts
 const codec = bot.getSessionManager().getCustomIdCodec();
-
-const builder = codec.createPageCustomIdBuilder(session);
-builder.push('foo').push('bar').setPage(1);
-
-const customId = builder.build();
+const customId = codec.serialize({ id: 'mySessionId', page: 3 });
 ```
 
 For `AbstractPaginationSession`:
@@ -131,13 +123,21 @@ For `AbstractPaginationSession`:
 
 ### ✨ Component Examples
 
+:::tip
+All these behaviors are defined in `AbstractPaginationSession#onUpdate()`. In case you want to change any of these, override said method.
+:::
+
+:::note
+The methods here assume you're inside an `AbstractPaginationSession`. If you're not, you can use `SessionCustomIdCodec#serialize({ id, page })` as well.
+:::
+
 ```mdx-code-block
 <Tabs>
 <TabItem value="Button">
 ```
 
 ```ts
-const buttonId = builder.cloneSetPage(3).build();
+const buttonId = this.buildPageCustomId(3);
 
 const button = new ButtonBuilder()
   // highlight-next-line
@@ -157,7 +157,7 @@ You can either:
 for [🔀 Stage Pagination Sessions](./stage-pagination-session)).
 
 ```ts
-const selectId = builder.cloneSetPage(3).build();
+const buttonId = this.buildPageCustomId(3);
 
 const select = new SelectMenuBuilder()
   // highlight-next-line
@@ -182,11 +182,8 @@ pagination indexes.
 :::
 
 ```ts
-const selectId = builder.build();
-
 const selectMenu = new StringSelectMenuBuilder()
-  // highlight-next-line
-  .setCustomId(selectId)
+  .setCustomId('someSelectId')
   // highlight-next-line
   .setMaxValues(1)
   .setPlaceholder('Select a page');
@@ -195,7 +192,7 @@ const selectMenu = new StringSelectMenuBuilder()
 const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   .map((page: number) => {
     // highlight-next-line
-    const customId = this.customId.cloneSetPage(page);
+    const buttonId = this.buildPageCustomId(page);
 
     return new StringSelectMenuOptionBuilder()
       .setLabel(`Go to page ${page}`)
@@ -217,7 +214,7 @@ You can either:
 for [🔀 Stage Pagination Sessions](./stage-pagination-session)).
 
 ```ts
-const modalId = builder.cloneSetPage(3).build();
+const buttonId = this.buildPageCustomId(3);
 
 const textInput = new TextInputBuilder()
   .setCustomId('textInput')
@@ -242,7 +239,7 @@ If the component's value cannot be parsed to a number, it will be handled as a r
 :::
 
 ```ts
-const modalId = builder.build();
+const modalId = this.buildPageCustomId(3);
 
 const modal = new ModalBuilder()
   .setTitle('Pagination')
@@ -270,5 +267,5 @@ modal.addComponents(modalRow);
 
 The `AbstractPaginationSession` provides the following `protected` utility methods:
 
-* `#buildDefaultPageRow()`: Builds a component row with default "next"/"previous" buttons.
-* `#buildCustomIdForPage(page: number)`: Builds a customId for a specific page.
+* `#buildBasicPageRow()`: Builds a component row with basic "next"/"previous" buttons.
+* `#buildPageCustomId(page: number, extra?: string)`: Builds a customId for a specific page.

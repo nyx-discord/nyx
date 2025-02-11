@@ -4,7 +4,7 @@
 
 export * from './bot/Bot';
 export * from './customId/AbstractCustomIdCodec';
-export * from './customId/IdentifiableCustomIdCodec';
+export * from './customId/SerializableFeatureEnum';
 export * from './discord/ActionRowList';
 export * from './discord/ActionRowWrapper';
 export * from './discord/ExtractTypeFromComponentData';

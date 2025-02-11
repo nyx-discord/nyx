@@ -1,17 +1,17 @@
 import type {
   ApplicationCommandInteraction,
+  CommandCustomIdData,
   CommandExecutionMeta,
   CommandFilter,
   ComponentCommandInteraction,
-  CustomIdBuilder,
   ExecutableCommand,
   NyxBot,
 } from '@nyx-discord/core';
-import type {
-  AnySelectMenuInteraction,
-  Awaitable,
-  ButtonInteraction,
-  ModalSubmitInteraction,
+import {
+  type AnySelectMenuInteraction,
+  type Awaitable,
+  type ButtonInteraction,
+  type ModalSubmitInteraction,
 } from 'discord.js';
 
 import { NotImplementedError } from '../../../../errors/NotImplementedError';
@@ -24,6 +24,8 @@ export abstract class AbstractExecutableCommand<
   extends AbstractCommand<Data>
   implements ExecutableCommand<Data, Interaction>
 {
+  protected abstract readonly customIdData: CommandCustomIdData;
+
   protected readonly filter: CommandFilter | null = null;
 
   public handleInteraction(
@@ -39,6 +41,15 @@ export abstract class AbstractExecutableCommand<
 
   public getFilter(): CommandFilter | null {
     return this.filter;
+  }
+
+  public buildCustomId(bot: NyxBot, extra?: string): string {
+    const data = { ...this.customIdData, extra: extra ?? null };
+    return bot.getCommandManager().getCustomIdCodec().serialize(data);
+  }
+
+  public getCustomIdData(extra?: string): CommandCustomIdData {
+    return { ...this.customIdData, extra: extra ?? null };
   }
 
   public abstract execute(
@@ -70,16 +81,11 @@ export abstract class AbstractExecutableCommand<
     throw new NotImplementedError();
   }
 
-  /** Returns this command's {@link CustomIdBuilder} on the given bot. */
-  protected getCustomIdBuilder(bot: NyxBot): CustomIdBuilder {
+  /** Returns this command's customId on the given bot. */
+  protected getCustomId(bot: NyxBot, extra?: string): string {
     return bot
       .getCommandManager()
       .getCustomIdCodec()
-      .createCustomIdBuilder(this);
-  }
-
-  /** Returns this command's customId on the given bot. */
-  protected getCustomId(bot: NyxBot): string {
-    return bot.getCommandManager().getCustomIdCodec().serializeToCustomId(this);
+      .serialize({ ...this.customIdData, extra: extra ?? null });
   }
 }

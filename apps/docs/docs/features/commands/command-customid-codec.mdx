@@ -16,9 +16,10 @@ you should use a dedicated handler or the [👤 Sessions API](./../sessions/sess
 
 ## ✨ Examples
 
-### 🚧 Usage examples
+:::tip
+All serialization methods are public, so you can make command custom ids anywhere, not just inside a command class. 
+:::
 
-These are short examples on how the API is used overall. For "real world" examples, read the next section.
 
 ```mdx-code-block
 <Tabs>
@@ -26,101 +27,28 @@ These are short examples on how the API is used overall. For "real world" exampl
 ```
 
 ```ts
-// Get the command instance
-const myCommand = commandManager.getRepository().locateByTree(MyCommandClass);
-if (!myCommand) throw new Error('Command not found');
+class MyCommand extends <Any ExecutableCommand> {
+  public async execute(
+    interaction: ChatInputCommandInteraction,
+    meta: CommandExecutionMeta,
+  ) {
+    // The bot contains the CustomIdCodec, so we need it first
+    const bot = meta.get(TypedKeys.Bot);
 
-// Get the customId
-const customIdCodec = commandManager.getCustomIdCodec();
-const customId = customIdCodec.serializeToCustomId(myCommand);
-```
+    // Get the customId:
+    const customId = bot.getCommandManager().getCustomIdCodec().serialize(this.customIdData);
+    // Or the shorthand:
+    const customId = this.getCustomId(bot);
 
-```mdx-code-block
-</TabItem>
-<TabItem value="Referring with extra data">
-```
+    // Reply with it
+    const button = new ButtonBuilder().setCustomId(customId);
+    await interaction.reply({ components: [new ActionRowBuilder().addComponents(button)] });
+  }
 
-Building your custom ID:
-
-```ts
-// Get the command instance
-const myCommand = commandManager.getRepository().locateByTree(MyCommandClass);
-if (!myCommand) throw new Error('Command not found');
-
-// Get the customId builder
-const customIdCodec = commandManager.getCustomIdCodec();
-const customIdBuilder = customIdCodec.createCustomIdBuilder(myCommand);
-
-// Append extra data and build
-const customId = customIdBuilder.setAt(0, 'Extra data').build();
-```
-
-Receiving and extracting the extra data from an `Interaction`:
-
-```ts
-// Build a StringIterator to extract the extra data
-const iterator = customIdCodec.createIteratorFromCustomId(interaction.customId);
-
-// Get at index 0, true to throw an error if not present
-const extraData = iterator.getAt(0, true);
-bot.getLogger().log(extraData); // 'Extra data'
-```
-
-```mdx-code-block
-</TabItem>
-</Tabs>
-```
-
-
-### ✅ Implementation examples
-
-These are "real world" examples on how the API can be used. For "short", concrete examples, read the last section.
-
-```mdx-code-block
-<Tabs>
-<TabItem value="Referring to a command">
-```
-
-```ts
-// Assume this command is registered
-class PingCommand extends AbstractStandaloneCommand {
-  public async handleInteraction(interaction: ComponentCommandInteraction) {
+  protected async handleButton(interaction: ButtonInteraction) {
     await interaction.reply('Pong!');
   }
 }
-
-class MyReferralCommand extends AbstractStandaloneCommand {
-  public async execute(
-    interaction: ChatInputCommandInteraction,
-    metadata: CommandExecutionMeta,
-  ) {
-    const bot = metadata.getBot();
-    const commandManager = bot.getCommandManager();
-
-    // Get the command instance
-    const pingCommand = commandManager.getRepository().locateByTree(PingCommand);
-    if (!pingCommand) throw new Error('Ping command not found');
-
-    // highlight-start
-    // Get the customId
-    const customIdCodec = bot.getCommandManager().getCustomIdCodec();
-    const customId = customIdCodec.serializeToCustomId(pingCommand);
-    // highlight-end
-
-    // Create your component
-
-    const button = new ButtonBuilder()
-      // highlight-start
-      // When this button is clicked, it will trigger PingCommand#handleInteraction()
-      .setCustomId(customId)
-      // highlight-end
-      .setLabel('Click to check your ping!')
-      .setStyle(ButtonStyle.Primary);
-
-    const row = new ActionRowBuilder().addComponents(button);
-    await interaction.reply({ components: [row] });
-  }
-}
 ```
 
 ```mdx-code-block
@@ -129,69 +57,96 @@ class MyReferralCommand extends AbstractStandaloneCommand {
 ```
 
 ```ts
-const UserIdIndex = 0;
-
-class AdminListCommand extends AbstractStandaloneCommand {
+class MyCommand extends <Any ExecutableCommand> {
   public async execute(
     interaction: ChatInputCommandInteraction,
-    metadata: CommandExecutionMeta,
+    meta: CommandExecutionMeta,
   ) {
-    const bot = metadata.getBot();
-    const commandManager = bot.getCommandManager();
+    // The bot contains the CustomIdCodec, so we need it first
+    const bot = meta.get(TypedKeys.Bot);
 
-    // Get the command instance
-    const userInfoCommand = commandManager.getRepository().locateByTree(UserInfoCommand);
-    if (!userInfoCommand) throw new Error('User info command not found');
+    // Get the customId:
+    const customId = bot.getCommandManager().getCustomIdCodec().serialize(this.customIdData, 'Extra data');
+    // Or the shorthand:
+    const customId = this.getCustomId(bot, 'Extra data');
 
-    // Get the customId builder
-    const customIdCodec = bot.getCommandManager().getCustomIdCodec();
-    const customIdBuilder = customIdCodec.createCustomIdBuilder(userInfoCommand);
+    // Reply with it
+    const button = new ButtonBuilder().setCustomId(customId);
+    await interaction.reply({ components: [new ActionRowBuilder().addComponents(button)] });
+  }
 
-    // Create customIds by cloning the builder, adding the ID and building
-    const adminACustomId = customIdBuilder
-      .clone()
-      .setAt(UserIdIndex, '1234567890')
-      .build();
-    const adminBCustomId = customIdBuilder
-      .clone()
-      .setAt(UserIdIndex, '0123456789')
-      .build();
+  protected async handleButton(interaction: ButtonInteraction, meta: CommandExecutionMeta) {
+    const extra = meta.get(TypedKeys.CustomIdExtra);
+    await interaction.reply(extra) // Replies 'Extra data';
+  }
+}
+```
 
-    // Create the buttons
-    const adminAButton = new ButtonBuilder()
-      .setCustomId(adminACustomId)
-      .setLabel('Admin A')
-      .setStyle(ButtonStyle.Primary);
+```mdx-code-block
+</TabItem>
+<TabItem value="Passing complex extra data">
+```
 
-    const adminBButton = new ButtonBuilder()
-      .setCustomId(adminBCustomId)
-      .setLabel('Admin B')
-      .setStyle(ButtonStyle.Primary);
+For passing complex data, we recommend using the [`@sapphire/string-store`](https://www.npmjs.com/package/@sapphire/string-store) package, which will:
 
-    const row = new ActionRowBuilder().addComponents(adminAButton, adminBButton);
+- Let you serialize complex schemas, including object unions.
+- Compress the result so it can easily fit into Discord's `customId` limit (100 characters).
+- Add type-safety in both the serialization and deserialization steps.
 
+```ts
+import { Schema, SchemaStore } from '@sapphire/string-store';
+
+const Ids = Object.freeze({
+  AgeUpdate: 0,
+  StrengthUpdate: 1,
+});
+
+const store = new SchemaStore()
+  .add(new Schema(Ids.AgeUpdate).int32('age'))
+  .add(new Schema(Ids.StrengthUpdate).float32('strength'));
+
+class MyCommand extends <Any ExecutableCommand> {
+  public async execute(
+    interaction: ChatInputCommandInteraction,
+    meta: CommandExecutionMeta,
+  ) {
+    const bot = meta.get(TypedKeys.Bot);
+
+    // For the age button:
+    const ageExtra = store.serialize(Ids.AgeUpdate, {
+      age: 20,
+    });
+    const ageCustomId = this.getCustomId(bot, extra);
+    const ageButton = new ButtonBuilder().setCustomId(ageCustomId);
+
+    // For the strength button:
+    const strengthExtra = store.serialize(Ids.StrengthUpdate, {
+      strength: 1.5,
+    });
+    const strengthCustomId = this.getCustomId(bot, extra);
+    const strengthButton = new ButtonBuilder().setCustomId(strengthCustomId);
+
+    // Aggregate and reply:
+    const row = new ActionRowBuilder().addComponents(ageButton, strengthButton);
     await interaction.reply({ components: [row] });
   }
-}
 
-class UserInfoCommand extends AbstractStandaloneCommand {
-  public async handleInteraction(
-    interaction: ComponentCommandInteraction,
-    metadata: CommandExecutionMeta,
-  ) {
-    const bot = metadata.getBot();
-    const customIdCodec = bot.getCommandManager().getCustomIdCodec();
+  protected async handleButton(interaction: ButtonInteraction, meta: CommandExecutionMeta) {
+    const extra = meta.get(TypedKeys.CustomIdExtra);
+    const result = store.deserialize(extra);
 
-    // Build a StringIterator to extract the extra data
-    const iterator = customIdCodec.createIteratorFromCustomId(interaction.customId);
+    switch (result.id) {
+      case Ids.AgeUpdate:
+        await interaction.reply(`Added ${result.data.age} years!`);
+        break;
 
-    // Get at UserIdIndex index, true to throw an error if not present
-    const userId = iterator.getAt(UserIdIndex, true);
-
-    const user = await bot.client.users.fetch(userId);
-    await interaction.reply(`User: ${user.tag}`);
+      case Ids.StrengthUpdate:
+        await interaction.reply(`Added ${result.data.strength} strength!`);
+        break;
+    }
   }
 }
+
 ```
 
 ```mdx-code-block

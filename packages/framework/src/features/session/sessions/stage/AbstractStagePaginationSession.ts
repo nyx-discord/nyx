@@ -1,5 +1,4 @@
 import type {
-  PaginationCustomIdBuilder,
   SessionExecutionMeta,
   SessionStage,
   SessionStageArray,
@@ -7,7 +6,6 @@ import type {
   StagePaginationSession,
 } from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
-
 import { AbstractPaginationSession } from '../AbstractPaginationSession.js';
 
 export abstract class AbstractStagePaginationSession<Result>
@@ -26,8 +24,7 @@ export abstract class AbstractStagePaginationSession<Result>
     interaction: SessionUpdateInteraction,
     meta: SessionExecutionMeta,
   ): Promise<boolean> {
-    const codec = this.bot.getSessionManager().getCustomIdCodec();
-    const newPage = codec.extractPageFromCustomId(interaction.customId);
+    const newPage = this.extractPageFromCustomId(interaction.customId);
     const newStage = this.stages[newPage ?? -1];
 
     /** Not a stage switch interaction. Route to current interaction. */
@@ -76,8 +73,12 @@ export abstract class AbstractStagePaginationSession<Result>
     return this.stages[previousPage] ? previousPage : null;
   }
 
-  public getCustomId(): PaginationCustomIdBuilder {
-    return this.customId.clone();
+  public buildPageCustomId(page: number, extra?: string): string {
+    return this.codec.serialize({
+      ...this.customIdData,
+      page,
+      extra: extra ?? null,
+    });
   }
 
   /** No longer used in stage pagination sessions. */

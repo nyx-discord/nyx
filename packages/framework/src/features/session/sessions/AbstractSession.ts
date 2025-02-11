@@ -1,12 +1,12 @@
 import { Collection } from '@discordjs/collection';
 import type {
-  CustomIdBuilder,
   Identifier,
   MetaCollection,
   NyxBot,
   ReadonlyMetaCollection,
   Session,
   SessionCustomIdCodec,
+  SessionCustomIdData,
   SessionEndData,
   SessionExecutionMeta,
   SessionStartFilter,
@@ -26,7 +26,6 @@ import type {
   ButtonInteraction,
   ModalSubmitInteraction,
 } from 'discord.js';
-
 import { NotImplementedError } from '../../../errors/NotImplementedError.js';
 
 export abstract class AbstractSession<Result = void>
@@ -40,7 +39,7 @@ export abstract class AbstractSession<Result = void>
 
   protected readonly startInteraction: SessionStartInteraction;
 
-  protected readonly customId: CustomIdBuilder;
+  protected readonly customIdData: Readonly<SessionCustomIdData>;
 
   protected readonly startFilter: SessionStartFilter<Result> | null = null;
 
@@ -59,19 +58,24 @@ export abstract class AbstractSession<Result = void>
 
   protected state: SessionState = SessionStateEnum.Uninitalized;
 
-  constructor(
-    bot: NyxBot,
-    id: string,
-    startInteraction: SessionStartInteraction,
-    ttl?: number,
-  ) {
-    this.bot = bot;
-    this.id = id;
-    this.startInteraction = startInteraction;
-
-    this.codec = bot.getSessionManager().getCustomIdCodec();
-    this.customId = this.codec.createCustomIdBuilder(this);
-    if (ttl !== undefined) this.ttl = ttl;
+  constructor(options: {
+    bot: NyxBot;
+    id: string;
+    startInteraction: SessionStartInteraction;
+    ttl?: number;
+  }) {
+    this.bot = options.bot;
+    this.id = options.id;
+    this.startInteraction = options.startInteraction;
+    this.codec = options.bot.getSessionManager().getCustomIdCodec();
+    this.customIdData = {
+      id: this.id,
+      extra: null,
+      page: null,
+    };
+    if (options.ttl !== undefined) {
+      this.ttl = options.ttl;
+    }
   }
 
   public async start(): Promise<void> {
@@ -157,6 +161,18 @@ export abstract class AbstractSession<Result = void>
     }
 
     this.state = state;
+  }
+
+  public getCustomIdData(extra?: string): SessionCustomIdData {
+    return {
+      ...this.customIdData,
+      extra: extra ?? null,
+    };
+  }
+
+  public buildCustomId(extra?: string): string {
+    const data = { ...this.customIdData, extra: extra ?? null };
+    return this.codec.serialize(data);
   }
 
   /** Handles a {@link ButtonInteraction} whose customId matches this session. */

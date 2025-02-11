@@ -14,6 +14,7 @@
     "serve:docusaurus": "lerna run serve --scope=@nyx-discord/docs",
     "test:core": "nx test @nyx-discord/core",
     "test:framework": "nx test @nyx-discord/framework",
+    "test": "nx test @nyx-discord/core && nx test @nyx-discord/framework",
     "ci:version:conventional": "lerna version --yes --no-private --conventional-commits --create-release github --message \"chore(release): version\"",
     "ci:version:major": "lerna version major --yes --no-private --conventional-commits --create-release github --message \"chore(release): major version\"",
     "ci:version:minor": "lerna version minor --yes --no-private --conventional-commits --create-release github --message \"chore(release): minor version\"",

@@ -2,6 +2,7 @@ import type { Awaitable } from 'discord.js';
 import type { BotAware } from '../../../bot/BotAware.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Metadatable } from '../../../meta/Metadatable.js';
+import type { SessionCustomIdData } from '../customId/data/SessionCustomIdData.js';
 import type { SessionEndCode } from '../end/SessionEndCode';
 import type { SessionEndData } from '../end/SessionEndData';
 import type { SessionExecutionMeta } from '../execution/meta/SessionExecutionMeta.js';
@@ -77,6 +78,12 @@ export interface Session<Result>
 
   /** Returns the end promise that will resolve to a {@link SessionEndData} when this session ends. */
   getEndPromise(): Promise<SessionEndData<Result>>;
+
+  /** Builds this session's custom id, optionally with extra data. */
+  buildCustomId(extra?: string): string;
+
+  /** Returns this session's custom id data. */
+  getCustomIdData(extra?: string): SessionCustomIdData;
 
   /** Returns the state of this session. */
   getState(): SessionState;

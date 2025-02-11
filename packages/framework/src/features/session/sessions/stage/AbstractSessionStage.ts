@@ -1,6 +1,7 @@
 import type {
   NyxBot,
-  PaginationCustomIdBuilder,
+  SessionCustomIdCodec,
+  SessionCustomIdData,
   SessionExecutionMeta,
   SessionStage,
   SessionUpdateInteraction,
@@ -24,16 +25,19 @@ export abstract class AbstractSessionStage<Result = void>
 {
   public readonly bot: NyxBot;
 
+  protected readonly codec: SessionCustomIdCodec;
+
   protected readonly session: StagePaginationSession<unknown>;
 
-  protected customId: PaginationCustomIdBuilder;
+  protected readonly customIdData: SessionCustomIdData;
 
   protected result: Result | null = null;
 
   constructor(session: StagePaginationSession<unknown>) {
     this.bot = session.bot;
     this.session = session;
-    this.customId = session.getCustomId();
+    this.customIdData = session.getCustomIdData();
+    this.codec = session.bot.getSessionManager().getCustomIdCodec();
   }
 
   public abstract onSwitch(
@@ -92,7 +96,7 @@ export abstract class AbstractSessionStage<Result = void>
   }
 
   /** Utility to build a pagination ActionRow, considering next/previous pages and disabling buttons accordingly. */
-  protected buildDefaultPageRow(): ActionRowData<InteractionButtonComponentData> {
+  protected buildBasicPageRow(): ActionRowData<InteractionButtonComponentData> {
     const currentPage = this.session.getCurrentPage();
 
     const nextPage = currentPage + 1;
@@ -103,7 +107,7 @@ export abstract class AbstractSessionStage<Result = void>
       components: [
         {
           type: ComponentType.Button,
-          customId: this.buildCustomIdForPage(previousPage),
+          customId: this.buildPageCustomId(previousPage),
           emoji: '⬅',
           style: ButtonStyle.Secondary,
           disabled: currentPage === 0,
@@ -111,7 +115,7 @@ export abstract class AbstractSessionStage<Result = void>
         {
           type: ComponentType.Button,
           style: ButtonStyle.Secondary,
-          customId: this.buildCustomIdForPage(nextPage),
+          customId: this.buildPageCustomId(nextPage),
           emoji: '➡',
           disabled: currentPage === this.session.getStages().length - 1,
         },
@@ -120,18 +124,23 @@ export abstract class AbstractSessionStage<Result = void>
   }
 
   /** Builds a customId for a given stage. */
-  protected buildCustomIdForStage(stage: SessionStage<unknown>): string {
+  protected buildCustomIdForStage(
+    stage: SessionStage<unknown>,
+    extra?: string,
+  ): string {
     const page = this.session.getStages().indexOf(stage);
-
     if (page === -1) {
       throw new ObjectNotFoundError('Stage not found in session');
     }
-
-    return this.buildCustomIdForPage(page);
+    return this.buildPageCustomId(page, extra);
   }
 
   /** Builds a customId for a given page. */
-  protected buildCustomIdForPage(page: number): string {
-    return this.customId.clone().setPage(page).build();
+  protected buildPageCustomId(page: number, extra?: string): string {
+    return this.codec.serialize({
+      ...this.customIdData,
+      page,
+      extra: extra ?? null,
+    });
   }
 }

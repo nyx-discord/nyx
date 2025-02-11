@@ -56,9 +56,9 @@ class MyStage extends AbstractSessionStage<void> {
   public async onSwitch(
     interaction: SessionUpdateInteraction,
   ): Promise<boolean> {
-    const row = this.buildDefaultPageRow();
+    const row = this.buildBasicPageRow();
 
-    const buttonId = this.customId.clonePush('button').build();
+    const buttonId = this.buildCustomId();
     const button = new ButtonBuilder()
       .setStyle(1)
       .setLabel('Click me!')

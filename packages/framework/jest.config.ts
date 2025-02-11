@@ -1,4 +1,3 @@
- 
 export default {
   displayName: '@nyx-discord/framework',
   preset: '../../jest.preset.js',

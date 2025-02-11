@@ -1,6 +1,7 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import type { ClassImplements } from '../../../types/ClassImplements.js';
 import type { Command } from '../commands/Command';
+import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand.js';
 import type { ImplementsParentCommand } from '../commands/implements/ImplementsParentCommand.js';
 import type { ImplementsStandaloneCommand } from '../commands/implements/ImplementsStandaloneCommand.js';
 import type { ImplementsSubCommand } from '../commands/implements/ImplementsSubCommand.js';
@@ -8,6 +9,7 @@ import type { ImplementsSubCommandGroup } from '../commands/implements/Implement
 import type { SubCommand } from '../commands/SubCommand';
 import type { SubCommandGroup } from '../commands/SubCommandGroup';
 import type { TopLevelCommand } from '../commands/TopLevelCommand.js';
+import type { CommandCustomIdData } from '../customId/data/CommandCustomIdData.js';
 
 /** An object responsible for storing commands. */
 export interface CommandRepository
@@ -174,6 +176,11 @@ export interface CommandRepository
     FirstChildClass?: ImplementsSubCommandGroup | ImplementsSubCommand,
     SecondChildClass?: ImplementsSubCommand,
   ): InstanceType<T> | null;
+
+  /** Locates a stored executable command by its customId data. */
+  locateExecutableByCustomIdData(
+    data: CommandCustomIdData,
+  ): AnyExecutableCommand | null;
 
   /** Returns the currently stored top level commands, keyed by their ID. */
   getCommands(): ReadonlyCollection<string, TopLevelCommand>;

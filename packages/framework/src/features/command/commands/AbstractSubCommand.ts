@@ -1,17 +1,18 @@
 import type {
+  CommandCustomIdData,
   CommandExecutionMeta,
   ParentCommand,
   SubCommand,
   SubCommandGroup,
 } from '@nyx-discord/core';
-import type {
-  AutocompleteInteraction,
-  Awaitable,
-  ChatInputCommandInteraction,
-  SlashCommandSubcommandBuilder,
+import {
+  ApplicationCommandType,
+  type AutocompleteInteraction,
+  type Awaitable,
+  type ChatInputCommandInteraction,
+  type SlashCommandSubcommandBuilder,
 } from 'discord.js';
 import { NotImplementedError } from '../../../errors/NotImplementedError';
-
 import { AbstractExecutableCommand } from './executable/AbstractExecutableCommand';
 
 /** A child, executable command that belongs to an {@link ParentCommand} or {@link SubCommandGroup}. */
@@ -22,11 +23,22 @@ export abstract class AbstractSubCommand
   >
   implements SubCommand
 {
+  protected readonly customIdData: CommandCustomIdData;
+
   protected readonly parent: ParentCommand | SubCommandGroup;
 
   constructor(parent: ParentCommand | SubCommandGroup) {
     super();
     this.parent = parent;
+    this.customIdData = {
+      type: ApplicationCommandType.ChatInput,
+      name: this.parent.isParent()
+        ? this.parent.getName()
+        : this.parent.getParent().getData().name,
+      extra: null,
+      subcommand: this.getName(),
+      group: this.parent.isSubCommandGroup() ? this.parent.getName() : null,
+    };
   }
 
   public getName(): string {

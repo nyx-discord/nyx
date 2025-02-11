@@ -40,6 +40,7 @@
     "@discordjs/collection": "1.5.3",
     "@isaacs/ttlcache": "1.4.1",
     "@nyx-discord/core": "workspace:*",
+    "@sapphire/string-store": "2.0.0",
     "cron": "3.0.0"
   }
 }

@@ -1,4 +1,3 @@
-import type { PaginationCustomIdBuilder } from '../../customId/PaginationCustomIdBuilder';
 import type { PaginationSession } from '../PaginationSession.js';
 import type { SessionStage } from './SessionStage.js';
 import type { SessionStageArray } from './SessionStageArray';
@@ -15,9 +14,6 @@ import type { SessionStageArray } from './SessionStageArray';
  */
 export interface StagePaginationSession<Result>
   extends PaginationSession<Result> {
-  /** Returns a copy of this session's custom id builder. */
-  getCustomId(): PaginationCustomIdBuilder;
-
   /** Returns the stage previous to the current one, if any. */
   getPreviousStage(): SessionStage<unknown> | null;
 

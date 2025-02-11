@@ -170,13 +170,14 @@ export class DefaultSessionManager implements SessionManager {
     meta?: SessionExecutionMeta,
   ): Promise<boolean> {
     const { customId } = interaction;
-    const sessionCustomId = this.codec.deserializeToObjectId(customId);
-    if (!sessionCustomId) return false;
+    const customIdData = this.codec.deserialize(customId);
+    if (!customIdData) return false;
 
-    const session = await this.repository.get(sessionCustomId);
+    const { id } = customIdData;
+    const session = await this.repository.get(id);
 
     if (!session) {
-      await this.executor.handleMissing(sessionCustomId, interaction);
+      await this.executor.handleMissing(id, interaction);
       return true;
     }
 
@@ -263,11 +264,11 @@ export class DefaultSessionManager implements SessionManager {
     interaction: SessionUpdateInteraction,
   ): Promise<Session<unknown> | null> {
     const { customId } = interaction;
-    const sessionCustomId = this.codec.deserializeToObjectId(customId);
+    const customIdData = this.codec.deserialize(customId);
+    if (!customIdData) return null;
 
-    if (!sessionCustomId) return null;
-
-    return (await this.repository.get(sessionCustomId)) ?? null;
+    const session = await this.repository.get(customIdData.id);
+    return session ?? null;
   }
 
   public async subscribe(

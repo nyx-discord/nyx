@@ -44,7 +44,7 @@ import { AbstractSession, SessionUpdateInteraction } from '@nyx-discord/framewor
 
 class MySession extends AbstractSession {
   public async start() {
-    const buttonId = this.customId.clonePush('button').build();
+    const buttonId = this.buildCustomId();
 
     const updateButton = new ButtonBuilder()
       .setCustomId(buttonId)
@@ -119,108 +119,29 @@ TTL to never refresh, like a "timed race" session.
 ## 💬 Custom Ids
 
 The `SessionCustomIdCodec` is the object responsible for generating and validating customIds that refer to a session,
-called "Session Custom Ids".
-
-Additionally, it can generate a `CustomIdBuilder`, which you can use to append extra tokens to your customId. When
-receiving it, you can use the codec again to extract the extra tokens using a `StringIterator`.
+called "Session Custom Ids". `AbstractSessions` have protected methods for easier creation of these customIds.
 
 ```ts
-const codec = bot.getSessionManager().getCustomIdCodec();
+// highlight-next-line
+// Assuming inside a session...
 
 // Creating a simple customId.
-const simpleCustomId = codec.deserializeToObjectId(session);
+const simpleCustomId = this.buildCustomId();
 
-// Creating a customId builder.
-const builder = codec.createCustomIdBuilder(session);
-builder.push('foo').push('bar');
+// Creating a customId with extra data.
+const extraCustomId = this.buildCustomId('foo');
 
-// warn-next-line
-// Throws an error if the result has more than 100 characters.
-const tokenCustomId = builder.build();
-
-// Extracting the extra tokens.
-const iterator = codec.createIteratorFromCustomId(tokenCustomId);
-iterator.getTokens(); // ['foo', 'bar']
+// To extract the extra string inside an update(), either:
+// - Retrieve it from the metadata (this is stored while the session is being resolved):
+const extra = metadata.get(TypedKeys.CustomIdExtra);
+// - Do it manually, but you'll get the same result as above and waste performance.
+const extra = this.codec.deserialize(interaction.customId)!.extra;
 ```
 
 :::tip
-* To avoid "magic values" where you guess the order of the tokens, you can use `CustomIdBuilder#setAt(index, value)`. You
-can then use `StringIterator#getAt(index)` to get the value, saving the index as a constant somewhere.
-
-* For utility purposes, `AbstractSession` saves its own customId in a `AbstractSession#customId` property. However, make
-sure to **always clone it before appending values to it**.
-
-* Discord doesn't allow duplicated customIds on a single message, even if they come from different component types.
-You can push values like `'button'`, `'select'`, `'modal'` to avoid that issue.
+Discord doesn't allow duplicated customIds on a single message, even if they come from different component types.
+You can use extras like `'button'`, `'select'`, `'modal'` to avoid that issue.
 :::
-
-### ✨ Component Examples
-
-```mdx-code-block
-<Tabs>
-<TabItem value="Button">
-```
-
-```ts
-const buttonId = builder.clonePush('button').build();
-
-const button = new ButtonBuilder()
-  // highlight-next-line
-  .setCustomId(buttonId)
-  .setLabel('A session button')
-  .setStyle(ButtonStyle.Primary);
-```
-
-```mdx-code-block
-</TabItem>
-<TabItem value="Select Menu">
-```
-
-:::warning
-The `CustomIdCodec` only uses the customId from the select menu itself, not their options.
-:::
-
-```ts
-const selectId = builder.clonePush('select').build();
-
-const select = new SelectMenuBuilder()
-  // highlight-next-line
-  .setCustomId(selectId)
-  .setPlaceholder('A session select menu')
-  .addOptions([
-    new StringSelectMenuOptionBuilder()
-      .setLabel('Option 1')
-      .setValue('option1'),
-    new StringSelectMenuOptionBuilder()
-      .setLabel('Option 2')
-      .setValue('option2'),
-  ]);
-```
-
-```mdx-code-block
-</TabItem>
-<TabItem value="Modal">
-```
-
-```ts
-const modalId = builder.clonePush('modal').build();
-
-const modal = new ModalBuilder()
-  // highlight-next-line
-  .setCustomId(modalId)
-  .setTitle('A session modal')
-  .addComponents([
-    new TextInputBuilder()
-      .setCustomId('textInput')
-      .setLabel('Text input')
-      .setStyle(TextInputStyle.Short),
-  ]);
-```
-
-```mdx-code-block
-</TabItem>
-</Tabs>
-```
 
 ## 🏆 Result
 

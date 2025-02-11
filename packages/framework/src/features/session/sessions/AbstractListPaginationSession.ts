@@ -17,18 +17,18 @@ export abstract class AbstractListPaginationSession<Item, Result>
 
   protected items: Item[];
 
-  constructor(
-    bot: NyxBot,
-    id: string,
-    createInteraction: SessionStartInteraction,
-    items: Item[],
-    itemsPerPage?: number,
-    ttl?: number,
-  ) {
-    super(bot, id, createInteraction, ttl);
+  constructor(options: {
+    bot: NyxBot;
+    id: string;
+    startInteraction: SessionStartInteraction;
+    items: Item[];
+    itemsPerPage?: number;
+    ttl?: number;
+  }) {
+    super(options);
     this.itemsPerPage =
-      itemsPerPage ?? AbstractListPaginationSession.DefaultItemsPerPage;
-    this.items = items;
+      options.itemsPerPage ?? AbstractListPaginationSession.DefaultItemsPerPage;
+    this.items = options.items;
   }
 
   public getItemsPerPage(): number {
@@ -42,7 +42,7 @@ export abstract class AbstractListPaginationSession<Item, Result>
     );
   }
 
-  protected override buildDefaultPageRow(): ActionRowData<InteractionButtonComponentData> {
+  protected override buildBasicPageRow(): ActionRowData<InteractionButtonComponentData> {
     const nextPage = this.currentPage + 1;
     const previousPage = this.currentPage - 1;
 
@@ -51,7 +51,7 @@ export abstract class AbstractListPaginationSession<Item, Result>
       components: [
         {
           type: ComponentType.Button,
-          customId: this.buildCustomIdForPage(previousPage),
+          customId: this.buildPageCustomId(previousPage),
           emoji: '⬅',
           style: ButtonStyle.Secondary,
           disabled: this.currentPage === 0,
@@ -59,7 +59,7 @@ export abstract class AbstractListPaginationSession<Item, Result>
         {
           type: ComponentType.Button,
           style: ButtonStyle.Secondary,
-          customId: this.buildCustomIdForPage(nextPage),
+          customId: this.buildPageCustomId(nextPage),
           emoji: '➡',
           disabled: this.itemsPerPage * nextPage >= this.items.length,
         },

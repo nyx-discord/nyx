@@ -1,9 +1,12 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import { Collection } from '@discordjs/collection';
 import type {
+  AnyExecutableCommand,
   ClassImplements,
   Command,
+  CommandCustomIdData,
   CommandRepository,
+  ContextMenuCommand,
   ImplementsParentCommand,
   ImplementsStandaloneCommand,
   ImplementsSubCommand,
@@ -13,6 +16,8 @@ import type {
   TopLevelCommand,
 } from '@nyx-discord/core';
 import { IllegalDuplicateError, ObjectNotFoundError } from '@nyx-discord/core';
+import { ApplicationCommandType } from 'discord.js';
+import { NotImplementedError } from '../../../errors/NotImplementedError';
 
 export class DefaultCommandRepository implements CommandRepository {
   protected readonly commands: Collection<string, TopLevelCommand> =
@@ -141,6 +146,44 @@ export class DefaultCommandRepository implements CommandRepository {
     }
 
     return firstChildCommand.findChildByName(secondChild);
+  }
+
+  public locateExecutableByCustomIdData(
+    data: CommandCustomIdData,
+  ): AnyExecutableCommand | null {
+    const topLevel = this.commands.get(data.name);
+    if (!topLevel) return null;
+
+    switch (data.type) {
+      case ApplicationCommandType.ChatInput: {
+        if (data.subcommand) {
+          if (!topLevel.isParent()) return null;
+
+          const first = topLevel.findChildByName(data.group ?? data.subcommand);
+          if (!first) return null;
+
+          if (first.isSubCommand()) {
+            return first;
+          }
+
+          return first.findChildByName(data.subcommand);
+        }
+
+        if (!topLevel.isStandalone()) return null;
+        return topLevel;
+      }
+      case ApplicationCommandType.User: {
+        return topLevel.getData().type === ApplicationCommandType.User
+          ? (topLevel as ContextMenuCommand)
+          : null;
+      }
+      case ApplicationCommandType.Message:
+        return topLevel.getData().type === ApplicationCommandType.Message
+          ? (topLevel as ContextMenuCommand)
+          : null;
+      default:
+        throw new NotImplementedError(`Unknown command type: ${data.type}`);
+    }
   }
 
   public getCommands(): ReadonlyCollection<string, TopLevelCommand> {
