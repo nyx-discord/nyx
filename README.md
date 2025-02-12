@@ -6,7 +6,7 @@ An OOP framework for building feature-complete Discord bots.
 
 ![Test Status](https://img.shields.io/github/actions/workflow/status/nyx-discord/nyx/test.yml?style=for-the-badge&logo=jest&label=Tests)
 [![Built with Typescript](https://img.shields.io/badge/Built%20with-Typescript-3176C6?style=for-the-badge&logo=typescript&logoColor=3178C6)](https://www.typescriptlang.org/)
-[![Discord Invite](https://img.shields.io/badge/Visit%20us%20in-Discord-5662f6?style=for-the-badge&logo=discord&logoColor=5662f6)](https://discord.gg/PQZmwaBZd5/)
+[![Discord Invite](https://img.shields.io/badge/Visit%20us%20in-Discord-5662f6?style=for-the-badge&logo=discord&logoColor=5662f6)](https://discord.gg/PQZmwaBZd5)
 
 The core idea of nyx is to be easy to modify and extend, with no hardcoded implementations, meaning that all the default
 objects can be completely replaced by your own if desired.
