@@ -27,8 +27,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build core
+        run: pnpm build:core
+
       - name: Test core
         run: pnpm run test:core
+
+      - name: Build framework
+        run: pnpm build:framework
 
       - name: Test framework
         run: pnpm run test:framework
