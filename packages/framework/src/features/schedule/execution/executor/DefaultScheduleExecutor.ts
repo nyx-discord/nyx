@@ -13,7 +13,7 @@ import {
 } from '@nyx-discord/core';
 
 import { BasicErrorHandler } from '../../../../error/BasicErrorHandler.js';
-import { ScheduleMiddlewareList } from '../../middleware/ScheduleMiddlewareList';
+import { ScheduleMiddlewareList } from '../../middleware/ScheduleMiddlewareList.js';
 
 export class DefaultScheduleExecutor implements ScheduleExecutor {
   protected readonly middleware: MiddlewareList<ScheduleMiddleware>;

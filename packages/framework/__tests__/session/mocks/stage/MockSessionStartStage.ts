@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { AbstractSessionStartStage } from '../../../../src';
 import { MockStagePaginationSession } from './MockStagePaginationSession';
 
@@ -6,9 +7,9 @@ export class MockSessionStartStage extends AbstractSessionStartStage {
     return new this(MockStagePaginationSession.createMock());
   }
 
-  public onSwitch = jest.fn();
+  public onSwitch = vi.fn();
 
-  public onLeave = jest.fn();
+  public onLeave = vi.fn();
 
-  public onStart = jest.fn();
+  public onStart = vi.fn();
 }

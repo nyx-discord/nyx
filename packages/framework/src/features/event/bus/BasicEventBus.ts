@@ -295,7 +295,11 @@ export class BasicEventBus<
   ): EventDispatchArgs<Args> {
     const metadata =
       meta
-      ?? EventDispatchMeta.fromEventName(this.bot, this as AnyEventBus, eventName);
+      ?? EventDispatchMeta.fromEventName(
+        this.bot,
+        this as AnyEventBus,
+        eventName,
+      );
     return [metadata, ...eventArgs];
   }
 

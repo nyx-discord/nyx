@@ -1,6 +1,6 @@
 import type { CommandCustomIdData } from '@nyx-discord/core';
 import { ApplicationCommandType } from 'discord.js';
-import { describe } from 'node:test';
+import { describe, expect, it, test } from 'vitest';
 import { DefaultCommandCustomIdCodec } from '../../../../dist';
 
 const createData = () => ({

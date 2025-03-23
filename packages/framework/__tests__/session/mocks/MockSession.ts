@@ -1,5 +1,6 @@
 import type { SessionStartInteraction } from '@nyx-discord/core';
 import { randomUUID } from 'crypto';
+import { vi } from 'vitest';
 import { AbstractSession } from '../../../src';
 import { MockBot } from '../../bot/MockBot';
 
@@ -12,7 +13,7 @@ export class MockSession extends AbstractSession {
     });
   }
 
-  public onStart = jest.fn();
+  public onStart = vi.fn();
 
-  public onEnd = jest.fn();
+  public onEnd = vi.fn();
 }

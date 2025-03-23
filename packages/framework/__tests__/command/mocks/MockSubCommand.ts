@@ -1,4 +1,5 @@
 import { SlashCommandSubcommandBuilder } from 'discord.js';
+import { vi } from 'vitest';
 import { AbstractSubCommand } from '../../../src';
 import { MockParentCommand } from './MockParentCommand';
 import { MockSubCommandGroup } from './MockSubcommandGroup';
@@ -15,7 +16,7 @@ export class MockSubCommand extends AbstractSubCommand {
     return new MockSubCommand(parent);
   }
 
-  public execute = jest.fn();
+  public execute = vi.fn();
 
   protected createData() {
     return new SlashCommandSubcommandBuilder()

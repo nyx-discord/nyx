@@ -46,24 +46,21 @@ export abstract class AbstractStagePaginationSession<Result>
   }
 
   public getCurrentStage(): SessionStage<unknown> {
-    return this.stages[this.currentPage];
+    return this.stages[this.currentPage] as SessionStage<unknown>;
   }
 
   public getNextStage(): SessionStage<unknown> | null {
-    const nextPage = this.getNextPage();
-
-    return nextPage ? this.stages[nextPage] : null;
+    const nextPage = this.currentPage + 1;
+    return nextPage ? (this.stages[nextPage] ?? null) : null;
   }
 
   public getPreviousStage(): SessionStage<unknown> | null {
-    const previousPage = this.getPreviousPage();
-
-    return previousPage ? this.stages[previousPage] : null;
+    const previousPage = this.currentPage - 1;
+    return previousPage ? (this.stages[previousPage] ?? null) : null;
   }
 
   public override getNextPage(): number | null {
     const nextPage = this.currentPage + 1;
-
     return this.stages[nextPage] ? nextPage : null;
   }
 
@@ -73,7 +70,7 @@ export abstract class AbstractStagePaginationSession<Result>
     return this.stages[previousPage] ? previousPage : null;
   }
 
-  public buildPageCustomId(page: number, extra?: string): string {
+  public override buildPageCustomId(page: number, extra?: string): string {
     return this.codec.serialize({
       ...this.customIdData,
       page,

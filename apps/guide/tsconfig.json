@@ -1,0 +1,16 @@
+{
+  // This file is not used in compilation. It is here just for a nice editor experience.
+  "extends": "@repo/typescript-config/docusaurus.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "esModuleInterop": true,
+    "lib": [
+      "dom",
+      "es2023"
+    ],
+    "target": "es2015",
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

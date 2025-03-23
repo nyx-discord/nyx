@@ -9,7 +9,7 @@ import type {
 import type { Awaitable } from 'discord.js';
 
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
-import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList';
+import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList.js';
 import { AbstractEventDispatcher } from './AbstractEventDispatcher.js';
 
 export class BasicSyncEventDispatcher

@@ -30,12 +30,17 @@ export class ActionRowWrapper<ComponentData extends ActionRowComponentData> {
     row = 0,
   ): ActionRowWrapper<MessageActionRowComponentData> {
     return new ActionRowWrapper<MessageActionRowComponentData>(
-      ...message.components[row].components,
+      ...(message.components[row]?.components ?? []),
     );
   }
 
   public add(...components: ComponentData[]): this {
     this.components.push(...components);
+    return this;
+  }
+
+  public set(...components: ComponentData[]): this {
+    this.components = components;
     return this;
   }
 
@@ -60,7 +65,8 @@ export class ActionRowWrapper<ComponentData extends ActionRowComponentData> {
           const json = component.toJSON();
           if (
             json.type === ComponentType.Button
-            && json.style === ButtonStyle.Link
+            && (json.style === ButtonStyle.Link
+              || json.style === ButtonStyle.Premium)
           ) {
             return false;
           }
@@ -69,7 +75,8 @@ export class ActionRowWrapper<ComponentData extends ActionRowComponentData> {
         } else {
           if (
             component.type === ComponentType.Button
-            && component.style === ButtonStyle.Link
+            && (component.style === ButtonStyle.Link
+              || component.style === ButtonStyle.Premium)
           ) {
             return false;
           }

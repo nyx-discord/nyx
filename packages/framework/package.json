@@ -22,8 +22,10 @@
     "lint": "eslint ./src --fix",
     "format": "prettier --write ./src",
     "barrel": "barrelsby --directory ./src --delete --singleQuotes",
-    "build": "rimraf dist && tsup-node src/index.ts && tsc --emitDeclarationOnly --declaration --declarationDir ./dist",
-    "prepublishOnly": "pnpm run build"
+    "build": "rimraf dist && tsup-node src/index.ts",
+    "prepublishOnly": "pnpm run build",
+    "test": "vitest --run",
+    "coverage": "vitest run --coverage"
   },
   "keywords": [
     "discord",
@@ -31,8 +33,13 @@
     "discord.js",
     "framework"
   ],
-  "author": "Amgelo563",
   "license": "MIT",
+  "devDependencies": {
+    "@repo/vitest-config": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/typedoc-config": "workspace:*"
+  },
   "peerDependencies": {
     "discord.js": "^14.14.1"
   },

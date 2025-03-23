@@ -26,7 +26,7 @@ import type {
 } from 'discord.js';
 
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
-import { CommandMiddlewareList } from '../middleware/CommandMiddlewareList';
+import { CommandMiddlewareList } from '../middleware/CommandMiddlewareList.js';
 
 export class DefaultCommandExecutor implements CommandExecutor {
   protected readonly errorHandler: CommandErrorHandler;

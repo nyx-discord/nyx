@@ -104,9 +104,10 @@ export class ActionRowList<ComponentData extends ActionRowComponentData> {
   public editAll(callback: RowComponentEditCallback<ComponentData>): this {
     for (const row of this.rows) {
       const { components } = row.toRowData();
-      for (const [index, component] of components.entries()) {
-        components[index] = callback(component, row);
-      }
+      const newComponents = components.map((component) =>
+        callback(component, row),
+      );
+      row.set(...newComponents);
     }
     return this;
   }
@@ -118,18 +119,12 @@ export class ActionRowList<ComponentData extends ActionRowComponentData> {
     many = true,
   ): this {
     for (const row of this.rows) {
-      const { components } = row.toRowData();
-      let applicableComponents = components.filter((component) =>
-        where(component),
-      );
-      if (!many) {
-        applicableComponents = applicableComponents.length
-          ? [applicableComponents[0]]
-          : [];
+      let finish = false;
+      if (row.has(where) && !many) {
+        finish = true;
       }
-      for (const [index, component] of applicableComponents.entries()) {
-        components[index] = callback(component, row);
-      }
+      row.editWhere(where, (component) => callback(component, row), many);
+      if (finish) break;
     }
     return this;
   }

@@ -1,10 +1,9 @@
 .prettierignore
 node_modules
 **/node_modules
-.docusaurus/
+.docusaurus/**
 **/*.mdx
 **/dist/*
 dist
 tsup.config.ts
-
-/.nx/workspace-data
+.turbo

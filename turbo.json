@@ -1,0 +1,61 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*", "package.json", "tsup.config.ts"],
+      "outputs": [
+        "build/**",
+        "dist/**",
+        ".docusaurus/**",
+        "apps/guide/build/guide"
+      ]
+    },
+    "test": {
+      "dependsOn": ["^test"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "__tests__/**",
+        "vitest.config.ts"
+      ],
+      "outputs": ["test-results/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "inputs": ["$TURBO_DEFAULT$", "src/**", "**/.eslintrc*"],
+      "outputs": []
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"],
+      "inputs": ["$TURBO_DEFAULT$", "src/**", "tsconfig.json"],
+      "outputs": []
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "coverage": {
+      "cache": false,
+      "persistent": true,
+      "outputs": ["coverage/**"]
+    },
+    "//#typedoc": {
+      "cache": true,
+      "persistent": false,
+      "inputs": ["$TURBO_DEFAULT$", "src/**", "typedoc.json"],
+      "outputs": ["build/docs"]
+    },
+    "format": {
+      "dependsOn": ["^format"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "**/.prettierrc*",
+        ".prettierrc.json"
+      ],
+      "outputs": []
+    }
+  }
+}

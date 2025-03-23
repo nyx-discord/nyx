@@ -7,7 +7,7 @@ import type {
 } from '@nyx-discord/core';
 
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
-import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList';
+import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList.js';
 import { AbstractEventDispatcher } from './AbstractEventDispatcher.js';
 
 export class BasicAsyncEventDispatcher
@@ -76,7 +76,6 @@ export class BasicAsyncEventDispatcher
       void promise.finally(() => {
         const index = pendingPromises.indexOf(promise);
         if (index !== -1) {
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           pendingPromises.splice(index, 1);
         }
       });

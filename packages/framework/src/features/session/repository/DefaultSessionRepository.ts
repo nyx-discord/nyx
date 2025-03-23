@@ -15,10 +15,14 @@ export class DefaultSessionRepository extends TTLCache<
   Session<unknown>
 > {
   constructor(onExpire?: SessionExpirationCallback) {
-    super({
+    const options: TTLCache.Options<string, Session<unknown>> = {
       updateAgeOnGet: false,
-      dispose: onExpire,
-    });
+    };
+    if (onExpire) {
+      options.dispose = onExpire;
+    }
+
+    super(options);
   }
 
   public static create(
@@ -71,7 +75,9 @@ export class DefaultSessionRepository extends TTLCache<
     return this.entries().next();
   }
 
-  public [Symbol.iterator](): IterableIterator<[string, Session<unknown>]> {
+  public override [Symbol.iterator](): IterableIterator<
+    [string, Session<unknown>]
+  > {
     return this.entries();
   }
 

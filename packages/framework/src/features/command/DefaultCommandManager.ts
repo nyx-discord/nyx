@@ -20,13 +20,13 @@ import type { AutocompleteInteraction, Client, ClientEvents } from 'discord.js';
 import { InteractionType } from 'discord.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultCommandCustomIdCodec } from './customId/DefaultCommandCustomIdCodec.js';
-import { DefaultCommandDeployer } from './deploy/DefaultCommandDeployer';
+import { DefaultCommandDeployer } from './deploy/DefaultCommandDeployer.js';
 import { DefaultCommandAutocompleteSubscriber } from './events/DefaultCommandAutocompleteSubscriber.js';
 import { DefaultCommandInteractionSubscriber } from './events/DefaultCommandInteractionSubscriber.js';
 import { DefaultCommandSubscriptionsContainer } from './events/DefaultCommandSubscriptionsContainer.js';
 import { DefaultCommandExecutor } from './execution/DefaultCommandExecutor.js';
 import { DefaultCommandRepository } from './repository/DefaultCommandRepository.js';
-import { DefaultCommandResolver } from './resolve/DefaultCommandResolver';
+import { DefaultCommandResolver } from './resolve/DefaultCommandResolver.js';
 
 type CommandManagerOptions = {
   subscriptionsContainer: CommandSubscriptionsContainer;

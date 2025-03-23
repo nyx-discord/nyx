@@ -1,5 +1,6 @@
 import type { SessionStartInteraction } from '@nyx-discord/core';
 import { randomUUID } from 'crypto';
+import { vi } from 'vitest';
 import { AbstractPaginationSession } from '../../../src';
 import { MockBot } from '../../bot/MockBot';
 
@@ -12,9 +13,9 @@ export class MockPaginationSession extends AbstractPaginationSession<void> {
     });
   }
 
-  public onStart = jest.fn();
+  public onStart = vi.fn();
 
-  public onEnd = jest.fn();
+  public onEnd = vi.fn();
 
-  public updatePage = jest.fn();
+  public updatePage = vi.fn();
 }

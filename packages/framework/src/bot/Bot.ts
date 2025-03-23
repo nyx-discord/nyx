@@ -39,8 +39,8 @@ type BotOptionsWithDefaults<
     ConcreteBotService,
     ConcreteClient
   >
-> &
-  Pick<
+>
+  & Pick<
     BotOptions<
       ConcreteLogger,
       ConcreteCommandManager,

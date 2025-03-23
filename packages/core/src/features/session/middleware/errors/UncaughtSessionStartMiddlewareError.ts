@@ -5,7 +5,6 @@ import type { SessionStartInteraction } from '../../interaction/SessionStartInte
 import type { Session } from '../../session/Session.js';
 import type { SessionStartMiddleware } from '../SessionStartMiddleware.js';
 
-// eslint-disable-next-line max-len
 export class UncaughtSessionStartMiddlewareError extends AbstractSessionError<SessionStartInteraction> {
   protected readonly middlewareList: MiddlewareList<SessionStartMiddleware>;
 

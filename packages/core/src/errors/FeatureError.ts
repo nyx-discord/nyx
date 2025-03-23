@@ -2,17 +2,17 @@
 export class FeatureError<ErroredObject extends object> extends Error {
   public override readonly stack: string;
 
-  protected readonly cause: ErroredObject;
+  protected readonly errored: ErroredObject;
 
   protected readonly error: Error;
 
-  constructor(error: Error, cause: ErroredObject, message?: string) {
+  constructor(error: Error, errored: ErroredObject, message?: string) {
     super(message ?? `There was an error while running an object: \n${error}`);
 
     this.error = error;
-    this.cause = cause;
+    this.errored = errored;
     this.stack = `${this.message} ('${
-      this.cause.constructor.name ?? 'unknown'
+      this.errored.constructor.name ?? 'unknown'
     }') \n${this.error.stack}`;
   }
 
@@ -23,6 +23,6 @@ export class FeatureError<ErroredObject extends object> extends Error {
 
   /** Returns the object that caused the error. */
   public getCause(): ErroredObject {
-    return this.cause;
+    return this.errored;
   }
 }

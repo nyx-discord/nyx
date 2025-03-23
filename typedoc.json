@@ -7,7 +7,7 @@
   "entryPointStrategy": "packages",
   "includeVersion": false,
   "theme": "my-theme",
-  "out": "build/typedoc",
+  "out": "build/docs",
   "favicon": "assets/favicon.ico",
   "plugin": [
     "@mxssfd/typedoc-theme",

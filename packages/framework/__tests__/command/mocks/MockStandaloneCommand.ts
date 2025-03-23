@@ -1,5 +1,6 @@
 import type { SlashCommandOptionsOnlyBuilder } from 'discord.js';
 import { SlashCommandBuilder } from 'discord.js';
+import { vi } from 'vitest';
 import { AbstractStandaloneCommand } from '../../../src';
 
 export class MockStandaloneCommand extends AbstractStandaloneCommand {
@@ -16,5 +17,5 @@ export class MockStandaloneCommand extends AbstractStandaloneCommand {
       .setDescription('Mock command');
   }
 
-  public execute = jest.fn();
+  public execute = vi.fn();
 }

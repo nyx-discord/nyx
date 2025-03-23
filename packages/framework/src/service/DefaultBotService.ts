@@ -149,13 +149,13 @@ export class DefaultBotService implements BotService {
 
     this.status = BotStatusEnum.Stopped;
 
-    Promise.resolve(this.bus.emit(BotServiceEventEnum.Stop, [reason])).catch(
-      (error) => {
-        this.bot
-          .getLogger()
-          .error('Uncaught bus error while emitting stop event.', error);
-      },
-    );
+    Promise.resolve(
+      this.bus.emit(BotServiceEventEnum.Stop, reason ? [reason] : []),
+    ).catch((error) => {
+      this.bot
+        .getLogger()
+        .error('Uncaught bus error while emitting stop event.', error);
+    });
 
     await this.bus.onUnregister();
     await this.bot.getClient().destroy();
