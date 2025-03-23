@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:core": "turbo run build --filter=@nyx-discord/core",
+    "build:framework": "turbo run build --filter=@nyx-discord/framework",
     "lint": "turbo run lint",
     "format": "turbo run format",
     "test": "turbo run test",

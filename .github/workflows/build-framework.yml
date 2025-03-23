@@ -27,4 +27,4 @@ jobs:
         run: pnpm --filter framework... install
 
       - name: Build framework
-        run: pnpm exec lerna run build --scope=@nyx-discord/framework
+        run: pnpm run build:framework

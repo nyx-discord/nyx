@@ -27,4 +27,4 @@ jobs:
         run: pnpm --filter core install
 
       - name: Build core
-        run: pnpm exec lerna run build --scope=@nyx-discord/core
+        run: pnpm run build:core
