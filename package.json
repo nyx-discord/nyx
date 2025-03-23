@@ -10,6 +10,8 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "test": "turbo run test",
+    "test:core": "turbo run test --filter=@nyx-discord/core",
+    "test:framework": "turbo run test --filter=@nyx-discord/framework",
     "typedoc": "typedoc",
     "coverage": "turbo run coverage",
     "ci:version:conventional": "lerna version --yes --no-private --conventional-commits --create-release github --message \"chore(release): bump version\"",
