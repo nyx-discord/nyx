@@ -1,10 +1,10 @@
-name: Deploy Docusaurus
+name: Deploy Guide
 
 on:
   push:
     branches: [main]
     paths:
-      - apps/docs/**
+      - apps/guide/**
   workflow_dispatch:
 
 permissions:
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy Docusaurus to GitHub Pages
+    name: Deploy Guide to GitHub Pages
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
