@@ -1,17 +1,10 @@
 import type {
   BotOptions,
-  BotService,
-  CommandManager,
-  EventManager,
   Identifier,
+  InjectableBotDependencies,
   NyxBot,
-  NyxLogger,
-  PluginManager,
-  ScheduleManager,
-  SessionManager,
 } from '@nyx-discord/core';
-import type { Client } from 'discord.js';
-
+import { Client } from 'discord.js';
 import { DefaultCommandManager } from '../features/command/DefaultCommandManager.js';
 import { DefaultEventManager } from '../features/event/DefaultEventManager.js';
 import { DefaultPluginManager } from '../features/plugin/DefaultPluginManager.js';
@@ -20,95 +13,38 @@ import { DefaultSessionManager } from '../features/session/DefaultSessionManager
 import { DefaultBotService } from '../service/DefaultBotService.js';
 
 type BotOptionsWithDefaults<
-  ConcreteLogger extends NyxLogger,
-  ConcreteCommandManager extends CommandManager,
-  ConcreteEventManager extends EventManager,
-  ConcreteScheduleManager extends ScheduleManager,
-  ConcreteSessionManager extends SessionManager,
-  ConcretePluginManager extends PluginManager,
-  ConcreteBotService extends BotService,
-  ConcreteClient extends Client,
-> = Partial<
-  BotOptions<
-    ConcreteLogger,
-    ConcreteCommandManager,
-    ConcreteEventManager,
-    ConcreteScheduleManager,
-    ConcreteSessionManager,
-    ConcretePluginManager,
-    ConcreteBotService,
-    ConcreteClient
-  >
->
+  Implementations extends Partial<InjectableBotDependencies>,
+> = Implementations
   & Pick<
-    BotOptions<
-      ConcreteLogger,
-      ConcreteCommandManager,
-      ConcreteEventManager,
-      ConcreteScheduleManager,
-      ConcreteSessionManager,
-      ConcretePluginManager,
-      ConcreteBotService
-    >,
+    BotOptions<InjectableBotDependencies>,
     'logger' | 'client' | 'id' | 'token' | 'deployCommands'
   >;
 
 /** The main Bot class. */
-export class Bot<
-  ConcreteLogger extends NyxLogger,
-  ConcreteCommandManager extends CommandManager,
-  ConcreteEventManager extends EventManager,
-  ConcreteScheduleManager extends ScheduleManager,
-  ConcreteSessionManager extends SessionManager,
-  ConcretePluginManager extends PluginManager,
-  ConcreteBotService extends BotService,
-  ConcreteClient extends Client,
-> implements
-    NyxBot<
-      ConcreteLogger,
-      ConcreteCommandManager,
-      ConcreteEventManager,
-      ConcreteScheduleManager,
-      ConcreteSessionManager,
-      ConcretePluginManager,
-      ConcreteBotService,
-      ConcreteClient
-    >
+export class Bot<Implementations extends InjectableBotDependencies>
+  implements NyxBot<Implementations>
 {
-  protected readonly logger: ConcreteLogger;
+  protected readonly logger: Implementations['logger'];
 
-  protected readonly commands: ConcreteCommandManager;
+  protected readonly commands: Implementations['commandManager'];
 
-  protected readonly events: ConcreteEventManager;
+  protected readonly events: Implementations['eventManager'];
 
-  protected readonly schedules: ConcreteScheduleManager;
+  protected readonly schedules: Implementations['scheduleManager'];
 
-  protected readonly sessions: ConcreteSessionManager;
+  protected readonly sessions: Implementations['sessionManager'];
 
-  protected readonly plugins: ConcretePluginManager;
+  protected readonly plugins: Implementations['pluginManager'];
 
-  protected readonly service: ConcreteBotService;
+  protected readonly service: Implementations['service'];
+
+  protected readonly client: Implementations['client'];
 
   protected readonly id: Identifier;
 
-  protected readonly client: ConcreteClient;
-
   protected readonly token: string;
 
-  constructor(
-    optionsGenerator: (
-      bot: NyxBot,
-    ) => BotOptions<
-      ConcreteLogger,
-      ConcreteCommandManager,
-      ConcreteEventManager,
-      ConcreteScheduleManager,
-      ConcreteSessionManager,
-      ConcretePluginManager,
-      ConcreteBotService,
-      ConcreteClient
-    >,
-  ) {
+  constructor(optionsGenerator: (bot: NyxBot) => BotOptions<Implementations>) {
     const options = optionsGenerator(this);
 
     this.client = options.client;
@@ -125,37 +61,10 @@ export class Bot<
   }
 
   public static create<
-    ConcreteLogger extends NyxLogger,
-    ConcreteCommandManager extends CommandManager,
-    ConcreteEventManager extends EventManager,
-    ConcreteScheduleManager extends ScheduleManager,
-    ConcreteSessionManager extends SessionManager,
-    ConcretePluginManager extends PluginManager,
-    ConcreteBotService extends BotService,
-    ConcreteClient extends Client,
+    Implementations extends Partial<InjectableBotDependencies>,
   >(
-    generator: (
-      bot: NyxBot,
-    ) => BotOptionsWithDefaults<
-      ConcreteLogger,
-      ConcreteCommandManager,
-      ConcreteEventManager,
-      ConcreteScheduleManager,
-      ConcreteSessionManager,
-      ConcretePluginManager,
-      ConcreteBotService,
-      ConcreteClient
-    >,
-  ): NyxBot<
-    ConcreteLogger,
-    ConcreteCommandManager,
-    ConcreteEventManager,
-    ConcreteScheduleManager,
-    ConcreteSessionManager,
-    ConcretePluginManager,
-    ConcreteBotService,
-    ConcreteClient
-  > {
+    generator: (bot: NyxBot) => BotOptionsWithDefaults<Implementations>,
+  ): NyxBot<InjectableBotDependencies & Implementations> {
     return new Bot((bot) => {
       const generatedOptions = generator(bot);
       const defaultOptions = Bot.DefaultOptionsGenerator(
@@ -165,16 +74,10 @@ export class Bot<
         generatedOptions.deployCommands,
       );
 
-      return { ...defaultOptions, ...generatedOptions } as BotOptions<
-        ConcreteLogger,
-        ConcreteCommandManager,
-        ConcreteEventManager,
-        ConcreteScheduleManager,
-        ConcreteSessionManager,
-        ConcretePluginManager,
-        ConcreteBotService,
-        ConcreteClient
-      >;
+      return {
+        ...defaultOptions,
+        ...generatedOptions,
+      };
     });
   }
 
@@ -221,15 +124,15 @@ export class Bot<
     return this.token;
   }
 
-  public getClient(): ConcreteClient {
+  public getClient(): Implementations['client'] {
     return this.client;
   }
 
-  public getCommandManager(): ConcreteCommandManager {
+  public getCommandManager(): Implementations['commandManager'] {
     return this.commands;
   }
 
-  public getEventManager(): ConcreteEventManager {
+  public getEventManager(): Implementations['eventManager'] {
     return this.events;
   }
 
@@ -237,23 +140,23 @@ export class Bot<
     return this.id;
   }
 
-  public getLogger(): ConcreteLogger {
+  public getLogger(): Implementations['logger'] {
     return this.logger;
   }
 
-  public getPluginManager(): ConcretePluginManager {
+  public getPluginManager(): Implementations['pluginManager'] {
     return this.plugins;
   }
 
-  public getScheduleManager(): ConcreteScheduleManager {
+  public getScheduleManager(): Implementations['scheduleManager'] {
     return this.schedules;
   }
 
-  public getService(): ConcreteBotService {
+  public getService(): Implementations['service'] {
     return this.service;
   }
 
-  public getSessionManager(): ConcreteSessionManager {
+  public getSessionManager(): Implementations['sessionManager'] {
     return this.sessions;
   }
 }
