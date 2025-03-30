@@ -33,7 +33,6 @@ export class DefaultPluginManager implements PluginManager {
 
   public static create(bot: NyxBot): PluginManager {
     const busId = Symbol('PluginManagerEventBus');
-
     const bus = BasicEventBus.createAsync(bot, busId);
 
     return new DefaultPluginManager(bot, bus);

@@ -19,7 +19,7 @@ import {
   ObjectNotFoundError,
 } from '@nyx-discord/core';
 import type { Awaitable, Client, ClientEvents } from 'discord.js';
-
+import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from './bus/BasicEventBus.js';
 import { BasicEventEmitterBus } from './bus/BasicEventEmitterBus.js';
 
@@ -54,24 +54,26 @@ export class DefaultEventManager implements EventManager {
   ): EventManager {
     const constructorOptions = options ?? {};
 
-    if (!constructorOptions.managerBus) {
-      const managerBusId = Symbol('EventManagerEventBus');
-      constructorOptions.managerBus =
-        BasicEventBus.createAsync<EventManagerEventsArgs>(bot, managerBusId);
-    }
-
-    if (!constructorOptions.clientBus) {
-      const clientBusId = Symbol('ClientEventBus');
-      constructorOptions.clientBus = BasicEventEmitterBus.createSyncWithEmitter<
-        ClientEvents,
-        Client
-      >(bot, clientBusId, client);
-    }
-
-    return new DefaultEventManager(
-      bot,
-      constructorOptions as EventManagerOptions,
+    ensureKey(
+      constructorOptions,
+      'managerBus',
+      BasicEventBus.createAsync<EventManagerEventsArgs>(
+        bot,
+        Symbol('EventManagerEventBus'),
+      ),
     );
+
+    ensureKey(
+      constructorOptions,
+      'clientBus',
+      BasicEventEmitterBus.createSyncWithEmitter<ClientEvents, Client>(
+        bot,
+        Symbol('ClientEventBus'),
+        client,
+      ),
+    );
+
+    return new DefaultEventManager(bot, constructorOptions);
   }
 
   public onStart(): Awaitable<void> {

@@ -22,7 +22,7 @@ import {
   SessionStateEnum,
 } from '@nyx-discord/core';
 import type { ClientEvents, Events } from 'discord.js';
-
+import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultSessionCustomIdCodec } from './customId/DefaultSessionCustomIdCodec';
 import { DefaultSessionUpdateSubscriber } from './event/DefaultSessionUpdateSubscriber.js';
@@ -75,41 +75,41 @@ export class DefaultSessionManager implements SessionManager {
   ): SessionManager {
     const constructorOptions = options ?? {};
 
-    if (!constructorOptions.executor) {
-      constructorOptions.executor = DefaultSessionExecutor.create();
-    }
-
-    if (!constructorOptions.repository) {
-      constructorOptions.repository = DefaultSessionRepository.create();
-    }
-
-    if (!constructorOptions.promiseRepository) {
-      constructorOptions.promiseRepository =
-        DefaultSessionPromiseRepository.create();
-    }
-
-    if (!constructorOptions.subscriber) {
-      constructorOptions.subscriber = new DefaultSessionUpdateSubscriber();
-    }
-
-    if (!constructorOptions.customIdCodec) {
-      constructorOptions.customIdCodec = DefaultSessionCustomIdCodec.create();
-    }
-
-    if (!constructorOptions.bus) {
-      const busId = Symbol('SessionManagerEventBus');
-
-      constructorOptions.bus = BasicEventBus.createAsync<SessionEventArgs>(
+    ensureKey(constructorOptions, 'executor', DefaultSessionExecutor.create());
+    ensureKey(
+      constructorOptions,
+      'repository',
+      DefaultSessionRepository.create(),
+    );
+    ensureKey(
+      constructorOptions,
+      'promiseRepository',
+      DefaultSessionPromiseRepository.create(),
+    );
+    ensureKey(
+      constructorOptions,
+      'subscriber',
+      new DefaultSessionUpdateSubscriber(),
+    );
+    ensureKey(
+      constructorOptions,
+      'customIdCodec',
+      DefaultSessionCustomIdCodec.create(),
+    );
+    ensureKey(
+      constructorOptions,
+      'bus',
+      BasicEventBus.createAsync<SessionEventArgs>(
         bot,
-        busId,
-      );
-    }
+        Symbol('SessionManagerEventBus'),
+      ),
+    );
 
-    const fullOptions = constructorOptions as SessionManagerOptions;
+    const manager = new DefaultSessionManager(bot, constructorOptions);
 
-    const manager = new DefaultSessionManager(bot, fullOptions);
-
-    fullOptions.repository.setExpirationCallback(manager.expire.bind(manager));
+    constructorOptions.repository.setExpirationCallback(
+      manager.expire.bind(manager),
+    );
 
     return manager;
   }

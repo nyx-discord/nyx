@@ -20,7 +20,7 @@ import {
   ScheduleEventEnum,
   ScheduleTickMeta,
 } from '@nyx-discord/core';
-
+import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultScheduleExecutor } from './execution/executor/DefaultScheduleExecutor.js';
 import { DefaultScheduleExecutionScheduler } from './execution/scheduler/DefaultScheduleExecutionScheduler.js';
@@ -58,32 +58,30 @@ export class DefaultScheduleManager implements ScheduleManager {
   ): ScheduleManager {
     const constructorOptions = options ?? {};
 
-    if (!constructorOptions.repository) {
-      constructorOptions.repository = DefaultScheduleRepository.create();
-    }
-
-    if (!constructorOptions.executor) {
-      constructorOptions.executor = DefaultScheduleExecutor.create();
-    }
-
-    if (!constructorOptions.scheduler) {
-      constructorOptions.scheduler = DefaultScheduleExecutionScheduler.create(
+    ensureKey(
+      constructorOptions,
+      'repository',
+      DefaultScheduleRepository.create(),
+    );
+    ensureKey(constructorOptions, 'executor', DefaultScheduleExecutor.create());
+    ensureKey(
+      constructorOptions,
+      'scheduler',
+      DefaultScheduleExecutionScheduler.create(
         constructorOptions.executor,
         (schedule) => ScheduleTickMeta.fromSchedule(schedule, bot),
-      );
-    }
-
-    if (!constructorOptions.eventBus) {
-      const busId = Symbol('ScheduleManagerEventBus');
-
-      constructorOptions.eventBus =
-        BasicEventBus.createAsync<ScheduleEventArgs>(bot, busId);
-    }
-
-    return new DefaultScheduleManager(
-      bot,
-      constructorOptions as ScheduleManagerOptions,
+      ),
     );
+    ensureKey(
+      constructorOptions,
+      'eventBus',
+      BasicEventBus.createAsync<ScheduleEventArgs>(
+        bot,
+        Symbol('ScheduleManagerEventBus'),
+      ),
+    );
+
+    return new DefaultScheduleManager(bot, constructorOptions);
   }
 
   public async onStart(): Promise<void> {

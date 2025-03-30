@@ -18,6 +18,7 @@ import type {
 import { CommandEventEnum, CommandExecutionMeta } from '@nyx-discord/core';
 import type { AutocompleteInteraction, Client, ClientEvents } from 'discord.js';
 import { InteractionType } from 'discord.js';
+import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultCommandCustomIdCodec } from './customId/DefaultCommandCustomIdCodec.js';
 import { DefaultCommandDeployer } from './deploy/DefaultCommandDeployer.js';
@@ -79,52 +80,43 @@ export class DefaultCommandManager implements CommandManager {
   ): CommandManager {
     const constructorOptions: Partial<CommandManagerOptions> = options ?? {};
 
-    if (typeof constructorOptions.deploy === 'undefined') {
-      constructorOptions.deploy = deploy;
-    }
-
-    if (!constructorOptions.eventBus) {
-      const busId = Symbol('CommandManagerEventBus');
-
-      constructorOptions.eventBus = BasicEventBus.createAsync<CommandEventArgs>(
+    ensureKey(constructorOptions, 'deploy', deploy);
+    ensureKey(
+      constructorOptions,
+      'eventBus',
+      BasicEventBus.createAsync<CommandEventArgs>(
         bot,
-        busId,
-      );
-    }
-
-    if (!constructorOptions.repository) {
-      constructorOptions.repository = DefaultCommandRepository.create();
-    }
-
-    if (!constructorOptions.executor) {
-      constructorOptions.executor = DefaultCommandExecutor.create();
-    }
-
-    if (!constructorOptions.customIdCodec) {
-      constructorOptions.customIdCodec = DefaultCommandCustomIdCodec.create();
-    }
-
-    if (!constructorOptions.resolver) {
-      constructorOptions.resolver = DefaultCommandResolver.create();
-    }
-
-    if (!constructorOptions.subscriptionsContainer) {
-      constructorOptions.subscriptionsContainer =
-        DefaultCommandSubscriptionsContainer.create(
-          clientBus,
-          new DefaultCommandInteractionSubscriber(),
-          new DefaultCommandAutocompleteSubscriber(),
-        );
-    }
-
-    if (!constructorOptions.deployer) {
-      constructorOptions.deployer = new DefaultCommandDeployer(client);
-    }
-
-    return new DefaultCommandManager(
-      bot,
-      constructorOptions as CommandManagerOptions,
+        Symbol('CommandManagerEventBus'),
+      ),
     );
+    ensureKey(
+      constructorOptions,
+      'repository',
+      DefaultCommandRepository.create(),
+    );
+    ensureKey(constructorOptions, 'executor', DefaultCommandExecutor.create());
+    ensureKey(
+      constructorOptions,
+      'customIdCodec',
+      DefaultCommandCustomIdCodec.create(),
+    );
+    ensureKey(constructorOptions, 'resolver', DefaultCommandResolver.create());
+    ensureKey(
+      constructorOptions,
+      'subscriptionsContainer',
+      DefaultCommandSubscriptionsContainer.create(
+        clientBus,
+        new DefaultCommandInteractionSubscriber(),
+        new DefaultCommandAutocompleteSubscriber(),
+      ),
+    );
+    ensureKey(
+      constructorOptions,
+      'deployer',
+      new DefaultCommandDeployer(client),
+    );
+
+    return new DefaultCommandManager(bot, constructorOptions);
   }
 
   public async onStart(): Promise<void> {
