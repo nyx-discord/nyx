@@ -4,7 +4,7 @@ export function ensureKey<K extends keyof I, I extends object, V extends I[K]>(
   key: K,
   valueIfNotPresent: Exclude<V, undefined>,
 ): asserts input is I & Record<K, V> {
-  if (typeof input[key] === 'undefined') {
+  if (typeof input[key] !== 'undefined') {
     return;
   }
   input[key] = valueIfNotPresent;
