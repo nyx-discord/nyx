@@ -11,13 +11,25 @@ import type {
   CommandSubscriptionsContainer,
   EventBus,
   EventSubscriber,
+  Identifier,
+  MetaCollection,
   NyxBot,
   ReadonlyCommandDeployer,
   TopLevelCommand,
 } from '@nyx-discord/core';
-import { CommandEventEnum, CommandExecutionMeta } from '@nyx-discord/core';
-import type { AutocompleteInteraction, Client, ClientEvents } from 'discord.js';
+import {
+  CommandEventEnum,
+  MetaCollectionFactory,
+  TypedFields,
+} from '@nyx-discord/core';
+import type {
+  AutocompleteInteraction,
+  Client,
+  ClientEvents,
+  Interaction,
+} from 'discord.js';
 import { InteractionType } from 'discord.js';
+import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
 import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultCommandCustomIdCodec } from './customId/DefaultCommandCustomIdCodec.js';
@@ -38,6 +50,7 @@ type CommandManagerOptions = {
   deployer: CommandDeployer;
   eventBus: EventBus<CommandEventArgs>;
   deploy: boolean;
+  metaFactory: MetaCollectionFactory;
 };
 
 export class DefaultCommandManager implements CommandManager {
@@ -59,6 +72,8 @@ export class DefaultCommandManager implements CommandManager {
 
   protected readonly deployOnStart: boolean;
 
+  protected readonly metaFactory: MetaCollectionFactory;
+
   constructor(bot: NyxBot, options: CommandManagerOptions) {
     this.bot = bot;
     this.repository = options.repository;
@@ -69,6 +84,7 @@ export class DefaultCommandManager implements CommandManager {
     this.eventBus = options.eventBus;
     this.deployer = options.deployer;
     this.deployOnStart = options.deploy;
+    this.metaFactory = options.metaFactory;
   }
 
   public static create(
@@ -79,14 +95,18 @@ export class DefaultCommandManager implements CommandManager {
     options?: Partial<CommandManagerOptions>,
   ): CommandManager {
     const constructorOptions: Partial<CommandManagerOptions> = options ?? {};
+    const metaFactory = DefaultMetaCollectionFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]);
 
     ensureKey(constructorOptions, 'deploy', deploy);
     ensureKey(
       constructorOptions,
       'eventBus',
       BasicEventBus.createAsync<CommandEventArgs>(
-        bot,
         Symbol('CommandManagerEventBus'),
+        metaFactory,
       ),
     );
     ensureKey(
@@ -115,6 +135,7 @@ export class DefaultCommandManager implements CommandManager {
       'deployer',
       new DefaultCommandDeployer(client),
     );
+    ensureKey(constructorOptions, 'metaFactory', metaFactory);
 
     return new DefaultCommandManager(bot, constructorOptions);
   }
@@ -252,7 +273,7 @@ export class DefaultCommandManager implements CommandManager {
 
   public async autocomplete(
     interaction: AutocompleteInteraction,
-    meta?: CommandExecutionMeta,
+    meta?: MetaCollection,
   ): Promise<boolean> {
     const command = this.resolver.resolveFromAutocompleteInteraction(
       interaction,
@@ -260,24 +281,26 @@ export class DefaultCommandManager implements CommandManager {
     );
     if (!command) return false;
 
-    const metadata =
-      meta
-      ?? CommandExecutionMeta.fromCommandAutocomplete(
-        command,
-        interaction,
-        this.bot,
-      );
+    const option = interaction.options.getFocused(true);
+    const { metadata, executionId } = this.createOrPopulateMeta({
+      meta,
+      command,
+      customIdExtra: null,
+      interaction,
+      extraData: [
+        { name: 'Option', value: option.name },
+        { name: 'Value', value: option.value },
+      ],
+    });
 
     try {
       if (!command.isSubCommand() && !command.isStandalone()) return false;
       await this.executor.autocomplete(command, interaction, metadata);
     } catch (error) {
-      const executionId = String(metadata.getId());
-
       this.bot
         .getLogger()
         .error(
-          `Uncaught executor error while autocompleting command '${executionId}'.`,
+          `Uncaught executor error while autocompleting command '${String(executionId)}'.`,
           error,
         );
     }
@@ -289,12 +312,10 @@ export class DefaultCommandManager implements CommandManager {
         metadata,
       ]),
     ).catch((error) => {
-      const executionId = String(metadata.getId());
-
       this.bot
         .getLogger()
         .error(
-          `Uncaught event bus error while emitting command autocomplete '${executionId}'.`,
+          `Uncaught event bus error while emitting command autocomplete '${String(executionId)}'.`,
           error,
         );
     });
@@ -304,9 +325,10 @@ export class DefaultCommandManager implements CommandManager {
 
   public async execute(
     interaction: CommandExecutableInteraction,
-    meta?: CommandExecutionMeta,
+    meta?: MetaCollection,
   ): Promise<boolean> {
     let command: AnyExecutableCommand | null;
+    let customIdExtra: string | null = null;
 
     if (interaction.type === InteractionType.ApplicationCommand) {
       command = this.resolver.resolveFromCommandInteraction(
@@ -325,23 +347,26 @@ export class DefaultCommandManager implements CommandManager {
       }
 
       command = found;
+      customIdExtra = data.extra;
     }
 
     if (!command) return false;
 
-    const metadata =
-      meta
-      ?? CommandExecutionMeta.fromCommandCall(command, interaction, this.bot);
+    const { metadata, executionId } = this.createOrPopulateMeta({
+      meta,
+      command,
+      customIdExtra,
+      interaction,
+      extraData: [],
+    });
 
     try {
       await this.executor.execute(command, interaction, metadata);
     } catch (error) {
-      const executionId = String(metadata.getId());
-
       this.bot
         .getLogger()
         .error(
-          `Uncaught executor error while executing command '${executionId}'.`,
+          `Uncaught executor error while executing command '${String(executionId)}'.`,
           error,
         );
 
@@ -355,12 +380,10 @@ export class DefaultCommandManager implements CommandManager {
         metadata,
       ]),
     ).catch((error) => {
-      const executionId = String(metadata.getId());
-
       this.bot
         .getLogger()
         .error(
-          `Uncaught event bus error while emitting command run '${executionId}'.`,
+          `Uncaught event bus error while emitting command run '${String(executionId)}'.`,
           error,
         );
     });
@@ -405,5 +428,47 @@ export class DefaultCommandManager implements CommandManager {
 
   public getDeployer(): ReadonlyCommandDeployer {
     return this.deployer;
+  }
+
+  public getMetaCollectionFactory(): MetaCollectionFactory {
+    return this.metaFactory;
+  }
+
+  /** Creates a meta collection for a session, or populates an existing one. */
+  protected createOrPopulateMeta(options: {
+    meta: MetaCollection | undefined;
+    command: AnyExecutableCommand;
+    customIdExtra: string | null;
+    interaction: Interaction;
+    extraData: { name: string; value: string }[];
+  }): {
+    metadata: MetaCollection;
+    executionId: Identifier;
+  } {
+    const commandName = options.command.getNameTree().join(' ');
+
+    const executionData = [
+      { name: 'Command', value: commandName },
+      { name: 'Date', value: new Date().toISOString() },
+      { name: 'Interaction ID', value: `${options.interaction.id}` },
+      { name: 'Interaction Type', value: `${options.interaction.type}` },
+      ...options.extraData,
+    ];
+    const executionId = Symbol(
+      executionData.map((e) => `${e.name} '${e.value}'`).join(' | '),
+    );
+
+    const metadata = this.metaFactory.createOrPopulate(
+      options.meta,
+      executionId,
+    );
+    if (options.customIdExtra) {
+      TypedFields.CustomIdExtra.set(metadata, options.customIdExtra);
+    }
+
+    return {
+      metadata,
+      executionId: executionId,
+    };
   }
 }

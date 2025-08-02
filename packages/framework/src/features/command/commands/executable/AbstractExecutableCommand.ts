@@ -1,10 +1,10 @@
 import type {
   ApplicationCommandInteraction,
   CommandCustomIdData,
-  CommandExecutionMeta,
   CommandFilter,
   ComponentCommandInteraction,
   ExecutableCommand,
+  MetaCollection,
   NyxBot,
 } from '@nyx-discord/core';
 import {
@@ -13,7 +13,6 @@ import {
   type ButtonInteraction,
   type ModalSubmitInteraction,
 } from 'discord.js';
-
 import { NotImplementedError } from '../../../../errors/NotImplementedError';
 import { AbstractCommand } from '../AbstractCommand';
 
@@ -30,7 +29,7 @@ export abstract class AbstractExecutableCommand<
 
   public handleInteraction(
     interaction: ComponentCommandInteraction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
   ): Awaitable<void> {
     if (interaction.isButton()) return this.handleButton(interaction, metadata);
     if (interaction.isModalSubmit()) {
@@ -54,13 +53,13 @@ export abstract class AbstractExecutableCommand<
 
   public abstract execute(
     interaction: Interaction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
   ): Awaitable<void>;
 
   /** Handles a {@link ButtonInteraction} whose customId matches this command. */
   protected handleButton(
     _interaction: ButtonInteraction,
-    _metadata: CommandExecutionMeta,
+    _metadata: MetaCollection,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }
@@ -68,7 +67,7 @@ export abstract class AbstractExecutableCommand<
   /** Handles an {@link AnySelectMenuInteraction} whose customId matches this command. */
   protected handleSelectMenu(
     _interaction: AnySelectMenuInteraction,
-    _metadata: CommandExecutionMeta,
+    _metadata: MetaCollection,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }
@@ -76,7 +75,7 @@ export abstract class AbstractExecutableCommand<
   /** Handles a {@link ModalSubmitInteraction} whose customId matches this command. */
   protected handleModal(
     _interaction: ModalSubmitInteraction,
-    _metadata: CommandExecutionMeta,
+    _metadata: MetaCollection,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }

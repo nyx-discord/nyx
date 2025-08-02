@@ -1,4 +1,4 @@
-import type { SessionExecutionMeta } from '../meta/SessionExecutionMeta.js';
+import { MetaCollection } from '../../../../meta/MetaCollection';
 
 /** Type of arguments used to call a {@link Session} start. */
-export type SessionStartArgs = [SessionExecutionMeta];
+export type SessionStartArgs = [MetaCollection];

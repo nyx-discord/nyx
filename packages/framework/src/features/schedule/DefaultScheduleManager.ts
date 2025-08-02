@@ -3,6 +3,8 @@ import type {
   EventBus,
   EventSubscriber,
   Identifier,
+  MetaCollection,
+  MetaCollectionFactory,
   NyxBot,
   Schedule,
   ScheduleEventArgs,
@@ -18,8 +20,9 @@ import {
   IllegalDuplicateError,
   ObjectNotFoundError,
   ScheduleEventEnum,
-  ScheduleTickMeta,
+  TypedFields,
 } from '@nyx-discord/core';
+import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
 import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultScheduleExecutor } from './execution/executor/DefaultScheduleExecutor.js';
@@ -31,6 +34,7 @@ type ScheduleManagerOptions = {
   repository: ScheduleRepository;
   scheduler: ScheduleExecutionScheduler;
   eventBus: EventBus<ScheduleEventArgs>;
+  metaFactory: MetaCollectionFactory;
 };
 
 export class DefaultScheduleManager implements ScheduleManager {
@@ -44,12 +48,15 @@ export class DefaultScheduleManager implements ScheduleManager {
 
   protected readonly bus: EventBus<ScheduleEventArgs>;
 
+  protected readonly metaFactory: MetaCollectionFactory;
+
   constructor(bot: NyxBot, options: ScheduleManagerOptions) {
     this.bot = bot;
     this.repository = options.repository;
     this.executor = options.executor;
     this.scheduler = options.scheduler;
     this.bus = options.eventBus;
+    this.metaFactory = options.metaFactory;
   }
 
   public static create(
@@ -57,6 +64,10 @@ export class DefaultScheduleManager implements ScheduleManager {
     options?: Partial<ScheduleManagerOptions>,
   ): ScheduleManager {
     const constructorOptions = options ?? {};
+    const metaFactory = DefaultMetaCollectionFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]);
 
     ensureKey(
       constructorOptions,
@@ -69,17 +80,18 @@ export class DefaultScheduleManager implements ScheduleManager {
       'scheduler',
       DefaultScheduleExecutionScheduler.create(
         constructorOptions.executor,
-        (schedule) => ScheduleTickMeta.fromSchedule(schedule, bot),
+        metaFactory,
       ),
     );
     ensureKey(
       constructorOptions,
       'eventBus',
       BasicEventBus.createAsync<ScheduleEventArgs>(
-        bot,
         Symbol('ScheduleManagerEventBus'),
+        metaFactory,
       ),
     );
+    ensureKey(constructorOptions, 'metaFactory', metaFactory);
 
     return new DefaultScheduleManager(bot, constructorOptions);
   }
@@ -191,7 +203,7 @@ export class DefaultScheduleManager implements ScheduleManager {
 
   public async tick(
     scheduleOrId: Schedule | Identifier,
-    meta?: ScheduleTickMeta,
+    meta?: MetaCollection,
   ): Promise<this> {
     const id = canBeIdentifier(scheduleOrId)
       ? scheduleOrId
@@ -202,7 +214,10 @@ export class DefaultScheduleManager implements ScheduleManager {
       throw new ObjectNotFoundError(`Schedule '${String(id)}' not found.`);
     }
 
-    const metadata = meta ?? ScheduleTickMeta.fromSchedule(schedule, this.bot);
+    const metadata = this.metaFactory.createOrPopulate(
+      meta,
+      Symbol(`Schedule '${String(id)}' @${Date.now()}`),
+    );
     await this.executor.tick(schedule, metadata);
 
     return this;
@@ -248,5 +263,9 @@ export class DefaultScheduleManager implements ScheduleManager {
 
   public getEventBus(): EventBus<ScheduleEventArgs> {
     return this.bus;
+  }
+
+  public getMetaCollectionFactory(): MetaCollectionFactory {
+    return this.metaFactory;
   }
 }

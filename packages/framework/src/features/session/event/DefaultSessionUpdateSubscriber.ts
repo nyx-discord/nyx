@@ -1,7 +1,6 @@
-import type { EventDispatchMeta } from '@nyx-discord/core';
+import { TypedFields, type MetaCollection } from '@nyx-discord/core';
 import type { Interaction } from 'discord.js';
 import { Events } from 'discord.js';
-
 import { AbstractDJSClientSubscriber as Subscriber } from '../../event/subscriber/AbstractDJSClientSubscriber.js';
 
 export class DefaultSessionUpdateSubscriber extends Subscriber<Events.InteractionCreate> {
@@ -10,7 +9,7 @@ export class DefaultSessionUpdateSubscriber extends Subscriber<Events.Interactio
   protected override locked = true;
 
   public async handleEvent(
-    meta: EventDispatchMeta,
+    meta: MetaCollection,
     interaction: Interaction,
   ): Promise<void> {
     if (
@@ -21,8 +20,10 @@ export class DefaultSessionUpdateSubscriber extends Subscriber<Events.Interactio
       return;
     }
 
-    const bot = meta.getBot(true);
+    const bot = TypedFields.Bot.get(meta, true);
     const handled = await bot.getSessionManager().update(interaction);
-    if (handled) meta.setHandled();
+    if (handled) {
+      TypedFields.EventHandled.set(meta, true);
+    }
   }
 }

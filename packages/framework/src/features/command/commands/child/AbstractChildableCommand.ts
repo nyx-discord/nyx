@@ -10,12 +10,11 @@ import {
   IllegalDuplicateError,
   ObjectNotFoundError,
 } from '@nyx-discord/core';
-
 import { AbstractCommand } from '../AbstractCommand';
 
 export abstract class AbstractChildableCommand<
     Data,
-    Child extends ChildCommand<any, any>,
+    Child extends ChildCommand<unknown, never>,
   >
   extends AbstractCommand<Data>
   implements ChildableCommand<Data, Child>

@@ -1,5 +1,4 @@
 import type { AutocompleteInteraction } from 'discord.js';
-
 import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
 import type { ApplicationCommandInteraction } from '../interaction/ApplicationCommandInteraction.js';
 import type { CommandRepository } from '../repository/CommandRepository';

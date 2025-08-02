@@ -20,7 +20,7 @@ Specifically, the command related objects are:
 * [`💼 CommandManager`](./command-manager.mdx): The entry point for the command system, holding all the command-related objects and methods that use all of these objects. All objects below are contained here.
 * [`💬 CommandCustomIdCodec`](./command-customid-codec.mdx): De/serializes commands names to/from customId strings, useful for creating message components that will trigger commands.
 * [`🔀 CommandResolver`](./command-resolver.mdx): Resolves the command that a given command interaction refers to.
-* [`⚡ CommandExecutor`](./command-executor.mdx): Executes commands, checking its `CommandMiddlewareList` and passing errors to the [`💫 ErrorHandler`](../../error/error-handling).
+* [`⚡ CommandExecutor`](./command-executor.mdx): Executes commands, checking its `CommandMiddlewareList` and passing errors to the [`💫 ErrorHandler`](../../extra/error-handling).
 * [`📔 CommandRepository`](./command-repository.mdx): Stores all the currently registered commands.
 * [`🪐 CommandDeployer`](./command-deployer.mdx): Deploys commands to Discord and stores the ApplicationCommand mappings.
 * [`👂 CommandSubscriptionsContainer`](./command-subscribers.mdx): Stores the [📩 Event Subscribers](../events/event-subscriber) that are subscribed to the [👂 Client event bus](../events/event-manager.mdx#-client-event-bus) to listen for command interactions.
@@ -144,7 +144,7 @@ await bot.getCommandManager().addCommands(command);
 :::danger
 There won't be any type errors if you don't implement the correspondent execute method for your command (like if you
 don't implement `executeUser()` with `ApplicationCommandType.User`), but you'll get a `NotImplementedError` once the
-command is actually executed, which will be handled by the [`ErrorHandler`](../../error/error-handling).
+command is actually executed, which will be handled by the [`ErrorHandler`](../../extra/error-handling).
 :::
 
 ```mdx-code-block

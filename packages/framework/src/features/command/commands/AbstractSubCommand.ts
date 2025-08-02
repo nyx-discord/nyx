@@ -1,6 +1,6 @@
 import type {
   CommandCustomIdData,
-  CommandExecutionMeta,
+  MetaCollection,
   ParentCommand,
   SubCommand,
   SubCommandGroup,
@@ -55,7 +55,7 @@ export abstract class AbstractSubCommand
 
   public autocomplete(
     _interaction: AutocompleteInteraction,
-    _metadata: CommandExecutionMeta,
+    _metadata: MetaCollection,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }

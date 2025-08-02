@@ -1,17 +1,17 @@
 import type {
+  MetaCollection,
   MiddlewareList,
   Schedule,
   ScheduleErrorHandler,
   ScheduleExecutor,
   ScheduleMiddleware,
   ScheduleTickArgs,
-  ScheduleTickMeta,
 } from '@nyx-discord/core';
 import {
   ScheduleMiddlewareError,
+  TypedFields,
   UncaughtScheduleMiddlewareError,
 } from '@nyx-discord/core';
-
 import { BasicErrorHandler } from '../../../../error/BasicErrorHandler.js';
 import { ScheduleMiddlewareList } from '../../middleware/ScheduleMiddlewareList.js';
 
@@ -32,12 +32,12 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
     return new DefaultScheduleExecutor(
       ScheduleMiddlewareList.create(),
       BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
-        meta.getBot().getLogger(),
+        TypedFields.Bot.get(meta, true).getLogger(),
       ),
     );
   }
 
-  public async tick(schedule: Schedule, meta: ScheduleTickMeta): Promise<void> {
+  public async tick(schedule: Schedule, meta: MetaCollection): Promise<void> {
     const args: ScheduleTickArgs = [meta];
 
     try {

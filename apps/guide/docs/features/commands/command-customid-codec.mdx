@@ -30,10 +30,10 @@ All serialization methods are public, so you can make command custom ids anywher
 class MyCommand extends <Any ExecutableCommand> {
   public async execute(
     interaction: ChatInputCommandInteraction,
-    meta: CommandExecutionMeta,
+    meta: MetaCollection,
   ) {
     // The bot contains the CustomIdCodec, so we need it first
-    const bot = meta.get(TypedKeys.Bot);
+    const bot = TypedFields.Bot.get(meta, true);
 
     // Get the customId:
     const customId = bot.getCommandManager().getCustomIdCodec().serialize(this.customIdData);
@@ -60,10 +60,10 @@ class MyCommand extends <Any ExecutableCommand> {
 class MyCommand extends <Any ExecutableCommand> {
   public async execute(
     interaction: ChatInputCommandInteraction,
-    meta: CommandExecutionMeta,
+    meta: MetaCollection,
   ) {
     // The bot contains the CustomIdCodec, so we need it first
-    const bot = meta.get(TypedKeys.Bot);
+    const bot = TypedFields.Bot.get(meta, true);
 
     // Get the customId:
     const customId = bot.getCommandManager().getCustomIdCodec().serialize(this.customIdData, 'Extra data');
@@ -75,8 +75,8 @@ class MyCommand extends <Any ExecutableCommand> {
     await interaction.reply({ components: [new ActionRowBuilder().addComponents(button)] });
   }
 
-  protected async handleButton(interaction: ButtonInteraction, meta: CommandExecutionMeta) {
-    const extra = meta.get(TypedKeys.CustomIdExtra);
+  protected async handleButton(interaction: ButtonInteraction, meta: MetaCollection) {
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
     await interaction.reply(extra) // Replies 'Extra data';
   }
 }
@@ -108,9 +108,9 @@ const store = new SchemaStore()
 class MyCommand extends <Any ExecutableCommand> {
   public async execute(
     interaction: ChatInputCommandInteraction,
-    meta: CommandExecutionMeta,
+    meta: MetaCollection,
   ) {
-    const bot = meta.get(TypedKeys.Bot);
+    const bot = TypedFields.Bot.get(meta, true);
 
     // For the age button:
     const ageExtra = store.serialize(Ids.AgeUpdate, {
@@ -131,8 +131,8 @@ class MyCommand extends <Any ExecutableCommand> {
     await interaction.reply({ components: [row] });
   }
 
-  protected async handleButton(interaction: ButtonInteraction, meta: CommandExecutionMeta) {
-    const extra = meta.get(TypedKeys.CustomIdExtra);
+  protected async handleButton(interaction: ButtonInteraction, meta: MetaCollection) {
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
     const result = store.deserialize(extra);
 
     switch (result.id) {

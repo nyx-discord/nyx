@@ -23,7 +23,7 @@ errorHandler.setConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [meta] = args;
-    const bot = meta.getBot(true);
+    const bot = TypedFields.Bot.get(meta, true);
 
     const { name } = command.getData();
 
@@ -57,7 +57,7 @@ errorHandler.setFallbackConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [meta] = args;
-    const bot = meta.getBot(true);
+    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
     logger.error(

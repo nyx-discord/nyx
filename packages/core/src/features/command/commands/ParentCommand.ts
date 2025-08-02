@@ -1,5 +1,4 @@
 import type { SlashCommandSubcommandsOnlyBuilder, Snowflake } from 'discord.js';
-
 import type { Identifiable } from '../../../identity/Identifiable';
 import type { ChildableCommand } from './child/ChildableCommand';
 import type { SubCommand } from './SubCommand.js';

@@ -4,7 +4,6 @@ import type {
   Tail,
 } from '@nyx-discord/core';
 import { SessionStartMiddlewareError } from '@nyx-discord/core';
-
 import { AbstractMiddlewareList } from '../../../middleware/AbstractMiddlewareList';
 import { SessionStartFilterCheckMiddleware } from '../filter/middleware/SessionStartFilterCheckMiddleware.js';
 

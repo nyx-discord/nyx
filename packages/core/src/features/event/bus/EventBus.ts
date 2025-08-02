@@ -1,11 +1,10 @@
 import type { Comparator, ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable } from 'discord.js';
-
-import type { NyxBot } from '../../../bot/NyxBot';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Identifier } from '../../../identity/Identifier.js';
 import type { Lockable } from '../../../lock/Lockable.js';
 import type { MetaCollection } from '../../../meta/MetaCollection.js';
+import { MetaCollectionFactory } from '../../../meta/MetaCollectionFactory.js';
 import type { Metadatable } from '../../../meta/Metadatable';
 import type { ReadonlyCollectionFrom } from '../../../types/ReadonlyCollectionFrom.js';
 import type { EventDispatcher } from '../dispatch/dispatcher/EventDispatcher.js';
@@ -20,9 +19,6 @@ export interface EventBus<
     Identifiable,
     Metadatable,
     IterableIterator<[Identifier, AnyEventSubscriberFrom<ArgsRecord>]> {
-  /** Returns the saved bot for this bus, if any. */
-  getBot(): NyxBot | null;
-
   /** Called by the {@link EventManager} after this bus is registered on it. */
   onRegister(): Awaitable<void>;
 
@@ -93,6 +89,9 @@ export interface EventBus<
   getSubscribedEvents(): ReadonlyCollectionFrom<
     EventSubscriberCollection<ArgsRecord>
   >;
+
+  /** Returns the {@link MetaCollectionFactory} for creating or populating {@link MetaCollection}s for event emits. */
+  getMetaCollectionFactory(): MetaCollectionFactory;
 
   /** Returns an iterator of all {@link EventSubscriber}s. */
   values(): IterableIterator<AnyEventSubscriberFrom<ArgsRecord>>;

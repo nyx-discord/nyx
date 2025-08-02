@@ -1,5 +1,4 @@
 import type { Awaitable } from 'discord.js';
-
 import type { AnyClass } from '../../types/AnyClass.js';
 import type { ReadonlyCollectionFrom } from '../../types/ReadonlyCollectionFrom.js';
 import type { ErrorConsumer } from '../consumer/ErrorConsumer.js';

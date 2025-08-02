@@ -10,14 +10,15 @@ import {
   BotServiceEventEnum,
   BotStatusEnum,
   IllegalStateError,
+  TypedFields,
 } from '@nyx-discord/core';
-
 import { BasicEventBus } from '../features/event/bus/BasicEventBus.js';
+import { DefaultMetaCollectionFactory } from '../meta/DefaultMetaCollectionFactory.js';
 
 type StartPromiseData = {
   promise: Promise<NyxBot>;
   resolve: (value: NyxBot) => void;
-  reject: (reason?: any) => void;
+  reject: (reason?: unknown) => void;
 };
 
 export class DefaultBotService implements BotService {
@@ -47,9 +48,16 @@ export class DefaultBotService implements BotService {
   }
 
   public static create(bot: NyxBot): BotService {
-    const busId = Symbol('BotServiceEventBus');
+    const metaFactory = DefaultMetaCollectionFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]);
 
-    const bus = BasicEventBus.createAsync<BotServiceEventArgs>(bot, busId);
+    const busId = Symbol('BotServiceEventBus');
+    const bus = BasicEventBus.createAsync<BotServiceEventArgs>(
+      busId,
+      metaFactory,
+    );
 
     return new DefaultBotService(bot, bus);
   }

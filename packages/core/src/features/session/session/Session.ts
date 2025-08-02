@@ -1,11 +1,11 @@
 import type { Awaitable } from 'discord.js';
 import type { BotAware } from '../../../bot/BotAware.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
+import { MetaCollection } from '../../../meta/MetaCollection.js';
 import type { Metadatable } from '../../../meta/Metadatable.js';
 import type { SessionCustomIdData } from '../customId/data/SessionCustomIdData.js';
 import type { SessionEndCode } from '../end/SessionEndCode';
 import type { SessionEndData } from '../end/SessionEndData';
-import type { SessionExecutionMeta } from '../execution/meta/SessionExecutionMeta.js';
 import type { SessionStartFilter } from '../filter/SessionStartFilter.js';
 import type { SessionUpdateFilter } from '../filter/SessionUpdateFilter.js';
 import type { SessionStartInteraction } from '../interaction/SessionStartInteraction.js';
@@ -35,7 +35,7 @@ export interface Session<Result>
    *
    * @throws {IllegalStateError} If the session has already started.
    */
-  onStart(meta: SessionExecutionMeta): Awaitable<void>;
+  onStart(meta: MetaCollection): Awaitable<void>;
 
   /**
    * Updates the session's state with an interaction.
@@ -47,7 +47,7 @@ export interface Session<Result>
    */
   onUpdate(
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<boolean>;
 
   /**
@@ -58,7 +58,7 @@ export interface Session<Result>
   onEnd(
     reason: string,
     code: SessionEndCode,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<void>;
 
   /** Returns the filter for starting this session. */

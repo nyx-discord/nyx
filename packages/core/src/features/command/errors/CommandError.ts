@@ -1,19 +1,19 @@
 import { FeatureError } from '../../../errors/FeatureError.js';
+import type { MetaCollection } from '../../../meta/MetaCollection.js';
 import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
-import type { CommandExecutionMeta } from '../execution/meta/CommandExecutionMeta.js';
 import type { CommandResolvableInteraction } from '../interaction/CommandResolvableInteraction.js';
 
 /** An Error that wraps errors that occur during the execution of an {@link ExecutableCommand} object. */
 export class CommandError extends FeatureError<AnyExecutableCommand> {
   protected readonly interaction: CommandResolvableInteraction;
 
-  protected readonly meta: CommandExecutionMeta;
+  protected readonly meta: MetaCollection;
 
   constructor(
     error: Error,
     command: AnyExecutableCommand,
     interaction: CommandResolvableInteraction,
-    meta: CommandExecutionMeta,
+    meta: MetaCollection,
     message?: string,
   ) {
     super(
@@ -26,7 +26,7 @@ export class CommandError extends FeatureError<AnyExecutableCommand> {
   }
 
   /** Returns the execution meta that was passed alongside the interaction. */
-  public getMeta(): CommandExecutionMeta {
+  public getMeta(): MetaCollection {
     return this.meta;
   }
 

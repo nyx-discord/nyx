@@ -5,16 +5,17 @@ import type {
   CommandErrorHandler,
   CommandExecutableInteraction,
   CommandExecutionArgs,
-  CommandExecutionMeta,
   CommandExecutor,
   CommandMiddleware,
   ComponentCommandInteraction,
   ContextMenuCommand,
+  MetaCollection,
   MiddlewareList,
 } from '@nyx-discord/core';
 import {
   CommandAutocompleteError,
   CommandMiddlewareError,
+  TypedFields,
   UncaughtCommandMiddlewareError,
 } from '@nyx-discord/core';
 import type {
@@ -24,7 +25,6 @@ import type {
   MessageContextMenuCommandInteraction,
   UserContextMenuCommandInteraction,
 } from 'discord.js';
-
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
 import { CommandMiddlewareList } from '../middleware/CommandMiddlewareList.js';
 
@@ -46,7 +46,9 @@ export class DefaultCommandExecutor implements CommandExecutor {
       BasicErrorHandler.createWithFallbackLogger<
         AnyExecutableCommand,
         CommandExecutionArgs
-      >((_error, _cmd, [_int, meta]) => meta.getBot().getLogger()),
+      >((_error, _cmd, [, meta]) =>
+        TypedFields.Bot.get(meta, true).getLogger(),
+      ),
       CommandMiddlewareList.create(),
     );
   }
@@ -54,7 +56,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async execute(
     command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
   ): Promise<boolean> {
     if (
       interaction.isChatInputCommand()
@@ -89,7 +91,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async autocomplete(
     command: ChatExecutableCommand<unknown>,
     interaction: AutocompleteInteraction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
   ): Promise<void> {
     try {
       await command.autocomplete(interaction, metadata);
@@ -111,7 +113,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async executeChatInput(
     command: ChatExecutableCommand<unknown>,
     interaction: ChatInputCommandInteraction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
   ): Promise<void> {
     await this.executeCommandMethod(
       command,
@@ -124,7 +126,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async executeComponent(
     command: AnyExecutableCommand,
     interaction: ComponentCommandInteraction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
   ): Promise<void> {
     await this.executeCommandMethod(
       command,
@@ -137,7 +139,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async executeMessage(
     command: ContextMenuCommand,
     interaction: MessageContextMenuCommandInteraction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
   ): Promise<void> {
     await this.executeCommandMethod(
       command,
@@ -150,7 +152,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async executeUser(
     command: ContextMenuCommand,
     interaction: UserContextMenuCommandInteraction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
   ): Promise<void> {
     await this.executeCommandMethod(
       command,
@@ -173,10 +175,10 @@ export class DefaultCommandExecutor implements CommandExecutor {
   >(
     command: AnyExecutableCommand,
     interaction: PassedInteraction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
     method: (
       interact: PassedInteraction,
-      meta: CommandExecutionMeta,
+      meta: MetaCollection,
     ) => Awaitable<void>,
   ): Promise<void> {
     const middlewareResult = await this.checkMiddleware(
@@ -200,7 +202,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   protected async checkMiddleware(
     command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
-    meta: CommandExecutionMeta,
+    meta: MetaCollection,
   ): Promise<boolean> {
     let result;
     try {
@@ -231,7 +233,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
     error: Error,
     command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
-    meta: CommandExecutionMeta,
+    meta: MetaCollection,
   ): CommandError {
     if (error instanceof CommandMiddlewareError) {
       return error;
@@ -251,7 +253,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
     error: Error,
     command: AnyExecutableCommand,
     interaction: AutocompleteInteraction,
-    meta: CommandExecutionMeta,
+    meta: MetaCollection,
   ): CommandError {
     return new CommandAutocompleteError(error, command, interaction, meta);
   }

@@ -15,7 +15,9 @@ import {
   IllegalDuplicateError,
   ObjectNotFoundError,
   PluginEventEnum,
+  TypedFields,
 } from '@nyx-discord/core';
+import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 
 export class DefaultPluginManager implements PluginManager {
@@ -32,8 +34,13 @@ export class DefaultPluginManager implements PluginManager {
   }
 
   public static create(bot: NyxBot): PluginManager {
+    const metaFactory = DefaultMetaCollectionFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]);
+
     const busId = Symbol('PluginManagerEventBus');
-    const bus = BasicEventBus.createAsync(bot, busId);
+    const bus = BasicEventBus.createAsync(busId, metaFactory);
 
     return new DefaultPluginManager(bot, bus);
   }

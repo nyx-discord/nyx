@@ -3,7 +3,6 @@ import type {
   CommandExecutionArgs,
   CommandFilter,
 } from '@nyx-discord/core';
-
 import { AbstractFilter } from '../../../filter/AbstractFilter.js';
 
 /** A {@link AbstractFilter Filter} for filtering Command executions. */

@@ -1,7 +1,6 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable } from 'discord.js';
 import type { BotLifecycleObserver } from '../../../types/BotLifecycleObserver';
-
 import type { Session } from '../session/Session.js';
 
 /** An object for temporal storage of {@link Session} instances. */

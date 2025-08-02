@@ -1,6 +1,6 @@
+import { MetaCollection } from '../../../../meta/MetaCollection';
 import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import { SessionUpdateError } from '../../errors/SessionUpdateError.js';
-import type { SessionExecutionMeta } from '../../execution/meta/SessionExecutionMeta.js';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction.js';
 import type { Session } from '../../session/Session.js';
 import type { SessionUpdateMiddleware } from '../SessionUpdateMiddleware.js';
@@ -13,7 +13,7 @@ export class UncaughtSessionUpdateMiddlewareError extends SessionUpdateError {
     middlewareList: MiddlewareList<SessionUpdateMiddleware>,
     session: Session<unknown>,
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ) {
     super(error, session, interaction, meta);
     this.middlewareList = middlewareList;

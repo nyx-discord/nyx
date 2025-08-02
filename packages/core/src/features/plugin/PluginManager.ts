@@ -1,6 +1,5 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable } from 'discord.js';
-
 import type { BotAware } from '../../bot/BotAware.js';
 import type { Identifier } from '../../identity/Identifier.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';

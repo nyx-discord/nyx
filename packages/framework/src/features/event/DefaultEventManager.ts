@@ -11,14 +11,15 @@ import type {
   NyxBot,
 } from '@nyx-discord/core';
 import {
-  AssertionError,
   canBeIdentifier,
   EventManagerEventEnum,
   IllegalDuplicateError,
   LockedObjectError,
   ObjectNotFoundError,
+  TypedFields,
 } from '@nyx-discord/core';
 import type { Awaitable, Client, ClientEvents } from 'discord.js';
+import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
 import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from './bus/BasicEventBus.js';
 import { BasicEventEmitterBus } from './bus/BasicEventEmitterBus.js';
@@ -42,7 +43,6 @@ export class DefaultEventManager implements EventManager {
     this.managerBus = options.managerBus;
     this.clientBus = options.clientBus;
     this.buses = new Collection<Identifier, AnyEventBus>();
-
     this.managerBus.lock();
     this.clientBus.lock();
   }
@@ -53,13 +53,17 @@ export class DefaultEventManager implements EventManager {
     options?: Partial<EventManagerOptions>,
   ): EventManager {
     const constructorOptions = options ?? {};
+    const metaFactory = DefaultMetaCollectionFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]);
 
     ensureKey(
       constructorOptions,
       'managerBus',
       BasicEventBus.createAsync<EventManagerEventsArgs>(
-        bot,
         Symbol('EventManagerEventBus'),
+        metaFactory,
       ),
     );
 
@@ -67,9 +71,9 @@ export class DefaultEventManager implements EventManager {
       constructorOptions,
       'clientBus',
       BasicEventEmitterBus.createSyncWithEmitter<ClientEvents, Client>(
-        bot,
         Symbol('ClientEventBus'),
         client,
+        metaFactory,
       ),
     );
 
@@ -97,13 +101,6 @@ export class DefaultEventManager implements EventManager {
 
   public async addEventBuses(...buses: AnyEventBus[]): Promise<this> {
     for (const bus of buses) {
-      const botBus = bus.getBot();
-      if (botBus && botBus !== this.bot) {
-        throw new AssertionError(
-          `Bus '${String(bus.getId())}' is not from this bot.`,
-        );
-      }
-
       const id = bus.getId();
       const presentBus = this.buses.get(id);
       if (presentBus) {

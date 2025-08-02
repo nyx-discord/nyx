@@ -60,11 +60,11 @@ class InteractionCreateSubscriber
   protected override readonly event = Events.InteractionCreate;
 
   public handleEvent(
-    meta: EventDispatchMeta,
+    meta: MetaCollection,
     interaction: Interaction,
   ): void {
     // Since the built-in client event bus has a bot, this will never throw an error.
-    const bot = meta.getBot(true);
+    const bot = TypedFields.Bot.get(meta, true);
 
     bot.getLogger().info(`Interaction ${interaction.id} received.`);
   }

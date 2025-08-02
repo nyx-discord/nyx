@@ -1,5 +1,5 @@
+import { MetaCollection } from '../../../../meta/MetaCollection.js';
 import { AbstractSessionError } from '../../errors/AbstractSessionError.js';
-import type { SessionExecutionMeta } from '../../execution/meta/SessionExecutionMeta.js';
 import type { SessionStartInteraction } from '../../interaction/SessionStartInteraction.js';
 import type { Session } from '../../session/Session.js';
 import type { SessionStartMiddleware } from '../SessionStartMiddleware.js';
@@ -11,7 +11,7 @@ export class SessionStartMiddlewareError extends AbstractSessionError<SessionSta
     error: Error,
     middleware: SessionStartMiddleware,
     session: Session<unknown>,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ) {
     super(error, session, session.getStartInteraction(), meta);
     this.middleware = middleware;

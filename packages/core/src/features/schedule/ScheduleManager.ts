@@ -1,14 +1,14 @@
 import type { Awaitable } from 'discord.js';
-
 import type { BotAware } from '../../bot/BotAware.js';
 import type { Identifier } from '../../identity/Identifier.js';
+import type { MetaCollection } from '../../meta/MetaCollection.js';
+import { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { ClassImplements } from '../../types/ClassImplements.js';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber';
 import type { ScheduleEventArgs } from './events/ScheduleEvent.js';
 import type { ScheduleExecutor } from './execution/executor/ScheduleExecutor.js';
-import type { ScheduleTickMeta } from './execution/meta/ScheduleTickMeta.js';
 import type { ReadonlyScheduleExecutionScheduler } from './execution/scheduler/ReadonlyScheduleExecutionScheduler.js';
 import type { ScheduleJobAdapter } from './job/ScheduleJobAdapter.js';
 import type { UndestroyableScheduleJobAdapter } from './job/UndestroyableScheduleJobAdapter.js';
@@ -38,7 +38,7 @@ export interface ScheduleManager extends BotLifecycleObserver, BotAware {
    */
   tick(
     scheduleOrId: Schedule | Identifier,
-    meta?: ScheduleTickMeta,
+    meta?: MetaCollection,
   ): Awaitable<this>;
 
   /**
@@ -81,4 +81,7 @@ export interface ScheduleManager extends BotLifecycleObserver, BotAware {
 
   /** Returns the {@link ScheduleExecutionScheduler} for this manager. */
   getScheduler(): ReadonlyScheduleExecutionScheduler;
+
+  /** Returns the {@link MetaCollectionFactory} for creating or populating {@link MetaCollection}s for schedule ticks. */
+  getMetaCollectionFactory(): MetaCollectionFactory;
 }

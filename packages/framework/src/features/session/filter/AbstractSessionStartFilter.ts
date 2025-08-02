@@ -3,7 +3,6 @@ import type {
   SessionStartArgs,
   SessionStartFilter,
 } from '@nyx-discord/core';
-
 import { AbstractFilter } from '../../../filter/AbstractFilter.js';
 
 export abstract class AbstractSessionStartFilter<Result>

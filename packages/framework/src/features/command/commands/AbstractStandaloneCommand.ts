@@ -1,6 +1,6 @@
 import type {
   CommandCustomIdData,
-  CommandExecutionMeta,
+  MetaCollection,
   StandaloneCommand,
 } from '@nyx-discord/core';
 import {
@@ -52,7 +52,7 @@ export abstract class AbstractStandaloneCommand
 
   public autocomplete(
     _interaction: AutocompleteInteraction,
-    _metadata: CommandExecutionMeta,
+    _metadata: MetaCollection,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }

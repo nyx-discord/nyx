@@ -1,10 +1,6 @@
-import type {
-  AnyEventSubscriber,
-  EventDispatchMeta,
-  MiddlewareResponse,
-} from '@nyx-discord/core';
+import type { AnyEventSubscriber, MiddlewareResponse } from '@nyx-discord/core';
 import { PriorityEnum } from '@nyx-discord/core';
-
+import { MetaCollection, TypedFields } from '@nyx-discord/core';
 import { AbstractEventSubscriberMiddleware } from '../middleware/AbstractEventSubscriberMiddleware.js';
 
 export class HandleCheckEventMiddleware extends AbstractEventSubscriberMiddleware {
@@ -14,11 +10,12 @@ export class HandleCheckEventMiddleware extends AbstractEventSubscriberMiddlewar
 
   public check(
     checked: AnyEventSubscriber,
-    meta: EventDispatchMeta,
+    meta: MetaCollection,
   ): MiddlewareResponse {
-    if (meta.isHandled() && checked.ignoresHandledEvents()) {
+    if (TypedFields.EventHandled.get(meta) && checked.ignoresHandledEvents()) {
       return this.false();
     }
+
     return this.true();
   }
 }

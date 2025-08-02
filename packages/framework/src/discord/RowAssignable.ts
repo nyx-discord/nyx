@@ -5,7 +5,6 @@ import type {
   AnyComponentBuilder,
   ComponentType,
 } from 'discord.js';
-
 import type { ActionRowWrapper } from './ActionRowWrapper';
 import type { ExtractTypeFromComponentData } from './ExtractTypeFromComponentData';
 

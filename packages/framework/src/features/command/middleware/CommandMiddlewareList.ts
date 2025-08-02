@@ -4,7 +4,6 @@ import type {
   Tail,
 } from '@nyx-discord/core';
 import { CommandMiddlewareError } from '@nyx-discord/core';
-
 import { AbstractMiddlewareList } from '../../../middleware/AbstractMiddlewareList';
 import { CommandFilterCheckMiddleware } from '../filter/middleware/CommandFilterCheckMiddleware.js';
 

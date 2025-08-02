@@ -8,7 +8,6 @@ import type {
   SessionCustomIdCodec,
   SessionCustomIdData,
   SessionEndData,
-  SessionExecutionMeta,
   SessionStartFilter,
   SessionStartInteraction,
   SessionState,
@@ -84,19 +83,19 @@ export abstract class AbstractSession<Result = void>
 
   public async onUpdate(
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Promise<boolean> {
     if (interaction.isButton()) return this.handleButton(interaction, meta);
     if (interaction.isModalSubmit()) return this.handleModal(interaction, meta);
     return this.handleSelectMenu(interaction, meta);
   }
 
-  public abstract onStart(meta: SessionExecutionMeta): Awaitable<void>;
+  public abstract onStart(meta: MetaCollection): Awaitable<void>;
 
   public abstract onEnd(
     reason: string,
     code: Identifier | number,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<void>;
 
   public getResult(): Result | null {
@@ -178,7 +177,7 @@ export abstract class AbstractSession<Result = void>
   /** Handles a {@link ButtonInteraction} whose customId matches this session. */
   protected handleButton(
     _interaction: ButtonInteraction,
-    _meta: SessionExecutionMeta,
+    _meta: MetaCollection,
   ): boolean | Promise<boolean> {
     throw new NotImplementedError();
   }
@@ -186,7 +185,7 @@ export abstract class AbstractSession<Result = void>
   /** Handles an {@link AnySelectMenuInteraction} whose customId matches this session. */
   protected handleSelectMenu(
     _interaction: AnySelectMenuInteraction,
-    _meta: SessionExecutionMeta,
+    _meta: MetaCollection,
   ): boolean | Promise<boolean> {
     throw new NotImplementedError();
   }
@@ -194,7 +193,7 @@ export abstract class AbstractSession<Result = void>
   /** Handles a {@link ModalSubmitInteraction} whose customId matches this session. */
   protected handleModal(
     _interaction: ModalSubmitInteraction,
-    _meta: SessionExecutionMeta,
+    _meta: MetaCollection,
   ): boolean | Promise<boolean> {
     throw new NotImplementedError();
   }

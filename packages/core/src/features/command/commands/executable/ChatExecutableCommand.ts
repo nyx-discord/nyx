@@ -3,7 +3,7 @@ import type {
   Awaitable,
   ChatInputCommandInteraction,
 } from 'discord.js';
-import type { CommandExecutionMeta } from '../../execution/meta/CommandExecutionMeta';
+import type { MetaCollection } from '../../../../meta/MetaCollection';
 import type { ExecutableCommand } from './ExecutableCommand';
 
 /**
@@ -15,6 +15,6 @@ export interface ChatExecutableCommand<Data>
   /** Responds to the given AutocompleteInteraction. */
   autocomplete(
     interaction: AutocompleteInteraction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
   ): Awaitable<void>;
 }

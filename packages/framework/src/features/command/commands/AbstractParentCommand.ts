@@ -5,7 +5,6 @@ import type {
 } from '@nyx-discord/core';
 import { AssertionError } from '@nyx-discord/core';
 import type { SlashCommandSubcommandsOnlyBuilder, Snowflake } from 'discord.js';
-
 import { AbstractChildableCommand } from './child/AbstractChildableCommand';
 
 export abstract class AbstractParentCommand

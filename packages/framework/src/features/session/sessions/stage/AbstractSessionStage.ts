@@ -1,8 +1,8 @@
 import type {
+  MetaCollection,
   NyxBot,
   SessionCustomIdCodec,
   SessionCustomIdData,
-  SessionExecutionMeta,
   SessionStage,
   SessionUpdateInteraction,
   StagePaginationSession,
@@ -17,7 +17,6 @@ import type {
   ModalSubmitInteraction,
 } from 'discord.js';
 import { ButtonStyle, ComponentType } from 'discord.js';
-
 import { NotImplementedError } from '../../../../errors/NotImplementedError.js';
 
 export abstract class AbstractSessionStage<Result = void>
@@ -43,18 +42,18 @@ export abstract class AbstractSessionStage<Result = void>
   public abstract onSwitch(
     interaction: SessionUpdateInteraction,
     previousStage: SessionStage<unknown>,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<boolean>;
 
   public abstract onLeave(
     interaction: SessionUpdateInteraction,
     nextStage: SessionStage<unknown>,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<void>;
 
   public async update(
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Promise<boolean> {
     if (interaction.isButton()) return this.handleButton(interaction, meta);
     if (interaction.isModalSubmit()) {
@@ -74,7 +73,7 @@ export abstract class AbstractSessionStage<Result = void>
   /** Handles a {@link ButtonInteraction} whose customId matches this session stage. */
   protected handleButton(
     _interaction: ButtonInteraction,
-    _meta: SessionExecutionMeta,
+    _meta: MetaCollection,
   ): Awaitable<boolean> {
     throw new NotImplementedError();
   }
@@ -82,7 +81,7 @@ export abstract class AbstractSessionStage<Result = void>
   /** Handles an {@link AnySelectMenuInteraction} whose customId matches this session stage. */
   protected handleSelect(
     _interaction: AnySelectMenuInteraction,
-    _meta: SessionExecutionMeta,
+    _meta: MetaCollection,
   ): Awaitable<boolean> {
     throw new NotImplementedError();
   }
@@ -90,7 +89,7 @@ export abstract class AbstractSessionStage<Result = void>
   /** Handles a {@link ModalSubmitInteraction} whose customId matches this session stage. */
   protected handleModal(
     _interaction: ModalSubmitInteraction,
-    _meta: SessionExecutionMeta,
+    _meta: MetaCollection,
   ): Awaitable<boolean> {
     throw new NotImplementedError();
   }

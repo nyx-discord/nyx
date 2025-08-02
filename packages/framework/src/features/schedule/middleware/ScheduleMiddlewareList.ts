@@ -4,7 +4,6 @@ import type {
   Tail,
 } from '@nyx-discord/core';
 import { ScheduleMiddlewareError } from '@nyx-discord/core';
-
 import { AbstractMiddlewareList } from '../../../middleware/AbstractMiddlewareList';
 import { ScheduleFilterCheckMiddleware } from './ScheduleFilterCheckMiddleware.js';
 

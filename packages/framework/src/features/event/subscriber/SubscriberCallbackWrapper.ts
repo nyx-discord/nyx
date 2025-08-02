@@ -1,10 +1,9 @@
-import type { EventDispatchMeta } from '@nyx-discord/core';
+import type { MetaCollection } from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
-
 import { AbstractEventSubscriber } from './AbstractEventSubscriber.js';
 
-type EventCallback<Arguments extends any[] = any[]> = (
-  meta: EventDispatchMeta,
+type EventCallback<Arguments extends unknown[] = unknown[]> = (
+  meta: MetaCollection,
   ...args: Arguments
 ) => Awaitable<void>;
 

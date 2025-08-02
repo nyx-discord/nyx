@@ -8,7 +8,7 @@
   },
   "include": [
     "src"
-  ],
+, "../core/src/field"  ],
   "exclude": [
     "node_modules",
     "dist"

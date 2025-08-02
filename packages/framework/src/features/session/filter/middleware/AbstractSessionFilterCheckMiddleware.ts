@@ -5,7 +5,6 @@ import type {
   SessionStartArgs,
   SessionUpdateArgs,
 } from '@nyx-discord/core';
-
 import { AbstractMiddleware } from '../../../../middleware/AbstractMiddleware.js';
 
 export abstract class AbstractSessionFilterCheckMiddleware<

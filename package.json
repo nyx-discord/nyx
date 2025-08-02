@@ -14,6 +14,7 @@
     "test:framework": "turbo run test --filter=@nyx-discord/framework",
     "typedoc": "typedoc",
     "coverage": "turbo run coverage",
+    "start:guide": "turbo run start --filter=@nyx-discord/guide",
     "ci:version:conventional": "lerna version --yes --no-private --conventional-commits --create-release github --message \"chore(release): bump version\"",
     "ci:version:major": "lerna version major --yes --no-private --conventional-commits --create-release github --message \"chore(release): major version\"",
     "ci:version:minor": "lerna version minor --yes --no-private --conventional-commits --create-release github --message \"chore(release): minor version\"",

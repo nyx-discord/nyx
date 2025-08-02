@@ -1,5 +1,4 @@
 import type { SlashCommandOptionsOnlyBuilder, Snowflake } from 'discord.js';
-
 import type { Identifiable } from '../../../identity/Identifiable';
 import type { ChatExecutableCommand } from './executable/ChatExecutableCommand';
 

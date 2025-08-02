@@ -2,10 +2,10 @@ import type { Awaitable } from 'discord.js';
 import type { Filterable } from '../../../filter/Filterable.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Lockable } from '../../../lock/Lockable.js';
+import { MetaCollection } from '../../../meta/MetaCollection.js';
 import type { Metadatable } from '../../../meta/Metadatable.js';
 import type { Priority } from '../../../priority/Priority.js';
 import type { EventBus } from '../bus/EventBus.js';
-import type { EventDispatchMeta } from '../dispatch/meta/EventDispatchMeta.js';
 import type { EventSubscriberLifetime } from '../lifetime/EventSubscriberLifetime.js';
 import type { EventSubscriberFilter } from './filter/EventSubscriberFilter.js';
 
@@ -19,7 +19,7 @@ export interface EventSubscriber<
     Metadatable {
   /** Handles an event given the passed args and metadata. */
   handleEvent(
-    meta: EventDispatchMeta,
+    meta: MetaCollection,
     ...args: ArgsRecord[Event]
   ): Awaitable<void>;
 

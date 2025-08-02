@@ -1,6 +1,5 @@
 import type { Awaitable } from 'discord.js';
-
-import type { SessionExecutionMeta } from '../../execution/meta/SessionExecutionMeta';
+import { MetaCollection } from '../../../../meta/MetaCollection';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction.js';
 import type { StagePaginationSession } from './StagePaginationSession';
 
@@ -14,7 +13,7 @@ export interface SessionStage<Result> {
   onSwitch(
     interaction: SessionUpdateInteraction,
     previousStage: SessionStage<unknown>,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<boolean>;
 
   /**
@@ -26,7 +25,7 @@ export interface SessionStage<Result> {
   onLeave(
     interaction: SessionUpdateInteraction,
     nextStage: SessionStage<unknown>,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<void>;
 
   /**
@@ -36,7 +35,7 @@ export interface SessionStage<Result> {
    */
   update(
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<boolean>;
 
   /** Returns this individual stage's result */

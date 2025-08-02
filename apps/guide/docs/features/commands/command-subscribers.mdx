@@ -75,7 +75,7 @@ class MyCommandInteractionSubscriber extends AbstractDJSClientSubscriber<'intera
   protected override readonly event = Events.InteractionCreate;
 
   public async handleEvent(
-    meta: EventDispatchMeta,
+    meta: MetaCollection,
     interaction: Interaction,
   ): Promise<void> {
     // Your custom logic.

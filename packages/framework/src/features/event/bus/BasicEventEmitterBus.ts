@@ -6,12 +6,12 @@ import type {
   EventEmitterBus,
   EventEmitterLike,
   Identifier,
-  NyxBot,
+  MetaCollectionFactory,
 } from '@nyx-discord/core';
 import { EventEmitter } from 'events';
+import { DefaultMetaCollectionFactory } from '../../../meta/DefaultMetaCollectionFactory.js';
 import { BasicAsyncEventDispatcher } from '../dispatcher/BasicAsyncEventDispatcher.js';
 import { BasicSyncEventDispatcher } from '../dispatcher/BasicSyncEventDispatcher.js';
-
 import { BasicEventBus } from './BasicEventBus.js';
 
 export class BasicEventEmitterBus<
@@ -26,43 +26,43 @@ export class BasicEventEmitterBus<
   protected readonly emitter: Emitter;
 
   constructor(
-    bot: NyxBot,
     id: Identifier,
     emitter: Emitter,
     sorter: Comparator<Identifier, AnyEventSubscriberFrom<EventArgsObject>>,
     dispatcher: EventDispatcher,
+    metaFactory: MetaCollectionFactory,
   ) {
-    super(bot, id, sorter, dispatcher);
+    super(id, sorter, dispatcher, metaFactory);
     this.emitter = emitter;
   }
 
   public static createSyncWithEmitter<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
     Emitter extends EventEmitter,
-  >(bot: NyxBot, id: Identifier, emitter: Emitter) {
+  >(id: Identifier, emitter: Emitter, metaFactory?: MetaCollectionFactory) {
     return new BasicEventEmitterBus<EventArgsObject, Emitter>(
-      bot,
       id,
       emitter,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicSyncEventDispatcher.create(),
+      metaFactory ?? new DefaultMetaCollectionFactory(),
     );
   }
 
   public static createAsyncWithEmitter<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
     Emitter extends EventEmitter,
-  >(bot: NyxBot, id: Identifier, emitter: Emitter) {
+  >(id: Identifier, emitter: Emitter, metaFactory?: MetaCollectionFactory) {
     const newEmitter = emitter ?? (new EventEmitter() as Emitter);
 
     return new BasicEventEmitterBus<EventArgsObject, Emitter>(
-      bot,
       id,
       newEmitter,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicAsyncEventDispatcher.create(),
+      metaFactory ?? new DefaultMetaCollectionFactory(),
     );
   }
 

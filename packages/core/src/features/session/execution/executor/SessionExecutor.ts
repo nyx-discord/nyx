@@ -1,4 +1,5 @@
 import type { Awaitable } from 'discord.js';
+import { MetaCollection } from '../../../../meta/MetaCollection';
 import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import type { SessionEndCode } from '../../end/SessionEndCode';
 import type { SessionEndData } from '../../end/SessionEndData';
@@ -10,7 +11,6 @@ import type { Session } from '../../session/Session.js';
 import type { SessionEndArgs } from '../args/SessionEndArgs';
 import type { SessionStartArgs } from '../args/SessionStartArgs.js';
 import type { SessionUpdateArgs } from '../args/SessionUpdateArgs.js';
-import type { SessionExecutionMeta } from '../meta/SessionExecutionMeta.js';
 
 /** An object responsible for handling session execution, including middleware checking and error handling. */
 export interface SessionExecutor {
@@ -19,10 +19,7 @@ export interface SessionExecutor {
    *
    * @throws {IllegalStateError} If the session is already started.
    */
-  start(
-    session: Session<unknown>,
-    meta: SessionExecutionMeta,
-  ): Awaitable<boolean>;
+  start(session: Session<unknown>, meta: MetaCollection): Awaitable<boolean>;
 
   /**
    * Executes a session update given an update interaction.
@@ -32,7 +29,7 @@ export interface SessionExecutor {
   update(
     session: Session<unknown>,
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<boolean>;
 
   /**
@@ -44,7 +41,7 @@ export interface SessionExecutor {
     session: Session<unknown>,
     reason: string,
     code: SessionEndCode,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<SessionEndData<unknown>>;
 
   /** Handles an interaction that refers to a session that doesn't exist anymore. */

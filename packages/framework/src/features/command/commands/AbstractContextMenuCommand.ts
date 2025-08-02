@@ -1,8 +1,8 @@
 import type {
   CommandCustomIdData,
-  CommandExecutionMeta,
   ContextMenuCommand,
 } from '@nyx-discord/core';
+import type { MetaCollection } from '@nyx-discord/core';
 import {
   ApplicationCommandType,
   type Awaitable,
@@ -33,7 +33,7 @@ export abstract class AbstractContextMenuCommand
     interaction:
       | MessageContextMenuCommandInteraction
       | UserContextMenuCommandInteraction,
-    metadata: CommandExecutionMeta,
+    metadata: MetaCollection,
   ): Awaitable<void> {
     if (interaction.isMessageContextMenuCommand()) {
       return this.executeMessage(interaction, metadata);
@@ -72,7 +72,7 @@ export abstract class AbstractContextMenuCommand
   /** Executes a {@link UserContextMenuCommandInteraction}. */
   protected executeUser(
     _interaction: UserContextMenuCommandInteraction,
-    _metadata: CommandExecutionMeta,
+    _metadata: MetaCollection,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }
@@ -80,7 +80,7 @@ export abstract class AbstractContextMenuCommand
   /** Executes a {@link MessageContextMenuCommandInteraction}. */
   protected executeMessage(
     _interaction: MessageContextMenuCommandInteraction,
-    _metadata: CommandExecutionMeta,
+    _metadata: MetaCollection,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }

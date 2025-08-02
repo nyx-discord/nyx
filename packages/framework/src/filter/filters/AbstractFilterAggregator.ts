@@ -1,5 +1,4 @@
 import type { Filter } from '@nyx-discord/core';
-
 import { AbstractFilter } from '../AbstractFilter.js';
 
 /** A filter that merges filters together. */

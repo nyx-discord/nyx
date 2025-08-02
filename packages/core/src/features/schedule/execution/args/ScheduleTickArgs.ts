@@ -1,4 +1,4 @@
-import type { ScheduleTickMeta } from '../meta/ScheduleTickMeta.js';
+import { MetaCollection } from '../../../../meta/MetaCollection';
 
 /** Type of arguments used to call a {@link Schedule}. */
-export type ScheduleTickArgs = [ScheduleTickMeta];
+export type ScheduleTickArgs = [MetaCollection];

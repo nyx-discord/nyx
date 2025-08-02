@@ -6,7 +6,6 @@ import type {
   ReadonlyMetaCollection,
   Schedule,
   ScheduleFilter,
-  ScheduleTickMeta,
   UndestroyableScheduleJobAdapter,
 } from '@nyx-discord/core';
 import { ObjectNotFoundError } from '@nyx-discord/core';
@@ -73,5 +72,5 @@ export abstract class AbstractSchedule implements Schedule {
     /** Do nothing by default */
   }
 
-  public abstract tick(meta: ScheduleTickMeta): Awaitable<void>;
+  public abstract tick(meta: MetaCollection): Awaitable<void>;
 }

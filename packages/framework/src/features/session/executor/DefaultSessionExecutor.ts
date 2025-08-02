@@ -1,11 +1,11 @@
 import type {
   Identifier,
+  MetaCollection,
   MiddlewareList,
   Session,
   SessionEndArgs,
   SessionEndData,
   SessionErrorHandler,
-  SessionExecutionMeta,
   SessionExecutor,
   SessionStartArgs,
   SessionStartMiddleware,
@@ -21,7 +21,6 @@ import {
   UncaughtSessionStartMiddlewareError,
   UncaughtSessionUpdateMiddlewareError,
 } from '@nyx-discord/core';
-
 import { ActionRowList } from '../../../discord/ActionRowList.js';
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
 import { SessionStartMiddlewareList } from '../middleware/SessionStartMiddlewareList';
@@ -72,7 +71,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
 
   public async start(
     session: Session<unknown>,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Promise<boolean> {
     if (session.getState() !== SessionStateEnum.Uninitalized) {
       throw new IllegalStateError(
@@ -114,7 +113,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
   public async update(
     session: Session<unknown>,
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Promise<boolean> {
     if (session.getState() !== SessionStateEnum.Running) {
       throw new IllegalStateError();
@@ -162,7 +161,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
     session: Session<unknown>,
     reason: string,
     code: Identifier | number,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Promise<SessionEndData<unknown>> {
     if (session.getState() !== SessionStateEnum.Running) {
       throw new IllegalStateError();

@@ -129,7 +129,7 @@ await ticketBus.emit('ticketClose', []);
 
 const validSubscriber = new SubscriberCallbackWrapper<TicketEventsArgs, 'ticketCreate'>(
   'ticketCreate',
-  (meta: EventDispatchMeta, createdTicket: Ticket) => {
+  (meta: MetaCollection, createdTicket: Ticket) => {
     // Do something
   }
 );
@@ -138,7 +138,7 @@ const invalidSubscriber = new SubscriberCallbackWrapper<TicketEventsArgs, 'ticke
   'ticketCreate',
   // Errors since TicketEventsArgs['ticketCreate'] doesn't match [number]
   // error-next-line
-  (meta: EventDispatchMeta, createdTicket: number) => {
+  (meta: MetaCollection, createdTicket: number) => {
     // Do something
   }
 );

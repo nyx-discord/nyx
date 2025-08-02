@@ -1,7 +1,6 @@
 import { Collection } from '@discordjs/collection';
 import type {
   EventBus,
-  EventDispatchMeta,
   EventSubscriber,
   EventSubscriberFilter,
   EventSubscriberLifetime,
@@ -93,7 +92,7 @@ export abstract class AbstractEventSubscriber<
   }
 
   public abstract handleEvent(
-    meta: EventDispatchMeta,
+    meta: MetaCollection,
     ...args: EventArgsObject[Event]
   ): Awaitable<void>;
 }

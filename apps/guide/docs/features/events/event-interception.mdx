@@ -37,16 +37,13 @@ The `AbstractMiddleware`, has `protected` utility methods to generate these resp
 :::info
 Middlewares are not bot aware nor event bus aware, meaning that you can reuse the same instance for many event buses.
 
-From the `EventDispatchMeta` passed on the subscriber's args you can get:
+From the `MetaCollection` passed on the subscriber's args you can get:
 
-* The bot that called the event, via `#getBot()`.
+* The bot that called the event, via the `TypedFields.Bot` field.
+* The bus where the event was emitted, via the `TypedFields.EventBus` field.
+* Whether the event has been marked as handled by another subscriber, via the `TypedFields.EventHandled` field.
 
-Note it can be `null` if the bus doesn't have a bot. You can pass `true` to this method to throw an error if it's not present.
-In practice, all built-in event buses have a bot, it will only be `null` for your custom ones where you didn't pass a bot.
-
-* The bus where the event was emitted, via `#getBus()`.
-* Whether the event has been marked as handled by another subscriber, via `#isHandled()`.
-
+For more information about TypedFields, check the [📦 Meta Collections](/extra/meta) guide.
 :::
 
 ### ❓ When to use a middleware?
@@ -127,15 +124,13 @@ the `SubscriberFilterCheckMiddleware`.
 :::info
 Filters are not bot aware nor event subscriber aware, meaning that you can reuse the same instance for many subscribers.
 
-From the `EventDispatchMeta` passed on the subscriber's args you can get:
+From the `MetaCollection` passed on the subscriber's args you can get:
 
-* The bot that called the event, via `#getBot()`.
+* The bot that called the event, via the `TypedFields.Bot` field.
+* The bus where the event was emitted, via the `TypedFields.EventBus` field.
+* Whether the event has been marked as handled by another subscriber, via the `TypedFields.EventHandled` field.
 
-Note it can be `null` if the bus doesn't have a bot. You can pass `true` to this method to throw an error if it's not present.
-In practice, all built-in event buses have a bot, it will only be `null` for your custom ones where you didn't pass a bot.
-
-* The bus where the event was emitted, via `#getBus()`.
-* Whether the event has been marked as handled by another subscriber, via `#isHandled()`.
+For more information about TypedFields, check the [📦 Meta Collections](/extra/meta) guide.
 :::
 
 :::tip
@@ -151,7 +146,7 @@ basic `AND`, `OR`, `NOT` gates, that can help you "combine" multiple filters int
 
 Filters are best suited for sharing common conditions that multiple subscribers should share before executing.
 
-Also, since they have access to the subscriber that is being filtered and the `EventCallMeta` object, filters can share
+Also, since they have access to the subscriber that is being filtered and the `MetaCollection`, filters can share
 information to the subscriber, effectively working as a "pre-processor".
 
 ### 👷‍ Filter Creation

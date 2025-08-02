@@ -3,7 +3,6 @@ import type {
   CommandExecutionArgs,
   CommandMiddleware,
 } from '@nyx-discord/core';
-
 import { AbstractMiddleware } from '../../../middleware/AbstractMiddleware.js';
 
 export abstract class AbstractCommandMiddleware

@@ -9,7 +9,6 @@ import type {
   ModalActionRowComponentBuilder,
 } from 'discord.js';
 import { isJSONEncodable } from 'discord.js';
-
 import { ActionRowWrapper } from './ActionRowWrapper.js';
 import type { RowAssignable } from './RowAssignable';
 

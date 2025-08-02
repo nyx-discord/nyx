@@ -1,10 +1,9 @@
 import type {
-  SessionExecutionMeta,
+  MetaCollection,
   SessionStartInteraction,
   SessionStartStage,
 } from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
-
 import { AbstractSessionStage } from './AbstractSessionStage';
 
 export abstract class AbstractSessionStartStage<Result = void>
@@ -13,6 +12,6 @@ export abstract class AbstractSessionStartStage<Result = void>
 {
   public abstract onStart(
     interaction: SessionStartInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Awaitable<void>;
 }

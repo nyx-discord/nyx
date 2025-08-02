@@ -1,7 +1,7 @@
 import type {
+  MetaCollection,
   NyxBot,
   PaginationSession,
-  SessionExecutionMeta,
   SessionStartInteraction,
   SessionUpdateInteraction,
 } from '@nyx-discord/core';
@@ -33,7 +33,7 @@ export abstract class AbstractPaginationSession<Result>
 
   public override async onUpdate(
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Promise<boolean> {
     const newPage = this.extractPageFromInteraction(interaction);
 
@@ -167,6 +167,6 @@ export abstract class AbstractPaginationSession<Result>
   /** Handles a page update. */
   protected abstract updatePage(
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Promise<boolean>;
 }

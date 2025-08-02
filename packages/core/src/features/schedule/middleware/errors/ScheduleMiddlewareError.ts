@@ -1,18 +1,18 @@
 import { FeatureError } from '../../../../errors/FeatureError.js';
-import type { ScheduleTickMeta } from '../../execution/meta/ScheduleTickMeta.js';
+import { MetaCollection } from '../../../../meta/MetaCollection.js';
 import type { Schedule } from '../../schedule/Schedule.js';
 import type { ScheduleMiddleware } from '../ScheduleMiddleware.js';
 
 export class ScheduleMiddlewareError extends FeatureError<Schedule> {
   protected readonly middleware: ScheduleMiddleware;
 
-  protected readonly meta: ScheduleTickMeta;
+  protected readonly meta: MetaCollection;
 
   constructor(
     error: Error,
     middleware: ScheduleMiddleware,
     schedule: Schedule,
-    meta: ScheduleTickMeta,
+    meta: MetaCollection,
   ) {
     super(
       error,
@@ -28,8 +28,8 @@ export class ScheduleMiddlewareError extends FeatureError<Schedule> {
     return this.middleware;
   }
 
-  /** Returns the ScheduleTickMeta passed when executing the middleware. */
-  public getMeta(): ScheduleTickMeta {
+  /** Returns the {@link MetaCollection} passed when executing the middleware. */
+  public getMeta(): MetaCollection {
     return this.meta;
   }
 }

@@ -1,6 +1,7 @@
 import type { AutocompleteInteraction, Awaitable } from 'discord.js';
-
 import type { BotAware } from '../../bot/BotAware.js';
+import type { MetaCollection } from '../../meta/MetaCollection.js';
+import { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber.js';
@@ -10,7 +11,6 @@ import type { ReadonlyCommandDeployer } from './deploy/ReadonlyCommandDeployer';
 import type { CommandSubscriptionsContainer } from './event/CommandSubscriptionsContainer.js';
 import type { CommandEventArgs } from './events/CommandEvent.js';
 import type { CommandExecutor } from './execution/executor/CommandExecutor.js';
-import type { CommandExecutionMeta } from './execution/meta/CommandExecutionMeta.js';
 import type { CommandExecutableInteraction } from './interaction/CommandExecutableInteraction.js';
 import type { ReadonlyCommandRepository } from './repository/ReadonlyCommandRepository.js';
 import type { CommandResolver } from './resolve/CommandResolver';
@@ -25,7 +25,7 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
    */
   execute(
     source: CommandExecutableInteraction,
-    meta?: CommandExecutionMeta,
+    meta?: MetaCollection,
   ): Awaitable<boolean>;
 
   /**
@@ -36,7 +36,7 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
    */
   autocomplete(
     interaction: AutocompleteInteraction,
-    meta?: CommandExecutionMeta,
+    meta?: MetaCollection,
   ): Awaitable<boolean>;
 
   /**
@@ -117,4 +117,7 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
 
   /** Returns the {@link CommandDeployer} for this manager. */
   getDeployer(): ReadonlyCommandDeployer;
+
+  /** Returns the {@link MetaCollectionFactory} for creating or populating {@link MetaCollection}s for command executions. */
+  getMetaCollectionFactory(): MetaCollectionFactory;
 }

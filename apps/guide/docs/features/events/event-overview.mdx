@@ -55,11 +55,10 @@ class InteractionCreateSubscriber
   protected readonly event = Events.InteractionCreate;
 
   public handleEvent(
-    meta: EventDispatchMeta,
+    meta: MetaCollection,
     interaction: Interaction,
   ): void {
-    const bot = meta.getBot(true);
-
+    const bot = TypedFields.Bot.get(meta, true);
     bot.getLogger().info(`Interaction ${interaction.id} received.`);
   }
 }
@@ -101,14 +100,13 @@ class CommandCallSubscriber
 
   // All of these arguments are safely typed
   public handleEvent(
-    meta: EventDispatchMeta,
+    meta: MetaCollection,
     command: ExecutableCommand<CommandData>,
     interaction: CommandExecutableInteraction,
-    commandMeta: CommandExecutionMeta,
+    commandMeta: MetaCollection,
   ) {
-  const bot = commandMeta.getBot(true);
-
-  bot.getLogger().info(`Command '${command.getData().name}' called.`);
+    const bot = TypedFields.Bot.get(commandMeta, true);
+    bot.getLogger().info(`Command '${command.getData().name}' called.`);
   }
 }
 
@@ -139,14 +137,14 @@ After creating it, you finish by subscribing it to the bus that you want with `E
 
 ```ts
 import { AbstractEventSubscriber } from '@nyx-discord/framework';
-import type { EventDispatchMeta } from '@nyx-discord/core';
+import type { MetaCollection } from '@nyx-discord/core';
 
 class MyEventSubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
   protected readonly event = 'someEvent';
 
-  public handleEvent(meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) {
+  public handleEvent(meta: MetaCollection, ...args: MyEventsArgs['someEvent']) {
     // Null if you didn't pass a bot while creating your bus
-    const bot = meta.getBot();
+    const bot = TypedFields.Bot.get(meta);
     if (!bot) {
       console.log('Hello world');
       return;
@@ -168,12 +166,13 @@ await myBus.subscribe(frameworkSubscriber);
 
 ```ts
 import { SubscriberCallbackWrapper } from '@nyx-discord/framework';
+import type { MetaCollection } from '@nyx-discord/core';
 
 const callbackSubscriber = new SubscriberCallbackWrapper < MyEventsArgs, 'someEvent'>(
   'someEvent',
-  (meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) => {
+  (meta: MetaCollection, ...args: MyEventsArgs['someEvent']) => {
     // Null if you didn't pass a bot while creating your bus
-    const bot = meta.getBot();
+    const bot = TypedFields.Bot.get(meta);
     if (!bot) {
       console.log('Hello world');
       return;
@@ -221,16 +220,15 @@ type the arguments of the event handler.
 ```ts
 import { Events } from 'discord.js';
 import type { Interaction } from 'discord.js';
-
 import { AbstractDJSClientSubscriber } from '@nyx-discord/framework';
-import type { EventDispatchMeta } from '@nyx-discord/core';
+import type { MetaCollection } from '@nyx-discord/core';
 
 class InteractionCreateSubscriber
   extends AbstractDJSClientSubscriber<Events.InteractionCreate> {
   protected override readonly event = Events.InteractionCreate;
 
-  public handleEvent(meta: EventDispatchMeta, interaction: Interaction) {
-    const bot = meta.getBot(true);
+  public handleEvent(meta: MetaCollection, interaction: Interaction) {
+    const bot = TypedFields.Bot.get(meta, true);
 
     bot.getLogger().info(`Interaction ${interaction.id} received.`);
   }
@@ -321,7 +319,7 @@ A typed event bus will also cause a type error when trying to add a `EventSubscr
 event that the bus emits.
 
 ```ts
-import { BasicEventBus } from '@nyx-discord/framework';
+import { BasicEventBus, type MetaCollection } from '@nyx-discord/framework';
 
 interface TicketEventsArgs {
   ticketCreate: [ticket: Ticket],
@@ -348,7 +346,7 @@ await ticketBus.emit('ticketClose', []);
 
 const validSubscriber = new SubscriberCallbackWrapper<TicketEventsArgs, 'ticketCreate'>(
   'ticketCreate',
-  (meta: EventDispatchMeta, createdTicket: Ticket) => {
+  (meta: MetaCollection, createdTicket: Ticket) => {
     // Do something
   }
 );
@@ -357,7 +355,7 @@ const invalidSubscriber = new SubscriberCallbackWrapper<TicketEventsArgs, 'ticke
   'ticketCreate',
   // Errors since TicketEventsArgs['ticketCreate'] doesn't match [number]
   // error-next-line
-  (meta: EventDispatchMeta, createdTicket: number) => {
+  (meta: MetaCollection, createdTicket: number) => {
     // Do something
   }
 );

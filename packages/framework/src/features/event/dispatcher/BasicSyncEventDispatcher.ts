@@ -1,13 +1,13 @@
-import type {
-  AnyEventSubscriber,
-  EventDispatchArgs,
-  EventSubscriberErrorHandler,
-  EventSubscriberMiddleware,
-  MiddlewareList,
-  SyncEventDispatcher,
+import {
+  TypedFields,
+  type AnyEventSubscriber,
+  type EventDispatchArgs,
+  type EventSubscriberErrorHandler,
+  type EventSubscriberMiddleware,
+  type MiddlewareList,
+  type SyncEventDispatcher,
 } from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
-
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
 import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList.js';
 import { AbstractEventDispatcher } from './AbstractEventDispatcher.js';
@@ -32,7 +32,7 @@ export class BasicSyncEventDispatcher
   public static create(syncTimeout?: number | null): SyncEventDispatcher {
     return new BasicSyncEventDispatcher(
       BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
-        meta.getBot(true).getLogger(),
+        TypedFields.Bot.get(meta, true).getLogger(),
       ),
       SubscriberMiddlewareList.create(),
       syncTimeout,

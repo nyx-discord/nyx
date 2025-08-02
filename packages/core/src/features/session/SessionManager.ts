@@ -1,6 +1,7 @@
 import type { Awaitable, ClientEvents, Events } from 'discord.js';
-
 import type { BotAware } from '../../bot/BotAware.js';
+import { MetaCollection } from '../../meta/MetaCollection.js';
+import { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber.js';
@@ -8,7 +9,6 @@ import type { SessionCustomIdCodec } from './customId/SessionCustomIdCodec.js';
 import type { SessionEndCode } from './end/SessionEndCode';
 import type { SessionEventArgs } from './events/SessionEvent.js';
 import type { SessionExecutor } from './execution/executor/SessionExecutor.js';
-import type { SessionExecutionMeta } from './execution/meta/SessionExecutionMeta.js';
 import type { SessionUpdateInteraction } from './interaction/SessionUpdateInteraction.js';
 import type { SessionPromiseRepository } from './promise/SessionPromiseRepository.js';
 import type { ReadonlySessionRepository } from './repository/ReadonlySessionRepository.js';
@@ -21,10 +21,7 @@ export interface SessionManager extends BotAware, BotLifecycleObserver {
    *
    * @throws {IllegalDuplicateError} If a session with that ID already exists.
    */
-  start(
-    session: Session<unknown>,
-    meta?: SessionExecutionMeta,
-  ): Awaitable<boolean>;
+  start(session: Session<unknown>, meta?: MetaCollection): Awaitable<boolean>;
 
   /**
    * Updates a session given a {@link SessionUpdateInteraction}, if it exists.
@@ -33,7 +30,7 @@ export interface SessionManager extends BotAware, BotLifecycleObserver {
    */
   update(
     interaction: SessionUpdateInteraction,
-    meta?: SessionExecutionMeta,
+    meta?: MetaCollection,
   ): Awaitable<boolean>;
 
   /** Ends a session. */
@@ -41,7 +38,7 @@ export interface SessionManager extends BotAware, BotLifecycleObserver {
     session: Session<unknown>,
     reason: string,
     code: SessionEndCode,
-    meta?: SessionExecutionMeta,
+    meta?: MetaCollection,
   ): Awaitable<this>;
 
   /** Resolves an {@link Session} given a {@link SessionUpdateInteraction}. */
@@ -87,4 +84,7 @@ export interface SessionManager extends BotAware, BotLifecycleObserver {
 
   /** Returns the {@link ReadonlySessionRepository} for this manager. */
   getRepository(): ReadonlySessionRepository;
+
+  /** Returns the {@link MetaCollectionFactory} for creating or populating {@link MetaCollection}s for session executions. */
+  getMetaCollectionFactory(): MetaCollectionFactory;
 }

@@ -1,5 +1,5 @@
+import { MetaCollection } from '../../../meta/MetaCollection';
 import type { SessionEndData } from '../end/SessionEndData';
-import type { SessionExecutionMeta } from '../execution/meta/SessionExecutionMeta.js';
 import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction';
 import type { Session } from '../session/Session.js';
 import { AbstractSessionError } from './AbstractSessionError.js';
@@ -14,7 +14,7 @@ export class SessionStopError<
     session: Session<unknown>,
     data: Data,
     interaction: SessionUpdateInteraction | null,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ) {
     super(error, session, interaction, meta);
 

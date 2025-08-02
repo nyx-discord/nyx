@@ -36,9 +36,9 @@ class MyStandaloneCommand extends AbstractStandaloneCommand {
 
   public async execute(
     interaction: ChatInputCommandInteraction,
-    meta: CommandExecutionMeta
+    meta: MetaCollection
   ) {
-    const bot = meta.getBot();
+    const bot = TypedFields.Bot.get(meta, true);
     const botId = bot.getId();
 
     await interaction.reply(`Hello from Bot ${String(botId)} from MyStandaloneCommand!`);

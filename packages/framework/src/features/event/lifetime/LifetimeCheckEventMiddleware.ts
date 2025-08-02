@@ -1,10 +1,10 @@
-import type {
-  AnyEventSubscriber,
-  EventDispatchMeta,
-  MiddlewareResponse,
+import type { AnyEventSubscriber, MiddlewareResponse } from '@nyx-discord/core';
+import {
+  EventSubscriberLifetimeEnum,
+  MetaCollection,
+  PriorityEnum,
+  TypedFields,
 } from '@nyx-discord/core';
-import { EventSubscriberLifetimeEnum, PriorityEnum } from '@nyx-discord/core';
-
 import { AbstractEventSubscriberMiddleware } from '../middleware/AbstractEventSubscriberMiddleware.js';
 
 export class LifetimeCheckEventMiddleware extends AbstractEventSubscriberMiddleware {
@@ -14,11 +14,10 @@ export class LifetimeCheckEventMiddleware extends AbstractEventSubscriberMiddlew
 
   public async check(
     subscriber: AnyEventSubscriber,
-    meta: EventDispatchMeta,
+    meta: MetaCollection,
   ): Promise<MiddlewareResponse> {
     if (subscriber.getLifetime() === EventSubscriberLifetimeEnum.Once) {
-      const bus = meta.getBus();
-
+      const bus = TypedFields.EventBus.get(meta, true);
       await bus.unsubscribe(subscriber);
     }
 

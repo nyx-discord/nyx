@@ -3,7 +3,6 @@ import type {
   Session,
   SessionFilter,
 } from '@nyx-discord/core';
-
 import { AbstractSessionFilterCheckMiddleware } from './AbstractSessionFilterCheckMiddleware.js';
 
 export class SessionStartFilterCheckMiddleware extends AbstractSessionFilterCheckMiddleware<Args> {

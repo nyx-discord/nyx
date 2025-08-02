@@ -1,7 +1,6 @@
 import type { AutocompleteInteraction } from 'discord.js';
-
+import type { MetaCollection } from '../../../meta/MetaCollection';
 import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
-import type { CommandExecutionMeta } from '../execution/meta/CommandExecutionMeta.js';
 import { CommandError } from './CommandError.js';
 
 /** An Error that wraps errors that occur during the execution of {@link ExecutableCommand#autocomplete}. */
@@ -12,7 +11,7 @@ export class CommandAutocompleteError extends CommandError {
     error: Error,
     command: AnyExecutableCommand,
     interaction: AutocompleteInteraction,
-    meta: CommandExecutionMeta,
+    meta: MetaCollection,
     message?: string,
   ) {
     super(

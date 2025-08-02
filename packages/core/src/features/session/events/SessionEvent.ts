@@ -1,5 +1,5 @@
+import { MetaCollection } from '../../../meta/MetaCollection';
 import type { SessionEndData } from '../end/SessionEndData';
-import type { SessionExecutionMeta } from '../execution/meta/SessionExecutionMeta.js';
 import type { SessionStartInteraction } from '../interaction/SessionStartInteraction.js';
 import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction.js';
 import type { Session } from '../session/Session.js';
@@ -25,17 +25,17 @@ export interface SessionEventArgs {
   sessionStart: [
     session: Session<unknown>,
     interaction: SessionStartInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ];
   sessionEnd: [
     session: Session<unknown>,
     data: SessionEndData<unknown>,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ];
   sessionUpdate: [
     session: Session<unknown>,
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ];
   sessionExpire: [session: Session<unknown>, data: SessionEndData<unknown>];
 }

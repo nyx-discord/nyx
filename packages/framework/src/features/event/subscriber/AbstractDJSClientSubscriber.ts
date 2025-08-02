@@ -1,6 +1,6 @@
-import type { EventDispatchMeta, EventSubscriber } from '@nyx-discord/core';
+import type { EventSubscriber } from '@nyx-discord/core';
+import { MetaCollection } from '@nyx-discord/core';
 import type { Awaitable, ClientEvents } from 'discord.js';
-
 import { AbstractEventSubscriber } from './AbstractEventSubscriber.js';
 
 export abstract class AbstractDJSClientSubscriber<
@@ -12,7 +12,7 @@ export abstract class AbstractDJSClientSubscriber<
   protected abstract override readonly event: Event;
 
   public abstract override handleEvent(
-    meta: EventDispatchMeta,
+    meta: MetaCollection,
     ...args: ClientEvents[Event]
   ): Awaitable<void>;
 }

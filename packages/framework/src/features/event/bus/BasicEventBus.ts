@@ -10,18 +10,17 @@ import type {
   EventSubscriberCollection,
   Identifier,
   MetaCollection,
-  NyxBot,
   ReadonlyCollectionFrom,
 } from '@nyx-discord/core';
 import {
   EventBusEventEnum,
-  EventDispatchMeta,
   IllegalDuplicateError,
   IllegalStateError,
+  MetaCollectionFactory,
   ObjectNotFoundError,
 } from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
-
+import { DefaultMetaCollectionFactory } from '../../../meta/DefaultMetaCollectionFactory.js';
 import { BasicAsyncEventDispatcher } from '../dispatcher/BasicAsyncEventDispatcher.js';
 import { BasicSyncEventDispatcher } from '../dispatcher/BasicSyncEventDispatcher.js';
 
@@ -29,8 +28,6 @@ export class BasicEventBus<
   EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
 > implements EventBus<EventArgsObject>
 {
-  public readonly bot: NyxBot | null;
-
   protected readonly id: Identifier;
 
   protected readonly subscribers: EventSubscriberCollection<EventArgsObject> =
@@ -47,39 +44,44 @@ export class BasicEventBus<
 
   protected readonly meta: MetaCollection = new Collection();
 
+  protected readonly metaFactory: MetaCollectionFactory;
+
   constructor(
-    bot: NyxBot | null,
     id: Identifier,
     sorter: Comparator<Identifier, AnyEventSubscriberFrom<EventArgsObject>>,
     dispatcher: EventDispatcher,
+    metaFactory: MetaCollectionFactory,
   ) {
-    this.bot = bot;
     this.id = id;
     this.dispatcher = dispatcher;
     this.sorter = sorter;
+    this.metaFactory = metaFactory;
   }
 
   public static createSync<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-  >(bot: NyxBot | null, id: Identifier) {
+  >(id: Identifier) {
     return new BasicEventBus<EventArgsObject>(
-      bot,
       id,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicSyncEventDispatcher.create(),
+      new DefaultMetaCollectionFactory(),
     );
   }
 
   public static createAsync<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-  >(bot: NyxBot | null, id: Identifier): EventBus<EventArgsObject> {
+  >(
+    id: Identifier,
+    metaFactory?: MetaCollectionFactory,
+  ): EventBus<EventArgsObject> {
     return new BasicEventBus<EventArgsObject>(
-      bot,
       id,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicAsyncEventDispatcher.create(),
+      metaFactory ?? new DefaultMetaCollectionFactory(),
     );
   }
 
@@ -177,7 +179,7 @@ export class BasicEventBus<
   public async emit<const EventName extends keyof EventArgsObject & string>(
     eventName: EventName,
     args: EventArgsObject[EventName],
-    meta?: EventDispatchMeta,
+    meta?: MetaCollection,
   ): Promise<this> {
     const subscriberMap = this.subscribers.get(eventName);
     if (!subscriberMap) return this;
@@ -223,10 +225,6 @@ export class BasicEventBus<
     return this.dispatcher;
   }
 
-  public getBot(): NyxBot | null {
-    return this.bot;
-  }
-
   public getSubscribers(): ReadonlyCollection<
     Identifier,
     AnyEventSubscriberFrom<EventArgsObject>
@@ -235,6 +233,10 @@ export class BasicEventBus<
       (accumulator, value) => accumulator.concat(value),
       new Collection<Identifier, AnyEventSubscriberFrom<EventArgsObject>>(),
     );
+  }
+
+  public getMetaCollectionFactory(): MetaCollectionFactory {
+    return this.metaFactory;
   }
 
   public onUnregister(): Awaitable<void> {
@@ -291,15 +293,9 @@ export class BasicEventBus<
   protected generateArgsForEvent<Args extends unknown[]>(
     eventName: string,
     eventArgs: Args,
-    meta?: EventDispatchMeta,
+    meta?: MetaCollection,
   ): EventDispatchArgs<Args> {
-    const metadata =
-      meta
-      ?? EventDispatchMeta.fromEventName(
-        this.bot,
-        this as AnyEventBus,
-        eventName,
-      );
+    const metadata = this.createMetaCollection(meta, eventName);
     return [metadata, ...eventArgs];
   }
 
@@ -347,5 +343,14 @@ export class BasicEventBus<
       eventName as unknown as keyof EventArgsObject & string,
       args as unknown as EventArgsObject[keyof EventArgsObject & string],
     );
+  }
+
+  /** Creates a meta collection for an event dispatch. */
+  protected createMetaCollection(
+    meta: MetaCollection | undefined,
+    event: string,
+  ): MetaCollection {
+    const id = Symbol(`Event:${event} @${Date.now()}`);
+    return this.metaFactory.createOrPopulate(meta, id);
   }
 }

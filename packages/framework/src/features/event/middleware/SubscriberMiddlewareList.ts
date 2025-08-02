@@ -5,7 +5,6 @@ import type {
 } from '@nyx-discord/core';
 import { EventSubscriberMiddlewareError } from '@nyx-discord/core';
 import { AbstractMiddlewareList } from '../../../middleware/AbstractMiddlewareList';
-
 import { LifetimeCheckEventMiddleware } from '../lifetime/LifetimeCheckEventMiddleware.js';
 import { HandleCheckEventMiddleware } from '../meta/HandleCheckEventMiddleware.js';
 import { SubscriberFilterCheckMiddleware } from './SubscriberFilterCheckMiddleware.js';

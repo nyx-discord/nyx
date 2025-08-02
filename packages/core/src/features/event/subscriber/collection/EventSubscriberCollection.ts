@@ -1,5 +1,4 @@
 import type { Collection } from '@discordjs/collection';
-
 import type { Identifier } from '../../../../identity/Identifier.js';
 import type { EventSubscriber } from '../EventSubscriber';
 import type { AnyEventSubscriberFrom } from '../types/AnyEventSubscriberFrom';

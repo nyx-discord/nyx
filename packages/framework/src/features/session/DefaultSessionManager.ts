@@ -1,6 +1,9 @@
 import type {
   EventBus,
   EventSubscriber,
+  Identifier,
+  MetaCollection,
+  MetaCollectionFactory,
   NyxBot,
   ReadonlySessionRepository,
   Session,
@@ -18,10 +21,11 @@ import {
   ObjectNotFoundError,
   SessionEndCodes,
   SessionEventEnum,
-  SessionExecutionMeta,
   SessionStateEnum,
+  TypedFields,
 } from '@nyx-discord/core';
-import type { ClientEvents, Events } from 'discord.js';
+import type { ClientEvents, Events, Interaction } from 'discord.js';
+import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
 import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultSessionCustomIdCodec } from './customId/DefaultSessionCustomIdCodec';
@@ -37,6 +41,7 @@ type SessionManagerOptions = {
   promiseRepository: SessionPromiseRepository;
   subscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>;
   bus: EventBus<SessionEventArgs>;
+  metaFactory: MetaCollectionFactory;
 };
 
 export class DefaultSessionManager implements SessionManager {
@@ -57,6 +62,8 @@ export class DefaultSessionManager implements SessionManager {
 
   protected readonly promiseRepository: SessionPromiseRepository;
 
+  protected readonly metaFactory: MetaCollectionFactory;
+
   constructor(bot: NyxBot, options: SessionManagerOptions) {
     this.bot = bot;
     this.codec = options.customIdCodec;
@@ -65,6 +72,7 @@ export class DefaultSessionManager implements SessionManager {
     this.promiseRepository = options.promiseRepository;
     this.subscriber = options.subscriber;
     this.bus = options.bus;
+    this.metaFactory = options.metaFactory;
 
     this.subscriber.lock();
   }
@@ -74,6 +82,10 @@ export class DefaultSessionManager implements SessionManager {
     options?: Partial<SessionManagerOptions>,
   ): SessionManager {
     const constructorOptions = options ?? {};
+    const metaFactory = DefaultMetaCollectionFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]);
 
     ensureKey(constructorOptions, 'executor', DefaultSessionExecutor.create());
     ensureKey(
@@ -100,10 +112,11 @@ export class DefaultSessionManager implements SessionManager {
       constructorOptions,
       'bus',
       BasicEventBus.createAsync<SessionEventArgs>(
-        bot,
         Symbol('SessionManagerEventBus'),
+        metaFactory,
       ),
     );
+    ensureKey(constructorOptions, 'metaFactory', metaFactory);
 
     const manager = new DefaultSessionManager(bot, constructorOptions);
 
@@ -131,14 +144,21 @@ export class DefaultSessionManager implements SessionManager {
 
   public async start(
     session: Session<unknown>,
-    meta?: SessionExecutionMeta,
+    meta?: MetaCollection,
   ): Promise<boolean> {
     this.checkSessionState(session, SessionStateEnum.Running);
 
     try {
       await this.repository.save(session);
 
-      const metadata = meta ?? SessionExecutionMeta.fromSession(session);
+      const { metadata, executionId } = this.createOrPopulateMeta({
+        meta,
+        session,
+        customIdExtra: null,
+        interaction: session.getStartInteraction(),
+        extraData: [],
+      });
+
       await this.executor.start(session, metadata);
       session.setState(SessionStateEnum.Running);
 
@@ -149,25 +169,23 @@ export class DefaultSessionManager implements SessionManager {
           metadata,
         ]),
       ).catch((error) => {
-        const executionId = String(metadata.getId());
-
         this.bot
           .getLogger()
           .error(
-            `Uncaught event bus error while emitting session start '${executionId}'.`,
+            `Uncaught event bus error while emitting session start '${String(executionId)}'.`,
             error,
           );
       });
 
       return true;
-    } catch (e) {
+    } catch (_e) {
       return session.getStartInteraction().replied;
     }
   }
 
   public async update(
     interaction: SessionUpdateInteraction,
-    meta?: SessionExecutionMeta,
+    meta?: MetaCollection,
   ): Promise<boolean> {
     const { customId } = interaction;
     const customIdData = this.codec.deserialize(customId);
@@ -185,7 +203,13 @@ export class DefaultSessionManager implements SessionManager {
       throw new AssertionError();
     }
 
-    const metadata = meta ?? SessionExecutionMeta.fromSession(session);
+    const { metadata, executionId } = this.createOrPopulateMeta({
+      meta,
+      session,
+      customIdExtra: customIdData.extra,
+      interaction,
+      extraData: [],
+    });
     const updateTtl = await this.executor.update(
       session,
       interaction,
@@ -207,12 +231,10 @@ export class DefaultSessionManager implements SessionManager {
         metadata,
       ]),
     ).catch((error) => {
-      const executionId = String(metadata.getId());
-
       this.bot
         .getLogger()
         .error(
-          `Uncaught event bus error while emitting session update '${executionId}'.`,
+          `Uncaught event bus error while emitting session update '${String(executionId)}'.`,
           error,
         );
     });
@@ -224,7 +246,7 @@ export class DefaultSessionManager implements SessionManager {
     session: Session<unknown>,
     reason: string,
     code: number,
-    meta?: SessionExecutionMeta,
+    meta?: MetaCollection,
   ): Promise<this> {
     this.checkSessionState(session, SessionStateEnum.Ended);
 
@@ -236,7 +258,16 @@ export class DefaultSessionManager implements SessionManager {
       );
     }
 
-    const metadata = meta ?? SessionExecutionMeta.fromSession(session);
+    const { metadata, executionId } = this.createOrPopulateMeta({
+      meta,
+      session,
+      customIdExtra: null,
+      interaction: null,
+      extraData: [
+        { name: 'Reason', value: reason },
+        { name: 'Code', value: code.toString() },
+      ],
+    });
 
     await this.repository.delete(id);
     const data = await this.executor.end(session, reason, code, metadata);
@@ -247,12 +278,10 @@ export class DefaultSessionManager implements SessionManager {
     Promise.resolve(
       this.bus.emit(SessionEventEnum.SessionEnd, [session, data, metadata]),
     ).catch((error) => {
-      const sessionId = String(session.getId());
-
       this.bot
         .getLogger()
         .error(
-          `Uncaught bus error while emitting session end '${sessionId}'.`,
+          `Uncaught bus error while emitting session end '${String(executionId)}'.`,
           error,
         );
     });
@@ -318,8 +347,18 @@ export class DefaultSessionManager implements SessionManager {
     return this.promiseRepository;
   }
 
+  public getMetaCollectionFactory(): MetaCollectionFactory {
+    return this.metaFactory;
+  }
+
   protected async expire(session: Session<unknown>): Promise<void> {
-    const metadata = SessionExecutionMeta.fromSession(session);
+    const { metadata, executionId } = this.createOrPopulateMeta({
+      meta: undefined,
+      session,
+      customIdExtra: null,
+      interaction: null,
+      extraData: [],
+    });
     const data = await this.executor.end(
       session,
       String(SessionEndCodes.Expired),
@@ -337,12 +376,10 @@ export class DefaultSessionManager implements SessionManager {
     Promise.resolve(
       this.bus.emit(SessionEventEnum.SessionExpire, [session, data]),
     ).catch((error) => {
-      const sessionId = String(session.getId());
-
       this.bot
         .getLogger()
         .error(
-          `Uncaught bus error while emitting session expire '${sessionId}'.`,
+          `Uncaught bus error while emitting session expire '${String(executionId)}'.`,
           error,
         );
     });
@@ -375,5 +412,49 @@ export class DefaultSessionManager implements SessionManager {
     ) {
       throw new AssertionError();
     }
+  }
+
+  /** Creates a meta collection for a session, or populates an existing one. */
+  protected createOrPopulateMeta(options: {
+    meta: MetaCollection | undefined;
+    session: Session<unknown>;
+    customIdExtra: string | null;
+    interaction: Interaction | null;
+    extraData: { name: string; value: string }[];
+  }): {
+    metadata: MetaCollection;
+    executionId: Identifier;
+  } {
+    const sessionId = options.session.getId();
+
+    const executionData = [
+      { name: 'Session', value: sessionId },
+      { name: 'Date', value: new Date().toISOString() },
+      ...options.extraData,
+    ];
+
+    if (options.interaction) {
+      executionData.push(
+        { name: 'Interaction ID', value: `${options.interaction.id}` },
+        { name: 'Interaction Type', value: `${options.interaction.type}` },
+      );
+    }
+
+    const executionId = Symbol(
+      executionData.map((e) => `${e.name} '${e.value}'`).join(' | '),
+    );
+
+    const metadata = this.metaFactory.createOrPopulate(
+      options.meta,
+      executionId,
+    );
+    if (options.customIdExtra) {
+      TypedFields.CustomIdExtra.set(metadata, options.customIdExtra);
+    }
+
+    return {
+      metadata,
+      executionId: executionId,
+    };
   }
 }

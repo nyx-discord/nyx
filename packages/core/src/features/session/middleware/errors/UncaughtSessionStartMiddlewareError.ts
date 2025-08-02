@@ -1,6 +1,6 @@
+import { MetaCollection } from '../../../../meta/MetaCollection';
 import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import { AbstractSessionError } from '../../errors/AbstractSessionError.js';
-import type { SessionExecutionMeta } from '../../execution/meta/SessionExecutionMeta.js';
 import type { SessionStartInteraction } from '../../interaction/SessionStartInteraction.js';
 import type { Session } from '../../session/Session.js';
 import type { SessionStartMiddleware } from '../SessionStartMiddleware.js';
@@ -12,7 +12,7 @@ export class UncaughtSessionStartMiddlewareError extends AbstractSessionError<Se
     error: Error,
     middlewareList: MiddlewareList<SessionStartMiddleware>,
     session: Session<unknown>,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ) {
     super(error, session, session.getStartInteraction(), meta);
     this.middlewareList = middlewareList;

@@ -11,7 +11,7 @@ specified by the subscriber happen.
 :::note
 Subscribers don't depend on a specific bot or bus, and you can reuse the same instance for many.
 
-To get the bot that is calling an event, use the `EventDispatchMeta#getBot()` method on the meta passed for the event.
+To get the bot that is calling an event, use the `TypedFields.Bot.get(meta)` method, using the meta passed for the event.
 
 Note it can be `null` if the bus doesn't have a bot. You can pass `true` to this method to throw an error if it's not present.
 In practice, all built-in event buses have a bot, it will only be `null` for your custom ones where you didn't pass a bot.
@@ -36,14 +36,14 @@ You can create an event subscriber by either:
 
 ```ts
 import { AbstractEventSubscriber } from '@nyx-discord/framework';
-import type { EventDispatchMeta } from '@nyx-discord/core';
+import type { MetaCollection } from '@nyx-discord/core';
 
 class MyEventSubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
   protected readonly event = 'someEvent';
 
-  public handleEvent(meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) {
+  public handleEvent(meta: MetaCollection, ...args: MyEventsArgs['someEvent']) {
     // Null if you didn't pass a bot while creating your bus
-    const bot = meta.getBot();
+    const bot = TypedFields.Bot.get(meta);
     if (!bot) {
       console.log('Hello world');
       return;
@@ -65,12 +65,13 @@ await myBus.subscribe(frameworkSubscriber);
 
 ```ts
 import { SubscriberCallbackWrapper } from '@nyx-discord/framework';
+import type { MetaCollection } from '@nyx-discord/core';
 
-const callbackSubscriber = new SubscriberCallbackWrapper < MyEventsArgs, 'someEvent'>(
+const callbackSubscriber = new SubscriberCallbackWrapper<MyEventsArgs, 'someEvent'>(
   'someEvent',
-  (meta: EventDispatchMeta, ...args: MyEventsArgs['someEvent']) => {
+  (meta: MetaCollection, ...args: MyEventsArgs['someEvent']) => {
     // Null if you didn't pass a bot while creating your bus
-    const bot = meta.getBot();
+    const bot = TypedFields.Bot.get(meta);
     if (!bot) {
       console.log('Hello world');
       return;
@@ -90,13 +91,14 @@ await myBus.subscribe(callbackSubscriber);
 
 ```ts
 import { EventSubscriber } from '@nyx-discord/core';
+import type { MetaCollection } from '@nyx-discord/core';
 
 class MyInterfaceEventSubscriber implements EventSubscriber {
   protected readonly event = 'someEvent';
 
-  public handleEvent(meta: EventDispatchMeta, ...args: unknown[]): void {
+  public handleEvent(meta: MetaCollection, ...args: unknown[]): void {
     // Null if you didn't pass a bot while creating your bus
-    const bot = meta.getBot();
+    const bot = TypedFields.Bot.get(meta);
     if (!bot) {
       console.log('Hello world');
       return;
@@ -140,7 +142,7 @@ await bot.getEventManager().subscribe(subscriber, newBus); // Throws ObjectNotFo
 
 ## 🧱 Event Dispatch Meta
 
-The first argument of the `EventSubscriber#handleEvent()` handler is an `EventDispatchMeta` object, which is a
+The first argument of the `EventSubscriber#handleEvent()` handler is an `MetaCollection` object, which is a
 `Collection` that stores metadata about the event call.
 
 :::tip
@@ -152,17 +154,15 @@ It's also passed to the `EventMiddleware`, and can be used as a way to share dat
 
 Apart from the keys saved by the caller or the middleware, the dispatch meta contains:
 
-* The bot that called the event, via `#getBot()`.
+* The bot that called the event, via the `TypedFields.Bot` field.
+* The bus where the event was emitted, via the `TypedFields.EventBus` field.
+* Whether the event has been marked as handled by another subscriber, via the `TypedFields.EventHandled` field.
 
-Note it can be `null` if the bus doesn't have a bot. You can pass `true` to this method to throw an error if it's not present.
-In practice, all built-in event buses have a bot, it will only be `null` for your custom ones where you didn't pass a bot.
-
-* The bus where the event was emitted, via `#getBus()`.
-* Whether the event has been marked as handled by another subscriber, via `#isHandled()`.
+For more information about TypedFields, check the [📦 Meta Collections](/extra/meta) guide.
 
 ### ✅ Event handling marking
 
-By default, when a subscriber marks an event as "handled" with the `EventDispatchMeta#setHandled()` method, it won't be
+By default, when a subscriber marks an event as "handled" with `TypedFields.EventHandled.set(meta, true)`, it won't be
 received by the rest of the subscribers. This is useful for events that only need to be "executed once", for example,
 replying to an `Interaction`.
 
@@ -176,65 +176,60 @@ the `ignoreHandled` property on `AbstractEventSubscriber`.
 
 ```ts
 import { AbstractEventSubscriber } from '@nyx-discord/framework';
+import type { MetaCollection } from '@nyx-discord/core';
 
 // A subscriber with priority Highest marks the event as handled
 class HighestEventSubscriber extends AbstractEventSubscriber {
-  protected readonly event = 'someEvent';
-
   // highlight-next-line
   protected readonly priority = PriorityEnum.Highest;
 
-  public handleEvent(meta: EventDispatchMeta): void {
-    // some logic
+  public handleEvent(meta: MetaCollection): void {
+    const bot = TypedFields.Bot.get(meta, true);
+    bot.getLogger().log('Highest');
 
-    const bot = meta.getBot(true);
-
-    bot.getLogger().log('Called HighestEventSubscriber!');
-    meta.setHandled();
+    // highlight-next-line
+    TypedFields.EventHandled.set(meta, true);
   }
 }
 
 // A subscriber with priority Lowest doesn't receive the event
 class LowestEventSubscriber extends AbstractEventSubscriber {
-  protected readonly event = 'someEvent';
-
 // highlight-next-line
   protected readonly priority = PriorityEnum.Lowest;
 
-  public handleEvent(meta: EventDispatchMeta): void {
-    const bot = meta.getBot(true);
-
-    bot.getLogger().log('Called LowestEventSubscriber!');
+  public handleEvent(meta: MetaCollection): void {
+    const bot = TypedFields.Bot.get(meta, true);
+    bot.getLogger().log('Lowest');
   }
 }
 
 // A subscriber with priority Lowest but `ignoreHandled = false` receives the event
 class LowestNotIgnoredEventSubscriber extends AbstractEventSubscriber {
-  protected readonly event = 'someEvent';
-
 // highlight-next-line
   protected readonly priority = PriorityEnum.Lowest;
 
 // highlight-next-line
   protected readonly ignoreHandled = false;
 
-  public handleEvent(meta: EventDispatchMeta): void {
-    const bot = meta.getBot(true);
-
-    bot.getLogger().log('Called LowestNotIgnoredEventSubscriber!');
+  public handleEvent(meta: MetaCollection): void {
+    const bot = TypedFields.Bot.get(meta, true);
+    bot.getLogger().log('Lowest with ignoreHandled = false');
   }
 }
 
 await myBus
-  .subscribe(new LowestEventSubscriber())
-  .subscribe(new HighestEventSubscriber());
+  .subscribe(
+    new LowestEventSubscriber(),
+    new HighestEventSubscriber(),
+    new LowestNotIgnoredEventSubscriber(),
+  );
 
 await myBus.emit('someEvent', []);
 /**
  * Logger output:
- * - Called HighestEventSubscriber!
- * - Called LowestNotIgnoredEventSubscriber!
- * Notice how LowestEventSubscriber wasn't called.
+ * - Highest
+ * - Lowest with ignoreHandled = false
+ * Notice how Lowest wasn't logged, since Highest marked the event as handled.
  */
 ```
 

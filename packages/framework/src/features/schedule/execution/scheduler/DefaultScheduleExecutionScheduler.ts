@@ -1,22 +1,22 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import type {
   Identifier,
+  MetaCollection,
   Schedule,
   ScheduleExecutionScheduler,
   ScheduleExecutor,
   ScheduleJobAdapter,
-  ScheduleTickMeta,
 } from '@nyx-discord/core';
 import {
   canBeIdentifier,
   IllegalStateError,
+  MetaCollectionFactory,
   ObjectNotFoundError,
 } from '@nyx-discord/core';
 import type { CronJobParams } from 'cron';
 import { CronJob } from 'cron';
 import type { Awaitable } from 'discord.js';
 import { Collection } from 'discord.js';
-
 import { CronJobAdapter } from '../../adapter/CronJobAdapter.js';
 
 type ScheduleJobParams = Omit<CronJobParams, 'cronTime' | 'onTick'>;
@@ -36,11 +36,11 @@ export class DefaultScheduleExecutionScheduler
 
   protected readonly jobParameters: ScheduleJobParams;
 
-  protected metaFactory: (schedule: Schedule) => ScheduleTickMeta;
+  protected metaFactory: MetaCollectionFactory;
 
   constructor(
     executor: ScheduleExecutor,
-    metaFactory: (schedule: Schedule) => ScheduleTickMeta,
+    metaFactory: MetaCollectionFactory,
     jobParameters: ScheduleJobParams,
   ) {
     this.executor = executor;
@@ -50,7 +50,7 @@ export class DefaultScheduleExecutionScheduler
 
   public static create(
     executor: ScheduleExecutor,
-    metaFactory: (schedule: Schedule) => ScheduleTickMeta,
+    metaFactory: MetaCollectionFactory,
     jobParameters?: ScheduleJobParams,
   ): ScheduleExecutionScheduler {
     const parameters =
@@ -119,13 +119,6 @@ export class DefaultScheduleExecutionScheduler
     return this;
   }
 
-  public setMetaFactory(
-    metaFactory: (schedule: Schedule) => ScheduleTickMeta,
-  ): this {
-    this.metaFactory = metaFactory;
-    return this;
-  }
-
   public getJobs(): ReadonlyCollection<
     Identifier,
     ScheduleJobAdapter<CronJob>
@@ -162,7 +155,7 @@ export class DefaultScheduleExecutionScheduler
     const parameters: CronJobParams = {
       cronTime: interval,
       onTick: async () => {
-        const meta = this.metaFactory(schedule);
+        const meta = this.createMetaCollection(schedule);
         await this.executor.tick(schedule, meta);
       },
     };
@@ -174,5 +167,12 @@ export class DefaultScheduleExecutionScheduler
   protected millisecondsToCron(intervalMs: number): string {
     const interval = Math.round(intervalMs / 1000);
     return `*/${interval} * * * * *`;
+  }
+
+  protected createMetaCollection(schedule: Schedule): MetaCollection {
+    const executionId = Symbol(
+      `Schedule '${String(schedule.getId())}' @${Date.now()}`,
+    );
+    return this.metaFactory.create(executionId);
   }
 }

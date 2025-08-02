@@ -1,5 +1,5 @@
 import { FeatureError } from '../../../errors/FeatureError.js';
-import type { SessionExecutionMeta } from '../execution/meta/SessionExecutionMeta.js';
+import { MetaCollection } from '../../../meta/MetaCollection.js';
 import type { SessionStartInteraction } from '../interaction/SessionStartInteraction.js';
 import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction.js';
 import type { Session } from '../session/Session.js';
@@ -13,13 +13,13 @@ export abstract class AbstractSessionError<
 > extends FeatureError<Session<unknown>> {
   protected readonly interaction: SessionInteraction;
 
-  protected readonly meta: SessionExecutionMeta;
+  protected readonly meta: MetaCollection;
 
   constructor(
     error: Error,
     session: Session<unknown>,
     interaction: SessionInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ) {
     super(error, session, 'There was an error while executing a Session.');
     this.interaction = interaction;

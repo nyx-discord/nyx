@@ -1,5 +1,5 @@
 import type {
-  SessionExecutionMeta,
+  MetaCollection,
   SessionStage,
   SessionStageArray,
   SessionUpdateInteraction,
@@ -14,7 +14,7 @@ export abstract class AbstractStagePaginationSession<Result>
 {
   protected abstract readonly stages: SessionStageArray;
 
-  public onStart(meta: SessionExecutionMeta): Awaitable<void> {
+  public onStart(meta: MetaCollection): Awaitable<void> {
     const stage = this.stages[0];
 
     return stage.onStart(this.startInteraction, meta);
@@ -22,7 +22,7 @@ export abstract class AbstractStagePaginationSession<Result>
 
   public override async onUpdate(
     interaction: SessionUpdateInteraction,
-    meta: SessionExecutionMeta,
+    meta: MetaCollection,
   ): Promise<boolean> {
     const newPage = this.extractPageFromCustomId(interaction.customId);
     const newStage = this.stages[newPage ?? -1];

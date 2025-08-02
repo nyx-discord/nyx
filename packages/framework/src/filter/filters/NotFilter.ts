@@ -1,5 +1,4 @@
 import type { Filter } from '@nyx-discord/core';
-
 import { AbstractFilter } from '../AbstractFilter.js';
 
 /** A filter that returns the opposite result that the provided filter returns (NOT gate). */

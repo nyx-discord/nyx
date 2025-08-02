@@ -104,8 +104,12 @@ const sidebars: SidebarsConfig = {
         },
       ],
     },
-
-    'error/error-handling',
+    {
+      type: 'category',
+      label: '🪐 Extra',
+      collapsed: false,
+      items: ['extra/error-handling', 'extra/meta'],
+    },
   ],
 };
 
