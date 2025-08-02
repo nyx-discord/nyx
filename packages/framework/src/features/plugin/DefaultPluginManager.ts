@@ -46,6 +46,7 @@ export class DefaultPluginManager implements PluginManager {
   }
 
   public async onStart(): Promise<void> {
+    await this.bus.onRegister();
     const startPromises = this.plugins.map((plugin) => plugin.onStart());
     await Promise.all(startPromises);
   }
@@ -55,10 +56,6 @@ export class DefaultPluginManager implements PluginManager {
     await Promise.all(stopPromises);
 
     await this.bus.onUnregister();
-  }
-
-  public async onSetup(): Promise<void> {
-    await this.bus.onRegister();
   }
 
   public async register(...plugins: NyxPlugin[]): Promise<this> {

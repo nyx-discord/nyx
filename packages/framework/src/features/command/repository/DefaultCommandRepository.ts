@@ -31,10 +31,6 @@ export class DefaultCommandRepository implements CommandRepository {
     return new DefaultCommandRepository();
   }
 
-  public onSetup(): void {
-    /** Do nothing by default. */
-  }
-
   public addCommand(command: TopLevelCommand): this {
     const commandId = command.getId();
     const existentCommand = this.commands.get(commandId);

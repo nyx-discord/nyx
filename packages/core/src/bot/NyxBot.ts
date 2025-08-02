@@ -1,5 +1,6 @@
-import { Awaitable } from 'discord.js';
 import type { Identifiable } from '../identity/Identifiable.js';
+import { Identifier } from '../identity/Identifier';
+import { BotStatus } from '../service/BotStatus';
 import { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
 
 /** A bot of the nyx framework. */
@@ -31,7 +32,13 @@ export interface NyxBot<
   getService(): Implementations['service'];
 
   /** Starts the bot. Alias for {@link BotService#start}. */
-  start(): Awaitable<this>;
+  start(): Promise<this>;
+
+  /** Stops the bot. Alias for {@link BotService#stop}. Once it's stopped, it cannot be started again. */
+  stop(reason?: Identifier): Promise<this>;
+
+  /** Returns the bot's status. */
+  getStatus(): BotStatus;
 
   /** Returns this bot's token. */
   getToken(): string;

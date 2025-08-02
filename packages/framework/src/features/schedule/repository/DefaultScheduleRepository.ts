@@ -25,10 +25,6 @@ export class DefaultScheduleRepository implements ScheduleRepository {
     return new DefaultScheduleRepository();
   }
 
-  public onSetup(): Awaitable<void> {
-    /** Do nothing by default. */
-  }
-
   public onStart(): Awaitable<void> {
     /** Do nothing by default. */
   }

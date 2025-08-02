@@ -85,7 +85,7 @@ You will find this pattern in a lot of other `@framework` objects, where you can
 ```
 
 :::tip
-When creating a bot (either via `new` or `#create()`), the type of parameters that you return are used in the bot's
+When creating a bot (either via `new` or `.create()`), the type of parameters that you return are used in the bot's
 type signature.
 
 This implies that, for example, if you create a `MyCustomCommandManager` and pass it to the bot's options, the bot will
@@ -95,28 +95,18 @@ custom properties or methods that you may have added or modified.
 
 ## 🚀 Bot Starting
 
-To start a bot, you can set it up and then login, or just directly start it:
+To start a bot, just call its `#start()` method:
 
 ```ts
-await bot.start(); // setups and logins
-
-// or:
-await bot.setup();
-await bot.login();
+await bot.start();
 ```
 
-:::danger
-Trying to login a bot without first setting it up will throw an `IllegalStateError`.
+:::warning
+If the start errors, it'll reject the promise, and the bot will enter in a `BotStatusEnum.Killed` state, meaning it won't
+be able to be used anymore. You can create a new bot instance and start it again, but you cannot recover the previous one.
+
+To get a bot's status at any time, you can use `Bot#getStatus()`.
 :::
-
-As a quick explanation:
-
-* When a bot is first created, it starts in the `Unsetup` status. It's NOT recommended to interact with the bot on this state.
-* Upon calling `Bot#setup()`, all the managers and plugins are notified about the setup. This is done to safely perform
-possible asynchronous logic that these objects need to actually function, outside the "object construction" step. The
-bot then switches to `Waiting`.
-* It's now safe to log in the bot on Discord with `Bot#login()`. Managers and plugins are also notified after the login,
-but at this point they should already be ready for it.
 
 ## 📚 Summary
 
@@ -139,7 +129,6 @@ const bot = Bot.create(() => ({
   deployCommands: true,
 }));
 
-// Make sure you're on an async context to be able to await
 await bot.start();
 ```
 

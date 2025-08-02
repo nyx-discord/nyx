@@ -127,14 +127,9 @@ export class DefaultSessionManager implements SessionManager {
     return manager;
   }
 
-  public async onSetup() {
-    await this.repository.onSetup();
-
+  public async onStart(): Promise<void> {
     const bus = this.bot.getEventManager().getClientBus();
     await bus.subscribe(this.subscriber);
-  }
-
-  public async onStart(): Promise<void> {
     await this.repository.onStart();
   }
 

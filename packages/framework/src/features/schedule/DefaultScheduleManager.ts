@@ -97,6 +97,7 @@ export class DefaultScheduleManager implements ScheduleManager {
   }
 
   public async onStart(): Promise<void> {
+    await this.bus.onRegister();
     await this.repository.onStart();
     await this.scheduler.onStart();
   }
@@ -105,12 +106,6 @@ export class DefaultScheduleManager implements ScheduleManager {
     await this.repository.onStop();
     await this.scheduler.onStop();
     await this.bus.onUnregister();
-  }
-
-  public async onSetup(): Promise<void> {
-    await this.repository.onSetup();
-    await this.scheduler.onSetup();
-    await this.bus.onRegister();
   }
 
   public async addSchedule(

@@ -3,7 +3,7 @@ import type {
   BotServiceEventArgs,
   BotStatus,
   EventBus,
-  EventSubscriber,
+  Identifier,
   NyxBot,
 } from '@nyx-discord/core';
 import {
@@ -28,23 +28,18 @@ export class DefaultBotService implements BotService {
 
   protected startPromise!: StartPromiseData;
 
-  protected status: BotStatus = BotStatusEnum.Unprepared;
+  protected status: BotStatus = BotStatusEnum.Waiting;
 
   constructor(bot: NyxBot, bus: EventBus<BotServiceEventArgs>) {
     this.bot = bot;
     this.bus = bus;
 
-    this.startPromise = DefaultBotService.createStartPromiseData();
-  }
-
-  public static createStartPromiseData(): StartPromiseData {
     const startPromise: Partial<StartPromiseData> = {};
     startPromise.promise = new Promise<NyxBot>((resolve, reject) => {
       startPromise.resolve = resolve;
       startPromise.reject = reject;
     });
-
-    return startPromise as StartPromiseData;
+    this.startPromise = startPromise as StartPromiseData;
   }
 
   public static create(bot: NyxBot): BotService {
@@ -62,29 +57,25 @@ export class DefaultBotService implements BotService {
     return new DefaultBotService(bot, bus);
   }
 
-  public async start(): Promise<this> {
-    if (this.status === BotStatusEnum.Running) {
-      throw new IllegalStateError();
-    }
+  isRunning(): boolean {
+    throw new Error('Method not implemented.');
+  }
 
-    if (this.status == BotStatusEnum.Unprepared) {
-      await this.setup();
+  public async start(): Promise<this> {
+    if (this.status !== BotStatusEnum.Waiting) {
+      throw new IllegalStateError(
+        `Bot is not in a valid state to start: ${this.status}`,
+      );
     }
 
     try {
-      const token = this.bot.getToken();
-      await this.bot.getClient().login(token);
-
       await this.bot.getEventManager().onStart();
-
       await Promise.all([
         await this.bot.getCommandManager().onStart(),
         await this.bot.getScheduleManager().onStart(),
         await this.bot.getSessionManager().onStart(),
         await this.bot.getPluginManager().onStart(),
       ]);
-
-      this.status = BotStatusEnum.Running;
 
       Promise.resolve(this.bus.emit(BotServiceEventEnum.Start, [])).catch(
         (error) => {
@@ -98,52 +89,22 @@ export class DefaultBotService implements BotService {
         this.bot.getLogger().error('Error while starting bot:', error);
       } finally {
         this.startPromise.reject(error);
-        this.status = BotStatusEnum.Killed;
       }
       throw error;
     }
+
+    this.status = BotStatusEnum.Running;
+    const token = this.bot.getToken();
+    await this.bot.getClient().login(token);
+
     this.startPromise.resolve(this.bot);
-    this.startPromise = DefaultBotService.createStartPromiseData();
 
     return this;
   }
 
-  public async setup(): Promise<this> {
-    if (this.status !== BotStatusEnum.Unprepared) {
-      throw new IllegalStateError();
-    }
-
-    try {
-      await this.bot.getEventManager().onSetup();
-
-      await Promise.all([
-        await this.bot.getCommandManager().onSetup(),
-        await this.bot.getScheduleManager().onSetup(),
-        await this.bot.getSessionManager().onSetup(),
-        await this.bot.getPluginManager().onSetup(),
-        await this.bus.onRegister(),
-      ]);
-
-      this.status = BotStatusEnum.Waiting;
-
-      Promise.resolve(this.bus.emit(BotServiceEventEnum.Setup, [])).catch(
-        (error) => {
-          this.bot
-            .getLogger()
-            .error('Uncaught bus error while emitting setup event.', error);
-        },
-      );
-
-      return this;
-    } catch (error) {
-      this.status = BotStatusEnum.Killed;
-      throw error;
-    }
-  }
-
-  public async stop(reason?: string): Promise<this> {
+  public async stop(reason?: Identifier): Promise<this> {
     if (this.status !== BotStatusEnum.Running) {
-      throw new IllegalStateError();
+      throw new IllegalStateError(`Bot is not running: ${this.status}`);
     }
 
     await Promise.all([
@@ -154,8 +115,6 @@ export class DefaultBotService implements BotService {
       await this.bot.getSessionManager().onStop(),
       await this.bot.getPluginManager().onStop(),
     ]);
-
-    this.status = BotStatusEnum.Stopped;
 
     Promise.resolve(
       this.bus.emit(BotServiceEventEnum.Stop, reason ? [reason] : []),
@@ -171,21 +130,10 @@ export class DefaultBotService implements BotService {
     return this;
   }
 
-  public isRunning(): boolean {
-    return this.status === BotStatusEnum.Running;
-  }
-
-  public async subscribe(
-    ...subscribers: EventSubscriber<
-      BotServiceEventArgs,
-      keyof BotServiceEventArgs
-    >[]
-  ): Promise<this> {
-    await this.bus.subscribe(...subscribers);
-    return this;
-  }
-
   public getStartPromise(): Promise<NyxBot> {
+    if (this.status === BotStatusEnum.Running) {
+      return Promise.resolve(this.bot);
+    }
     return this.startPromise.promise;
   }
 

@@ -18,7 +18,7 @@ import {
   ObjectNotFoundError,
   TypedFields,
 } from '@nyx-discord/core';
-import type { Awaitable, Client, ClientEvents } from 'discord.js';
+import type { Client, ClientEvents } from 'discord.js';
 import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
 import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from './bus/BasicEventBus.js';
@@ -80,11 +80,7 @@ export class DefaultEventManager implements EventManager {
     return new DefaultEventManager(bot, constructorOptions);
   }
 
-  public onStart(): Awaitable<void> {
-    /** Do nothing by default */
-  }
-
-  public async onSetup(): Promise<void> {
+  public async onStart(): Promise<void> {
     await this.managerBus.onRegister();
     await this.clientBus.onRegister();
   }

@@ -63,10 +63,6 @@ export class DefaultScheduleExecutionScheduler
     );
   }
 
-  public onSetup(): Awaitable<void> {
-    /** Do nothing by default. */
-  }
-
   public onStart(): Awaitable<void> {
     /** Do nothing by default. */
   }

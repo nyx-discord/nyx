@@ -31,10 +31,6 @@ export class DefaultSessionRepository extends TTLCache<
     return new DefaultSessionRepository(onExpire);
   }
 
-  public onSetup(): Awaitable<void> {
-    /** Do nothing by default. */
-  }
-
   public onStart(): Awaitable<void> {
     /** Do nothing by default. */
   }

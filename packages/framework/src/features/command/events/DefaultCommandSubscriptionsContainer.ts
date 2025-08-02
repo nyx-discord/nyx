@@ -57,17 +57,13 @@ export class DefaultCommandSubscriptionsContainer
     );
   }
 
-  public onStart(): void {
-    /** Do nothing by default. */
+  public async onStart(): Promise<void> {
+    await this.eventBus.subscribe(this.interactionSubscriber);
+    await this.eventBus.subscribe(this.autocompleteSubscriber);
   }
 
   public onStop(): void {
     /** Do nothing by default. */
-  }
-
-  public async onSetup(): Promise<void> {
-    await this.eventBus.subscribe(this.interactionSubscriber);
-    await this.eventBus.subscribe(this.autocompleteSubscriber);
   }
 
   public getInteractionSubscriber(): EventSubscriber<

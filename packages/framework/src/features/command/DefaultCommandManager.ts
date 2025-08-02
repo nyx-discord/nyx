@@ -141,15 +141,11 @@ export class DefaultCommandManager implements CommandManager {
   }
 
   public async onStart(): Promise<void> {
+    await this.eventBus.onRegister();
     await this.subscriptionsContainer.onStart();
     if (this.deployOnStart) {
       await this.deployer.deploy();
     }
-  }
-
-  public async onSetup(): Promise<void> {
-    await this.subscriptionsContainer.onSetup();
-    await this.eventBus.onRegister();
   }
 
   public async onStop(): Promise<void> {

@@ -22,10 +22,6 @@ export class DefaultSessionPromiseRepository
     return new DefaultSessionPromiseRepository();
   }
 
-  public onSetup(): void {
-    /** Do nothing by default. */
-  }
-
   public onStart(): void {
     /** Do nothing by default. */
   }

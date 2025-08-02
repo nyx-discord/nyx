@@ -1,5 +1,6 @@
 import type {
   BotOptions,
+  BotStatus,
   Identifier,
   InjectableBotDependencies,
   NyxBot,
@@ -107,6 +108,15 @@ export class Bot<Implementations extends InjectableBotDependencies>
   public async start(): Promise<this> {
     await this.service.start();
     return this;
+  }
+
+  public async stop(reason?: Identifier): Promise<this> {
+    await this.service.stop(reason);
+    return this;
+  }
+
+  public getStatus(): BotStatus {
+    return this.service.getStatus();
   }
 
   public decorate<Key extends string | symbol, Value>(

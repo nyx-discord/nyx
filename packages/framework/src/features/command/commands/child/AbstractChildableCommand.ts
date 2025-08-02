@@ -14,7 +14,7 @@ import { AbstractCommand } from '../AbstractCommand';
 
 export abstract class AbstractChildableCommand<
     Data,
-    Child extends ChildCommand<unknown, never>,
+    Child extends ChildCommand<unknown, any>,
   >
   extends AbstractCommand<Data>
   implements ChildableCommand<Data, Child>
