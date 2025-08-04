@@ -1,11 +1,9 @@
-import type { Identifier } from '../identity/Identifier.js';
 import { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
 
 /** Type of options to create a bot. */
 export interface BotOptions<Implementations extends InjectableBotDependencies> {
   token: string;
   client: Implementations['client'];
-  id: Identifier;
   deployCommands: boolean;
 
   logger: Implementations['logger'];
