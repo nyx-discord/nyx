@@ -17,12 +17,12 @@ export function disableAllComponents(
   for (const component of array) {
     if ('setDisabled' in component) {
       component.setDisabled(true);
-      return;
+      continue;
     }
     if (component instanceof SectionBuilder) {
       if (!(component.accessory instanceof ButtonBuilder)) continue;
       component.accessory.setDisabled(true);
-      return;
+      continue;
     }
 
     switch (component.data.type) {
