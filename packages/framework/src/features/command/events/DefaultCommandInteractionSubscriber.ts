@@ -1,6 +1,6 @@
+import { MetaCollection, TypedFields } from '@nyx-discord/core';
 import type { Interaction } from 'discord.js';
 import { Events } from 'discord.js';
-import { MetaCollection, TypedFields } from '@nyx-discord/core';
 import { AbstractDJSClientSubscriber as Subscriber } from '../../event/subscriber/AbstractDJSClientSubscriber.js';
 
 export class DefaultCommandInteractionSubscriber extends Subscriber<Events.InteractionCreate> {
@@ -10,7 +10,13 @@ export class DefaultCommandInteractionSubscriber extends Subscriber<Events.Inter
     meta: MetaCollection,
     interaction: Interaction,
   ): Promise<void> {
-    if (interaction.isAutocomplete()) return;
+    if (
+      interaction.isAutocomplete()
+      || interaction.isPrimaryEntryPointCommand()
+    ) {
+      return;
+    }
+
     const bot = TypedFields.Bot.get(meta, true);
 
     const handled = await bot.getCommandManager().execute(interaction);

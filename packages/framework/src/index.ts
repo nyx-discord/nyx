@@ -5,10 +5,6 @@
 export * from './bot/Bot';
 export * from './customId/AbstractCustomIdCodec';
 export * from './customId/SerializableFeatureEnum';
-export * from './discord/ActionRowList';
-export * from './discord/ActionRowWrapper';
-export * from './discord/ExtractTypeFromComponentData';
-export * from './discord/RowAssignable';
 export * from './error/BasicErrorHandler';
 export * from './errors/NotImplementedError';
 export * from './features/command/DefaultCommandManager';
@@ -90,3 +86,5 @@ export * from './filter/middleware/BasicFilterCheckMiddleware';
 export * from './middleware/AbstractMiddleware';
 export * from './middleware/AbstractMiddlewareList';
 export * from './service/DefaultBotService';
+
+export * from '@nyx-discord/core';

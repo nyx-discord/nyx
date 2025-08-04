@@ -21,7 +21,8 @@ import {
   UncaughtSessionStartMiddlewareError,
   UncaughtSessionUpdateMiddlewareError,
 } from '@nyx-discord/core';
-import { ActionRowList } from '../../../discord/ActionRowList.js';
+import { createComponentBuilder, TopLevelComponentData } from 'discord.js';
+import { disableAllComponents } from '../../../discord/disableAllComponents';
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
 import { SessionStartMiddlewareList } from '../middleware/SessionStartMiddlewareList';
 import { SessionUpdateMiddlewareList } from '../middleware/SessionUpdateMiddlewareList';
@@ -214,10 +215,11 @@ export class DefaultSessionExecutor implements SessionExecutor {
     interaction: SessionUpdateInteraction,
   ): Promise<void> {
     const { message } = interaction;
-    const rowList = ActionRowList.fromMessage(message);
-    rowList.setDisabled(true);
-
-    await interaction.update({ components: rowList.toRowsData() });
+    const builders = message.components.map(createComponentBuilder);
+    disableAllComponents(builders);
+    await interaction.update({
+      components: builders as unknown as TopLevelComponentData[],
+    });
   }
 
   public setMissingHandler(

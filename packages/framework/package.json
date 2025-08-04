@@ -41,7 +41,7 @@
     "@repo/vitest-config": "workspace:*"
   },
   "peerDependencies": {
-    "discord.js": "^14.14.1"
+    "discord.js": "^14.21.0"
   },
   "dependencies": {
     "@discordjs/collection": "1.5.3",
