@@ -41,8 +41,6 @@ export class Bot<Implementations extends InjectableBotDependencies>
 
   protected readonly client: Implementations['client'];
 
-  protected readonly id: Identifier;
-
   protected readonly token: string;
 
   constructor(optionsGenerator: (bot: NyxBot) => BotOptions<Implementations>) {
@@ -50,8 +48,6 @@ export class Bot<Implementations extends InjectableBotDependencies>
 
     this.client = options.client;
     this.token = options.token;
-    this.id = options.id;
-
     this.logger = options.logger;
     this.service = options.service;
     this.commands = options.commands;
@@ -144,10 +140,6 @@ export class Bot<Implementations extends InjectableBotDependencies>
 
   public getEventManager(): Implementations['eventManager'] {
     return this.events;
-  }
-
-  public getId(): Identifier {
-    return this.id;
   }
 
   public getLogger(): Implementations['logger'] {

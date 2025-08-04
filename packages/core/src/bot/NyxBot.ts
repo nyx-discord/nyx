@@ -1,4 +1,3 @@
-import type { Identifiable } from '../identity/Identifiable.js';
 import { Identifier } from '../identity/Identifier';
 import { BotStatus } from '../service/BotStatus';
 import { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
@@ -6,7 +5,7 @@ import { InjectableBotDependencies } from './inject/InjectableBotDependencies.js
 /** A bot of the nyx framework. */
 export interface NyxBot<
   Implementations extends InjectableBotDependencies = InjectableBotDependencies,
-> extends Identifiable {
+> {
   /** Returns the logger of this bot for console output. */
   getLogger(): Implementations['logger'];
 

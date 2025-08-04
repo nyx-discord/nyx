@@ -38,10 +38,8 @@ export abstract class AbstractSchedule implements Schedule {
     const job = bot.getScheduleManager().getJobForSchedule(this);
     if (!job && force) {
       const scheduleId = String(this.id);
-      const botId = String(bot.getId());
-
       throw new ObjectNotFoundError(
-        `Job for schedule ${scheduleId} not found on bot ${botId}.`,
+        `Job for schedule ${scheduleId} not found.`,
       );
     }
 
