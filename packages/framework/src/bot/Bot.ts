@@ -18,7 +18,7 @@ type BotOptionsWithDefaults<
 > = Implementations
   & Pick<
     BotOptions<InjectableBotDependencies>,
-    'logger' | 'client' | 'id' | 'token' | 'deployCommands'
+    'logger' | 'client' | 'token' | 'deployCommands'
   >;
 
 /** The main Bot class. */
@@ -66,7 +66,6 @@ export class Bot<Implementations extends InjectableBotDependencies>
       const generatedOptions = generator(bot);
       const defaultOptions = Bot.DefaultOptionsGenerator(
         bot,
-        generatedOptions.id,
         generatedOptions.client,
         generatedOptions.deployCommands,
       );
@@ -80,7 +79,6 @@ export class Bot<Implementations extends InjectableBotDependencies>
 
   public static readonly DefaultOptionsGenerator = (
     bot: NyxBot,
-    id: Identifier,
     client: Client,
     deployCommands: boolean,
   ) => {
