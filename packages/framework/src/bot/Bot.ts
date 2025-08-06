@@ -22,8 +22,9 @@ type BotOptionsWithDefaults<
   >;
 
 /** The main Bot class. */
-export class Bot<Implementations extends InjectableBotDependencies>
-  implements NyxBot<Implementations>
+export class Bot<
+  Implementations extends InjectableBotDependencies = InjectableBotDependencies,
+> implements NyxBot<Implementations>
 {
   protected readonly logger: Implementations['logger'];
 
