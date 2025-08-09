@@ -4,6 +4,7 @@ import type {
   ChildableCommand,
   ChildCommand,
   ClassImplements,
+  Nameable,
 } from '@nyx-discord/core';
 import {
   AssertionError,
@@ -13,8 +14,8 @@ import {
 import { AbstractCommand } from '../AbstractCommand';
 
 export abstract class AbstractChildableCommand<
-    Data,
-    Child extends ChildCommand<unknown, any>,
+    Data extends Nameable,
+    Child extends ChildCommand<Nameable, any>,
   >
   extends AbstractCommand<Data>
   implements ChildableCommand<Data, Child>
@@ -38,7 +39,7 @@ export abstract class AbstractChildableCommand<
       if (child.getParent() !== this) {
         throw new AssertionError();
       }
-      const name = child.getName();
+      const name = child.getData().name;
 
       const duplicate = this.children.get(name);
       if (duplicate) {

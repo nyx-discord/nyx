@@ -11,6 +11,7 @@ import type {
   ContextMenuCommand,
   MetaCollection,
   MiddlewareList,
+  Nameable,
 } from '@nyx-discord/core';
 import {
   CommandAutocompleteError,
@@ -89,7 +90,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   }
 
   public async autocomplete(
-    command: ChatExecutableCommand<unknown>,
+    command: ChatExecutableCommand<Nameable>,
     interaction: AutocompleteInteraction,
     metadata: MetaCollection,
   ): Promise<void> {
@@ -111,7 +112,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   }
 
   public async executeChatInput(
-    command: ChatExecutableCommand<unknown>,
+    command: ChatExecutableCommand<Nameable>,
     interaction: ChatInputCommandInteraction,
     metadata: MetaCollection,
   ): Promise<void> {

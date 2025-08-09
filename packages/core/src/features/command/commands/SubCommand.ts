@@ -6,8 +6,10 @@ import type { SubCommandGroup } from './SubCommandGroup.js';
 
 /** A child, executable command that belongs to a {@link ParentCommand} or {@link SubCommandGroup}. */
 export interface SubCommand
-  extends ChatExecutableCommand<SlashCommandSubcommandBuilder>,
+  extends ChatExecutableCommand<
+      ReturnType<SlashCommandSubcommandBuilder['toJSON']>
+    >,
     ChildCommand<
-      SlashCommandSubcommandBuilder,
+      ReturnType<SlashCommandSubcommandBuilder['toJSON']>,
       ParentCommand | SubCommandGroup
     > {}

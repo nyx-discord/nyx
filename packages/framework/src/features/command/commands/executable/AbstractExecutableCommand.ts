@@ -5,6 +5,7 @@ import type {
   ComponentCommandInteraction,
   ExecutableCommand,
   MetaCollection,
+  Nameable,
   NyxBot,
 } from '@nyx-discord/core';
 import {
@@ -17,7 +18,7 @@ import { NotImplementedError } from '../../../../errors/NotImplementedError';
 import { AbstractCommand } from '../AbstractCommand';
 
 export abstract class AbstractExecutableCommand<
-    Data,
+    Data extends Nameable,
     Interaction extends ApplicationCommandInteraction,
   >
   extends AbstractCommand<Data>

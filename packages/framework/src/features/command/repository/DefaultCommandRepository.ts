@@ -11,6 +11,7 @@ import type {
   ImplementsStandaloneCommand,
   ImplementsSubCommand,
   ImplementsSubCommandGroup,
+  Nameable,
   SubCommand,
   SubCommandGroup,
   TopLevelCommand,
@@ -89,12 +90,12 @@ export class DefaultCommandRepository implements CommandRepository {
   public locateByClassTree<T extends ImplementsStandaloneCommand>(
     StandaloneCommandClass: T,
   ): InstanceType<T> | null;
-  public locateByClassTree<T extends ClassImplements<Command<unknown>>>(
+  public locateByClassTree<T extends ClassImplements<Command<Nameable>>>(
     TopLevelCommandClass: ClassImplements<TopLevelCommand>,
     FirstChildClass?: ImplementsSubCommandGroup | ImplementsSubCommand,
     SecondChildClass?: ImplementsSubCommand,
   ): InstanceType<T> | null {
-    let command: Command<unknown> | null =
+    let command: Command<Nameable> | null =
       this.commands.find(
         (registeredCommand) =>
           registeredCommand instanceof TopLevelCommandClass,

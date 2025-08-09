@@ -1,5 +1,6 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import type { ClassImplements } from '../../../types/ClassImplements.js';
+import type { Nameable } from '../../../types/Nameable';
 import type { Command } from '../commands/Command';
 import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand.js';
 import type { ImplementsParentCommand } from '../commands/implements/ImplementsParentCommand.js';
@@ -171,7 +172,7 @@ export interface CommandRepository
    * repo.locateByClassTree(SomeParentCommand, SomeSubCommandGroup); // Stored instance of SomeSubCommandGroup
    * repo.locateByClassTree(SomeParentCommand, ChildSubCommand); // null
    */
-  locateByClassTree<T extends ClassImplements<Command<unknown>>>(
+  locateByClassTree<T extends ClassImplements<Command<Nameable>>>(
     TopLevelCommandClass: ClassImplements<TopLevelCommand>,
     FirstChildClass?: ImplementsSubCommandGroup | ImplementsSubCommand,
     SecondChildClass?: ImplementsSubCommand,

@@ -18,7 +18,7 @@ import { AbstractExecutableCommand } from './executable/AbstractExecutableComman
 /** A child, executable command that belongs to an {@link ParentCommand} or {@link SubCommandGroup}. */
 export abstract class AbstractSubCommand
   extends AbstractExecutableCommand<
-    SlashCommandSubcommandBuilder,
+    ReturnType<SlashCommandSubcommandBuilder['toJSON']>,
     ChatInputCommandInteraction
   >
   implements SubCommand
@@ -33,16 +33,14 @@ export abstract class AbstractSubCommand
     this.customIdData = {
       type: ApplicationCommandType.ChatInput,
       name: this.parent.isParent()
-        ? this.parent.getName()
+        ? this.parent.getData().name
         : this.parent.getParent().getData().name,
       extra: null,
-      subcommand: this.getName(),
-      group: this.parent.isSubCommandGroup() ? this.parent.getName() : null,
+      subcommand: this.getData().name,
+      group: this.parent.isSubCommandGroup()
+        ? this.parent.getData().name
+        : null,
     };
-  }
-
-  public getName(): string {
-    return this.createData().name;
   }
 
   public getParent(): ParentCommand | SubCommandGroup {
@@ -60,14 +58,7 @@ export abstract class AbstractSubCommand
     throw new NotImplementedError();
   }
 
-  public getData(): SlashCommandSubcommandBuilder {
-    return this.createData();
-  }
-
   public getNameTree(): ReadonlyArray<string> {
-    return this.parent.getNameTree().concat(this.getName());
+    return this.parent.getNameTree().concat(this.data.name);
   }
-
-  /** Returns this subcommand's data. */
-  protected abstract createData(): SlashCommandSubcommandBuilder;
 }

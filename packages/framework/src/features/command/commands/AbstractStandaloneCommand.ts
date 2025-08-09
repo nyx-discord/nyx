@@ -8,7 +8,6 @@ import {
   type AutocompleteInteraction,
   type Awaitable,
   type ChatInputCommandInteraction,
-  type SlashCommandBuilder,
   type SlashCommandOptionsOnlyBuilder,
   type Snowflake,
 } from 'discord.js';
@@ -24,26 +23,18 @@ export abstract class AbstractStandaloneCommand
 {
   protected readonly customIdData: CommandCustomIdData = {
     type: ApplicationCommandType.ChatInput,
-    name: this.getName(),
+    name: this.getData().name,
     extra: null,
     subcommand: null,
     group: null,
   };
-
-  public getName(): string {
-    return this.createData().name;
-  }
-
-  public getData(): ReturnType<SlashCommandBuilder['toJSON']> {
-    return this.createData().toJSON();
-  }
 
   public getGuilds(): ReadonlyArray<Snowflake> | null {
     return null;
   }
 
   public getId(): string {
-    return this.createData().name;
+    return this.data.name;
   }
 
   public override isStandalone(): this is StandaloneCommand {
@@ -58,9 +49,6 @@ export abstract class AbstractStandaloneCommand
   }
 
   public getNameTree(): ReadonlyArray<string> {
-    return [this.getName()];
+    return [this.data.name];
   }
-
-  /** Returns this command's data. */
-  protected abstract createData(): SlashCommandOptionsOnlyBuilder;
 }

@@ -8,7 +8,7 @@ import { AbstractChildableCommand } from './child/AbstractChildableCommand';
 
 export abstract class AbstractSubCommandGroup
   extends AbstractChildableCommand<
-    SlashCommandSubcommandGroupBuilder,
+    ReturnType<SlashCommandSubcommandGroupBuilder['toJSON']>,
     SubCommand
   >
   implements SubCommandGroup
@@ -22,10 +22,6 @@ export abstract class AbstractSubCommandGroup
     this.parent = parent;
   }
 
-  public getName(): string {
-    return this.createData().name;
-  }
-
   public override isSubCommandGroup(): this is SubCommandGroup {
     return true;
   }
@@ -34,14 +30,7 @@ export abstract class AbstractSubCommandGroup
     return this.parent;
   }
 
-  public getData(): SlashCommandSubcommandGroupBuilder {
-    return this.createData();
-  }
-
   public getNameTree(): ReadonlyArray<string> {
-    return this.parent.getNameTree().concat(this.getName());
+    return this.parent.getNameTree().concat(this.data.name);
   }
-
-  /** Returns this group's data. */
-  protected abstract createData(): SlashCommandSubcommandGroupBuilder;
 }

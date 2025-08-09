@@ -2,6 +2,7 @@ import type { Awaitable } from 'discord.js';
 import type { NyxBot } from '../../../../bot/NyxBot';
 import type { Filterable } from '../../../../filter/Filterable';
 import type { MetaCollection } from '../../../../meta/MetaCollection';
+import type { Nameable } from '../../../../types/Nameable';
 import type { CommandCustomIdData } from '../../customId/data/CommandCustomIdData';
 import type { CommandFilter } from '../../filter/CommandFilter';
 import type { ApplicationCommandInteraction } from '../../interaction/ApplicationCommandInteraction';
@@ -10,7 +11,7 @@ import type { Command } from '../Command';
 
 /** A command that can be executed by an interaction. */
 export interface ExecutableCommand<
-  Data,
+  Data extends Nameable,
   Interaction extends ApplicationCommandInteraction,
 > extends Command<Data>,
     Filterable<CommandFilter> {

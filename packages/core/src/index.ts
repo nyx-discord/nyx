@@ -163,6 +163,7 @@ export * from './types/ArrayMinLength';
 export * from './types/BotLifecycleObserver';
 export * from './types/ClassImplements';
 export * from './types/Constructor';
+export * from './types/Nameable';
 export * from './types/OptionalArray';
 export * from './types/ReadonlyCollectionFrom';
 export * from './types/Tail';

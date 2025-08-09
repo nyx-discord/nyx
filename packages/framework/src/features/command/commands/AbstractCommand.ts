@@ -3,6 +3,7 @@ import type {
   Command,
   ContextMenuCommand,
   MetaCollection,
+  Nameable,
   ParentCommand,
   ReadonlyMetaCollection,
   StandaloneCommand,
@@ -10,7 +11,11 @@ import type {
   SubCommandGroup,
 } from '@nyx-discord/core';
 
-export abstract class AbstractCommand<Data> implements Command<Data> {
+export abstract class AbstractCommand<Data extends Nameable>
+  implements Command<Data>
+{
+  protected abstract readonly data: Data;
+
   protected readonly meta: MetaCollection = new Collection();
 
   public isStandalone(): this is StandaloneCommand {
@@ -37,13 +42,9 @@ export abstract class AbstractCommand<Data> implements Command<Data> {
     return this.meta;
   }
 
-  public toString(): string {
-    return this.getName();
+  public getData(): Data {
+    return this.data;
   }
 
   public abstract getNameTree(): ReadonlyArray<string>;
-
-  public abstract getData(): Data;
-
-  public abstract getName(): string;
 }

@@ -9,5 +9,11 @@ import type { SubCommand } from './SubCommand.js';
  * This cannot be executed by itself and merely exists for grouping {@link SubCommand subcommands}.
  */
 export interface SubCommandGroup
-  extends ChildableCommand<SlashCommandSubcommandGroupBuilder, SubCommand>,
-    ChildCommand<SlashCommandSubcommandGroupBuilder, ParentCommand> {}
+  extends ChildableCommand<
+      ReturnType<SlashCommandSubcommandGroupBuilder['toJSON']>,
+      SubCommand
+    >,
+    ChildCommand<
+      ReturnType<SlashCommandSubcommandGroupBuilder['toJSON']>,
+      ParentCommand
+    > {}

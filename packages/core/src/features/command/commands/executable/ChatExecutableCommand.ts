@@ -4,13 +4,14 @@ import type {
   ChatInputCommandInteraction,
 } from 'discord.js';
 import type { MetaCollection } from '../../../../meta/MetaCollection';
+import type { Nameable } from '../../../../types/Nameable';
 import type { ExecutableCommand } from './ExecutableCommand';
 
 /**
  * A command that can be executed in chat.
  * Either {@link SubCommand} or {@link StandaloneCommand}.
  */
-export interface ChatExecutableCommand<Data>
+export interface ChatExecutableCommand<Data extends Nameable>
   extends ExecutableCommand<Data, ChatInputCommandInteraction> {
   /** Responds to the given AutocompleteInteraction. */
   autocomplete(

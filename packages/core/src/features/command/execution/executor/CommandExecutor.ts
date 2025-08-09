@@ -8,6 +8,7 @@ import type {
 import type { ErrorHandlerContainer } from '../../../../error/handler/ErrorHandlerContainer.js';
 import type { MetaCollection } from '../../../../meta/MetaCollection.js';
 import type { MiddlewareListContainer } from '../../../../middleware/list/MiddlewareListContainer.js';
+import type { Nameable } from '../../../../types/Nameable';
 import type { ContextMenuCommand } from '../../commands/ContextMenuCommand';
 import type { AnyExecutableCommand } from '../../commands/executable/AnyExecutableCommand';
 import type { ChatExecutableCommand } from '../../commands/executable/ChatExecutableCommand';
@@ -28,7 +29,7 @@ export interface CommandExecutor
 
   /** Executes a {@link ChatInputCommandInteraction} on a {@link ExecutableCommand}. */
   executeChatInput(
-    command: ChatExecutableCommand<unknown>,
+    command: ChatExecutableCommand<Nameable>,
     interaction: ChatInputCommandInteraction,
     metadata: MetaCollection,
   ): Awaitable<void>;
@@ -42,7 +43,7 @@ export interface CommandExecutor
 
   /** Autocompletes (responds) a {@link AutocompleteInteraction} with the provided options from {@link ExecutableCommand#autocomplete}. */
   autocomplete(
-    command: ChatExecutableCommand<unknown>,
+    command: ChatExecutableCommand<Nameable>,
     interaction: AutocompleteInteraction,
     metadata: MetaCollection,
   ): Awaitable<void>;

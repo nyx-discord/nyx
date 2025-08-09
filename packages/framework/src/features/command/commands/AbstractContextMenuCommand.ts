@@ -1,8 +1,8 @@
 import type {
   CommandCustomIdData,
   ContextMenuCommand,
+  MetaCollection,
 } from '@nyx-discord/core';
-import type { MetaCollection } from '@nyx-discord/core';
 import {
   ApplicationCommandType,
   type Awaitable,
@@ -23,7 +23,7 @@ export abstract class AbstractContextMenuCommand
 {
   protected readonly customIdData: CommandCustomIdData = {
     type: ApplicationCommandType.Message,
-    name: this.getName(),
+    name: this.getData().name,
     extra: null,
     subcommand: null,
     group: null,
@@ -42,14 +42,6 @@ export abstract class AbstractContextMenuCommand
     }
   }
 
-  public getName(): string {
-    return this.createData().name;
-  }
-
-  public getData(): ReturnType<ContextMenuCommandBuilder['toJSON']> {
-    return this.createData().toJSON();
-  }
-
   public getGuilds(): ReadonlyArray<Snowflake> | null {
     return null;
   }
@@ -63,7 +55,7 @@ export abstract class AbstractContextMenuCommand
   }
 
   public getNameTree(): ReadonlyArray<string> {
-    return [this.getName()];
+    return [this.data.name];
   }
 
   /** Returns this command's data. */

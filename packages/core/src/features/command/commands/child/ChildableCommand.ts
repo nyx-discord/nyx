@@ -1,11 +1,14 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import type { ClassImplements } from '../../../../types/ClassImplements';
+import type { Nameable } from '../../../../types/Nameable';
 import type { Command } from '../Command';
 import type { ChildCommand } from './ChildCommand';
 
 /** A command that can contain {@link ChildCommand children commands}. */
-export interface ChildableCommand<Data, Child extends ChildCommand<any, any>>
-  extends Command<Data> {
+export interface ChildableCommand<
+  Data extends Nameable,
+  Child extends ChildCommand<any, any>,
+> extends Command<Data> {
   /** The number of children this command has. */
   readonly size: number;
 
