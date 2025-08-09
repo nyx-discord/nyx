@@ -1,6 +1,6 @@
 {
   "name": "@nyx-discord/core",
-  "version": "2.3.0",
+  "version": "3.0.0-beta.0",
   "description": "The core of nyx. Contains the object interfaces and contracts that make up the framework.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -50,10 +50,10 @@
   "license": "MIT",
   "devDependencies": {
     "@discordjs/collection": "1.5.3",
-    "@repo/vitest-config": "workspace:*",
     "@repo/eslint-config": "workspace:*",
+    "@repo/typedoc-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@repo/typedoc-config": "workspace:*"
+    "@repo/vitest-config": "workspace:*"
   },
   "peerDependencies": {
     "discord.js": "^14.21.0"

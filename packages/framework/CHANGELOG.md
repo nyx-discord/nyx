@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0-beta.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.5.0...@nyx-discord/framework@3.0.0-beta.0) (2025-08-09)
+
+### ⚠ BREAKING CHANGES
+
+- **command:** move away from forced data builders
+- bump latest supported djs to 14.21.0
+- remove bot IDs
+- remove setup stage
+- replace metadata classes with simple Collection instances
+- simplify Bot DI type inference
+- session and command customId rewrite
+
+### Features
+
+- bump latest supported djs to 14.21.0 ([d3fcac7](https://github.com/nyx-discord/nyx/commit/d3fcac7a8ebab7aa582b7e1897cb9a895738ff01))
+- improve disableAllComponents readability and also check nested section components ([68d78ba](https://github.com/nyx-discord/nyx/commit/68d78ba21691b7f60b946c1130da18ced24eb742))
+- include default implementations generic for Bot ([1f6bbdb](https://github.com/nyx-discord/nyx/commit/1f6bbdb1f730a8d4f0c039ed3dfb2033ebd29f88))
+- session and command customId rewrite ([5dfe282](https://github.com/nyx-discord/nyx/commit/5dfe2821724d12dfccaf0b932fb7eec18ca1419a))
+
+### Bug Fixes
+
+- continue in disableAllComponents, not return ([a2fdf0e](https://github.com/nyx-discord/nyx/commit/a2fdf0e7d8274f560f26307c65bf421d287602b3))
+- inverse missing value check for ensureKey() ([70f1115](https://github.com/nyx-discord/nyx/commit/70f1115f95cd05bad646396ad300fbc62725e197))
+- remove BotOptionsWithDefaults[#id](https://github.com/nyx-discord/nyx/issues/id) due to previous removal ([465f050](https://github.com/nyx-discord/nyx/commit/465f0509ea4ff2fc7861456c126b0d7bfe65da5a))
+
+### Code Refactoring
+
+- **command:** move away from forced data builders ([b2a6f12](https://github.com/nyx-discord/nyx/commit/b2a6f120ce23dd71d7ac301f98c33d79f149a12b))
+- remove bot IDs ([cabaf16](https://github.com/nyx-discord/nyx/commit/cabaf16219da899e9d3aa03a5af3207de9c3930f))
+- remove setup stage ([9b9eb00](https://github.com/nyx-discord/nyx/commit/9b9eb00a26168b35e6b8fe08db804d127f871002))
+- replace metadata classes with simple Collection instances ([e389f32](https://github.com/nyx-discord/nyx/commit/e389f32941e0099d9db77d75afce56455ab58fd6))
+- simplify Bot DI type inference ([511e3ed](https://github.com/nyx-discord/nyx/commit/511e3ed6997ff7d6e12acb1c29e773743affc4af))
+
 ## [2.5.0](https://github.com/nyx-discord/nyx/compare/@nyx-discord/framework@2.4.0...@nyx-discord/framework@2.5.0) (2024-09-05)
 
 ### Features
