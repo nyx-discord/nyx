@@ -47,7 +47,7 @@ export abstract class AbstractContextMenuCommand
   }
 
   public getId(): string {
-    return this.createData().name;
+    return this.data.name;
   }
 
   public override isContextMenu(): this is ContextMenuCommand {
@@ -57,9 +57,6 @@ export abstract class AbstractContextMenuCommand
   public getNameTree(): ReadonlyArray<string> {
     return [this.data.name];
   }
-
-  /** Returns this command's data. */
-  protected abstract createData(): ContextMenuCommandBuilder;
 
   /** Executes a {@link UserContextMenuCommandInteraction}. */
   protected executeUser(
