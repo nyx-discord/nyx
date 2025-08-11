@@ -1,8 +1,7 @@
 import type {
   ContextMenuCommandBuilder,
-  MessageContextMenuCommandInteraction,
+  ContextMenuCommandInteraction,
   Snowflake,
-  UserContextMenuCommandInteraction,
 } from 'discord.js';
 import type { Identifiable } from '../../../identity/Identifiable';
 import type { ExecutableCommand } from './executable/ExecutableCommand';
@@ -11,7 +10,7 @@ import type { ExecutableCommand } from './executable/ExecutableCommand';
 export interface ContextMenuCommand
   extends ExecutableCommand<
       ReturnType<ContextMenuCommandBuilder['toJSON']>,
-      MessageContextMenuCommandInteraction | UserContextMenuCommandInteraction
+      ContextMenuCommandInteraction
     >,
     Identifiable<string> {
   /** Gets the guilds this command can be executed in. `null` for global commands. */

@@ -1,8 +1,9 @@
-import type {
+import {
   AnyExecutableCommand,
   CommandCustomIdCodec,
   CommandDeployer,
   CommandEventArgs,
+  CommandEventEnum,
   CommandExecutableInteraction,
   CommandExecutor,
   CommandManager,
@@ -13,21 +14,13 @@ import type {
   EventSubscriber,
   Identifier,
   MetaCollection,
+  MetaCollectionFactory,
   NyxBot,
   ReadonlyCommandDeployer,
   TopLevelCommand,
-} from '@nyx-discord/core';
-import {
-  CommandEventEnum,
-  MetaCollectionFactory,
   TypedFields,
 } from '@nyx-discord/core';
-import type {
-  AutocompleteInteraction,
-  Client,
-  ClientEvents,
-  Interaction,
-} from 'discord.js';
+import type { AutocompleteInteraction, Client, ClientEvents } from 'discord.js';
 import { InteractionType } from 'discord.js';
 import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
 import { ensureKey } from '../../util/ensureKey.js';
@@ -435,7 +428,7 @@ export class DefaultCommandManager implements CommandManager {
     meta: MetaCollection | undefined;
     command: AnyExecutableCommand;
     customIdExtra: string | null;
-    interaction: Interaction;
+    interaction: CommandExecutableInteraction | AutocompleteInteraction;
     extraData: { name: string; value: string }[];
   }): {
     metadata: MetaCollection;

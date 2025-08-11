@@ -3,6 +3,7 @@ import type {
   ContextMenuCommand,
   MetaCollection,
 } from '@nyx-discord/core';
+import type { ContextMenuCommandInteraction } from 'discord.js';
 import {
   ApplicationCommandType,
   type Awaitable,
@@ -17,7 +18,7 @@ import { AbstractExecutableCommand } from './executable/AbstractExecutableComman
 export abstract class AbstractContextMenuCommand
   extends AbstractExecutableCommand<
     ReturnType<ContextMenuCommandBuilder['toJSON']>,
-    MessageContextMenuCommandInteraction | UserContextMenuCommandInteraction
+    ContextMenuCommandInteraction
   >
   implements ContextMenuCommand
 {
@@ -30,9 +31,7 @@ export abstract class AbstractContextMenuCommand
   };
 
   public execute(
-    interaction:
-      | MessageContextMenuCommandInteraction
-      | UserContextMenuCommandInteraction,
+    interaction: ContextMenuCommandInteraction,
     metadata: MetaCollection,
   ): Awaitable<void> {
     if (interaction.isMessageContextMenuCommand()) {

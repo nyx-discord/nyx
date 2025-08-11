@@ -1,4 +1,5 @@
 import type {
+  AnySessionInteraction,
   EventBus,
   EventSubscriber,
   Identifier,
@@ -414,7 +415,7 @@ export class DefaultSessionManager implements SessionManager {
     meta: MetaCollection | undefined;
     session: Session<unknown>;
     customIdExtra: string | null;
-    interaction: Interaction | null;
+    interaction: AnySessionInteraction | null;
     extraData: { name: string; value: string }[];
   }): {
     metadata: MetaCollection;
