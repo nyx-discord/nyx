@@ -4,7 +4,7 @@ import type { Filterable } from '../../../../filter/Filterable';
 import type { MetaCollection } from '../../../../meta/MetaCollection';
 import type { Nameable } from '../../../../types/Nameable';
 import type { CommandCustomIdData } from '../../customId/data/CommandCustomIdData';
-import type { CommandFilter } from '../../filter/CommandFilter';
+import type { CommandFilterResolvable } from '../../filter/CommandFilterResolvable';
 import type { ApplicationCommandInteraction } from '../../interaction/ApplicationCommandInteraction';
 import type { ComponentCommandInteraction } from '../../interaction/ComponentCommandInteraction';
 import type { Command } from '../Command';
@@ -14,7 +14,7 @@ export interface ExecutableCommand<
   Data extends Nameable,
   Interaction extends ApplicationCommandInteraction,
 > extends Command<Data>,
-    Filterable<CommandFilter> {
+    Filterable<CommandFilterResolvable> {
   /** Executes this command from an interaction. */
   execute(interaction: Interaction, metadata: MetaCollection): Awaitable<void>;
 

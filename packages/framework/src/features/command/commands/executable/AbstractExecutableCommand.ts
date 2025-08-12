@@ -1,7 +1,7 @@
 import type {
   ApplicationCommandInteraction,
   CommandCustomIdData,
-  CommandFilter,
+  CommandFilterResolvable,
   ComponentCommandInteraction,
   ExecutableCommand,
   MetaCollection,
@@ -26,7 +26,7 @@ export abstract class AbstractExecutableCommand<
 {
   protected abstract readonly customIdData: CommandCustomIdData;
 
-  protected readonly filter: CommandFilter | null = null;
+  protected readonly filter: CommandFilterResolvable | null = null;
 
   public handleInteraction(
     interaction: ComponentCommandInteraction,
@@ -39,7 +39,7 @@ export abstract class AbstractExecutableCommand<
     return this.handleSelectMenu(interaction, metadata);
   }
 
-  public getFilter(): CommandFilter | null {
+  public getFilter(): CommandFilterResolvable | null {
     return this.filter;
   }
 

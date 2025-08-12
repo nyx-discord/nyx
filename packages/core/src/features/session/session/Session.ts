@@ -1,13 +1,13 @@
 import type { Awaitable } from 'discord.js';
 import type { BotAware } from '../../../bot/BotAware.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
-import { MetaCollection } from '../../../meta/MetaCollection.js';
+import type { MetaCollection } from '../../../meta/MetaCollection.js';
 import type { Metadatable } from '../../../meta/Metadatable.js';
 import type { SessionCustomIdData } from '../customId/data/SessionCustomIdData.js';
 import type { SessionEndCode } from '../end/SessionEndCode';
 import type { SessionEndData } from '../end/SessionEndData';
-import type { SessionStartFilter } from '../filter/SessionStartFilter.js';
-import type { SessionUpdateFilter } from '../filter/SessionUpdateFilter.js';
+import type { SessionStartFilterResolvable } from '../filter/start/SessionStartFilterResolvable';
+import type { SessionUpdateFilterResolvable } from '../filter/update/SessionUpdateFilterResolvable';
 import type { SessionStartInteraction } from '../interaction/SessionStartInteraction.js';
 import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction.js';
 import type { SessionState } from '../state/SessionState.js';
@@ -62,10 +62,10 @@ export interface Session<Result>
   ): Awaitable<void>;
 
   /** Returns the filter for starting this session. */
-  getStartFilter(): SessionStartFilter<Result> | null;
+  getStartFilter(): SessionStartFilterResolvable<Result> | null;
 
   /** Returns the filter for update interactions of this session. */
-  getUpdateFilter(): SessionUpdateFilter<Result> | null;
+  getUpdateFilter(): SessionUpdateFilterResolvable<Result> | null;
 
   /** Returns the result of this session. */
   getResult(): Result | null;

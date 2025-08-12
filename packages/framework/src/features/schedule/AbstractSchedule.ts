@@ -5,7 +5,7 @@ import type {
   NyxBot,
   ReadonlyMetaCollection,
   Schedule,
-  ScheduleFilter,
+  ScheduleFilterResolvable,
   UndestroyableScheduleJobAdapter,
 } from '@nyx-discord/core';
 import { ObjectNotFoundError } from '@nyx-discord/core';
@@ -14,7 +14,7 @@ import type { Awaitable } from 'discord.js';
 export abstract class AbstractSchedule implements Schedule {
   protected readonly id: Identifier = Symbol(this.constructor.name);
 
-  protected readonly filter: ScheduleFilter | null = null;
+  protected readonly filter: ScheduleFilterResolvable | null = null;
 
   protected readonly meta: MetaCollection = new Collection<
     Identifier,
@@ -50,7 +50,7 @@ export abstract class AbstractSchedule implements Schedule {
     return this.id;
   }
 
-  public getFilter(): ScheduleFilter | null {
+  public getFilter(): ScheduleFilterResolvable | null {
     return this.filter;
   }
 

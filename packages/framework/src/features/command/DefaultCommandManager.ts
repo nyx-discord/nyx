@@ -1,9 +1,8 @@
-import {
+import type {
   AnyExecutableCommand,
   CommandCustomIdCodec,
   CommandDeployer,
   CommandEventArgs,
-  CommandEventEnum,
   CommandExecutableInteraction,
   CommandExecutor,
   CommandManager,
@@ -18,8 +17,8 @@ import {
   NyxBot,
   ReadonlyCommandDeployer,
   TopLevelCommand,
-  TypedFields,
 } from '@nyx-discord/core';
+import { CommandEventEnum, TypedFields } from '@nyx-discord/core';
 import type { AutocompleteInteraction, Client, ClientEvents } from 'discord.js';
 import { InteractionType } from 'discord.js';
 import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';

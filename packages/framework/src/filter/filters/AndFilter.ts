@@ -4,7 +4,7 @@ import { AbstractFilterAggregator } from './AbstractFilterAggregator.js';
 export class AndFilter extends AbstractFilterAggregator<unknown, unknown[]> {
   public async check(filtered: unknown, ...args: unknown[]): Promise<boolean> {
     for (const filter of this.filters) {
-      const success = await filter.check(filtered, ...args);
+      const success = await this.checkFilter(filter, filtered, ...args);
       if (!success) return false;
     }
     return true;

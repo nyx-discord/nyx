@@ -1,13 +1,19 @@
-import type { Filter, Filterable, MiddlewareResponse } from '@nyx-discord/core';
+import type {
+  Filterable,
+  FilterResolvable,
+  MiddlewareResponse,
+} from '@nyx-discord/core';
 import { AbstractMiddleware } from '../../middleware/AbstractMiddleware.js';
 
-type ExtractFilterArgs<Of extends Filterable<Filter<unknown, unknown[]>>> =
-  Of extends Filterable<Filter<unknown, infer Args extends unknown[]>>
+type ExtractFilterArgs<
+  Of extends Filterable<FilterResolvable<unknown, unknown[]>>,
+> =
+  Of extends Filterable<FilterResolvable<unknown, infer Args extends unknown[]>>
     ? Args
     : never;
 
 export class BasicFilterCheckMiddleware<
-  Checked extends Filterable<Filter<unknown, unknown[]>>,
+  Checked extends Filterable<FilterResolvable<unknown, unknown[]>>,
 > extends AbstractMiddleware<Checked, ExtractFilterArgs<Checked>> {
   protected override locked = true;
 
@@ -18,9 +24,11 @@ export class BasicFilterCheckMiddleware<
     const filter = checked.getFilter();
     if (!filter) return this.true();
 
-    const result = await filter.check(checked, ...args);
-    if (!result) return this.false();
+    const result =
+      typeof filter === 'object'
+        ? await filter.check(checked, ...args)
+        : await filter.bind(checked)(checked, ...args);
 
-    return this.true();
+    return result ? this.true() : this.false();
   }
 }

@@ -1,7 +1,7 @@
 import type {
-  SessionStartArgs as Args,
   Session,
-  SessionFilter,
+  SessionFilterResolvable,
+  SessionStartArgs as Args,
 } from '@nyx-discord/core';
 import { AbstractSessionFilterCheckMiddleware } from './AbstractSessionFilterCheckMiddleware.js';
 
@@ -9,7 +9,7 @@ export class SessionStartFilterCheckMiddleware extends AbstractSessionFilterChec
   /** @inheritDoc */
   protected extractFilter(
     session: Session<unknown>,
-  ): SessionFilter<unknown, Args> | null {
+  ): SessionFilterResolvable<unknown, Args> | null {
     return session.getStartFilter();
   }
 }

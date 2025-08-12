@@ -2,12 +2,12 @@ import type { Awaitable } from 'discord.js';
 import type { Filterable } from '../../../filter/Filterable.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Lockable } from '../../../lock/Lockable.js';
-import { MetaCollection } from '../../../meta/MetaCollection.js';
+import type { MetaCollection } from '../../../meta/MetaCollection.js';
 import type { Metadatable } from '../../../meta/Metadatable.js';
 import type { Priority } from '../../../priority/Priority.js';
 import type { EventBus } from '../bus/EventBus.js';
 import type { EventSubscriberLifetime } from '../lifetime/EventSubscriberLifetime.js';
-import type { EventSubscriberFilter } from './filter/EventSubscriberFilter.js';
+import type { EventSubscriberFilterResolvable } from './filter/EventSubscriberFilterResolvable';
 
 /** An object that can subscribe to a event on an {@link EventBus}. */
 export interface EventSubscriber<
@@ -15,7 +15,7 @@ export interface EventSubscriber<
   Event extends keyof ArgsRecord & string,
 > extends Identifiable,
     Lockable,
-    Filterable<EventSubscriberFilter<ArgsRecord, Event>>,
+    Filterable<EventSubscriberFilterResolvable<ArgsRecord, Event>>,
     Metadatable {
   /** Handles an event given the passed args and metadata. */
   handleEvent(

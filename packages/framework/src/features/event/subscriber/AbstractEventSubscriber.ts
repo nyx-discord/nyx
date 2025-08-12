@@ -2,7 +2,7 @@ import { Collection } from '@discordjs/collection';
 import type {
   EventBus,
   EventSubscriber,
-  EventSubscriberFilter,
+  EventSubscriberFilterResolvable,
   EventSubscriberLifetime,
   Identifier,
   MetaCollection,
@@ -23,7 +23,7 @@ export abstract class AbstractEventSubscriber<
 
   protected readonly priority: Priority = PriorityEnum.Normal;
 
-  protected readonly filter: EventSubscriberFilter<
+  protected readonly filter: EventSubscriberFilterResolvable<
     EventArgsObject,
     Event
   > | null = null;
@@ -65,7 +65,10 @@ export abstract class AbstractEventSubscriber<
     return this.priority;
   }
 
-  public getFilter(): EventSubscriberFilter<EventArgsObject, Event> | null {
+  public getFilter(): EventSubscriberFilterResolvable<
+    EventArgsObject,
+    Event
+  > | null {
     return this.filter;
   }
 

@@ -8,10 +8,10 @@ import type {
   SessionCustomIdCodec,
   SessionCustomIdData,
   SessionEndData,
-  SessionStartFilter,
+  SessionStartFilterResolvable,
   SessionStartInteraction,
   SessionState,
-  SessionUpdateFilter,
+  SessionUpdateFilterResolvable,
   SessionUpdateInteraction,
 } from '@nyx-discord/core';
 import {
@@ -40,9 +40,11 @@ export abstract class AbstractSession<Result = void>
 
   protected readonly customIdData: Readonly<SessionCustomIdData>;
 
-  protected readonly startFilter: SessionStartFilter<Result> | null = null;
+  protected readonly startFilter: SessionStartFilterResolvable<Result> | null =
+    null;
 
-  protected readonly updateFilter: SessionUpdateFilter<Result> | null = null;
+  protected readonly updateFilter: SessionUpdateFilterResolvable<Result> | null =
+    null;
 
   protected readonly ttl: number = AbstractSession.DefaultTTL;
 
@@ -113,11 +115,11 @@ export abstract class AbstractSession<Result = void>
     return this.meta;
   }
 
-  public getStartFilter(): SessionStartFilter<Result> | null {
+  public getStartFilter(): SessionStartFilterResolvable<Result> | null {
     return this.startFilter;
   }
 
-  public getUpdateFilter(): SessionUpdateFilter<Result> | null {
+  public getUpdateFilter(): SessionUpdateFilterResolvable<Result> | null {
     return this.updateFilter;
   }
 

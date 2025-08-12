@@ -1,7 +1,7 @@
 import type {
   MiddlewareResponse,
   Session,
-  SessionFilter,
+  SessionFilterResolvable,
   SessionStartArgs,
   SessionUpdateArgs,
 } from '@nyx-discord/core';
@@ -19,7 +19,10 @@ export abstract class AbstractSessionFilterCheckMiddleware<
     const filter = this.extractFilter(session);
     if (!filter) return this.true();
 
-    const result = await filter.check(session, ...args);
+    const result =
+      typeof filter === 'object'
+        ? await filter.check(session, ...args)
+        : await filter.bind(session)(session, ...args);
     if (!result) return this.false();
 
     return this.true();
@@ -28,5 +31,5 @@ export abstract class AbstractSessionFilterCheckMiddleware<
   /** Extracts the filter from the session. */
   protected abstract extractFilter(
     session: Session<unknown>,
-  ): SessionFilter<unknown, Args> | null;
+  ): SessionFilterResolvable<unknown, Args> | null;
 }

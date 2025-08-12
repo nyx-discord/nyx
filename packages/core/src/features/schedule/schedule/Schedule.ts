@@ -4,14 +4,14 @@ import type { Filterable } from '../../../filter/Filterable.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Metadatable } from '../../../meta/Metadatable.js';
 import type { ScheduleTickArgs } from '../execution/args/ScheduleTickArgs.js';
-import type { ScheduleFilter } from '../filter/ScheduleFilter.js';
+import type { ScheduleFilterResolvable } from '../filter/ScheduleFilterResolvable';
 import type { ScheduleInterval } from '../interval/ScheduleInterval.js';
 import type { UndestroyableScheduleJobAdapter } from '../job/UndestroyableScheduleJobAdapter.js';
 
 /** An object that is ticked continuously. */
 export interface Schedule
   extends Identifiable,
-    Filterable<ScheduleFilter>,
+    Filterable<ScheduleFilterResolvable>,
     Metadatable {
   /** Runs this schedule. */
   tick(...args: ScheduleTickArgs): Awaitable<void>;
