@@ -9,7 +9,9 @@ import type { PaginationSession } from './PaginationSession.js';
  */
 export interface ListPaginationSession<Item, Result>
   extends PaginationSession<Result> {
+  /** Returns the amount of items the session shows per page. */
   getItemsPerPage(): number;
 
+  /** Returns the items of this current page. */
   getCurrentPageItems(): ReadonlyArray<Item>;
 }
