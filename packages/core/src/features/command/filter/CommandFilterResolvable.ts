@@ -1,3 +1,4 @@
+import type { FilterResolvableFrom } from '../../../filter/FilterResolvable';
 import type { CommandFilter } from './CommandFilter';
 
-export type CommandFilterResolvable = CommandFilter | CommandFilter['check'];
+export type CommandFilterResolvable = FilterResolvableFrom<CommandFilter>;
