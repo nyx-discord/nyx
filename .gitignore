@@ -1,6 +1,7 @@
 # Monorepo caches
 .nx
 .turbo
+.source
 
 # Websites output
 build/

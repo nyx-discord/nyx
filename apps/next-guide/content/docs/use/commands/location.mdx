@@ -1,0 +1,63 @@
+---
+title: Command Location
+icon: MapPin
+---
+
+Sometimes you may need a reference to a currently registered command. You can do so using the `CommandRepository` of your command manager.
+
+```ts twoslash
+// ---cut-start---
+import { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut-end---
+const repository = bot.getCommandManager().getRepository();
+```
+
+### Location by name
+
+Use the `locateByNameTree()` method to find a command by its name tree, which is a string representation of the command's hierarchy, e.g. `parent sub-command`.
+
+```ts twoslash
+// ---cut-start---
+import { CommandRepository } from '@nyx-discord/framework';
+declare const repository: CommandRepository;
+// ---cut-end---
+
+const topLevel = repository.locateByNameTree('top-level-command');
+//    ^?
+
+const subCommandOrGroup = repository.locateByNameTree('parent', 'sub-command-or-group');
+//    ^?
+
+const subCommand = repository.locateByNameTree('parent', 'sub-command-group', 'sub-command');
+//    ^?
+```
+
+This however only returns the generic base types, not a specific class instance. If you need a specific type, use the following method.
+
+### Location by class
+
+The `locateByClassTree()` method allows you to find a command by its class hierarchy, which is useful if you want to get a specific command type.
+
+```ts twoslash
+// ---cut-start---
+import { AbstractStandaloneCommand, AbstractSubCommand, AbstractParentCommand, AbstractSubCommandGroup, CommandRepository } from '@nyx-discord/framework';
+// @ts-expect-error Incomplete example
+class MyStandaloneCommand extends AbstractStandaloneCommand {}
+// @ts-expect-error Incomplete example
+class MySubCommand extends AbstractSubCommand {}
+// @ts-expect-error Incomplete example
+class MyParentCommand extends AbstractParentCommand {}
+// @ts-expect-error Incomplete example
+class MySubCommandGroup extends AbstractSubCommandGroup {}
+declare const repository: CommandRepository;
+// ---cut-end---
+const standalone = repository.locateByClassTree(MyStandaloneCommand);
+//    ^?
+
+const subCommand = repository.locateByClassTree(MyParentCommand, MySubCommand);
+//    ^?
+
+const subCommandGroup = repository.locateByClassTree(MyParentCommand, MySubCommandGroup);
+//    ^?
+```

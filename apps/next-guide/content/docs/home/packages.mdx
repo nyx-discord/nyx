@@ -1,0 +1,30 @@
+---
+title: Packages
+description: Explore the packages that make up nyx
+icon: Package
+---
+
+import { FrameworkMention } from '../../../components/tooltip/FrameworkMention';
+import { CoreMention } from '../../../components/tooltip/CoreMention';
+
+## Structure
+
+The framework is built with two packages: `@nyx-discord/core` and `@nyx-discord/framework`, abbreviated in this guide as <CoreMention /> and <FrameworkMention />:
+
+### Core
+
+* Defines all the object templates (interfaces) and their relations, acting as the blueprint.
+* Minimal runtime dependencies (since it doesn't have many actual code).
+* It doesn't have any implementations, so it's not usable by itself.
+
+### Framework
+
+* Provides default, minimal implementations for <CoreMention />, making it directly usable.
+* Its implementations are designed to depend on interfaces from <CoreMention />, rather than each other, making those dependencies fully replaceable by your own.
+* Low runtime dependencies due to its "bare bones" ideology.
+
+## Which package to use?
+
+Most of the time, you'll want to use <FrameworkMention />. Even if you want to include your own components, this library makes it easy to replace them via constructor injection.
+
+If you want to develop something for nyx, such as a plugin, you can use <CoreMention />. This way, you can depend on the interfaces and not any actual implementations, ensuring your component will work across all nyx implementations.

@@ -1,0 +1,42 @@
+{
+  "name": "@nyx-discord/next-guide",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev --turbo",
+    "start": "next start",
+    "postinstall": "fumadocs-mdx"
+  },
+  "dependencies": {
+    "@icons-pack/react-simple-icons": "13.7.0",
+    "@orama/orama": "3.1.11",
+    "@radix-ui/react-hover-card": "1.1.14",
+    "fumadocs-core": "15.6.7",
+    "fumadocs-mdx": "11.7.1",
+    "fumadocs-twoslash": "3.1.4",
+    "fumadocs-ui": "15.6.7",
+    "lucide-react": "0.536.0",
+    "next": "15.4.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwind-merge": "3.3.1",
+    "twoslash": "0.3.4",
+    "zod": "4.0.14"
+  },
+  "devDependencies": {
+    "@nyx-discord/core": "workspace:*",
+    "@nyx-discord/framework": "workspace:*",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "24.1.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "discord.js": "14.21.0",
+    "eslint": "^8",
+    "eslint-config-next": "15.4.4",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3"
+  }
+}

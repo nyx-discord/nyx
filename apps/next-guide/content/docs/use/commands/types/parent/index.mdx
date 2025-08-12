@@ -1,0 +1,140 @@
+---
+title: Parent Commands
+icon: Folder
+defaultOpen: true
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Callout type="warn">It's recommended to read the [Commands Overview](../../index.mdx) page first.</Callout>
+
+Parent commands are top-level, non executable commands that can have children, which can be either subcommands commands or subcommand groups.
+
+## Creation
+
+<Steps>
+<Step>
+
+### Class creation
+
+Extend the `AbstractParentCommand` class:
+
+```ts twoslash
+import { AbstractParentCommand } from '@nyx-discord/framework';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+export class MyCommand extends AbstractParentCommand {}
+```
+
+</Step>
+<Step>
+
+### Implementation
+
+Implement `data` that stores the command's data, and `children` that stores the command's children.
+
+<Callout type= "warn">The `data` field must not contain any option, only the base values (name, description, etc). If they are included, they will be ignored.</Callout>
+
+```ts twoslash
+import { SlashCommandBuilder, Collection } from 'discord.js';
+import { AbstractParentCommand, SubCommand, SubCommandGroup } from '@nyx-discord/framework';
+
+export class MyCommand extends AbstractParentCommand {
+  protected readonly data = new SlashCommandBuilder()
+    .setName('my-command')
+    .setDescription('My command')
+    .toJSON();
+
+  protected readonly children = new Collection<string, SubCommand | SubCommandGroup>();
+}
+```
+
+</Step>
+<Step>
+
+### Registration
+
+Instantiate and register it to a bot's `CommandManager`.
+
+```ts twoslash
+import type { ParentCommand, NyxBot } from '@nyx-discord/framework';
+declare const MyCommand: new () => ParentCommand;
+declare const bot: NyxBot;
+// ---cut---
+await bot.getCommandManager().addCommands(new MyCommand());
+```
+
+</Step>
+</Steps>
+
+## Guild deployment
+
+By default, all commands will be deployed in the global scope. If you want to deploy them in a specific guild, you can do so by implementing the `getGuilds()` method.
+
+```ts twoslash
+import { AbstractParentCommand } from '@nyx-discord/framework';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+export class MyCommand extends AbstractParentCommand {
+  public getGuilds() {
+    return ['GUILD_ID', 'ANOTHER_GUILD_ID'];
+  }
+}
+```
+
+If you're ever overriding from another base command, you can return `null` to make it global again, this is the default implementation.
+
+## Children management
+
+Children aren't static: they can be added and removed in runtime.
+
+```ts twoslash
+// ---cut-start---
+import { ParentCommand, SubCommand, SubCommandGroup } from '@nyx-discord/framework';
+declare const parent: ParentCommand;
+declare const subCommand: SubCommand;
+declare const subCommandGroup: SubCommandGroup;
+// ---cut-end---
+parent.addChildren(subCommand, subCommandGroup);
+parent.removeChildByInstance(subCommand);
+parent.removeChildByName('sub-command-group-name');
+```
+
+However, for the changes to be reflected in Discord, you must edit the command afterwards:
+
+```ts twoslash
+// ---cut-start---
+import type { NyxBot, ParentCommand } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+declare const parent: ParentCommand;
+// ---cut-end---
+await bot.getCommandManager().editCommands(parent);
+```
+
+You can also query them by name, class or `Collection`:
+
+```ts twoslash
+// ---cut-start---
+import { ParentCommand  } from '@nyx-discord/framework';
+declare const parent: ParentCommand;
+// ---cut-end---
+import { AbstractSubCommand } from '@nyx-discord/framework';
+
+const byName = parent.findChildByName('sub-command-name');
+//    ^?
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandClass extends AbstractSubCommand { /** */ }
+
+const byClass = parent.findChildByClass(MySubCommandClass);
+//    ^?
+
+const allChildren = parent.getChildren();
+//    ^?
+```

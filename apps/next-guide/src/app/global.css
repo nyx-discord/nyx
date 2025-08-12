@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/vitepress.css';
+@import 'fumadocs-ui/css/preset.css';
+@import 'fumadocs-twoslash/twoslash.css';
+
+.home {
+  --color-fd-primary: var(--home-color);
+}
+
+.use {
+  --color-fd-primary: var(--use-color);
+}
+
+.extend {
+  --color-fd-primary: var(--extend-color);
+}
+
+
+:root {
+  --home-color: #5f78fe;
+  --use-color: #5fc8fe;
+  --extend-color: #9b77ff;
+}
+
+body {
+  overscroll-behavior-y: none;
+  background-color: var(--color-fd-background);
+}

@@ -1,0 +1,138 @@
+---
+title: SubCommand Groups
+icon: Folders
+---
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Callout type="warn">It's recommended to read the [Commands Overview](../../index.mdx), [Parent Commands](./) and [SubCommands](./subcommand) pages first.</Callout>
+
+Subcommand groups are non executable commands that have subcommand children. They are stored inside a [Parent Command](./).
+
+While they don't depend on a specific bot, they do depend on their parent (a parent command).
+
+## Creation
+
+<Steps>
+<Step>
+### Class creation
+Extend the `AbstractSubCommandGroup` class:
+
+```ts twoslash
+import { AbstractSubCommandGroup } from '@nyx-discord/framework';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+export class MySubCommandGroup extends AbstractSubCommandGroup {}
+```
+
+</Step>
+<Step>
+### Implementation
+Implement `data` that stores the command's data, and `children` that stores the command
+children.
+<Callout type="warn">The `data` field must not contain any option, only the base values (name, description, etc). If they are included, they will be ignored.</Callout>
+
+```ts twoslash
+import { SlashCommandSubcommandGroupBuilder, Collection } from 'discord.js';
+import { AbstractSubCommandGroup, SubCommand } from '@nyx-discord/framework';
+
+export class MySubCommandGroup extends AbstractSubCommandGroup {
+  protected readonly data = new SlashCommandSubcommandGroupBuilder()
+    .setName('my-group')
+    .setDescription('My group')
+    .toJSON();
+
+  protected readonly children = new Collection<string, SubCommand>();
+}
+```
+
+</Step>
+<Step>
+### Addition to its parent
+
+Instantiate and add it to a parent command.
+
+```ts twoslash
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup, SubCommand, NyxBot } from '@nyx-discord/framework';
+declare const MySubCommandGroup: new (parent: ParentCommand) => SubCommandGroup;
+declare const parent: ParentCommand;
+declare const bot: NyxBot;
+// ---cut-end---
+const subCommandGroup = new MySubCommandGroup(parent);
+parent.addChildren(subCommandGroup);
+```
+
+Or do it in the parent's class:
+
+```ts twoslash
+import { AbstractParentCommand, AbstractSubCommandGroup } from '@nyx-discord/framework';
+import { SlashCommandBuilder } from 'discord.js';
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup } from '@nyx-discord/framework';
+declare const MySubCommandGroup: new (parent: ParentCommand) => SubCommandGroup;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+
+class MyCommand extends AbstractParentCommand {
+  constructor() {
+    super();
+    this.addChildren(new MySubCommandGroup(this));
+  }
+}
+```
+
+Then it'll show up when the top-level parent command is registered.
+
+</Step>
+</Steps>
+
+## Children management
+
+Children aren't static: they can be added and removed in runtime.
+
+```ts twoslash
+// ---cut-start---
+import { SubCommand, SubCommandGroup } from '@nyx-discord/framework';
+declare const subCommand: SubCommand;
+declare const subCommandGroup: SubCommandGroup;
+// ---cut-end---
+subCommandGroup.addChildren(subCommand);
+subCommandGroup.removeChildByInstance(subCommand);
+subCommandGroup.removeChildByName('sub-command-name');
+```
+
+However, for the changes to be reflected in Discord, you must edit the **parent command** afterwards:
+
+```ts twoslash
+// ---cut-start---
+import type { NyxBot, ParentCommand } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+declare const parentCommand: ParentCommand;
+// ---cut-end---
+await bot.getCommandManager().editCommands(parentCommand);
+```
+
+You can also query them by name, class or `Collection`:
+
+```ts twoslash
+// ---cut-start---
+import { SubCommandGroup } from '@nyx-discord/framework';
+declare const group: SubCommandGroup;
+// ---cut-end---
+import { AbstractSubCommand } from '@nyx-discord/framework';
+
+const byName = group.findChildByName('sub-command-name');
+//    ^?
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandClass extends AbstractSubCommand { /** */ }
+
+const byClass = group.findChildByClass(MySubCommandClass);
+//    ^?
+
+const allChildren = group.getChildren();
+//    ^?
+```

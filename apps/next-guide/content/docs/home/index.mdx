@@ -1,0 +1,73 @@
+---
+title: Introduction
+icon: Sparkles
+---
+
+import { SiDiscorddotjs,SiGithub } from '@icons-pack/react-simple-icons';
+import { SiDiscord } from '@icons-pack/react-simple-icons';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { BlocksIcon, CircleDotDashedIcon, LockOpenIcon, SmileIcon, TerminalIcon } from 'lucide-react';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { discordInvite } from '../../../src/app/layout.config';
+
+Hello there 👋! Welcome to official guide for using nyx, a Discord.js TypeScript bot framework.
+
+Here, you'll discover how to create your own bot using it, how to customize your instance and add new components to it.
+
+## What is nyx?
+
+Nyx is a framework to build Discord.js bots in TypeScript. The main ideas behind it are:
+
+<Cards>
+  <Card icon={<BlocksIcon />} title="Fully extendable">
+    Every single internal component is documented and can be easily swapped by your own.
+  </Card>
+  <Card icon={<CircleDotDashedIcon />} title="Bare-bones">
+    As little runtime dependencies as possible, which you can also replace.
+  </Card>
+  <Card icon={<SmileIcon />} title="Easy to understand and setup">
+    Hacky or unnecessarily messy internal code is avoided, like messing with Discord.js internals or its typings.
+  </Card>
+  <Card icon={<SiDiscorddotjs />} title="Discord.js Native">
+    Use the objects you already know from Discord.js without needing wrappers or rewrites when updating.
+  </Card>
+  <Card icon={<TerminalIcon />} title="Developer friendly">
+    Type safety, predictability, error handling and extensibility are the foundation of the framework.
+  </Card>
+  <Card icon={<LockOpenIcon />} title="Architecture freedom">
+    Nyx doesn't enforce any specific way to do things. Choose your own folder structure, way to load commands/events, databases, etc.
+  </Card>
+</Cards>
+
+<Callout type="error" title="What nyx isn't">
+- It isn't the best fit for simple bots. You should use [`@discordjs/core`](https://discord.js.org/docs/packages/core/main) or raw DJS for that.
+- It isn't a beginner-friendly framework. We assume you have some level of understanding of TypeScript.
+- It isn't a battery-included framework. It doesn't come with any commands, events or filters (like cooldowns) out of the box. It only comes with the components required for you to be able to build such features.
+</Callout>
+
+## Key Features
+
+Nyx has five main features:
+
+1. **Commands**, for Discord application commands. Includes support for context menu commands, subcommands, and more.
+2. **Events**, for subscribing to events, either from Discord.js or your own.
+3. **Schedules**, for timed tasks.
+4. **Sessions**, for user interaction sessions.
+5. **Plugins**, for pieces that extend nyx.
+
+All of these features are documented in detail in their respective sections, which we'll cover next.
+
+## Community and Contribution
+
+<Cards>
+  <Card icon={<SiDiscord />} href={discordInvite} title="Community">
+    Join our Discord server to ask questions, share your creations, and get help from the team or the community.
+  </Card>
+  <Card icon={<SiGithub />} href="https://github.com/nyx-discord/nyx" title="Contribute">
+    If you want to contribute, you can do so by opening issues or pull requests on our GitHub repository.
+    </Card>
+</Cards>
+
+## What's next?
+
+Check the [Packages](./packages.mdx) page to learn about the packages that make up nyx, or the [Navigating the Guide](./navigating.mdx) page to learn how to navigate the guide right away.

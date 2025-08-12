@@ -1,0 +1,14 @@
+{
+  "title": "Use",
+  "description": "How to use nyx and its features.",
+  "root": true,
+  "icon": "CodeXml",
+  "pages": [
+    "index",
+    "---Commands---",
+    "./commands/index",
+    "./commands/types",
+    "./commands/components",
+    "./commands/location"
+  ]
+}

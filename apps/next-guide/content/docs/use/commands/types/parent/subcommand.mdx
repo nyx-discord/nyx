@@ -1,0 +1,133 @@
+---
+title: SubCommands
+icon: Baby
+---
+
+import { LayersIcon, LockIcon, MousePointerClickIcon } from 'lucide-react';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Callout type="warn">It's recommended to read the [Commands Overview](../../index.mdx) and [Parent Commands](./) pages first.</Callout>
+
+Subcommands are executable commands stored inside a [Parent Command](./) or a [SubCommand Group](./subcommand-group).
+
+While they don't depend on a specific bot, they do depend on their parent (a parent command or a group).
+
+## Creation
+
+<Steps>
+<Step>
+### Class creation
+Extend the `AbstractSubCommand` class:
+
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/framework';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+export class MySubCommand extends AbstractSubCommand {}
+```
+
+</Step>
+<Step>
+### Implementation
+Implement `data` that stores the command's data, and `execute()` that executes the command
+```ts twoslash
+import { SlashCommandSubcommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import { AbstractSubCommand } from '@nyx-discord/framework';
+export class MySubCommand extends AbstractSubCommand {
+  protected readonly data = new SlashCommandSubcommandBuilder()
+    .setName('my-command')
+    .setDescription('My command')
+    .toJSON();
+
+  public async execute(interaction: ChatInputCommandInteraction) {
+    await interaction.reply('Hello!');
+  }
+}
+```
+</Step>
+<Step>
+### Addition to its parent
+Instantiate and add it to a parent command or a subcommand group.
+```ts twoslash
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup, SubCommand, NyxBot } from '@nyx-discord/framework';
+declare const MySubCommand: new (parent: ParentCommand | SubCommandGroup) => SubCommand;
+declare const parent: ParentCommand | SubCommandGroup;
+declare const bot: NyxBot;
+// ---cut-end---
+const subCommand = new MySubCommand(parent);
+parent.addChildren(subCommand);
+```
+Or do it in the parent or group's class:
+```ts twoslash
+import { AbstractParentCommand, AbstractSubCommandGroup } from '@nyx-discord/framework';
+import { SlashCommandBuilder } from 'discord.js';
+
+// ---cut-start---
+import type { ParentCommand, SubCommand, SubCommandGroup } from '@nyx-discord/framework';
+declare const MySubCommand: new (parent: ParentCommand | SubCommandGroup) => SubCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+// On a parent command:
+class MyCommand extends AbstractParentCommand {
+  constructor() {
+    super();
+    this.addChildren(new MySubCommand(this));
+  }
+}
+
+// Or on a subcommand group:
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyGroup extends AbstractSubCommandGroup {
+  constructor(parent: ParentCommand) {
+    super(parent);
+    this.addChildren(new MySubCommand(this));
+  }
+}
+```
+
+Then it'll show up when the top-level parent command is registered.
+
+</Step>
+</Steps>
+
+
+## Autocompletion
+
+If your subcommand has autocompletable options, you can implement the `autocomplete()` method.
+
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/framework';
+import type { AutocompleteInteraction } from 'discord.js';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+export class MySubCommand extends AbstractSubCommand {
+  public async autocomplete(interaction: AutocompleteInteraction) {
+    await interaction.respond([
+      { name: 'First option', value: 'first' },
+      { name: 'Second option', value: 'second' },
+    ]);
+  }
+}
+```
+
+## Advanced features
+
+<Callout>Click on each card to learn more about that feature.</Callout>
+
+<Cards>
+  <Card title="Command components" icon={<MousePointerClickIcon />} href="../../components">
+    Handle components interactions directly in the subcommand that sent them, without a separate `interactionCreate` listener.
+  </Card>
+  <Card title="Filters" icon={<LockIcon />}>
+    Add pre-execution checks to your subcommand, like permissions or cooldowns.
+  </Card>
+  <Card title="Middlewares" icon={<LayersIcon />}>
+    Run code before every command's execution, like logging or pre-conditions.
+  </Card>
+</Cards>

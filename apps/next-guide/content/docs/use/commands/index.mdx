@@ -1,0 +1,104 @@
+---
+title: Commands Overview
+icon: Laptop
+---
+
+import { BabyIcon, CommandIcon, FolderIcon, FoldersIcon, PictureInPicture } from 'lucide-react';
+
+Commands are how your bot responds to user interactions.
+
+<Callout type="warn">
+Nyx **only** supports application commands. It does not and will not support message-based commands (like `!ping`).
+
+If you really need such functionality, you can implement it yourself using the `messageCreate` event, but this isn't advised. Application commands improve DX and UX significantly, and don't require a privileged intent to work.
+</Callout>
+
+## Creating a command
+
+Let's create a simple ping command:
+
+```ts twoslash
+import { type NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import { AbstractStandaloneCommand } from '@nyx-discord/framework';
+
+class PingCommand extends AbstractStandaloneCommand {
+  protected readonly data = new SlashCommandBuilder()
+    .setName('ping')
+    .setDescription('Replies with Pong!')
+    .toJSON();
+
+  public async execute(interaction: ChatInputCommandInteraction) {
+    await interaction.reply('Pong!');
+  }
+}
+
+// Register the command
+await bot.getCommandManager().addCommands(new PingCommand());
+```
+
+That's it! Your bot now has a `/ping` command that replies with "Pong!" when used.
+
+The framework doesn't store any state in the instance, so you can reuse it across multiple bot instances without any problems.
+
+## Command deployment
+
+For commands to be deployed at Discord, you must either:
+
+- Pass `deployCommands: true` when creating the bot
+  ```ts twoslash
+  import { Client } from 'discord.js';
+  declare const client: Client<boolean>;
+  // ---cut---
+  import { Bot } from '@nyx-discord/framework';
+
+  const myBot = Bot.create((bot) => ({
+    // ---cut-start---
+    token: 'TOKEN', client, logger: console,
+    // ---cut-end---
+    // ... other options
+    deployCommands: true,
+  }));
+  ```
+  Then, when starting the bot, it will automatically deploy them.
+
+- Manually deploy:
+
+  <Callout type="error">This will throw if you passed `deployCommands: true` or already called it before.</Callout>
+
+  ```ts twoslash
+  import { Bot } from '@nyx-discord/framework';
+  declare const bot: Bot;
+  // ---cut---
+  await bot.getCommandManager().deploy();
+  ```
+
+<Callout type="warn" title="Add or deploy first?">
+If you add a command after the bot has started, the framework will have to make an API call to register it. This is not recommended due to ratelimits, so it's best to add all the commands *before* starting your bot.
+</Callout>
+
+## Command types
+
+Commands are categorized into several types, depending on their purposes:
+
+<Callout>Click on each card to learn more about that type.</Callout>
+
+<Cards>
+  <Card href="commands/types/standalone" title="Standalone Commands" icon={<CommandIcon />} external={false}>
+    Slash commands with no children, like `/ping` or `/help`.
+  </Card>
+  <Card href="commands/types/parent" title="Parent Commands" icon={<FolderIcon />} external={false}>
+    Slash commands that contain subcommands or subcommand groups, like `/user` with `/user info`.
+  </Card>
+  <Card href="commands/types/parent/subcommand" title="SubCommands" icon={<BabyIcon />} external={false}>
+    Executable commands that live inside parents or subcommand groups, like `info` in a `/user` parent.
+  </Card>
+  <Card href="commands/types/parent/subcommand-group" title="SubCommand Groups" icon={<FoldersIcon />} external={false}>
+    Non executable groups inside parent commands, like `settings` in a `/user settings view` command.
+  </Card>
+  <Card href="commands/types/context-menu" title="Context Menu Commands" icon={<PictureInPicture />} external={false}>
+    Commands that appear when users right-click on messages or users.
+  </Card>
+</Cards>
