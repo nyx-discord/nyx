@@ -11,13 +11,7 @@ export interface MiddlewareList<MiddlewareType extends Middleware<any, any>> {
   ): Awaitable<boolean>;
 
   /** Adds a middleware to the list. */
-  add(middleware: MiddlewareType): this;
-
-  /**
-   * Adds a list of middlewares to the list. Alias for mapping
-   * the array to {@link add}.
-   */
-  bulkAdd(...middlewares: MiddlewareType[]): this;
+  add(...middlewares: MiddlewareType[]): this;
 
   /**
    * Removes a middleware from the list given its instance or ID.

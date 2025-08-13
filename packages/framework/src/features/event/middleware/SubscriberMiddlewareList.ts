@@ -1,6 +1,6 @@
 import type {
-  MiddlewareList,
   EventSubscriberMiddleware as SubMiddleware,
+  MiddlewareList,
   Tail,
 } from '@nyx-discord/core';
 import { EventSubscriberMiddlewareError } from '@nyx-discord/core';
@@ -15,7 +15,7 @@ export class SubscriberMiddlewareList extends AbstractMiddlewareList<SubMiddlewa
     const filterMiddleware = new SubscriberFilterCheckMiddleware();
     const lifetimeEventMiddleware = new LifetimeCheckEventMiddleware();
 
-    return new SubscriberMiddlewareList().bulkAdd(
+    return new SubscriberMiddlewareList().add(
       handledEventMiddleware,
       filterMiddleware,
       lifetimeEventMiddleware,

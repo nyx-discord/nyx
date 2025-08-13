@@ -23,22 +23,17 @@ export abstract class AbstractMiddlewareList<
     return true;
   }
 
-  public add(middleware: MiddlewareType): this {
-    const priority = middleware.getPriority();
-    for (const [index, storedMiddleware] of this.middlewares.entries()) {
-      if (storedMiddleware.getPriority() > priority) continue;
-      this.middlewares.splice(index, 0, middleware);
-      return this;
-    }
-    this.middlewares.push(middleware);
-
-    return this;
-  }
-
-  public bulkAdd(...middlewares: MiddlewareType[]): this {
+  public add(...middlewares: MiddlewareType[]): this {
     for (const middleware of middlewares) {
-      this.add(middleware);
+      const priority = middleware.getPriority();
+      for (const [index, storedMiddleware] of this.middlewares.entries()) {
+        if (storedMiddleware.getPriority() > priority) continue;
+        this.middlewares.splice(index, 0, middleware);
+        return this;
+      }
+      this.middlewares.push(middleware);
     }
+
     return this;
   }
 
