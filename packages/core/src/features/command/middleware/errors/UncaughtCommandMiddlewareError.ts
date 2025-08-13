@@ -3,14 +3,14 @@ import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList'
 import type { AnyExecutableCommand } from '../../commands/executable/AnyExecutableCommand';
 import { CommandError } from '../../errors/CommandError.js';
 import type { CommandExecutableInteraction } from '../../interaction/CommandExecutableInteraction.js';
-import type { CommandMiddleware } from '../CommandMiddleware.js';
+import type { CommandMiddlewareResolvable } from '../CommandMiddlewareResolvable';
 
 export class UncaughtCommandMiddlewareError extends CommandError {
-  protected readonly middlewareList: MiddlewareList<CommandMiddleware>;
+  protected readonly middlewareList: MiddlewareList<CommandMiddlewareResolvable>;
 
   constructor(
     error: Error,
-    middlewareList: MiddlewareList<CommandMiddleware>,
+    middlewareList: MiddlewareList<CommandMiddlewareResolvable>,
     command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
     meta: MetaCollection,
@@ -20,7 +20,7 @@ export class UncaughtCommandMiddlewareError extends CommandError {
   }
 
   /** Returns the middleware list that threw this error. */
-  public getList(): MiddlewareList<CommandMiddleware> {
+  public getList(): MiddlewareList<CommandMiddlewareResolvable> {
     return this.middlewareList;
   }
 }

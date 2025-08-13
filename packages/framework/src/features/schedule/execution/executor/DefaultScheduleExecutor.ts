@@ -4,7 +4,7 @@ import type {
   Schedule,
   ScheduleErrorHandler,
   ScheduleExecutor,
-  ScheduleMiddleware,
+  ScheduleMiddlewareResolvable,
   ScheduleTickArgs,
 } from '@nyx-discord/core';
 import {
@@ -16,12 +16,12 @@ import { BasicErrorHandler } from '../../../../error/BasicErrorHandler.js';
 import { ScheduleMiddlewareList } from '../../middleware/ScheduleMiddlewareList.js';
 
 export class DefaultScheduleExecutor implements ScheduleExecutor {
-  protected readonly middleware: MiddlewareList<ScheduleMiddleware>;
+  protected readonly middleware: MiddlewareList<ScheduleMiddlewareResolvable>;
 
   protected readonly errorHandler: ScheduleErrorHandler;
 
   constructor(
-    middleware: MiddlewareList<ScheduleMiddleware>,
+    middleware: MiddlewareList<ScheduleMiddlewareResolvable>,
     errorHandler: ScheduleErrorHandler,
   ) {
     this.middleware = middleware;
@@ -54,7 +54,7 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
     }
   }
 
-  public getMiddleware(): MiddlewareList<ScheduleMiddleware> {
+  public getMiddleware(): MiddlewareList<ScheduleMiddlewareResolvable> {
     return this.middleware;
   }
 

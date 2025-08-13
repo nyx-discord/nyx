@@ -6,7 +6,7 @@ import type {
   CommandExecutableInteraction,
   CommandExecutionArgs,
   CommandExecutor,
-  CommandMiddleware,
+  CommandMiddlewareResolvable,
   ComponentCommandInteraction,
   ContextMenuCommand,
   MetaCollection,
@@ -32,11 +32,11 @@ import { CommandMiddlewareList } from '../middleware/CommandMiddlewareList.js';
 export class DefaultCommandExecutor implements CommandExecutor {
   protected readonly errorHandler: CommandErrorHandler;
 
-  protected readonly middleware: MiddlewareList<CommandMiddleware>;
+  protected readonly middleware: MiddlewareList<CommandMiddlewareResolvable>;
 
   constructor(
     errorHandler: CommandErrorHandler,
-    middleware: MiddlewareList<CommandMiddleware>,
+    middleware: MiddlewareList<CommandMiddlewareResolvable>,
   ) {
     this.errorHandler = errorHandler;
     this.middleware = middleware;
@@ -167,7 +167,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
     return this.errorHandler;
   }
 
-  public getMiddleware(): MiddlewareList<CommandMiddleware> {
+  public getMiddleware(): MiddlewareList<CommandMiddlewareResolvable> {
     return this.middleware;
   }
 

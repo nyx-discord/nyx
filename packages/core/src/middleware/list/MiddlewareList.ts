@@ -1,14 +1,21 @@
 import type { Awaitable } from 'discord.js';
-import type { Tail } from '../../types/Tail';
-import type { Middleware } from '../Middleware.js';
+import type { MiddlewareResolvable } from '../MiddlewareResolvable';
 
 /** An object that contains and checks {@link Middleware middlewares}. */
-export interface MiddlewareList<MiddlewareType extends Middleware<any, any>> {
+export interface MiddlewareList<
+  MiddlewareType extends MiddlewareResolvable<any, any>,
+  Checked = MiddlewareType extends MiddlewareResolvable<infer C, any>
+    ? C
+    : never,
+  Args extends readonly unknown[] = MiddlewareType extends MiddlewareResolvable<
+    any,
+    infer A
+  >
+    ? A
+    : never,
+> {
   /** Checks all the stored {@link Middleware Middlewares} using the passed arguments and returns the result. */
-  check(
-    checked: Parameters<MiddlewareType['check']>[0],
-    ...args: Tail<Parameters<MiddlewareType['check']>>
-  ): Awaitable<boolean>;
+  check(checked: Checked, ...args: Args): Awaitable<boolean>;
 
   /** Adds a middleware to the list. */
   add(...middlewares: MiddlewareType[]): this;

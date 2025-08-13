@@ -1,8 +1,8 @@
-import { MetaCollection } from '../../../../meta/MetaCollection.js';
+import type { MetaCollection } from '../../../../meta/MetaCollection.js';
 import { SessionUpdateError } from '../../errors/SessionUpdateError.js';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction.js';
 import type { Session } from '../../session/Session.js';
-import type { SessionUpdateMiddleware } from '../SessionUpdateMiddleware.js';
+import type { SessionUpdateMiddleware } from '../update/SessionUpdateMiddleware';
 
 export class SessionUpdateMiddlewareError extends SessionUpdateError {
   protected readonly middleware: SessionUpdateMiddleware;

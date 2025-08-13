@@ -2,16 +2,16 @@ import { FeatureError } from '../../../../errors/FeatureError.js';
 import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import type { EventDispatchArgs } from '../../dispatch/args/EventDispatchArgs';
 import type { AnyEventSubscriber } from '../../subscriber/types/AnyEventSubscriber';
-import type { EventSubscriberMiddleware } from '../EventSubscriberMiddleware.js';
+import type { EventSubscriberMiddlewareResolvable } from '../EventSubscriberMiddlewareResolvable';
 
 export class UncaughtEventSubscriberMiddlewareError extends FeatureError<AnyEventSubscriber> {
-  protected readonly middlewareList: MiddlewareList<EventSubscriberMiddleware>;
+  protected readonly middlewareList: MiddlewareList<EventSubscriberMiddlewareResolvable>;
 
   protected readonly args: EventDispatchArgs;
 
   constructor(
     error: Error,
-    middlewareList: MiddlewareList<EventSubscriberMiddleware>,
+    middlewareList: MiddlewareList<EventSubscriberMiddlewareResolvable>,
     subscriber: AnyEventSubscriber,
     args: EventDispatchArgs,
   ) {
@@ -30,7 +30,7 @@ export class UncaughtEventSubscriberMiddlewareError extends FeatureError<AnyEven
   }
 
   /** Returns the middleware list that threw this error. */
-  public getList(): MiddlewareList<EventSubscriberMiddleware> {
+  public getList(): MiddlewareList<EventSubscriberMiddlewareResolvable> {
     return this.middlewareList;
   }
 }

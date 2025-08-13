@@ -1,17 +1,17 @@
 import { FeatureError } from '../../../../errors/FeatureError.js';
-import { MetaCollection } from '../../../../meta/MetaCollection.js';
+import type { MetaCollection } from '../../../../meta/MetaCollection.js';
 import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import type { Schedule } from '../../schedule/Schedule.js';
-import type { ScheduleMiddleware } from '../ScheduleMiddleware.js';
+import type { ScheduleMiddlewareResolvable } from '../ScheduleMiddlewareResolvable';
 
 export class UncaughtScheduleMiddlewareError extends FeatureError<Schedule> {
-  protected readonly middlewareList: MiddlewareList<ScheduleMiddleware>;
+  protected readonly middlewareList: MiddlewareList<ScheduleMiddlewareResolvable>;
 
   protected readonly meta: MetaCollection;
 
   constructor(
     error: Error,
-    middlewareList: MiddlewareList<ScheduleMiddleware>,
+    middlewareList: MiddlewareList<ScheduleMiddlewareResolvable>,
     schedule: Schedule,
     meta: MetaCollection,
   ) {
@@ -25,7 +25,7 @@ export class UncaughtScheduleMiddlewareError extends FeatureError<Schedule> {
   }
 
   /** Returns the middleware that threw this error. */
-  public getList(): MiddlewareList<ScheduleMiddleware> {
+  public getList(): MiddlewareList<ScheduleMiddlewareResolvable> {
     return this.middlewareList;
   }
 

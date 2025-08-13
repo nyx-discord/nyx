@@ -1,12 +1,12 @@
 import type { Awaitable } from 'discord.js';
-import { MetaCollection } from '../../../../meta/MetaCollection';
+import type { MetaCollection } from '../../../../meta/MetaCollection';
 import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import type { SessionEndCode } from '../../end/SessionEndCode';
 import type { SessionEndData } from '../../end/SessionEndData';
 import type { SessionErrorHandler } from '../../error/SessionErrorHandler.js';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction.js';
-import type { SessionStartMiddleware } from '../../middleware/SessionStartMiddleware.js';
-import type { SessionUpdateMiddleware } from '../../middleware/SessionUpdateMiddleware.js';
+import type { SessionStartMiddlewareResolvable } from '../../middleware/start/SessionStartMiddlewareResolvable';
+import type { SessionUpdateMiddlewareResolvable } from '../../middleware/update/SessionUpdateMiddlewareResolvable';
 import type { Session } from '../../session/Session.js';
 import type { SessionEndArgs } from '../args/SessionEndArgs';
 import type { SessionStartArgs } from '../args/SessionStartArgs.js';
@@ -59,10 +59,10 @@ export interface SessionExecutor {
   ): void;
 
   /** Returns the middleware used when a session is started. */
-  getStartMiddleware(): MiddlewareList<SessionStartMiddleware>;
+  getStartMiddleware(): MiddlewareList<SessionStartMiddlewareResolvable>;
 
   /** Returns the middleware used when a session is updated. */
-  getUpdateMiddleware(): MiddlewareList<SessionUpdateMiddleware>;
+  getUpdateMiddleware(): MiddlewareList<SessionUpdateMiddlewareResolvable>;
 
   /** Returns the {@link SessionErrorHandler} for errors thrown when a session is started. */
   getStartErrorHandler(): SessionErrorHandler<SessionStartArgs>;

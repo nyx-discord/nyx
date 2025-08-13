@@ -8,10 +8,10 @@ import type {
   SessionErrorHandler,
   SessionExecutor,
   SessionStartArgs,
-  SessionStartMiddleware,
+  SessionStartMiddlewareResolvable,
   SessionUpdateArgs,
   SessionUpdateInteraction,
-  SessionUpdateMiddleware,
+  SessionUpdateMiddlewareResolvable,
 } from '@nyx-discord/core';
 import {
   IllegalStateError,
@@ -21,7 +21,8 @@ import {
   UncaughtSessionStartMiddlewareError,
   UncaughtSessionUpdateMiddlewareError,
 } from '@nyx-discord/core';
-import { createComponentBuilder, TopLevelComponentData } from 'discord.js';
+import type { TopLevelComponentData } from 'discord.js';
+import { createComponentBuilder } from 'discord.js';
 import { disableAllComponents } from '../../../discord/disableAllComponents';
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
 import { SessionStartMiddlewareList } from '../middleware/SessionStartMiddlewareList';
@@ -34,13 +35,13 @@ export class DefaultSessionExecutor implements SessionExecutor {
 
   protected readonly endErrorHandler: SessionErrorHandler<SessionEndArgs>;
 
-  protected readonly startMiddleware: MiddlewareList<SessionStartMiddleware>;
+  protected readonly startMiddleware: MiddlewareList<SessionStartMiddlewareResolvable>;
 
-  protected readonly updateMiddleware: MiddlewareList<SessionUpdateMiddleware>;
+  protected readonly updateMiddleware: MiddlewareList<SessionUpdateMiddlewareResolvable>;
 
   constructor(
-    startMiddleware: MiddlewareList<SessionStartMiddleware>,
-    updateMiddleware: MiddlewareList<SessionUpdateMiddleware>,
+    startMiddleware: MiddlewareList<SessionStartMiddlewareResolvable>,
+    updateMiddleware: MiddlewareList<SessionUpdateMiddlewareResolvable>,
     createErrorHandler: SessionErrorHandler<SessionStartArgs>,
     updateErrorHandler: SessionErrorHandler<SessionUpdateArgs>,
     stopErrorHandler: SessionErrorHandler<SessionEndArgs>,
@@ -93,19 +94,15 @@ export class DefaultSessionExecutor implements SessionExecutor {
               session,
               meta,
             );
-
       await this.startErrorHandler.handle(wrappedError, session, [meta]);
-
       return false;
     }
 
     try {
       await session.onStart(meta);
-
       return true;
     } catch (error) {
       await this.startErrorHandler.handle(error as object, session, [meta]);
-
       const interaction = session.getStartInteraction();
       return interaction.replied;
     }
@@ -119,7 +116,6 @@ export class DefaultSessionExecutor implements SessionExecutor {
     if (session.getState() !== SessionStateEnum.Running) {
       throw new IllegalStateError();
     }
-
     try {
       const result = await this.updateMiddleware.check(
         session,
@@ -138,14 +134,12 @@ export class DefaultSessionExecutor implements SessionExecutor {
               interaction,
               meta,
             );
-
       await this.updateErrorHandler.handle(wrappedError, session, [
         interaction,
         meta,
       ]);
       return false;
     }
-
     try {
       return await session.onUpdate(interaction, meta);
     } catch (error) {
@@ -153,7 +147,6 @@ export class DefaultSessionExecutor implements SessionExecutor {
         interaction,
         meta,
       ]);
-
       return false;
     }
   }
@@ -167,34 +160,29 @@ export class DefaultSessionExecutor implements SessionExecutor {
     if (session.getState() !== SessionStateEnum.Running) {
       throw new IllegalStateError();
     }
-
     const endData: SessionEndData<unknown> = {
       reason,
       code,
       result: null,
     };
-
     try {
       await session.onEnd(reason, code, meta);
-
       endData.result = session.getResult();
-
       return endData;
     } catch (error) {
       await this.endErrorHandler.handle(error as object, session, [
         endData,
         meta,
       ]);
-
       return endData;
     }
   }
 
-  public getStartMiddleware(): MiddlewareList<SessionStartMiddleware> {
+  public getStartMiddleware(): MiddlewareList<SessionStartMiddlewareResolvable> {
     return this.startMiddleware;
   }
 
-  public getUpdateMiddleware(): MiddlewareList<SessionUpdateMiddleware> {
+  public getUpdateMiddleware(): MiddlewareList<SessionUpdateMiddlewareResolvable> {
     return this.updateMiddleware;
   }
 

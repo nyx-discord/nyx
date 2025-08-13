@@ -1,16 +1,17 @@
-import { MetaCollection } from '../../../../meta/MetaCollection';
+import type { MetaCollection } from '../../../../meta/MetaCollection';
 import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import { AbstractSessionError } from '../../errors/AbstractSessionError.js';
 import type { SessionStartInteraction } from '../../interaction/SessionStartInteraction.js';
 import type { Session } from '../../session/Session.js';
-import type { SessionStartMiddleware } from '../SessionStartMiddleware.js';
+import type { SessionStartMiddlewareResolvable } from '../start/SessionStartMiddlewareResolvable';
 
+// eslint-disable-next-line max-len
 export class UncaughtSessionStartMiddlewareError extends AbstractSessionError<SessionStartInteraction> {
-  protected readonly middlewareList: MiddlewareList<SessionStartMiddleware>;
+  protected readonly middlewareList: MiddlewareList<SessionStartMiddlewareResolvable>;
 
   constructor(
     error: Error,
-    middlewareList: MiddlewareList<SessionStartMiddleware>,
+    middlewareList: MiddlewareList<SessionStartMiddlewareResolvable>,
     session: Session<unknown>,
     meta: MetaCollection,
   ) {
@@ -19,7 +20,7 @@ export class UncaughtSessionStartMiddlewareError extends AbstractSessionError<Se
   }
 
   /** Returns the middleware list that threw this error. */
-  public getMiddlewareList(): MiddlewareList<SessionStartMiddleware> {
+  public getMiddlewareList(): MiddlewareList<SessionStartMiddlewareResolvable> {
     return this.middlewareList;
   }
 }

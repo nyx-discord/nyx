@@ -3,7 +3,7 @@ import type {
   EventDispatchArgs,
   EventDispatcher,
   EventSubscriberErrorHandler,
-  EventSubscriberMiddleware,
+  EventSubscriberMiddlewareResolvable,
   MiddlewareList,
 } from '@nyx-discord/core';
 import {
@@ -14,11 +14,11 @@ import {
 export abstract class AbstractEventDispatcher implements EventDispatcher {
   protected readonly errorHandler: EventSubscriberErrorHandler;
 
-  protected readonly middleware: MiddlewareList<EventSubscriberMiddleware>;
+  protected readonly middleware: MiddlewareList<EventSubscriberMiddlewareResolvable>;
 
   constructor(
     errorHandler: EventSubscriberErrorHandler,
-    middleware: MiddlewareList<EventSubscriberMiddleware>,
+    middleware: MiddlewareList<EventSubscriberMiddlewareResolvable>,
   ) {
     this.errorHandler = errorHandler;
     this.middleware = middleware;
@@ -28,7 +28,7 @@ export abstract class AbstractEventDispatcher implements EventDispatcher {
     return this.errorHandler;
   }
 
-  public getMiddleware(): MiddlewareList<EventSubscriberMiddleware> {
+  public getMiddleware(): MiddlewareList<EventSubscriberMiddlewareResolvable> {
     return this.middleware;
   }
 

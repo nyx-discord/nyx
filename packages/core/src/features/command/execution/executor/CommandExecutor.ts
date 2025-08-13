@@ -15,12 +15,12 @@ import type { ChatExecutableCommand } from '../../commands/executable/ChatExecut
 import type { CommandErrorHandler } from '../../error/CommandErrorHandler.js';
 import type { CommandExecutableInteraction } from '../../interaction/CommandExecutableInteraction.js';
 import type { ComponentCommandInteraction } from '../../interaction/ComponentCommandInteraction.js';
-import type { CommandMiddleware } from '../../middleware/CommandMiddleware.js';
+import type { CommandMiddlewareResolvable } from '../../middleware/CommandMiddlewareResolvable';
 
 /** An object responsible for executing commands, making sure that they satisfy the middleware and catching any errors in the process. */
 export interface CommandExecutor
   extends ErrorHandlerContainer<CommandErrorHandler>,
-    MiddlewareListContainer<CommandMiddleware> {
+    MiddlewareListContainer<CommandMiddlewareResolvable> {
   execute(
     command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,

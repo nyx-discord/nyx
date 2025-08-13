@@ -1,8 +1,8 @@
-import { MetaCollection } from '../../../../meta/MetaCollection.js';
+import type { MetaCollection } from '../../../../meta/MetaCollection.js';
 import { AbstractSessionError } from '../../errors/AbstractSessionError.js';
 import type { SessionStartInteraction } from '../../interaction/SessionStartInteraction.js';
 import type { Session } from '../../session/Session.js';
-import type { SessionStartMiddleware } from '../SessionStartMiddleware.js';
+import type { SessionStartMiddleware } from '../start/SessionStartMiddleware';
 
 export class SessionStartMiddlewareError extends AbstractSessionError<SessionStartInteraction> {
   protected readonly middleware: SessionStartMiddleware;

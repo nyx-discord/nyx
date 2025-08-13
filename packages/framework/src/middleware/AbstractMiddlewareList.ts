@@ -1,20 +1,34 @@
-import type { Middleware, MiddlewareList, Tail } from '@nyx-discord/core';
+import type {
+  MiddlewareList,
+  MiddlewareResolvable,
+  Priority,
+} from '@nyx-discord/core';
+import { PriorityEnum } from '@nyx-discord/core';
 
 export abstract class AbstractMiddlewareList<
-  MiddlewareType extends Middleware<any, any>,
+  MiddlewareType extends MiddlewareResolvable<any, any>,
+  Checked = MiddlewareType extends MiddlewareResolvable<infer C, any>
+    ? C
+    : never,
+  Args extends readonly unknown[] = MiddlewareType extends MiddlewareResolvable<
+    any,
+    infer A
+  >
+    ? A
+    : never,
 > implements MiddlewareList<MiddlewareType>
 {
   protected readonly middlewares: MiddlewareType[] = [];
 
-  public async check(
-    checked: Parameters<MiddlewareType['check']>[0],
-    ...args: Tail<Parameters<MiddlewareType['check']>>
-  ): Promise<boolean> {
+  public async check(checked: Checked, ...args: Args): Promise<boolean> {
     if (!this.middlewares.length) return true;
 
     for (const middleware of this.middlewares) {
       try {
-        const result = await middleware.check(checked, ...args);
+        const result =
+          typeof middleware === 'object'
+            ? await middleware.check(checked, ...args)
+            : await middleware(checked, ...args);
         if (!result.checkNext || !result.allowed) return result.allowed;
       } catch (error) {
         throw this.wrapError(middleware, error as Error, checked, ...args);
@@ -25,9 +39,9 @@ export abstract class AbstractMiddlewareList<
 
   public add(...middlewares: MiddlewareType[]): this {
     for (const middleware of middlewares) {
-      const priority = middleware.getPriority();
+      const priority = this.extractPriority(middleware);
       for (const [index, storedMiddleware] of this.middlewares.entries()) {
-        if (storedMiddleware.getPriority() > priority) continue;
+        if (this.extractPriority(storedMiddleware) > priority) continue;
         this.middlewares.splice(index, 0, middleware);
         return this;
       }
@@ -65,7 +79,14 @@ export abstract class AbstractMiddlewareList<
   protected abstract wrapError(
     erroredMiddleware: MiddlewareType,
     error: Error,
-    checked: Parameters<MiddlewareType['check']>[0],
-    ...args: Tail<Parameters<MiddlewareType['check']>>
+    checked: Checked,
+    ...args: Args
   ): Error;
+
+  /** Extracts the priority from a middleware. Defaults to `PriorityEnum.Normal` for callback middlewares. */
+  protected extractPriority(middleware: MiddlewareType): Priority {
+    return typeof middleware === 'object'
+      ? middleware.getPriority()
+      : PriorityEnum.Normal;
+  }
 }
