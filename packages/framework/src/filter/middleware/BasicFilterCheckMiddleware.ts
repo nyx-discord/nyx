@@ -15,7 +15,7 @@ type ExtractFilterArgs<
 export class BasicFilterCheckMiddleware<
   Checked extends Filterable<FilterResolvable<unknown, unknown[]>>,
 > extends AbstractMiddleware<Checked, ExtractFilterArgs<Checked>> {
-  protected override locked = true;
+  protected override protected = true;
 
   public async check(
     checked: Checked,

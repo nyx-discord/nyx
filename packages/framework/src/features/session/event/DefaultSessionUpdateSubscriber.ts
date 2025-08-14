@@ -1,4 +1,4 @@
-import { TypedFields, type MetaCollection } from '@nyx-discord/core';
+import { type MetaCollection, TypedFields } from '@nyx-discord/core';
 import type { Interaction } from 'discord.js';
 import { Events } from 'discord.js';
 import { AbstractDJSClientSubscriber as Subscriber } from '../../event/subscriber/AbstractDJSClientSubscriber.js';
@@ -6,7 +6,7 @@ import { AbstractDJSClientSubscriber as Subscriber } from '../../event/subscribe
 export class DefaultSessionUpdateSubscriber extends Subscriber<Events.InteractionCreate> {
   protected readonly event = Events.InteractionCreate;
 
-  protected override locked = true;
+  protected override protected = true;
 
   public async handleEvent(
     meta: MetaCollection,

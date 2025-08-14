@@ -90,9 +90,9 @@ export class BasicEventEmitterBus<
 
   public override async clearSubscribers(
     eventName?: string,
-    clearLocked = false,
+    clearProtected = false,
   ): Promise<this> {
-    await super.clearSubscribers(eventName, clearLocked);
+    await super.clearSubscribers(eventName, clearProtected);
     for (const event of this.listenedEvents) {
       this.unlistenFromEmitter(event);
     }

@@ -10,7 +10,7 @@ import type { Awaitable } from 'discord.js';
 export abstract class AbstractMiddleware<Check, Args extends readonly unknown[]>
   implements Middleware<Check, Args>
 {
-  protected locked = false;
+  protected protected = false;
 
   protected readonly priority: Priority = PriorityEnum.Normal;
 
@@ -18,18 +18,18 @@ export abstract class AbstractMiddleware<Check, Args extends readonly unknown[]>
     return this.priority;
   }
 
-  public lock(): this {
-    this.locked = true;
+  public protect(): this {
+    this.protected = true;
     return this;
   }
 
-  public unlock(): this {
-    this.locked = false;
+  public unprotect(): this {
+    this.protected = false;
     return this;
   }
 
-  public isLocked(): boolean {
-    return this.locked;
+  public isProtected(): boolean {
+    return this.protected;
   }
 
   public abstract check(

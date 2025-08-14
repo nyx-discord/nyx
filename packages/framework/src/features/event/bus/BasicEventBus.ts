@@ -10,13 +10,13 @@ import type {
   EventSubscriberCollection,
   Identifier,
   MetaCollection,
+  MetaCollectionFactory,
   ReadonlyCollectionFrom,
 } from '@nyx-discord/core';
 import {
   EventBusEventEnum,
   IllegalDuplicateError,
   IllegalStateError,
-  MetaCollectionFactory,
   ObjectNotFoundError,
 } from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
@@ -35,7 +35,7 @@ export class BasicEventBus<
 
   protected dispatcher: EventDispatcher;
 
-  protected locked: boolean = false;
+  protected protected: boolean = false;
 
   protected sorter: Comparator<
     Identifier,
@@ -126,7 +126,7 @@ export class BasicEventBus<
     return this;
   }
 
-  public async unsubscribeLocked(
+  public async unsubscribeProtected(
     subscriber: AnyEventSubscriberFrom<EventArgsObject>,
   ): Promise<this> {
     await this.performUnsubscribe(subscriber, true);
@@ -135,7 +135,7 @@ export class BasicEventBus<
 
   public async clearSubscribers(
     eventName?: string,
-    clearLocked = false,
+    clearProtected = false,
   ): Promise<this> {
     const affected = eventName
       ? this.subscribers.filter((_, event) => event === eventName)
@@ -146,9 +146,9 @@ export class BasicEventBus<
     const subscriberPromises: Array<Awaitable<void>> = [];
 
     for (const [key, collection] of affected.entries()) {
-      const affectedObjects = clearLocked
+      const affectedObjects = clearProtected
         ? collection
-        : collection.filter((_, k) => !collection.get(k)?.isLocked());
+        : collection.filter((_, k) => !collection.get(k)?.isProtected());
 
       if (!affectedObjects || !affectedObjects.size) continue;
 
@@ -247,18 +247,18 @@ export class BasicEventBus<
     /** Do nothing by default. */
   }
 
-  public isLocked(): boolean {
-    return this.locked;
+  public isProtected(): boolean {
+    return this.protected;
   }
 
-  public lock(): this {
-    this.locked = true;
+  public protect(): this {
+    this.protected = true;
 
     return this;
   }
 
-  public unlock(): this {
-    this.locked = false;
+  public unprotect(): this {
+    this.protected = false;
 
     return this;
   }
@@ -301,7 +301,7 @@ export class BasicEventBus<
 
   protected async performUnsubscribe(
     subscriber: AnyEventSubscriberFrom<EventArgsObject>,
-    unsubscribeLocked: boolean,
+    unsubscribeProtected: boolean,
   ): Promise<void> {
     const eventName = subscriber.getEvent();
     const id = subscriber.getId();
@@ -311,7 +311,7 @@ export class BasicEventBus<
       throw new ObjectNotFoundError();
     }
 
-    if (!unsubscribeLocked && presentSubscriber.isLocked()) {
+    if (!unsubscribeProtected && presentSubscriber.isProtected()) {
       throw new IllegalStateError();
     }
 

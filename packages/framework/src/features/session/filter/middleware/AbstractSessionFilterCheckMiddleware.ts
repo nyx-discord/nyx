@@ -10,7 +10,7 @@ import { AbstractMiddleware } from '../../../../middleware/AbstractMiddleware.js
 export abstract class AbstractSessionFilterCheckMiddleware<
   Args extends SessionUpdateArgs | SessionStartArgs,
 > extends AbstractMiddleware<Session<unknown>, Args> {
-  protected override locked = true;
+  protected override protected = true;
 
   public async check(
     session: Session<unknown>,

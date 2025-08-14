@@ -33,7 +33,7 @@ export abstract class AbstractEventSubscriber<
 
   protected readonly id: Identifier = Symbol(this.constructor.name);
 
-  protected locked = false;
+  protected protected = false;
 
   protected abstract readonly event: Event;
 
@@ -80,17 +80,17 @@ export abstract class AbstractEventSubscriber<
     return this.meta;
   }
 
-  public isLocked(): boolean {
-    return this.locked;
+  public isProtected(): boolean {
+    return this.protected;
   }
 
-  public lock(): this {
-    this.locked = true;
+  public protect(): this {
+    this.protected = true;
     return this;
   }
 
-  public unlock(): this {
-    this.locked = false;
+  public unprotect(): this {
+    this.protected = false;
     return this;
   }
 

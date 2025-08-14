@@ -35,8 +35,8 @@ export class DefaultCommandSubscriptionsContainer
     this.interactionSubscriber = interactionSubscriber;
     this.autocompleteSubscriber = autocompleteSubscriber;
 
-    this.interactionSubscriber.lock();
-    this.autocompleteSubscriber.lock();
+    this.interactionSubscriber.protect();
+    this.autocompleteSubscriber.protect();
   }
 
   public static create(
@@ -102,10 +102,10 @@ export class DefaultCommandSubscriptionsContainer
     oldSubscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>,
     newSubscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>,
   ): Promise<void> {
-    oldSubscriber.unlock();
+    oldSubscriber.unprotect();
     await this.eventBus.unsubscribe(oldSubscriber);
 
-    newSubscriber.lock();
+    newSubscriber.protect();
     await this.eventBus.subscribe(newSubscriber);
   }
 }

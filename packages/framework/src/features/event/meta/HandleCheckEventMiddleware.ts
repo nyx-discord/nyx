@@ -9,7 +9,7 @@ import { AbstractEventSubscriberMiddleware } from '../middleware/AbstractEventSu
 export class HandleCheckEventMiddleware extends AbstractEventSubscriberMiddleware {
   protected override priority = PriorityEnum.Highest;
 
-  protected override locked = true;
+  protected override protected = true;
 
   public check(
     checked: AnyEventSubscriber,

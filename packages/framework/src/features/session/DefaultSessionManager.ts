@@ -25,7 +25,7 @@ import {
   SessionStateEnum,
   TypedFields,
 } from '@nyx-discord/core';
-import type { ClientEvents, Events, Interaction } from 'discord.js';
+import type { ClientEvents, Events } from 'discord.js';
 import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
 import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
@@ -75,7 +75,7 @@ export class DefaultSessionManager implements SessionManager {
     this.bus = options.bus;
     this.metaFactory = options.metaFactory;
 
-    this.subscriber.lock();
+    this.subscriber.protect();
   }
 
   public static create(
@@ -308,10 +308,10 @@ export class DefaultSessionManager implements SessionManager {
   ): Promise<this> {
     const bus = this.bot.getEventManager().getClientBus();
 
-    this.subscriber.unlock();
+    this.subscriber.unprotect();
     await bus.unsubscribe(this.subscriber);
 
-    subscriber.lock();
+    subscriber.protect();
     await bus.subscribe(subscriber);
     return this;
   }

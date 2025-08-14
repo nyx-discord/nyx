@@ -24,7 +24,7 @@ export interface EventManager extends BotAware, BotLifecycleObserver {
    * Removes an event bus from the manager.
    *
    * @emits EventManagerEventEnum#EventBusRemove On the manager's event bus.
-   * @throws {LockedObjectError}     If the bus is locked.
+   * @throws {ProtectedObjectError}     If the bus is protected.
    * @throws {IllegalDuplicateError} If a bus with that ID is not registered.
    */
   removeEventBus(busOrId: AnyEventBus | Identifier): Awaitable<this>;

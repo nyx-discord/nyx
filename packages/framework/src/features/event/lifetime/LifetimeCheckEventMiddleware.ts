@@ -1,7 +1,10 @@
-import type { AnyEventSubscriber, MiddlewareResponse } from '@nyx-discord/core';
+import type {
+  AnyEventSubscriber,
+  MiddlewareResponse,
+  MetaCollection,
+} from '@nyx-discord/core';
 import {
   EventSubscriberLifetimeEnum,
-  MetaCollection,
   PriorityEnum,
   TypedFields,
 } from '@nyx-discord/core';
@@ -10,7 +13,7 @@ import { AbstractEventSubscriberMiddleware } from '../middleware/AbstractEventSu
 export class LifetimeCheckEventMiddleware extends AbstractEventSubscriberMiddleware {
   protected override readonly priority = PriorityEnum.Lowest;
 
-  protected override readonly locked = true;
+  protected override readonly protected = true;
 
   public async check(
     subscriber: AnyEventSubscriber,

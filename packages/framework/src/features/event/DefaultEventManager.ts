@@ -14,8 +14,8 @@ import {
   canBeIdentifier,
   EventManagerEventEnum,
   IllegalDuplicateError,
-  LockedObjectError,
   ObjectNotFoundError,
+  ProtectedObjectError,
   TypedFields,
 } from '@nyx-discord/core';
 import type { Client, ClientEvents } from 'discord.js';
@@ -43,8 +43,8 @@ export class DefaultEventManager implements EventManager {
     this.managerBus = options.managerBus;
     this.clientBus = options.clientBus;
     this.buses = new Collection<Identifier, AnyEventBus>();
-    this.managerBus.lock();
-    this.clientBus.lock();
+    this.managerBus.protect();
+    this.clientBus.protect();
   }
 
   public static create(
@@ -140,8 +140,8 @@ export class DefaultEventManager implements EventManager {
       );
     }
 
-    if (presentBus.isLocked()) {
-      throw new LockedObjectError(presentBus);
+    if (presentBus.isProtected()) {
+      throw new ProtectedObjectError(presentBus);
     }
 
     await presentBus.clearSubscribers(undefined, true);
