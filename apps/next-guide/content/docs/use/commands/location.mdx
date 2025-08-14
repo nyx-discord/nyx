@@ -11,6 +11,11 @@ import { NyxBot } from '@nyx-discord/framework';
 declare const bot: NyxBot;
 // ---cut-end---
 const repository = bot.getCommandManager().getRepository();
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+repository.locateBy
+//                 ^|
 ```
 
 ### Location by name
@@ -22,7 +27,6 @@ Use the `locateByNameTree()` method to find a command by its name tree, which is
 import { CommandRepository } from '@nyx-discord/framework';
 declare const repository: CommandRepository;
 // ---cut-end---
-
 const topLevel = repository.locateByNameTree('top-level-command');
 //    ^?
 
@@ -59,5 +63,22 @@ const subCommand = repository.locateByClassTree(MyParentCommand, MySubCommand);
 //    ^?
 
 const subCommandGroup = repository.locateByClassTree(MyParentCommand, MySubCommandGroup);
+//    ^?
+```
+
+Notice how the return type of each call is the respective instance (or `null`), not the generic types.
+
+## Getting commands
+
+Alternatively, you can get all top level commands with the `getCommands()` method, which returns a `ReadonlyCollection` of them, keyed by name.
+
+<Callout type="warn">This returns the local store, not a copy of it. Hence why it's typed as readonly. However, you may type assert and manipulate it, but it's not safe to do so.</Callout>
+
+```ts twoslash
+// ---cut-start---
+import { CommandRepository } from '@nyx-discord/framework';
+declare const repository: CommandRepository;
+// ---cut-end---
+const topLevels = repository.getCommands();
 //    ^?
 ```
