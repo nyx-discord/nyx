@@ -26,5 +26,8 @@ jobs:
       - name: Install dependencies
         run: pnpm --filter framework... install
 
+      - name: Lint code
+        run: pnpm --filter framework... lint
+
       - name: Build framework
         run: pnpm run build:framework

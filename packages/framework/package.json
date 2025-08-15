@@ -19,7 +19,7 @@
     "url": "git+https://github.com/nyx-discord/nyx.git"
   },
   "scripts": {
-    "lint": "eslint ./src --fix",
+    "lint": "eslint ./src",
     "format": "prettier --write ./src",
     "barrel": "barrelsby --directory ./src --delete --singleQuotes",
     "build": "rimraf dist && tsup-node src/index.ts",

@@ -26,5 +26,8 @@ jobs:
       - name: Install dependencies
         run: pnpm --filter core install
 
+      - name: Lint code
+        run: pnpm --filter core... lint
+
       - name: Build core
         run: pnpm run build:core
