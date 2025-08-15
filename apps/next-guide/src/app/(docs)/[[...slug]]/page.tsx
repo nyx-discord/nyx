@@ -117,8 +117,13 @@ export async function generateMetadata(props: {
   const page = source.getPage(params.slug);
   if (!page) notFound();
 
+  const section = params.slug?.[1] ?? params.slug?.[0];
+  const prefix = section
+    ? `${section.charAt(0).toUpperCase()}${section.slice(1)}`
+    : 'Home';
+
   return {
-    title: page.data.title,
+    title: `${prefix} | ${page.data.title}`,
     description: page.data.description,
   };
 }
