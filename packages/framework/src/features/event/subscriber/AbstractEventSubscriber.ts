@@ -9,7 +9,11 @@ import type {
   Priority,
   ReadonlyMetaCollection,
 } from '@nyx-discord/core';
-import { EventSubscriberLifetimeEnum, PriorityEnum } from '@nyx-discord/core';
+import {
+  EventSubscriberLifetimeEnum,
+  PriorityEnum,
+  TypedFields,
+} from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
 
 export abstract class AbstractEventSubscriber<
@@ -98,4 +102,12 @@ export abstract class AbstractEventSubscriber<
     meta: MetaCollection,
     ...args: EventArgsObject[Event]
   ): Awaitable<void>;
+
+  protected isHandled(meta: MetaCollection): boolean {
+    return TypedFields.EventHandled.get(meta) === true;
+  }
+
+  protected setHandled(meta: MetaCollection, handled = true): void {
+    TypedFields.EventHandled.set(meta, handled);
+  }
 }
