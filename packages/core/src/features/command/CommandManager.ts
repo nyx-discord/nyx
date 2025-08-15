@@ -1,7 +1,7 @@
 import type { AutocompleteInteraction, Awaitable } from 'discord.js';
 import type { BotAware } from '../../bot/BotAware.js';
 import type { MetaCollection } from '../../meta/MetaCollection.js';
-import { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
+import type { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber.js';
@@ -85,7 +85,7 @@ export interface CommandManager extends BotAware, BotLifecycleObserver {
    * ```
    */
   subscribe(
-    ...subscribers: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>[]
+    ...subscribers: EventSubscriber<CommandEventArgs>[]
   ): Awaitable<this>;
 
   /**

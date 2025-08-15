@@ -32,7 +32,7 @@ export interface EventBus<
    *   subscribed to the event.
    */
   subscribe<
-    const Sub extends EventSubscriber<ArgsRecord, keyof ArgsRecord & string>,
+    const Sub extends EventSubscriber<ArgsRecord>,
     const EventName extends ReturnType<Sub['getEvent']> & keyof ArgsRecord,
   >(
     ...subscribers: EventSubscriber<ArgsRecord, EventName>[]

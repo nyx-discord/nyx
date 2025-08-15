@@ -2,7 +2,7 @@ import type { Awaitable } from 'discord.js';
 import type { BotAware } from '../../bot/BotAware.js';
 import type { Identifier } from '../../identity/Identifier.js';
 import type { MetaCollection } from '../../meta/MetaCollection.js';
-import { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
+import type { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { ClassImplements } from '../../types/ClassImplements.js';
 import type { EventBus } from '../event/bus/EventBus.js';
@@ -51,10 +51,7 @@ export interface ScheduleManager extends BotLifecycleObserver, BotAware {
    * ```
    */
   subscribe(
-    ...subscribers: EventSubscriber<
-      ScheduleEventArgs,
-      keyof ScheduleEventArgs
-    >[]
+    ...subscribers: EventSubscriber<ScheduleEventArgs>[]
   ): Awaitable<this>;
 
   /** Returns the job that belongs to the passed schedule or schedule ID. */

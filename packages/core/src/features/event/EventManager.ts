@@ -50,7 +50,7 @@ export interface EventManager extends BotAware, BotLifecycleObserver {
    * ```
    */
   subscribeClient(
-    ...subscribers: EventSubscriber<ClientEvents, keyof ClientEvents>[]
+    ...subscribers: EventSubscriber<ClientEvents>[]
   ): Awaitable<this>;
 
   /**
@@ -63,10 +63,7 @@ export interface EventManager extends BotAware, BotLifecycleObserver {
    * ```
    */
   subscribeManager(
-    ...subscribers: EventSubscriber<
-      EventManagerEventsArgs,
-      keyof EventManagerEventsArgs
-    >[]
+    ...subscribers: EventSubscriber<EventManagerEventsArgs>[]
   ): Awaitable<this>;
 
   /** Returns the bot's Discord.js Client event bus. */

@@ -12,7 +12,7 @@ import type { EventSubscriberFilterResolvable } from './filter/EventSubscriberFi
 /** An object that can subscribe to a event on an {@link EventBus}. */
 export interface EventSubscriber<
   ArgsRecord extends Record<keyof ArgsRecord & string, unknown[]>,
-  Event extends keyof ArgsRecord & string,
+  Event extends keyof ArgsRecord & string = keyof ArgsRecord & string,
 > extends Identifiable,
     Protectable,
     Filterable<EventSubscriberFilterResolvable<ArgsRecord, Event>>,

@@ -1,7 +1,7 @@
 import type { Awaitable, ClientEvents, Events } from 'discord.js';
 import type { BotAware } from '../../bot/BotAware.js';
-import { MetaCollection } from '../../meta/MetaCollection.js';
-import { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
+import type { MetaCollection } from '../../meta/MetaCollection.js';
+import type { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber.js';
@@ -67,7 +67,7 @@ export interface SessionManager extends BotAware, BotLifecycleObserver {
    * ```
    */
   subscribe(
-    ...subscribers: EventSubscriber<SessionEventArgs, keyof SessionEventArgs>[]
+    ...subscribers: EventSubscriber<SessionEventArgs>[]
   ): Awaitable<this>;
 
   /** Returns the {@link SessionPromiseRepository} for this manager. */
