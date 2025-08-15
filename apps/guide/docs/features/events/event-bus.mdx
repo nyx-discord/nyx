@@ -2,8 +2,7 @@
 title: 📣 Event Buses
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+
 
 # 📣 Event Buses
 
@@ -166,12 +165,12 @@ always sorted.
 
 ## 🔒 Locking
 
-Event buses extend the `Lockable` interface, so that they can be locked and unlocked.
+Event buses extend the `Lockable` interface, so that they can be protected and unlocked.
 
-If an event bus is locked, the `EventManager#removeEventBus()` method will throw an `LockedObjectError` when trying to
+If an event bus is protected, the `EventManager#removeEventBus()` method will throw an `LockedObjectError` when trying to
 remove it.
 
-You can set an event bus as locked by calling the `BasicEventBus#lock()` method (or overriding the `locked` property
+You can set an event bus as protected by calling the `BasicEventBus#protect()` method (or overriding the `protected` property
 when extending).
 
 ```ts
@@ -179,7 +178,7 @@ import { BasicEventBus } from '@nyx-discord/framework';
 
 const myEventBus = BasicEventBus.createAsync<MyEventsArgs>(bot, Symbol('MyEventBus'));
 // highlight-next-line
-myEventBus.lock();
+myEventBus.protect();
 
 await bot.getEventManager().addEventBus(myEventBus);
 // error-next-line

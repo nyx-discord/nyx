@@ -1,0 +1,50 @@
+---
+title: Events
+icon: RadioTower
+---
+
+<Callout type="warn">It's recommended to read the [Events Overview](../events/index.mdx) and [Event Subscribers](../events/subscribers.mdx) pages first.</Callout>
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The `CommandManager` has an `EventBus` that allows you to listen to events related to commands.
+
+This is useful for monitoring, logging, or any other custom logic you want to execute when a command is executed.
+
+## Events
+
+The following events are available:
+
+```ts twoslash
+import { CommandEventEnum } from '@nyx-discord/framework';
+
+// @noErrors
+CommandEventEnum.
+//               ^|
+```
+
+## Usage
+
+<Steps>
+<Step>
+### Subscriber creation
+
+Create a subscriber that will listen to a given event. Check the [Event Subscribers](../events/subscribers.mdx) page for more information.
+
+</Step>
+<Step>
+### Subscription
+
+Subscribe to the event using the `CommandManager`'s `subscribe()` method.
+
+```ts twoslash
+// ---cut-start---
+import { EventSubscriber, CommandEventArgs } from '@nyx-discord/framework';
+declare const subscriber: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>;
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut-end---
+await bot.getCommandManager().subscribe(subscriber);
+```
+</Step>
+</Steps>

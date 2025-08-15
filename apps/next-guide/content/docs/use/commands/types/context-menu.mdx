@@ -15,7 +15,7 @@ Context menu commands are commands executed on special menus. Currently Discord 
 
 <Steps>
 <Step>
-### Class creation
+### Creation
 
 Extend the `AbstractContextMenuCommand` class:
 
@@ -95,10 +95,10 @@ export class MyCommand extends AbstractContextMenuCommand {
   <Card title="Command components" icon={<MousePointerClickIcon />} href="../components">
     Handle components interactions directly in the subcommand that sent them, without a separate `interactionCreate` listener.
   </Card>
-  <Card title="Filters" icon={<LockIcon />}>
+  <Card title="Filters" icon={<LockIcon />} href="../filters">
     Add pre-execution checks to your subcommand, like permissions or cooldowns.
   </Card>
-  <Card title="Middlewares" icon={<LayersIcon />}>
+  <Card title="Middlewares" icon={<LayersIcon />} href="../middlewares">
     Run code before every command's execution, like logging or pre-conditions.
   </Card>
 </Cards>

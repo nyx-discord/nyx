@@ -9,6 +9,11 @@
     "./commands/index",
     "./commands/types",
     "./commands/components",
-    "./commands/location"
+    "./commands/location",
+    "./commands/filters",
+    "./commands/middlewares",
+    "./commands/events",
+    "---Events---",
+    "./events/index"
   ]
 }
