@@ -60,13 +60,16 @@ export class BasicEventBus<
 
   public static createSync<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-  >(id: Identifier) {
+  >(
+    id: Identifier,
+    metaFactory?: MetaCollectionFactory,
+  ): EventBus<EventArgsObject> {
     return new BasicEventBus<EventArgsObject>(
       id,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicSyncEventDispatcher.create(),
-      new DefaultMetaCollectionFactory(),
+      metaFactory ?? new DefaultMetaCollectionFactory(),
     );
   }
 
