@@ -62,11 +62,11 @@ export abstract class AbstractSchedule implements Schedule {
     return this.meta;
   }
 
-  public onRegister(): void {
+  public onRegister(_bot: NyxBot): void {
     /** Do nothing by default */
   }
 
-  public onUnregister(): void {
+  public onUnregister(_bot: NyxBot): void {
     /** Do nothing by default */
   }
 
