@@ -1,10 +1,5 @@
-import type {
-  CommandCustomIdData,
-  MetaCollection,
-  StandaloneCommand,
-} from '@nyx-discord/core';
+import type { MetaCollection, StandaloneCommand } from '@nyx-discord/core';
 import {
-  ApplicationCommandType,
   type AutocompleteInteraction,
   type Awaitable,
   type ChatInputCommandInteraction,
@@ -21,14 +16,6 @@ export abstract class AbstractStandaloneCommand
   >
   implements StandaloneCommand
 {
-  protected readonly customIdData: CommandCustomIdData = {
-    type: ApplicationCommandType.ChatInput,
-    name: this.getData().name,
-    extra: null,
-    subcommand: null,
-    group: null,
-  };
-
   public getGuilds(): ReadonlyArray<Snowflake> | null {
     return null;
   }

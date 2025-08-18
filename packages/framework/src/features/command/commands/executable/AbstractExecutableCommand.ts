@@ -10,6 +10,7 @@ import type {
 } from '@nyx-discord/core';
 import {
   type AnySelectMenuInteraction,
+  ApplicationCommandType,
   type Awaitable,
   type ButtonInteraction,
   type ModalSubmitInteraction,
@@ -24,8 +25,6 @@ export abstract class AbstractExecutableCommand<
   extends AbstractCommand<Data>
   implements ExecutableCommand<Data, Interaction>
 {
-  protected abstract readonly customIdData: CommandCustomIdData;
-
   protected readonly filter: CommandFilterResolvable | null = null;
 
   public handleInteraction(
@@ -44,12 +43,24 @@ export abstract class AbstractExecutableCommand<
   }
 
   public buildCustomId(bot: NyxBot, extra?: string): string {
-    const data = { ...this.customIdData, extra: extra ?? null };
+    const data = {
+      type: ApplicationCommandType.ChatInput,
+      name: this.data.name,
+      subcommand: null,
+      group: null,
+      extra: extra ?? null,
+    };
     return bot.getCommandManager().getCustomIdCodec().serialize(data);
   }
 
   public getCustomIdData(extra?: string): CommandCustomIdData {
-    return { ...this.customIdData, extra: extra ?? null };
+    return {
+      type: ApplicationCommandType.ChatInput,
+      name: this.data.name,
+      subcommand: null,
+      group: null,
+      extra: extra ?? null,
+    };
   }
 
   public abstract execute(
@@ -83,9 +94,7 @@ export abstract class AbstractExecutableCommand<
 
   /** Returns this command's customId on the given bot. */
   protected getCustomId(bot: NyxBot, extra?: string): string {
-    return bot
-      .getCommandManager()
-      .getCustomIdCodec()
-      .serialize({ ...this.customIdData, extra: extra ?? null });
+    const data = this.getCustomIdData(extra);
+    return bot.getCommandManager().getCustomIdCodec().serialize(data);
   }
 }

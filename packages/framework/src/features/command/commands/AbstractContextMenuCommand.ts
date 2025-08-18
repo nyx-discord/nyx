@@ -1,11 +1,6 @@
-import type {
-  CommandCustomIdData,
-  ContextMenuCommand,
-  MetaCollection,
-} from '@nyx-discord/core';
+import type { ContextMenuCommand, MetaCollection } from '@nyx-discord/core';
 import type { ContextMenuCommandInteraction } from 'discord.js';
 import {
-  ApplicationCommandType,
   type Awaitable,
   type ContextMenuCommandBuilder,
   type MessageContextMenuCommandInteraction,
@@ -22,14 +17,6 @@ export abstract class AbstractContextMenuCommand
   >
   implements ContextMenuCommand
 {
-  protected readonly customIdData: CommandCustomIdData = {
-    type: ApplicationCommandType.Message,
-    name: this.getData().name,
-    extra: null,
-    subcommand: null,
-    group: null,
-  };
-
   public execute(
     interaction: ContextMenuCommandInteraction,
     metadata: MetaCollection,
