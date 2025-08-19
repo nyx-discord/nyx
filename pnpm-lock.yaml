@@ -344,9 +344,6 @@ importers:
       '@nyx-discord/core':
         specifier: workspace:*
         version: link:../core
-      '@sapphire/string-store':
-        specifier: 2.0.0
-        version: 2.0.0
       cron:
         specifier: 3.0.0
         version: 3.0.0
@@ -2996,10 +2993,6 @@ packages:
   '@sapphire/snowflake@3.5.3':
     resolution: {integrity: sha512-jjmJywLAFoWeBi1W7994zZyiNWPIiqRRNAmSERxyg93xRGzNYvGjlZ0gR6x0F4gPRi2+0O6S71kOZYyr3cxaIQ==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
-
-  '@sapphire/string-store@2.0.0':
-    resolution: {integrity: sha512-Ba6HQqzvtTu+8Ye4Vmd51lU2+L9C3KAWbvtIbkJlVEC9iKC98hAvDronE/qOgMDZfYI8KgT9dsLXtGuA8sFneQ==}
-    engines: {node: '>=v20', npm: '>=10'}
 
   '@shikijs/core@3.9.2':
     resolution: {integrity: sha512-3q/mzmw09B2B6PgFNeiaN8pkNOixWS726IHmJEpjDAcneDPMQmUg2cweT9cWXY4XcyQS3i6mOOUgQz9RRUP6HA==}
@@ -14093,8 +14086,6 @@ snapshots:
       lodash: 4.17.21
 
   '@sapphire/snowflake@3.5.3': {}
-
-  '@sapphire/string-store@2.0.0': {}
 
   '@shikijs/core@3.9.2':
     dependencies:

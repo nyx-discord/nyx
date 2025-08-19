@@ -3,8 +3,6 @@
  */
 
 export * from './bot/Bot';
-export * from './customId/AbstractCustomIdCodec';
-export * from './customId/SerializableFeatureEnum';
 export * from './error/BasicErrorHandler';
 export * from './errors/NotImplementedError';
 export * from './features/command/DefaultCommandManager';
