@@ -155,8 +155,14 @@ export class DefaultSessionManager implements SessionManager {
         extraData: [],
       });
 
-      await this.executor.start(session, metadata);
+      const result = await Promise.resolve(
+        this.executor.start(session, metadata),
+      ).catch((e) => e);
       session.setState(SessionStateEnum.Running);
+      if (result !== true) {
+        await this.repository.delete(session.getId());
+        return false;
+      }
 
       Promise.resolve(
         this.bus.emit(SessionEventEnum.SessionStart, [
