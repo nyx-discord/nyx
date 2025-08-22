@@ -47,14 +47,9 @@ export class DefaultPluginManager implements PluginManager {
 
   public async onStart(): Promise<void> {
     await this.bus.onRegister();
-    const startPromises = this.plugins.map((plugin) => plugin.onStart());
-    await Promise.all(startPromises);
   }
 
   public async onStop(): Promise<void> {
-    const stopPromises = this.plugins.map((plugin) => plugin.onStop());
-    await Promise.all(stopPromises);
-
     await this.bus.onUnregister();
   }
 
@@ -71,7 +66,7 @@ export class DefaultPluginManager implements PluginManager {
         );
       }
       this.plugins.set(id, plugin);
-      await plugin.onRegister();
+      await plugin.onRegister(this.bot);
 
       Promise.resolve(this.bus.emit(PluginEventEnum.PluginAdd, [plugin])).catch(
         (error) => {
@@ -99,7 +94,7 @@ export class DefaultPluginManager implements PluginManager {
       );
     }
     this.plugins.delete(id);
-    await presentPlugin.onUnregister();
+    await presentPlugin.onUnregister(this.bot);
 
     Promise.resolve(
       this.bus.emit(PluginEventEnum.PluginRemove, [presentPlugin]),
