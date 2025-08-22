@@ -1,4 +1,4 @@
-![nyx/docs Logo](src/public/nyx_guide.png)
+![nyx/guide Logo](public/nyx_guide.png)
 
 ---
 
