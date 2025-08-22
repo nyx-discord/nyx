@@ -57,7 +57,7 @@ export class DefaultBotService implements BotService {
     return new DefaultBotService(bot, bus);
   }
 
-  isRunning(): boolean {
+  public isRunning(): boolean {
     throw new Error('Method not implemented.');
   }
 
@@ -71,7 +71,6 @@ export class DefaultBotService implements BotService {
     try {
       await this.bot.getEventManager().onStart();
       await Promise.all([
-        await this.bot.getCommandManager().onStart(),
         await this.bot.getScheduleManager().onStart(),
         await this.bot.getSessionManager().onStart(),
         await this.bot.getPluginManager().onStart(),
@@ -96,6 +95,7 @@ export class DefaultBotService implements BotService {
     this.status = BotStatusEnum.Running;
     const token = this.bot.getToken();
     await this.bot.getClient().login(token);
+    await this.bot.getCommandManager().onStart();
 
     this.startPromise.resolve(this.bot);
 
