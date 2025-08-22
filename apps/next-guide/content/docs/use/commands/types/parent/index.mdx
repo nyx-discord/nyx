@@ -6,7 +6,7 @@ defaultOpen: true
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
-<Callout type="warn">It's recommended to read the [Commands Overview](../../index.mdx) page first.</Callout>
+<Callout type="warn">It's recommended to read the [Commands Overview](../../index) page first.</Callout>
 
 Parent commands are top-level, non executable commands that can have children, which can be either subcommands commands or subcommand groups.
 
@@ -25,7 +25,7 @@ import { AbstractParentCommand } from '@nyx-discord/framework';
 // ---cut-start---
 // @ts-expect-error Incomplete example
 // ---cut-end---
-export class MyCommand extends AbstractParentCommand {}
+class MyCommand extends AbstractParentCommand {}
 ```
 
 </Step>
@@ -41,7 +41,7 @@ Implement `data` that stores the command's data, and `children` that stores the 
 import { SlashCommandBuilder, Collection } from 'discord.js';
 import { AbstractParentCommand, SubCommand, SubCommandGroup } from '@nyx-discord/framework';
 
-export class MyCommand extends AbstractParentCommand {
+class MyCommand extends AbstractParentCommand {
   protected readonly data = new SlashCommandBuilder()
     .setName('my-command')
     .setDescription('My command')
@@ -79,7 +79,7 @@ import { AbstractParentCommand } from '@nyx-discord/framework';
 // ---cut-start---
 // @ts-expect-error Incomplete example
 // ---cut-end---
-export class MyCommand extends AbstractParentCommand {
+class MyCommand extends AbstractParentCommand {
   public getGuilds() {
     return ['GUILD_ID', 'ANOTHER_GUILD_ID'];
   }

@@ -9,6 +9,14 @@ import { Callout } from 'fumadocs-ui/components/callout';
 import { BlocksIcon, CircleDotDashedIcon, LockOpenIcon, SmileIcon, TerminalIcon } from 'lucide-react';
 import { Card, Cards } from 'fumadocs-ui/components/card';
 import { discordInvite } from '../../../src/app/layout.config';
+import { GithubInfo } from 'fumadocs-ui/components/github-info';
+
+![nyx](/nyx_guide.png)
+
+<GithubInfo
+  owner="nyx-discord"
+  repo="nyx"
+/>
 
 Hello there 👋! Welcome to official guide for using nyx, a Discord.js TypeScript bot framework.
 
@@ -57,17 +65,22 @@ Nyx has five main features:
 
 All of these features are documented in detail in their respective sections, which we'll cover next.
 
+<Callout title="Codeblocks">
+The codeblocks in this guide are powered by [Twoslash](https://twoslash.netlify.app/guide/), meaning:
+
+- You can hover over variables, functions, etc. to see their documentation.
+- Every example (that isn't explicitly mentioned as incomplete) will compile normally.
+</Callout>
+
 ## Community and Contribution
 
+<Callout>Click on each card to go to its page.</Callout>
+
 <Cards>
-  <Card icon={<SiDiscord />} href={discordInvite} title="Community">
+  <Card icon={<SiDiscord />} href={discordInvite} title="Discord Community">
     Join our Discord server to ask questions, share your creations, and get help from the team or the community.
   </Card>
   <Card icon={<SiGithub />} href="https://github.com/nyx-discord/nyx" title="Contribute">
     If you want to contribute, you can do so by opening issues or pull requests on our GitHub repository.
     </Card>
 </Cards>
-
-## What's next?
-
-Check the [Packages](./packages.mdx) page to learn about the packages that make up nyx, or the [Navigating the Guide](./navigating.mdx) page to learn how to navigate the guide right away.

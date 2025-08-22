@@ -6,7 +6,7 @@ icon: Baby
 import { LayersIcon, LockIcon, MousePointerClickIcon } from 'lucide-react';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
-<Callout type="warn">It's recommended to read the [Commands Overview](../../index.mdx) and [Parent Commands](./) pages first.</Callout>
+<Callout type="warn">It's recommended to read the [Commands Overview](../../index) and [Parent Commands](./) pages first.</Callout>
 
 Subcommands are executable commands stored inside a [Parent Command](./) or a [SubCommand Group](./subcommand-group).
 
@@ -24,7 +24,7 @@ import { AbstractSubCommand } from '@nyx-discord/framework';
 // ---cut-start---
 // @ts-expect-error Incomplete example
 // ---cut-end---
-export class MySubCommand extends AbstractSubCommand {}
+class MySubCommand extends AbstractSubCommand {}
 ```
 
 </Step>
@@ -34,7 +34,7 @@ Implement `data` that stores the command's data, and `execute()` that executes t
 ```ts twoslash
 import { SlashCommandSubcommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
 import { AbstractSubCommand } from '@nyx-discord/framework';
-export class MySubCommand extends AbstractSubCommand {
+class MySubCommand extends AbstractSubCommand {
   protected readonly data = new SlashCommandSubcommandBuilder()
     .setName('my-command')
     .setDescription('My command')
@@ -94,6 +94,17 @@ Then it'll show up when the top-level parent command is registered.
 </Step>
 </Steps>
 
+## Execution Meta
+
+The second argument of the execute method is a `MetaCollection` object, which is a `Collection` that stores metadata about the command call.
+
+Apart from the keys saved by the caller or the middleware, the dispatch meta contains:
+
+* The execution ID, via the `TypedFields.Id` field.
+* The execution start date, via the `TypedFields.CreationDate` field.
+* The bot whose `Client` sent the interaction, via the `TypedFields.Bot` field.
+
+To learn more about TypedFields, check the [Metadata](/use/other/meta) page.
 
 ## Autocompletion
 
@@ -106,7 +117,7 @@ import type { AutocompleteInteraction } from 'discord.js';
 // ---cut-start---
 // @ts-expect-error Incomplete example
 // ---cut-end---
-export class MySubCommand extends AbstractSubCommand {
+class MySubCommand extends AbstractSubCommand {
   public async autocomplete(interaction: AutocompleteInteraction) {
     await interaction.respond([
       { name: 'First option', value: 'first' },
@@ -115,6 +126,37 @@ export class MySubCommand extends AbstractSubCommand {
   }
 }
 ```
+
+## Metadata
+
+When extending nyx with plugins, you may want to specify extra data for them. You can do so with the `MetaCollection` object, saved on the subcommand.
+
+<Callout>
+While subcommands internally save a `MetaCollection`, the return type of `#getMeta()` is a `ReadonlyMetaCollection`,
+meaning that external objects can read the collection, but not modify it.
+</Callout>
+
+```ts twoslash
+import { AbstractSubCommand, Identifier } from '@nyx-discord/framework';
+import { Collection } from 'discord.js';
+
+// ---cut-start---
+import { ParentCommand } from '@nyx-discord/framework';
+declare const parent: ParentCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommand extends AbstractSubCommand {
+  protected readonly meta = new Collection<Identifier, unknown>([
+    ['someKey', 'someValue']
+  ]);
+}
+
+const subcommand = new MySubCommand(parent);
+const meta = subcommand.getMeta();
+const value = meta.get('someKey'); // 'someValue'
+```
+
+For a more type-safe approach, you can use `TypedFields`. Check the [Metadata](/use/other/meta) page for more information.
 
 ## Advanced features
 

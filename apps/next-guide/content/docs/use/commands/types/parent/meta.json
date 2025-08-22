@@ -1,7 +1,4 @@
 {
   "defaultOpen": true,
-  "pages": [
-    "subcommand",
-    "subcommand-group"
-  ]
+  "pages": ["subcommand", "subcommand-group"]
 }

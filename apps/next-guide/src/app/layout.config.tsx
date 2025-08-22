@@ -1,4 +1,4 @@
-import Logo from '@/public/logo.png';
+import Logo from '@/../public/logo.png';
 import { SiDiscord } from '@icons-pack/react-simple-icons';
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import Image from 'next/image';
@@ -6,10 +6,10 @@ import Image from 'next/image';
 export const logo = (
   <>
     <Image
-      alt="nyx Logo"
+      alt="nyx logo"
       src={Logo}
       className="w-6 md:w-8"
-      aria-label="nyx Logo"
+      aria-label="nyx logo"
     />
   </>
 );
@@ -22,7 +22,7 @@ export const baseOptions: BaseLayoutProps = {
     title: (
       <>
         {logo}
-        <span className="font-medium [header_&]:text-[15px]">nyx Guide</span>
+        <span className="font-medium [header_&]:text-[15px]">nyx guide</span>
       </>
     ),
   },

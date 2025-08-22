@@ -1,0 +1,174 @@
+---
+title: List Pagination Session
+icon: BookOpenText
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Callout type="warn">It's recommended to read the [Pagination Session](./pagination-session) page first, all of its features apply to this.</Callout>
+
+A `ListPaginationSession` is a special type of pagination session made to paginate a list of items.
+
+Initially, the item's values are received at the session's constructor. You can also include a refreshing system in the session to refresh the items with their newest state, if desired.
+
+## Creation
+
+<Steps>
+<Step>
+
+### Creation
+Extend the `AbstractListPaginationSession` class:
+
+```ts twoslash
+import { AbstractListPaginationSession } from '@nyx-discord/framework';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyListPaginationSession extends AbstractListPaginationSession<number, void> {}
+```
+
+The first type argument is the type of the items, and the second is the session's return type.
+
+<Callout>
+In `updatePage()` you can now use `getCurrentPageItems()`, which is an utility method that calculates and returns the current page's items.
+</Callout>
+
+</Step>
+<Step>
+### Implementation
+
+Implement it the same way you'd implement a `PaginationSession`.
+
+</Step>
+<Step>
+
+### Initialization
+
+Instantiate and start your session the same way as a regular one, but passing the list of items:
+
+```ts twoslash
+import type { NyxBot, AbstractListPaginationSession } from '@nyx-discord/framework';
+import { type ChatInputCommandInteraction } from 'discord.js';
+declare const startInteraction: ChatInputCommandInteraction;
+declare const bot: NyxBot;
+declare const id: string;
+// @ts-expect-error Incomplete example
+class MyListPaginationSession extends AbstractListPaginationSession<number, void> {}
+// ---cut---
+const session = new MyListPaginationSession({
+  bot,
+  id,
+  startInteraction,
+  items: [1, 2, 3, /** ... */]
+});
+await session.start();
+```
+
+</Step>
+</Steps>
+
+## Example
+
+This example will paginate a list of the currently cached guilds:
+
+```ts twoslash
+import {
+  AbstractListPaginationSession,
+  type SessionUpdateInteraction,
+  type NyxBot,
+  type SessionStartInteraction
+} from '@nyx-discord/framework';
+import { ContainerBuilder, SectionBuilder, MessageFlags, type Guild } from 'discord.js';
+
+class GuildsPaginationSession extends AbstractListPaginationSession<Guild, void> {
+//                                                                  ^^^^^
+  constructor(options: {
+    bot: NyxBot;
+    id: string;
+    startInteraction: SessionStartInteraction;
+  }) {
+    const guildsIterator = options.bot.getClient().guilds.cache.values();
+    super({
+      ...options,
+      items: Array.from(guildsIterator),
+    });
+  }
+
+  public async onStart() {
+    const container = this.generateContainer();
+    const row = this.buildBasicPageRow();
+
+    await this.startInteraction.reply({
+      components: [container, row],
+      flags: MessageFlags.IsComponentsV2,
+    });
+  }
+
+  protected async updatePage(interaction: SessionUpdateInteraction): Promise<boolean> {
+    const container = this.generateContainer();
+    const row = this.buildBasicPageRow();
+
+    await interaction.update({
+      components: [container, row],
+      flags: MessageFlags.IsComponentsV2,
+    });
+    return true;
+  }
+
+  public async onEnd() {
+    const container = this.generateContainer();
+    await this.startInteraction.editReply({
+      components: [container],
+      flags: MessageFlags.IsComponentsV2,
+    });
+  }
+
+  protected generateContainer(): ContainerBuilder {
+    const guilds = this.getCurrentPageItems(); // [!code highlight]
+    const container = new ContainerBuilder()
+      .addTextDisplayComponents((textDisplay) => textDisplay.setContent('# Guilds'));
+
+    for (const guild of guilds) {
+      const icon = guild.iconURL();
+      if (icon) {
+        container.addSectionComponents((section) => section
+          .addTextDisplayComponents((textDisplay) => textDisplay.setContent(guild.name))
+          .setThumbnailAccessory((thumbnail) => thumbnail.setURL(icon))
+        );
+      } else {
+        container.addTextDisplayComponents((textDisplay) => textDisplay.setContent(guild.name));
+      }
+    }
+
+    return container;
+  }
+}
+```
+
+You can then use it in your command or anywhere where you have an interaction:
+
+```ts twoslash
+import type { NyxBot, AbstractListPaginationSession, SessionStartInteraction } from '@nyx-discord/framework';
+import { type ChatInputCommandInteraction } from 'discord.js';
+declare const startInteraction: ChatInputCommandInteraction;
+declare const bot: NyxBot;
+// @ts-expect-error Incomplete example
+class GuildsPaginationSession extends AbstractListPaginationSession<Guild, void> {
+    constructor(options: {
+    bot: NyxBot;
+    id: string;
+    startInteraction: SessionStartInteraction;
+  }) {
+    const guildsIterator = options.bot.getClient().guilds.cache.values();
+    super({
+      ...options,
+      items: Array.from(guildsIterator),
+    });
+  }
+}
+const id = 'mySessionId';
+// ---cut---
+const session = new GuildsPaginationSession({ bot, id, startInteraction });
+await session.start();
+```

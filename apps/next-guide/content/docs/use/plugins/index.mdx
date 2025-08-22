@@ -1,0 +1,66 @@
+---
+title: Overview
+icon: Puzzle
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Plugins are objects that can be used to pack nyx's functionality, such as commands, events, schedules and sessions.
+
+## Usage
+
+<Steps>
+<Step>
+### Plugin creation
+
+Create a class that implements `NyxPlugin`.
+
+```ts twoslash
+import { NyxPlugin, NyxBot } from '@nyx-discord/framework';
+
+class MyPlugin implements NyxPlugin {
+  public static readonly Id = Symbol('my-plugin');
+
+  public async onRegister(bot: NyxBot) {
+    bot.getLogger().log('My plugin has been registered!');
+  }
+
+  public async onUnregister(bot: NyxBot) {
+    bot.getLogger().log('My plugin has been unregistered!');
+  }
+
+  public getData() {
+    return {
+      name: 'my-plugin',
+      version: '1.0.0',
+      description: 'My plugin',
+      // Optional
+      git: 'https://github.com/...',
+    }
+  }
+
+  public getId() {
+    return MyPlugin.Id;
+  }
+}
+```
+
+The `getData()` method is unused by the framework, but it provides information for the plugin's consumer.
+
+</Step>
+<Step>
+
+### Registration
+
+Register it to a bot's `PluginManager`:
+
+```ts twoslash
+import { NyxBot, NyxPlugin } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+declare const MyPlugin: new () => NyxPlugin;
+// ---cut---
+await bot.getPluginManager().register(new MyPlugin());
+```
+
+</Step>
+</Steps>

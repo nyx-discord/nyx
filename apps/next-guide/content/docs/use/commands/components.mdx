@@ -9,7 +9,7 @@ You can make your components sent by your commands trigger a callback in the com
 
 <Callout>This is only recommended for simple non complex components, as it can make the code tightly coupled and harder to read.</Callout>
 
-Given only these are executable, you can only use this in [Standalone Commands](./types/standalone.mdx), [SubCommands](./types/subcommand.mdx) and [Context Menu Commands](./types/context-menu.mdx).
+Given only these are executable, you can only use this in [Standalone Commands](./types/standalone), [SubCommands](./types/subcommand) and [Context Menu Commands](./types/context-menu).
 
 ## Usage
 
@@ -39,7 +39,7 @@ class MyCommand extends AbstractStandaloneCommand {
 }
 ```
 
-To learn more about TypedFields, check the [Metadata](../other/meta.mdx) page.
+To learn more about TypedFields, check the [Metadata](../other/meta) page.
 
 </Step>
 <Step>
@@ -56,7 +56,7 @@ import { AbstractStandaloneCommand, TypedFields, type MetaCollection } from '@ny
 // ---cut-start---
 // @ts-expect-error Incomplete example
 // ---cut-end---
-export class MyCommand extends AbstractStandaloneCommand {
+class MyCommand extends AbstractStandaloneCommand {
   public async execute(interaction: ChatInputCommandInteraction, meta: MetaCollection) {
     const bot = TypedFields.Bot.get(meta, true);
     const customId = this.getCustomId(bot); // [!code highlight]
@@ -88,7 +88,7 @@ import type { ButtonInteraction } from 'discord.js';
 // ---cut-start---
 // @ts-expect-error Incomplete example
 // ---cut-end---
-export class MyCommand extends AbstractStandaloneCommand {
+class MyCommand extends AbstractStandaloneCommand {
   public async handleButton(interaction: ButtonInteraction) {
     await interaction.reply('You clicked the button!');
   }
@@ -153,7 +153,7 @@ class MyCommand extends AbstractStandaloneCommand {
 
 You can also execute other commands callbacks by creating a customId that refers to them.
 
-In order to do so, you'll need the command instance first. You can read how to obtain it in the [Command Location](./location.mdx) page.
+In order to do so, you'll need the command instance first. You can read how to obtain it in the [Command Location](./location) page.
 
 ```ts twoslash
 // ---cut-start---
@@ -166,7 +166,7 @@ import type { ChatInputCommandInteraction } from 'discord.js';
 // ---cut-start---
 // @ts-expect-error Incomplete example
 // ---cut-end---
-export class MyCommand extends AbstractStandaloneCommand {
+class MyCommand extends AbstractStandaloneCommand {
   public async execute(interaction: ChatInputCommandInteraction, meta: MetaCollection) {
     const bot = TypedFields.Bot.get(meta, true);
 

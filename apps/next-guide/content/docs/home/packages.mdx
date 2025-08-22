@@ -11,17 +11,11 @@ import { CoreMention } from '../../../components/tooltip/CoreMention';
 
 The framework is built with two packages: `@nyx-discord/core` and `@nyx-discord/framework`, abbreviated in this guide as <CoreMention /> and <FrameworkMention />:
 
-### Core
-
-* Defines all the object templates (interfaces) and their relations, acting as the blueprint.
-* Minimal runtime dependencies (since it doesn't have many actual code).
-* It doesn't have any implementations, so it's not usable by itself.
-
-### Framework
-
-* Provides default, minimal implementations for <CoreMention />, making it directly usable.
-* Its implementations are designed to depend on interfaces from <CoreMention />, rather than each other, making those dependencies fully replaceable by your own.
-* Low runtime dependencies due to its "bare bones" ideology.
+| Core                                                                                        | Framework                                                                                                                                                       |
+|---------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Defines all the object templates (interfaces) and their relations, acting as the blueprint. | Provides default, minimal implementations for <CoreMention />, making it directly usable.                                                                       |
+| Minimal runtime dependencies (since it doesn't have much actual code).                      | Its implementations are designed to depend on interfaces from <CoreMention />, rather than each other, making those dependencies fully replaceable by your own. |
+| It doesn't have any implementations, so it's not usable by itself.                          | Low runtime dependencies due to its "bare bones" ideology.                                                                                                      |
 
 ## Which package to use?
 

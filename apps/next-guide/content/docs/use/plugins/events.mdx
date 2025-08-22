@@ -1,0 +1,50 @@
+---
+title: Events
+icon: RadioTower
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Callout type="warn">It's recommended to read the [Events Overview](../events/index) and [Event Subscribers](../events/subscribers) pages first.</Callout>
+
+The `PluginManager` has an `EventBus` that allows you to listen to events related to plugins.
+
+This is useful for monitoring, logging, or any other custom logic you want to execute when a plugin is added/removed.
+
+## Events
+
+The following events are available:
+
+```ts twoslash
+import { PluginEventEnum } from '@nyx-discord/framework';
+
+// @noErrors
+PluginEventEnum.
+//              ^|
+```
+
+## Usage
+
+<Steps>
+<Step>
+### Subscriber creation
+
+Create a subscriber that will listen to a given event, use the `PluginEventArgs` type for the arguments map. Check the [Event Subscribers](../events/subscribers) page for more information.
+
+</Step>
+<Step>
+### Subscription
+
+Subscribe to the event using the `PluginEventArgs`'s `subscribe()` method.
+
+```ts twoslash
+// ---cut-start---
+import { EventSubscriber, PluginEventArgs } from '@nyx-discord/framework';
+declare const subscriber: EventSubscriber<PluginEventArgs, keyof PluginEventArgs>;
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut-end---
+await bot.getPluginManager().subscribe(subscriber);
+```
+</Step>
+</Steps>

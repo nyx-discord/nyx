@@ -1,0 +1,50 @@
+---
+title: Events
+icon: RadioTower
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Callout type="warn">It's recommended to read the [Events Overview](../events/index) and [Event Subscribers](../events/subscribers) pages first.</Callout>
+
+The `SessionManager` has an `EventBus` that allows you to listen to events related to sessions.
+
+This is useful for monitoring, logging, or any other custom logic you want to execute when a session starts, updates, etc.
+
+## Events
+
+The following events are available:
+
+```ts twoslash
+import { SessionEventEnum } from '@nyx-discord/framework';
+
+// @noErrors
+SessionEventEnum.
+//               ^|
+```
+
+## Usage
+
+<Steps>
+<Step>
+### Subscriber creation
+
+Create a subscriber that will listen to a given event, use the `SessionEventArgs` type for the arguments map. Check the [Event Subscribers](../events/subscribers) page for more information.
+
+</Step>
+<Step>
+### Subscription
+
+Subscribe to the event using the `SessionManager`'s `subscribe()` method.
+
+```ts twoslash
+// ---cut-start---
+import { EventSubscriber, SessionEventArgs } from '@nyx-discord/framework';
+declare const subscriber: EventSubscriber<SessionEventArgs, keyof SessionEventArgs>;
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut-end---
+await bot.getSessionManager().subscribe(subscriber);
+```
+</Step>
+</Steps>

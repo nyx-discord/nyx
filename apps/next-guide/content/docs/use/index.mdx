@@ -5,6 +5,7 @@ icon: Rocket
 ---
 
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { AlarmClockIcon, LaptopIcon, MegaphoneIcon, PuzzleIcon, UserIcon } from 'lucide-react';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 ## First Start
@@ -128,4 +129,22 @@ await myBot.start();
 
 ## Next Steps
 
+<Callout>Click on each card to learn more about that feature.</Callout>
 
+<Cards>
+<Card title="Commands" href="/use/commands" icon={<LaptopIcon />} external={false}>
+  Learn how to create and use commands in your bot.
+</Card>
+<Card title="Events" href="/use/events" icon={<MegaphoneIcon />} external={false}>
+  Learn how to subscribe to Client or custom events.
+</Card>
+<Card title="Schedules" href="/use/schedules" icon={<AlarmClockIcon />} external={false}>
+  Learn how to schedule tasks to be executed at specific times.
+</Card>
+<Card title="Sessions" href="/use/sessions" icon={<UserIcon />} external={false}>
+  Learn how to manage user interaction sessions.
+</Card>
+<Card title="Plugins" href="/use/plugins" icon={<PuzzleIcon />} external={false}>
+  Learn how to create and use plugins to extend your bot's functionality.
+</Card>
+</Cards>

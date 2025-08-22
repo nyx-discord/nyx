@@ -3,3 +3,113 @@ title: Overview
 icon: Megaphone
 ---
 
+import { EyeIcon, BusIcon } from 'lucide-react';
+
+The event system in nyx is powered by `EventBuses`. These are objects that store and notify their `EventSubscribers` when an
+event is called either internally or from another source.
+
+## Quick example
+
+The `EventManager` holds the event bus that wraps the `Client` events:
+
+```ts twoslash
+import { AbstractDJSClientSubscriber, MetaCollection } from '@nyx-discord/framework';
+import { Events, Interaction } from 'discord.js';
+
+class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
+  protected readonly event = Events.InteractionCreate;
+
+  public async handleEvent(meta: MetaCollection, interaction: Interaction) {
+    console.log(`Interaction created: ${interaction.id}`);
+  }
+}
+
+// ---cut-start---
+import { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut-end---
+await bot.getEventManager().subscribeClient(new InteractionCreateLogger());
+```
+
+That's it! Your bot will now log every interaction created.
+
+## Type safety
+
+<Callout>You only need to implement this if you want to create your own event buses.</Callout>
+
+In order to guarantee type safety, both `EventBuses` and `EventSubscribers` take generic arguments that define the events and their arguments.
+
+An example of such type is:
+
+```ts twoslash
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+```
+
+This type can then be used to create an `EventBus`:
+
+```ts twoslash
+import { EventBus } from '@nyx-discord/framework';
+
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+declare const bus: EventBus<MyEventsArgs>;
+```
+
+This `EventBus` can then be used to subscribe to events:
+
+```ts twoslash
+import { EventSubscriber, EventBus } from '@nyx-discord/framework';
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+
+declare const bus: EventBus<MyEventsArgs>;
+declare const mySubscriber: EventSubscriber<MyEventsArgs, 'someEvent'>;
+await bus.subscribe(mySubscriber);
+```
+
+And it will throw a type error if the event arguments do not match.
+
+```ts twoslash
+// @errors: 2345
+// ---cut-start---
+import { EventSubscriber, EventBus } from '@nyx-discord/framework';
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+type OtherEventsArgs = {
+  someEvent: [boolean]; // Different arguments
+};
+
+declare const bus: EventBus<MyEventsArgs>;
+declare const otherSubscriber: EventSubscriber<OtherEventsArgs, 'someEvent'>;
+
+await bus.subscribe(otherSubscriber);
+```
+
+This ensures that the event arguments are correctly typed and that you cannot accidentally subscribe to an event with the wrong arguments.
+
+## What's next?
+
+<Callout>Click on each card to go to its page.</Callout>
+
+<Cards>
+  <Card href="events/buses" title="Event Buses" icon={<BusIcon />} external={false}>
+    Learn how to create your own event bus, or use built-in ones.
+  </Card>
+  <Card href="events/subscribers" title="Subscribers" icon={<EyeIcon />} external={false}>
+    Learn how to create event subscribers, and the features they provide.
+  </Card>
+</Cards>

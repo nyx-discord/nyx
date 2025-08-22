@@ -1,0 +1,355 @@
+---
+title: Buses
+icon: Bus
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Event buses are objects that store and notify their `EventSubscribers` when an event is called either internally, typically via an EventEmitter, or externally, via `EventBus#emit()`.
+
+## Main features
+
+An event bus can be un/subscribed to:
+
+```ts twoslash
+// ---cut-start---
+import { EventBus, EventSubscriber } from '@nyx-discord/framework';
+type EventArgs = {
+  someEvent: [string, number];
+};
+declare const bus: EventBus<EventArgs>;
+declare const subscriber: EventSubscriber<EventArgs, 'someEvent'>;
+// ---cut-end---
+await bus.subscribe(subscriber);
+await bus.unsubscribe(subscriber);
+```
+
+Can be used to emit an event type-safely:
+
+```ts twoslash
+// ---cut-start---
+import { EventBus } from '@nyx-discord/framework';
+// ---cut-end---
+type EventArgs = {
+  someEvent: [string, number];
+};
+
+declare const bus: EventBus<EventArgs>;
+
+await bus.emit('someEvent', ['hello', 123]);
+// @errors: 2322
+// Error! Argument missmatch
+await bus.emit('someEvent', [true, 123]);
+```
+
+It can be iterated and its subscribers can be obtained:
+
+```ts twoslash
+// ---cut-start---
+import { EventBus } from '@nyx-discord/framework';
+type EventArgs = {
+  someEvent: [string, number];
+};
+declare const bus: EventBus<EventArgs>;
+// ---cut-end---
+const subscribers = bus.getSubscribers();
+//    ^?
+
+for (const [id, subscriber] of bus) {
+  //            ^?
+}
+```
+
+And other features you might find useful. Check the documentation for more details.
+
+## Subscriber concurrency
+
+An event bus has complete freedom over how to execute its subscribers, however the framework has normalized two patterns for ease of use (though it's not hardcoded):
+
+### Async buses
+
+It calls its subscribers asynchronously, meaning that it doesn't wait for the current subscriber to finish before executing the next.
+
+| Advantages                                                                                                                            | Disadvantages                                                                                                                                                                                         |
+|---------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Can be faster, especially for events with many subscribers, since it executes them in bulk.                                           | Multiple subscribers running may hog the event loop and decrease performance.                                                                                                                         |
+| Less prone to blocking or delaying the system, since it can move on to the next subscriber while the previous one is still executing. | May lead to calling subscribers in an order different than their priority. For example, subscribers with `PriorityEnum.Normal` may execute before subscribers with `PriorityEnum.High` have finished. |
+|                                                                                                                                       | Since subscribers are executed in bulk, it can be harder to trace when an error occurs.                                                                                                          |
+
+#### Concurrency Limit
+
+To tackle the mentioned disadvantages, it has a concurrency limit functionality. This allows you to set how many subscribers are being checked or executed at the same time.
+
+```ts twoslash
+// ---cut-start---
+import { EventBus } from '@nyx-discord/framework';
+type EventArgs = {
+  someEvent: [string, number];
+};
+declare const bus: EventBus<EventArgs>;
+// ---cut-end---
+import { AsyncEventDispatcher } from '@nyx-discord/framework';
+
+const dispatcher = bus.getDispatcher() as AsyncEventDispatcher;
+dispatcher.setConcurrencyLimit(5);
+```
+
+<Callout>
+* Setting this limit to `1` effectively turns the dispatcher into a sync one.
+* The default concurrency limit is `3`.
+</Callout>
+
+### Sync buses
+
+It calls its subscribers synchronously, meaning that it waits for the current subscriber to finish before executing the next.
+
+| Advantages                                                                   | Disadvantages                                                                                                                                          |
+|------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Ensures that subscribers are only executed in the order of their `Priority`. | May be slower for events with many subscribers, as it has to wait for each subscriber (and its middleware) to finish before moving on to the next one. |
+| Easier to debug and to trace when and on which state an error occurs.        | If one subscriber takes a long time to execute, it can cause a delay for others.                                                                       |
+
+#### Sync Timeout
+
+To tackle the mentioned disadvantages, it has a sync timeout functionality. This allows you to set "timeframe" for any subscriber to finish, before the dispatcher stops waiting and calls the next subscriber.
+
+```ts twoslash
+// ---cut-start---
+import { EventBus } from '@nyx-discord/framework';
+type EventArgs = {
+  someEvent: [string, number];
+};
+declare const bus: EventBus<EventArgs>;
+// ---cut-end---
+import { SyncEventDispatcher } from '@nyx-discord/framework';
+
+const dispatcher = bus.getDispatcher() as SyncEventDispatcher;
+dispatcher.setSyncTimeout(50_000);
+```
+<Callout>The default is of 10000 ms (10 seconds).</Callout>
+
+## Known buses
+
+### Client bus
+
+The `Client` event bus is a built-in bus that wraps its events, and is available in the `EventManager`:
+
+```ts twoslash
+// ---cut-start---
+import { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut-end---
+const bus = bot.getEventManager().getClientBus();
+//    ^?
+```
+
+The manager also has a utility method to directly subscribe to it:
+
+```ts twoslash
+// ---cut-start---
+import { NyxBot, EventSubscriber } from '@nyx-discord/framework';
+import { Events, ClientEvents } from 'discord.js';
+declare const bot: NyxBot;
+declare const eventSubscriber: EventSubscriber<ClientEvents, 'interactionCreate'>;
+// ---cut-end---
+await bot.getEventManager().subscribeClient(eventSubscriber);
+```
+
+### Manager buses
+
+Each manager holds a bus that wraps events related to the feature they manage:
+
+```ts twoslash
+// ---cut-start---
+import { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut-end---
+const commandBus = bot.getCommandManager().getEventBus();
+//    ^?
+
+// Named differently to not be confused with the getBus() method
+const eventBus = bot.getEventManager().getManagerBus();
+//    ^?
+
+const scheduleBus = bot.getScheduleManager().getEventBus();
+//    ^?
+
+const sessionsBus = bot.getSessionManager().getEventBus();
+//    ^?
+
+const pluginBus = bot.getPluginManager().getEventBus();
+//    ^?
+```
+
+See the respective guide of each feature for more information about the events they emit.
+
+## Custom buses
+
+You can create your own event bus, and optionally register it to the `EventManager`.
+
+<Steps>
+<Step>
+### Arguments type
+
+You'll first need an arguments type for your events, for example:
+
+```ts twoslash
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+```
+
+This type's keys are the event names, and their values are the arguments of that event.
+
+</Step>
+<Step>
+### Creation
+
+#### Manual emits
+
+If you want a bus whose `emit()` method is manually called, either:
+
+- Use `BasicEventBus.createSync()` to create a sync bus.
+- Use `BasicEventBus.createAsync()` to create an async bus.
+
+```ts twoslash
+import { BasicEventBus } from '@nyx-discord/framework';
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+
+const syncBus = BasicEventBus.createSync<MyEventsArgs>(Symbol('mySyncBus'));
+const asyncBus = BasicEventBus.createAsync<MyEventsArgs>(Symbol('myAsyncBus'));
+```
+
+#### From an EventEmitter
+
+You can also create a bus that will wrap an existent `EventEmitter`, or a class that extends it:
+
+- Use `BasicEventBus.createSync()` to create a sync bus.
+- Use `BasicEventBus.createAsync()` to create an async bus.
+
+```ts twoslash
+import { EventEmitter } from 'node:events';
+import { BasicEventEmitterBus } from '@nyx-discord/framework';
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+
+const emitter = new EventEmitter();
+const syncBus = BasicEventEmitterBus.createSyncWithEmitter<MyEventsArgs, EventEmitter>(Symbol('myBus'), emitter);
+const asyncBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventsArgs, EventEmitter>(Symbol('myBus'), emitter);
+```
+
+</Step>
+<Step>
+### Optional registration
+
+If you want to make your bus available to other features like plugins, you can register it to the `EventManager`:
+
+```ts twoslash
+// ---cut-start---
+import { NyxBot, EventBus } from '@nyx-discord/framework';
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+declare const bot: NyxBot;
+declare const bus: EventBus<MyEventsArgs>;
+// ---cut-end---
+await bot.getEventManager().addEventBuses(bus);
+```
+
+It'll use the ID you passed to `create()` as the key.
+
+</Step>
+</Steps>
+
+## Protection
+
+You can choose to protect your bus from being removed, in case it's used for internal purposes and it's not supposed to be removed:
+
+```ts twoslash
+// ---cut-start---
+import { BasicEventBus } from '@nyx-discord/framework';
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+const bus = BasicEventBus.createSync<MyEventsArgs>('foo');
+// ---cut-end---
+bus.protect();
+// or to unprotect
+bus.unprotect();
+```
+
+That way it'll throw a runtime error if you try to remove it normally:
+
+```ts twoslash
+// ---cut-start---
+import { BasicEventBus, NyxBot } from '@nyx-discord/framework';
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+declare const bot: NyxBot;
+// ---cut-end---
+const bus = BasicEventBus.createSync<MyEventsArgs>('foo');
+bus.protect();
+
+await bot.getEventManager().addEventBuses(bus);
+// throws ProtectedObjectError
+await bot.getEventManager().removeEventBus(bus);
+```
+
+## Preparing a bus
+
+You can extend `BasicEventBus` to be able to override `onRegister()` and `onUnregister()`, which allow the bus to setup and clean up before and after it's registered.
+
+```ts twoslash
+import { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut---
+import { BasicEventBus } from '@nyx-discord/framework';
+
+class MyBus extends BasicEventBus<MyEventsArgs> {
+  async onRegister() {
+    console.log('I was registered!');
+  }
+
+  async onUnregister() {
+    console.log('I was unregistered!');
+  }
+}
+
+const bus = MyBus.createSync<MyEventsArgs>('foo');
+await bot.getEventManager().addEventBuses(bus);
+// console: I was registered!
+await bot.getEventManager().removeEventBus(bus);
+// console: I was unregistered!
+```
+
+It's recommended to use this instead of the constructor for better practices, and since it also allows for async logic.
+
+## Bus events
+
+Apart from the events specified in the type, the bus also emits extra events related to the bus itself:
+
+```ts twoslash
+import { EventBusEventEnum } from '@nyx-discord/framework';
+// @noErrors
+EventBusEventEnum.
+//                ^|
+```
+
+You can subscribe to these events in any bus, like any other event they'd manage.
