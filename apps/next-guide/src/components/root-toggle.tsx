@@ -1,11 +1,11 @@
 'use client';
+import { usePathname } from 'fumadocs-core/framework';
+import Link from 'fumadocs-core/link';
+import { useSidebar } from 'fumadocs-ui/contexts/sidebar';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { type ComponentProps, type ReactNode, useMemo, useState } from 'react';
-import Link from 'fumadocs-core/link';
-import { usePathname } from 'fumadocs-core/framework';
 import { cn } from '../lib/cn';
 import { isActive } from '../lib/is-active';
-import { useSidebar } from 'fumadocs-ui/contexts/sidebar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
 export interface Option {
@@ -50,7 +50,7 @@ export function RootToggle({
   }, [options, pathname]);
 
   const onClick = () => {
-    closeOnRedirect.current = false;
+    (closeOnRedirect as unknown as Record<string, boolean>).current = false;
     setOpen(false);
   };
 
