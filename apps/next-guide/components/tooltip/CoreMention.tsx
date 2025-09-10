@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { TooltipText } from './TooltipText';
 
 export function CoreMention() {
@@ -10,7 +11,8 @@ export function CoreMention() {
           defines the base interfaces that make up nyx.
         </p>
         <p>
-          Check the <a href="/home/packages">Packages</a> page for more details.
+          Check the <Link href="/home/packages">Packages</Link> page for more
+          details.
         </p>
       </div>
     ),
