@@ -329,7 +329,10 @@ export class DefaultCommandManager implements CommandManager {
       const data = this.customIdCodec.deserialize(customId);
       if (!data) return false;
 
-      const found = this.repository.locateExecutableByCustomIdData(data);
+      const found = this.resolver.resolveFromCustomIdData(
+        data,
+        this.repository,
+      );
       if (!found || found.isParent() || found.isSubCommandGroup()) {
         return false;
       }

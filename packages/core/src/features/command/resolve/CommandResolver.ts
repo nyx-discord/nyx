@@ -1,5 +1,6 @@
 import type { AutocompleteInteraction } from 'discord.js';
 import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
+import type { CommandCustomIdData } from '../customId/data/CommandCustomIdData';
 import type { ApplicationCommandInteraction } from '../interaction/ApplicationCommandInteraction.js';
 import type { CommandRepository } from '../repository/CommandRepository';
 
@@ -14,6 +15,11 @@ export interface CommandResolver {
   /** Resolves an {@link ExecutableCommand} that the given autocomplete interaction refers to. */
   resolveFromAutocompleteInteraction(
     interaction: AutocompleteInteraction,
+    repository: CommandRepository,
+  ): AnyExecutableCommand | null;
+
+  resolveFromCustomIdData(
+    data: CommandCustomIdData,
     repository: CommandRepository,
   ): AnyExecutableCommand | null;
 }
