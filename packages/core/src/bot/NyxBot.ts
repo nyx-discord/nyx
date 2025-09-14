@@ -1,6 +1,6 @@
-import { Identifier } from '../identity/Identifier';
-import { BotStatus } from '../service/BotStatus';
-import { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
+import type { Identifier } from '../identity/Identifier';
+import type { BotStatus } from '../service/BotStatus';
+import type { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
 
 /** A bot of the nyx framework. */
 export interface NyxBot<

@@ -5,7 +5,7 @@ import type {
   InjectableBotDependencies,
   NyxBot,
 } from '@nyx-discord/core';
-import { Client } from 'discord.js';
+import type { Client } from 'discord.js';
 import { DefaultCommandManager } from '../features/command/DefaultCommandManager.js';
 import { DefaultEventManager } from '../features/event/DefaultEventManager.js';
 import { DefaultPluginManager } from '../features/plugin/DefaultPluginManager.js';
@@ -51,11 +51,11 @@ export class Bot<
     this.token = options.token;
     this.logger = options.logger;
     this.service = options.service;
-    this.commands = options.commands;
-    this.events = options.events;
-    this.schedules = options.schedules;
-    this.sessions = options.sessions;
-    this.plugins = options.plugins;
+    this.commands = options.commandManager;
+    this.events = options.eventManager;
+    this.schedules = options.scheduleManager;
+    this.sessions = options.sessionManager;
+    this.plugins = options.pluginManager;
   }
 
   public static create<
@@ -86,17 +86,17 @@ export class Bot<
     const eventManager = DefaultEventManager.create(bot, client);
 
     return {
-      events: eventManager,
-      commands: DefaultCommandManager.create(
+      eventManager: eventManager,
+      commandManager: DefaultCommandManager.create(
         bot,
         client,
         eventManager.getClientBus(),
         deployCommands,
       ),
-      schedules: DefaultScheduleManager.create(bot),
-      sessions: DefaultSessionManager.create(bot),
+      scheduleManager: DefaultScheduleManager.create(bot),
+      sessionManager: DefaultSessionManager.create(bot),
       service: DefaultBotService.create(bot),
-      plugins: DefaultPluginManager.create(bot),
+      pluginManager: DefaultPluginManager.create(bot),
     };
   };
 

@@ -1,4 +1,4 @@
-import { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
+import type { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
 
 /** Type of options to create a bot. */
 export interface BotOptions<Implementations extends InjectableBotDependencies> {
@@ -7,10 +7,10 @@ export interface BotOptions<Implementations extends InjectableBotDependencies> {
   deployCommands: boolean;
 
   logger: Implementations['logger'];
-  commands: Implementations['commandManager'];
-  events: Implementations['eventManager'];
-  schedules: Implementations['scheduleManager'];
-  sessions: Implementations['sessionManager'];
-  plugins: Implementations['pluginManager'];
+  commandManager: Implementations['commandManager'];
+  eventManager: Implementations['eventManager'];
+  scheduleManager: Implementations['scheduleManager'];
+  sessionManager: Implementations['sessionManager'];
+  pluginManager: Implementations['pluginManager'];
   service: Implementations['service'];
 }
