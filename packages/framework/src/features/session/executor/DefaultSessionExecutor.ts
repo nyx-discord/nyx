@@ -60,13 +60,13 @@ export class DefaultSessionExecutor implements SessionExecutor {
       SessionUpdateMiddlewareList.create(),
 
       BasicErrorHandler.createWithFallbackLogger((_error, session) =>
-        session.bot.getLogger(),
+        session.getBot().getLogger(),
       ),
       BasicErrorHandler.createWithFallbackLogger((_error, session) =>
-        session.bot.getLogger(),
+        session.getBot().getLogger(),
       ),
       BasicErrorHandler.createWithFallbackLogger((_error, session) =>
-        session.bot.getLogger(),
+        session.getBot().getLogger(),
       ),
     );
   }
