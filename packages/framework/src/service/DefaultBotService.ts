@@ -14,11 +14,17 @@ import {
 } from '@nyx-discord/core';
 import { BasicEventBus } from '../features/event/bus/BasicEventBus.js';
 import { DefaultMetaCollectionFactory } from '../meta/DefaultMetaCollectionFactory.js';
+import { ensureKey } from '../util/ensureKey';
 
 type StartPromiseData = {
   promise: Promise<NyxBot>;
   resolve: (value: NyxBot) => void;
   reject: (reason?: unknown) => void;
+};
+
+type BotServiceOptions = {
+  bot: NyxBot;
+  bus: EventBus<BotServiceEventArgs>;
 };
 
 export class DefaultBotService implements BotService {
@@ -30,9 +36,9 @@ export class DefaultBotService implements BotService {
 
   protected status: BotStatus = BotStatusEnum.Waiting;
 
-  constructor(bot: NyxBot, bus: EventBus<BotServiceEventArgs>) {
-    this.bot = bot;
-    this.bus = bus;
+  constructor(options: BotServiceOptions) {
+    this.bot = options.bot;
+    this.bus = options.bus;
 
     const startPromise: Partial<StartPromiseData> = {};
     startPromise.promise = new Promise<NyxBot>((resolve, reject) => {
@@ -42,19 +48,26 @@ export class DefaultBotService implements BotService {
     this.startPromise = startPromise as StartPromiseData;
   }
 
-  public static create(bot: NyxBot): BotService {
+  public static create(options: {
+    bot: NyxBot;
+    injections?: Partial<BotServiceOptions>;
+  }): BotService {
+    const constructorOptions = options.injections ?? {};
     const metaFactory = DefaultMetaCollectionFactory.createWith([
       TypedFields.Bot,
-      bot,
+      options.bot,
     ]);
 
-    const busId = Symbol('BotServiceEventBus');
-    const bus = BasicEventBus.createAsync<BotServiceEventArgs>(
-      busId,
-      metaFactory,
+    ensureKey(
+      constructorOptions,
+      'bus',
+      BasicEventBus.createAsync<BotServiceEventArgs>(
+        Symbol('BotServiceEventBus'),
+        metaFactory,
+      ),
     );
 
-    return new DefaultBotService(bot, bus);
+    return new DefaultBotService({ ...constructorOptions, bot: options.bot });
   }
 
   public isRunning(): boolean {

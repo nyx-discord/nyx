@@ -44,15 +44,15 @@ export class DefaultEventManager implements EventManager {
     this.clientBus.protect();
   }
 
-  public static create(
-    bot: NyxBot,
-    client: Client,
-    options?: Partial<EventManagerOptions>,
-  ): EventManager {
-    const constructorOptions = options ?? {};
+  public static create(options: {
+    bot: NyxBot;
+    client: Client;
+    injections?: Partial<EventManagerOptions>;
+  }): EventManager {
+    const constructorOptions = options.injections ?? {};
     const metaFactory = DefaultMetaCollectionFactory.createWith([
       TypedFields.Bot,
-      bot,
+      options.bot,
     ]);
 
     ensureKey(
@@ -69,7 +69,7 @@ export class DefaultEventManager implements EventManager {
       'clientBus',
       BasicEventEmitterBus.createSyncWithEmitter<ClientEvents, Client>(
         Symbol('ClientEventBus'),
-        client,
+        options.client,
         metaFactory,
       ),
     );

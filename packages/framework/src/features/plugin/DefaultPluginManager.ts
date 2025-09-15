@@ -18,7 +18,12 @@ import {
   TypedFields,
 } from '@nyx-discord/core';
 import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
+import { ensureKey } from '../../util/ensureKey';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
+
+type PluginManagerOptions = {
+  bus: EventBus<PluginEventArgs>;
+};
 
 export class DefaultPluginManager implements PluginManager {
   protected readonly bot: NyxBot;
@@ -27,22 +32,35 @@ export class DefaultPluginManager implements PluginManager {
 
   protected readonly bus: EventBus<PluginEventArgs>;
 
-  constructor(bot: NyxBot, bus: EventBus<PluginEventArgs>) {
-    this.bot = bot;
-    this.bus = bus;
+  constructor(options: { bot: NyxBot; bus: EventBus<PluginEventArgs> }) {
+    this.bot = options.bot;
+    this.bus = options.bus;
     this.plugins = new Collection<Identifier, NyxPlugin>();
   }
 
-  public static create(bot: NyxBot): PluginManager {
+  public static create(options: {
+    bot: NyxBot;
+    injections?: Partial<PluginManagerOptions>;
+  }): PluginManager {
+    const constructorOptions = options.injections ?? {};
     const metaFactory = DefaultMetaCollectionFactory.createWith([
       TypedFields.Bot,
-      bot,
+      options.bot,
     ]);
 
-    const busId = Symbol('PluginManagerEventBus');
-    const bus = BasicEventBus.createAsync(busId, metaFactory);
+    ensureKey(
+      constructorOptions,
+      'bus',
+      BasicEventBus.createAsync<PluginEventArgs>(
+        Symbol('PluginManagerEventBus'),
+        metaFactory,
+      ),
+    );
 
-    return new DefaultPluginManager(bot, bus);
+    return new DefaultPluginManager({
+      bot: options.bot,
+      ...constructorOptions,
+    });
   }
 
   public async onStart(): Promise<void> {

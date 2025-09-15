@@ -56,14 +56,14 @@ export class DefaultScheduleManager implements ScheduleManager {
     this.metaFactory = options.metaFactory;
   }
 
-  public static create(
-    bot: NyxBot,
-    options?: Partial<ScheduleManagerOptions>,
-  ): ScheduleManager {
-    const constructorOptions = options ?? {};
+  public static create(options: {
+    bot: NyxBot;
+    injections?: Partial<ScheduleManagerOptions>;
+  }): ScheduleManager {
+    const constructorOptions = options.injections ?? {};
     const metaFactory = DefaultMetaCollectionFactory.createWith([
       TypedFields.Bot,
-      bot,
+      options.bot,
     ]);
 
     ensureKey(

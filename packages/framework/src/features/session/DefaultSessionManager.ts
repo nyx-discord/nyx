@@ -74,15 +74,15 @@ export class DefaultSessionManager implements SessionManager {
     this.subscriber.protect();
   }
 
-  public static create(
-    bot: NyxBot,
-    clientBus: EventBus<ClientEvents>,
-    options?: Partial<SessionManagerOptions>,
-  ): SessionManager {
-    const constructorOptions = options ?? {};
+  public static create(options: {
+    bot: NyxBot;
+    clientBus: EventBus<ClientEvents>;
+    injections?: Partial<SessionManagerOptions>;
+  }): SessionManager {
+    const constructorOptions = options.injections ?? {};
     const metaFactory = DefaultMetaCollectionFactory.createWith([
       TypedFields.Bot,
-      bot,
+      options.bot,
     ]);
 
     ensureKey(constructorOptions, 'executor', DefaultSessionExecutor.create());
@@ -118,7 +118,7 @@ export class DefaultSessionManager implements SessionManager {
 
     const manager = new DefaultSessionManager({
       ...constructorOptions,
-      clientBus,
+      clientBus: options.clientBus,
     });
 
     constructorOptions.repository.setExpirationCallback(

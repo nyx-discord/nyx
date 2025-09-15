@@ -76,20 +76,21 @@ export class DefaultCommandManager implements CommandManager {
     this.metaFactory = options.metaFactory;
   }
 
-  public static create(
-    bot: NyxBot,
-    client: Client,
-    clientBus: EventBus<ClientEvents>,
-    deploy: boolean,
-    options?: Partial<CommandManagerOptions>,
-  ): CommandManager {
-    const constructorOptions: Partial<CommandManagerOptions> = options ?? {};
+  public static create(options: {
+    bot: NyxBot;
+    client: Client;
+    clientBus: EventBus<ClientEvents>;
+    deploy: boolean;
+    injections?: Partial<CommandManagerOptions>;
+  }): CommandManager {
+    const constructorOptions: Partial<CommandManagerOptions> =
+      options.injections ?? {};
     const metaFactory = DefaultMetaCollectionFactory.createWith([
       TypedFields.Bot,
-      bot,
+      options.bot,
     ]);
 
-    ensureKey(constructorOptions, 'deploy', deploy);
+    ensureKey(constructorOptions, 'deploy', options.deploy);
     ensureKey(
       constructorOptions,
       'eventBus',
@@ -114,7 +115,7 @@ export class DefaultCommandManager implements CommandManager {
       constructorOptions,
       'subscriptionsContainer',
       DefaultCommandSubscriptionsContainer.create(
-        clientBus,
+        options.clientBus,
         new DefaultCommandInteractionSubscriber(),
         new DefaultCommandAutocompleteSubscriber(),
       ),
@@ -122,7 +123,7 @@ export class DefaultCommandManager implements CommandManager {
     ensureKey(
       constructorOptions,
       'deployer',
-      new DefaultCommandDeployer(client),
+      new DefaultCommandDeployer(options.client),
     );
     ensureKey(constructorOptions, 'metaFactory', metaFactory);
 

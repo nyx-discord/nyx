@@ -83,21 +83,21 @@ export class Bot<
     client: Client,
     deployCommands: boolean,
   ) => {
-    const eventManager = DefaultEventManager.create(bot, client);
+    const eventManager = DefaultEventManager.create({ bot, client });
     const clientBus = eventManager.getClientBus();
 
     return {
       eventManager: eventManager,
-      commandManager: DefaultCommandManager.create(
+      commandManager: DefaultCommandManager.create({
         bot,
         client,
-        eventManager.getClientBus(),
-        deployCommands,
-      ),
-      scheduleManager: DefaultScheduleManager.create(bot),
-      sessionManager: DefaultSessionManager.create(bot, clientBus),
-      service: DefaultBotService.create(bot),
-      pluginManager: DefaultPluginManager.create(bot),
+        clientBus: eventManager.getClientBus(),
+        deploy: deployCommands,
+      }),
+      scheduleManager: DefaultScheduleManager.create({ bot }),
+      sessionManager: DefaultSessionManager.create({ bot, clientBus }),
+      service: DefaultBotService.create({ bot }),
+      pluginManager: DefaultPluginManager.create({ bot }),
     };
   };
 
