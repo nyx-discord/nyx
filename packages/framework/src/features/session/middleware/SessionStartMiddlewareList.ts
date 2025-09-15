@@ -10,8 +10,7 @@ import { SessionStartFilterCheckMiddleware } from '../filter/middleware/SessionS
 export class SessionStartMiddlewareList extends AbstractMiddlewareList<SessMiddleware> {
   public static create(): MiddlewareList<SessMiddleware> {
     const filterMiddleware = new SessionStartFilterCheckMiddleware();
-
-    return new SessionStartMiddlewareList().add(filterMiddleware);
+    return new this().add(filterMiddleware);
   }
 
   /** Wraps a generic error in a {@link SessionStartMiddlewareError}. */

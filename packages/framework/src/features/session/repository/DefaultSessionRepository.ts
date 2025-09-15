@@ -28,7 +28,7 @@ export class DefaultSessionRepository extends TTLCache<
   public static create(
     onExpire?: SessionExpirationCallback,
   ): SessionRepository {
-    return new DefaultSessionRepository(onExpire);
+    return new this(onExpire);
   }
 
   public onStart(): Awaitable<void> {

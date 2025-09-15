@@ -29,7 +29,7 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
   }
 
   public static create(): ScheduleExecutor {
-    return new DefaultScheduleExecutor(
+    return new this(
       ScheduleMiddlewareList.create(),
       BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
         TypedFields.Bot.get(meta, true).getLogger(),

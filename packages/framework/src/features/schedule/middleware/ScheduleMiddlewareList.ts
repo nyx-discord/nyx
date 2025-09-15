@@ -10,8 +10,7 @@ import { ScheduleFilterCheckMiddleware } from './ScheduleFilterCheckMiddleware.j
 export class ScheduleMiddlewareList extends AbstractMiddlewareList<ScheduleMiddleware> {
   public static create(): MiddlewareList<ScheduleMiddleware> {
     const filterMiddleware = new ScheduleFilterCheckMiddleware();
-
-    return new ScheduleMiddlewareList().add(filterMiddleware);
+    return new this().add(filterMiddleware);
   }
 
   /** Wraps a generic error in a {@link ScheduleMiddlewareError}. */

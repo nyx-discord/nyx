@@ -22,6 +22,10 @@ export class DefaultCommandDeployer implements CommandDeployer {
     this.client = client;
   }
 
+  public static create(client: Client): CommandDeployer {
+    return new this(client);
+  }
+
   public async deploy(): Promise<
     ReadonlyCollection<string, ApplicationCommand>
   > {

@@ -55,7 +55,7 @@ export class DefaultSessionExecutor implements SessionExecutor {
   }
 
   public static create(): SessionExecutor {
-    return new DefaultSessionExecutor(
+    return new this(
       SessionStartMiddlewareList.create(),
       SessionUpdateMiddlewareList.create(),
 

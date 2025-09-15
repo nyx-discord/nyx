@@ -90,7 +90,7 @@ export class DefaultScheduleManager implements ScheduleManager {
     );
     ensureKey(constructorOptions, 'metaFactory', metaFactory);
 
-    return new DefaultScheduleManager(constructorOptions);
+    return new this(constructorOptions);
   }
 
   public async onStart(): Promise<void> {

@@ -24,7 +24,7 @@ export class DefaultCommandRepository implements CommandRepository {
   }
 
   public static create(): CommandRepository {
-    return new DefaultCommandRepository();
+    return new this();
   }
 
   public addCommand(command: TopLevelCommand): this {

@@ -10,7 +10,7 @@ export class DefaultSessionCustomIdCodec implements SessionCustomIdCodec {
   protected static readonly Id = 'S';
 
   public static create(): SessionCustomIdCodec {
-    return new DefaultSessionCustomIdCodec();
+    return new this();
   }
 
   public serialize(data: SessionCustomIdData): string {

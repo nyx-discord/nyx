@@ -9,7 +9,7 @@ import { CommandFilterCheckMiddleware } from '../filter/middleware/CommandFilter
 
 export class CommandMiddlewareList extends AbstractMiddlewareList<CommandMiddleware> {
   public static create(): MiddlewareList<CommandMiddleware> {
-    const list = new CommandMiddlewareList();
+    const list = new this();
     list.add(new CommandFilterCheckMiddleware());
     return list;
   }

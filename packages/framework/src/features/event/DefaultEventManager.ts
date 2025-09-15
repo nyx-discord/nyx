@@ -74,7 +74,7 @@ export class DefaultEventManager implements EventManager {
       ),
     );
 
-    return new DefaultEventManager(constructorOptions);
+    return new this(constructorOptions);
   }
 
   public onStart(): Awaitable<void> {

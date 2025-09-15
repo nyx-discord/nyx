@@ -65,7 +65,7 @@ export class Bot<
   >(
     generator: (bot: NyxBot) => BotOptionsWithDefaults<Implementations>,
   ): NyxBot<InjectableBotDependencies & Implementations> {
-    return new Bot((bot) => {
+    return new this((bot) => {
       const generatedOptions = generator(bot);
       const defaultOptions = Bot.DefaultOptionsGenerator(
         bot,

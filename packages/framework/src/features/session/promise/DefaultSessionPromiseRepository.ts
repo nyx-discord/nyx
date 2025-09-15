@@ -19,7 +19,7 @@ export class DefaultSessionPromiseRepository
   protected readonly promises: Map<string, SessionPromiseData> = new Map();
 
   public static create(): SessionPromiseRepository {
-    return new DefaultSessionPromiseRepository();
+    return new this();
   }
 
   public onStart(): void {

@@ -22,7 +22,7 @@ export class DefaultScheduleRepository implements ScheduleRepository {
   }
 
   public static create(): ScheduleRepository {
-    return new DefaultScheduleRepository();
+    return new this();
   }
 
   public onStart(): Awaitable<void> {

@@ -57,7 +57,7 @@ export class DefaultPluginManager implements PluginManager {
       ),
     );
 
-    return new DefaultPluginManager({
+    return new this({
       bot: options.bot,
       ...constructorOptions,
     });

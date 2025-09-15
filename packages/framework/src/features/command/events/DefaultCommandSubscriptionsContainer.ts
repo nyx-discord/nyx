@@ -50,11 +50,7 @@ export class DefaultCommandSubscriptionsContainer
       Events.InteractionCreate
     >,
   ) {
-    return new DefaultCommandSubscriptionsContainer(
-      eventBus,
-      interactionSubscriber,
-      autocompleteSubscriber,
-    );
+    return new this(eventBus, interactionSubscriber, autocompleteSubscriber);
   }
 
   public async onStart(): Promise<void> {

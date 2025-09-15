@@ -11,7 +11,7 @@ import { ApplicationCommandType } from 'discord.js';
 
 export class DefaultCommandResolver implements CommandResolver {
   public static create(): CommandResolver {
-    return new DefaultCommandResolver();
+    return new this();
   }
 
   public resolveFromCommandInteraction(

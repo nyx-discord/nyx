@@ -116,7 +116,7 @@ export class DefaultSessionManager implements SessionManager {
     );
     ensureKey(constructorOptions, 'metaFactory', metaFactory);
 
-    const manager = new DefaultSessionManager({
+    const manager = new this({
       ...constructorOptions,
       clientBus: options.clientBus,
     });

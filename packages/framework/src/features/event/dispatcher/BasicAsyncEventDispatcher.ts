@@ -1,10 +1,10 @@
 import {
-  TypedFields,
   type AnyEventSubscriber,
   type AsyncEventDispatcher,
   type EventSubscriberErrorHandler,
   type EventSubscriberMiddleware,
   type MiddlewareList,
+  TypedFields,
 } from '@nyx-discord/core';
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
 import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList.js';
@@ -28,7 +28,7 @@ export class BasicAsyncEventDispatcher
   }
 
   public static create(concurrencyLimit?: number | null): AsyncEventDispatcher {
-    return new BasicAsyncEventDispatcher(
+    return new this(
       BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
         TypedFields.Bot.get(meta, true).getLogger(),
       ),

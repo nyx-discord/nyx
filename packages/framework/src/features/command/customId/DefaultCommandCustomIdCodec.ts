@@ -11,7 +11,7 @@ export class DefaultCommandCustomIdCodec implements CommandCustomIdCodec {
   protected static readonly Id = 'C';
 
   public static create(): CommandCustomIdCodec {
-    return new DefaultCommandCustomIdCodec();
+    return new this();
   }
 
   public serialize(data: CommandCustomIdData): string {

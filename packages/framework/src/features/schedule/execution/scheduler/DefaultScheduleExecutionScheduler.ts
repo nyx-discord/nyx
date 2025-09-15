@@ -2,6 +2,7 @@ import type { ReadonlyCollection } from '@discordjs/collection';
 import type {
   Identifier,
   MetaCollection,
+  MetaCollectionFactory,
   Schedule,
   ScheduleExecutionScheduler,
   ScheduleExecutor,
@@ -10,7 +11,6 @@ import type {
 import {
   canBeIdentifier,
   IllegalStateError,
-  MetaCollectionFactory,
   ObjectNotFoundError,
 } from '@nyx-discord/core';
 import type { CronJobParams } from 'cron';
@@ -55,12 +55,7 @@ export class DefaultScheduleExecutionScheduler
   ): ScheduleExecutionScheduler {
     const parameters =
       jobParameters ?? DefaultScheduleExecutionScheduler.DefaultJobParameters;
-
-    return new DefaultScheduleExecutionScheduler(
-      executor,
-      metaFactory,
-      parameters,
-    );
+    return new this(executor, metaFactory, parameters);
   }
 
   public onStart(): Awaitable<void> {

@@ -117,11 +117,11 @@ export class DefaultCommandManager implements CommandManager {
     ensureKey(
       constructorOptions,
       'deployer',
-      new DefaultCommandDeployer(options.client),
+      DefaultCommandDeployer.create(options.client),
     );
     ensureKey(constructorOptions, 'metaFactory', metaFactory);
 
-    return new DefaultCommandManager(constructorOptions);
+    return new this(constructorOptions);
   }
 
   public async onStart(): Promise<void> {

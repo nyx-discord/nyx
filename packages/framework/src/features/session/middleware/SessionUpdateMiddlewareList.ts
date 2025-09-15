@@ -10,8 +10,7 @@ import { SessionUpdateFilterCheckMiddleware } from '../filter/middleware/Session
 export class SessionUpdateMiddlewareList extends AbstractMiddlewareList<SesMiddleware> {
   public static create(): MiddlewareList<SesMiddleware> {
     const filterMiddleware = new SessionUpdateFilterCheckMiddleware();
-
-    return new SessionUpdateMiddlewareList().add(filterMiddleware);
+    return new this().add(filterMiddleware);
   }
 
   /** Wraps a generic error in a {@link SessionUpdateMiddlewareError}. */

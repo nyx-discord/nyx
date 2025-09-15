@@ -15,7 +15,7 @@ export class SubscriberMiddlewareList extends AbstractMiddlewareList<SubMiddlewa
     const filterMiddleware = new SubscriberFilterCheckMiddleware();
     const lifetimeEventMiddleware = new LifetimeCheckEventMiddleware();
 
-    return new SubscriberMiddlewareList().add(
+    return new this().add(
       handledEventMiddleware,
       filterMiddleware,
       lifetimeEventMiddleware,

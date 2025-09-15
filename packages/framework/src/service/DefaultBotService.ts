@@ -67,7 +67,7 @@ export class DefaultBotService implements BotService {
       ),
     );
 
-    return new DefaultBotService({ ...constructorOptions, bot: options.bot });
+    return new this({ ...constructorOptions, bot: options.bot });
   }
 
   public isRunning(): boolean {

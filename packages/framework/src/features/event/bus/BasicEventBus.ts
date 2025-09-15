@@ -64,7 +64,7 @@ export class BasicEventBus<
     id: Identifier,
     metaFactory?: MetaCollectionFactory,
   ): EventBus<EventArgsObject> {
-    return new BasicEventBus<EventArgsObject>(
+    return new this<EventArgsObject>(
       id,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
@@ -79,7 +79,7 @@ export class BasicEventBus<
     id: Identifier,
     metaFactory?: MetaCollectionFactory,
   ): EventBus<EventArgsObject> {
-    return new BasicEventBus<EventArgsObject>(
+    return new this<EventArgsObject>(
       id,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),

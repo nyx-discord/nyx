@@ -43,7 +43,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   }
 
   public static create(): CommandExecutor {
-    return new DefaultCommandExecutor(
+    return new this(
       BasicErrorHandler.createWithFallbackLogger<
         AnyExecutableCommand,
         CommandExecutionArgs
