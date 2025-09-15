@@ -131,7 +131,7 @@ export class DefaultScheduleManager implements ScheduleManager {
 
     Promise.resolve(
       this.bus.emit(ScheduleEventEnum.ScheduleAdd, [schedule]),
-    ).catch((error) => {});
+    ).catch((_error) => {});
 
     return job;
   }
@@ -155,7 +155,7 @@ export class DefaultScheduleManager implements ScheduleManager {
 
     Promise.resolve(
       this.bus.emit(ScheduleEventEnum.ScheduleRemove, [schedule]),
-    ).catch((error) => {});
+    ).catch((_error) => {});
 
     return this;
   }
