@@ -32,11 +32,7 @@ export class DefaultCommandCustomIdCodec implements CommandCustomIdCodec {
       return null;
     }
 
-    const id = parts[1];
-    if (!id) {
-      return null;
-    }
-    const typeString = parts[2];
+    const typeString = parts[1];
     if (!typeString) {
       return null;
     }
@@ -45,14 +41,14 @@ export class DefaultCommandCustomIdCodec implements CommandCustomIdCodec {
       return null;
     }
 
-    const name = parts[3];
+    const name = parts[2];
     if (!name) {
       return null;
     }
 
-    const subcommand = parts[4] || null;
-    const group = parts[5] || null;
-    const extra = parts[6] || null;
+    const subcommand = parts[3] || null;
+    const group = parts[4] || null;
+    const extra = parts[5] || null;
 
     return {
       type,
