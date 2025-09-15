@@ -1,5 +1,5 @@
 import type { Awaitable } from 'discord.js';
-import type { BotAware } from '../../../bot/BotAware.js';
+import type { NyxBot } from '../../../bot/NyxBot';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { MetaCollection } from '../../../meta/MetaCollection.js';
 import type { Metadatable } from '../../../meta/Metadatable.js';
@@ -19,10 +19,7 @@ import type { SessionState } from '../state/SessionState.js';
  * A session stores its state, and can be updated and respond to
  * {@link SessionUpdateInteraction user interactions}.
  */
-export interface Session<Result>
-  extends BotAware,
-    Identifiable<string>,
-    Metadatable {
+export interface Session<Result> extends Identifiable<string>, Metadatable {
   /**
    * Starts the session. Alias of `SessionManager#start(this)`.
    *
@@ -90,4 +87,7 @@ export interface Session<Result>
 
   /** Sets the state of this session. */
   setState(state: SessionState): void;
+
+  /** Returns the bot that owns this session. */
+  getBot(): NyxBot;
 }

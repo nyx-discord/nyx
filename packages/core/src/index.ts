@@ -1,4 +1,3 @@
-export * from './bot/BotAware';
 export * from './bot/BotOptions';
 export * from './bot/inject/InjectableBotDependencies';
 export * from './bot/NyxBot';

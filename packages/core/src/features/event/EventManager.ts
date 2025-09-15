@@ -1,6 +1,5 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable, ClientEvents } from 'discord.js';
-import type { BotAware } from '../../bot/BotAware.js';
 import type { Identifier } from '../../identity/Identifier.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { ClassImplements } from '../../types/ClassImplements.js';
@@ -10,7 +9,7 @@ import type { EventManagerEventsArgs } from './events/EventManagerEvent.js';
 import type { EventSubscriber } from './subscriber/EventSubscriber.js';
 
 /** An object that holds the objects and methods that make together a bot's event system. */
-export interface EventManager extends BotAware, BotLifecycleObserver {
+export interface EventManager extends BotLifecycleObserver {
   /**
    * Adds event buses to the manager.
    *

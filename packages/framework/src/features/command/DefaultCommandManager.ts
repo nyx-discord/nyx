@@ -46,8 +46,6 @@ type CommandManagerOptions = {
 };
 
 export class DefaultCommandManager implements CommandManager {
-  public readonly bot: NyxBot;
-
   protected readonly subscriptionsContainer: CommandSubscriptionsContainer;
 
   protected readonly resolver: CommandResolver;
@@ -66,8 +64,7 @@ export class DefaultCommandManager implements CommandManager {
 
   protected readonly metaFactory: MetaCollectionFactory;
 
-  constructor(bot: NyxBot, options: CommandManagerOptions) {
-    this.bot = bot;
+  constructor(options: CommandManagerOptions) {
     this.repository = options.repository;
     this.executor = options.executor;
     this.customIdCodec = options.customIdCodec;
@@ -129,11 +126,10 @@ export class DefaultCommandManager implements CommandManager {
     );
     ensureKey(constructorOptions, 'metaFactory', metaFactory);
 
-    return new DefaultCommandManager(bot, constructorOptions);
+    return new DefaultCommandManager(constructorOptions);
   }
 
   public async onStart(): Promise<void> {
-    await this.eventBus.onRegister();
     await this.subscriptionsContainer.onStart();
     if (this.deployOnStart) {
       await this.deployer.deploy();
@@ -142,7 +138,6 @@ export class DefaultCommandManager implements CommandManager {
 
   public async onStop(): Promise<void> {
     await this.subscriptionsContainer.onStop();
-    await this.eventBus.onUnregister();
   }
 
   public async addCommands(...commands: TopLevelCommand[]): Promise<this> {
@@ -163,16 +158,7 @@ export class DefaultCommandManager implements CommandManager {
     for (const command of commands) {
       Promise.resolve(
         this.eventBus.emit(CommandEventEnum.CommandAdd, [command]),
-      ).catch((error) => {
-        const id = command.getId();
-
-        this.bot
-          .getLogger()
-          .error(
-            `'Uncaught bus error while emitting command add '${id}'.`,
-            error,
-          );
-      });
+      ).catch((_error) => {});
     }
 
     return this;
@@ -196,16 +182,7 @@ export class DefaultCommandManager implements CommandManager {
     for (const command of commands) {
       Promise.resolve(
         this.eventBus.emit(CommandEventEnum.CommandRemove, [command]),
-      ).catch((error) => {
-        const id = command.getId();
-
-        this.bot
-          .getLogger()
-          .error(
-            `'Uncaught bus error while emitting command remove '${id}'.`,
-            error,
-          );
-      });
+      ).catch((_error) => {});
     }
 
     return this;
@@ -227,32 +204,14 @@ export class DefaultCommandManager implements CommandManager {
       this.repository.removeCommand(repoCommand);
       Promise.resolve(
         this.eventBus.emit(CommandEventEnum.CommandRemove, [repoCommand]),
-      ).catch((error) => {
-        const id = repoCommand.getId();
-
-        this.bot
-          .getLogger()
-          .error(
-            `'Uncaught bus error while emitting command remove due to set '${id}'.`,
-            error,
-          );
-      });
+      ).catch((_error) => {});
     }
 
     for (const setCommand of commands) {
       this.repository.addCommand(setCommand);
       Promise.resolve(
         this.eventBus.emit(CommandEventEnum.CommandAdd, [setCommand]),
-      ).catch((error) => {
-        const id = setCommand.getId();
-
-        this.bot
-          .getLogger()
-          .error(
-            `'Uncaught bus error while emitting command add due to set '${id}'.`,
-            error,
-          );
-      });
+      ).catch((_error) => {});
     }
 
     await this.deployer.setCommands(...commands);
@@ -285,12 +244,13 @@ export class DefaultCommandManager implements CommandManager {
       if (!command.isSubCommand() && !command.isStandalone()) return false;
       await this.executor.autocomplete(command, interaction, metadata);
     } catch (error) {
-      this.bot
-        .getLogger()
-        .error(
-          `Uncaught executor error while autocompleting command '${String(executionId)}'.`,
-          error,
-        );
+      const wrapped = new Error(
+        `Uncaught executor error while autocompleting command '${String(executionId)}'.`,
+        { cause: error },
+      );
+      await this.executor
+        .getErrorHandler()
+        .handle(wrapped, command, [interaction, metadata]);
     }
 
     Promise.resolve(
@@ -299,14 +259,7 @@ export class DefaultCommandManager implements CommandManager {
         interaction,
         metadata,
       ]),
-    ).catch((error) => {
-      this.bot
-        .getLogger()
-        .error(
-          `Uncaught event bus error while emitting command autocomplete '${String(executionId)}'.`,
-          error,
-        );
-    });
+    ).catch((_error) => {});
 
     return interaction.responded;
   }
@@ -354,13 +307,13 @@ export class DefaultCommandManager implements CommandManager {
     try {
       await this.executor.execute(command, interaction, metadata);
     } catch (error) {
-      this.bot
-        .getLogger()
-        .error(
-          `Uncaught executor error while executing command '${String(executionId)}'.`,
-          error,
-        );
-
+      const wrapped = new Error(
+        `Uncaught executor error while executing command '${String(executionId)}'.`,
+        { cause: error },
+      );
+      await this.executor
+        .getErrorHandler()
+        .handle(wrapped, command, [interaction, metadata]);
       return interaction.replied;
     }
 
@@ -370,14 +323,7 @@ export class DefaultCommandManager implements CommandManager {
         interaction,
         metadata,
       ]),
-    ).catch((error) => {
-      this.bot
-        .getLogger()
-        .error(
-          `Uncaught event bus error while emitting command run '${String(executionId)}'.`,
-          error,
-        );
-    });
+    ).catch((_error) => {});
 
     return true;
   }

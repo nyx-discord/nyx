@@ -38,8 +38,6 @@ type ScheduleManagerOptions = {
 };
 
 export class DefaultScheduleManager implements ScheduleManager {
-  public readonly bot: NyxBot;
-
   protected readonly executor: ScheduleExecutor;
 
   protected readonly repository: ScheduleRepository;
@@ -50,8 +48,7 @@ export class DefaultScheduleManager implements ScheduleManager {
 
   protected readonly metaFactory: MetaCollectionFactory;
 
-  constructor(bot: NyxBot, options: ScheduleManagerOptions) {
-    this.bot = bot;
+  constructor(options: ScheduleManagerOptions) {
     this.repository = options.repository;
     this.executor = options.executor;
     this.scheduler = options.scheduler;
@@ -93,11 +90,10 @@ export class DefaultScheduleManager implements ScheduleManager {
     );
     ensureKey(constructorOptions, 'metaFactory', metaFactory);
 
-    return new DefaultScheduleManager(bot, constructorOptions);
+    return new DefaultScheduleManager(constructorOptions);
   }
 
   public async onStart(): Promise<void> {
-    await this.bus.onRegister();
     await this.repository.onStart();
     await this.scheduler.onStart();
   }
@@ -105,7 +101,6 @@ export class DefaultScheduleManager implements ScheduleManager {
   public async onStop(): Promise<void> {
     await this.repository.onStop();
     await this.scheduler.onStop();
-    await this.bus.onUnregister();
   }
 
   public async addSchedule(
@@ -120,38 +115,25 @@ export class DefaultScheduleManager implements ScheduleManager {
       );
     }
 
+    let job;
     try {
       await this.repository.addSchedule(schedule);
-      const job = await this.scheduler.start(schedule);
-
-      await schedule.onRegister(this.bot);
-
-      Promise.resolve(
-        this.bus.emit(ScheduleEventEnum.ScheduleAdd, [schedule]),
-      ).catch((error) => {
-        const scheduleId = String(schedule.getId());
-
-        this.bot
-          .getLogger()
-          .error(
-            `Uncaught bus error while emitting schedule add '${scheduleId}'.`,
-            error,
-          );
-      });
-
-      return job;
+      job = await this.scheduler.start(schedule);
     } catch (error) {
-      this.bot
-        .getLogger()
-        .error(
-          `There was an error while adding schedule '${String(
-            schedule.getId(),
-          )}'.`,
-          error,
-        );
-
+      if (this.repository.getScheduleByID(schedule.getId())) {
+        await this.repository.removeSchedule(schedule);
+      }
+      if (this.scheduler.getJobForSchedule(schedule)) {
+        await this.scheduler.destroy(schedule);
+      }
       throw error;
     }
+
+    Promise.resolve(
+      this.bus.emit(ScheduleEventEnum.ScheduleAdd, [schedule]),
+    ).catch((error) => {});
+
+    return job;
   }
 
   public async removeSchedule(
@@ -167,31 +149,13 @@ export class DefaultScheduleManager implements ScheduleManager {
         `Schedule with ID ${String(id)} not found.`,
       );
     }
-    try {
-      await this.repository.removeSchedule(scheduleOrId);
-      await this.scheduler.destroy(schedule);
-      await schedule.onUnregister(this.bot);
 
-      Promise.resolve(
-        this.bus.emit(ScheduleEventEnum.ScheduleRemove, [schedule]),
-      ).catch((error) => {
-        const scheduleId = String(schedule.getId());
+    await this.repository.removeSchedule(scheduleOrId);
+    await this.scheduler.destroy(schedule);
 
-        this.bot
-          .getLogger()
-          .error(
-            `Uncaught bus error while emitting schedule remove '${scheduleId}'.`,
-            error,
-          );
-      });
-    } catch (error) {
-      this.bot
-        .getLogger()
-        .error(
-          `There was an error while removing schedule '${String(id)}'.`,
-          error,
-        );
-    }
+    Promise.resolve(
+      this.bus.emit(ScheduleEventEnum.ScheduleRemove, [schedule]),
+    ).catch((error) => {});
 
     return this;
   }

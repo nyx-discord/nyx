@@ -1,5 +1,4 @@
 import type { Awaitable } from 'discord.js';
-import type { BotAware } from '../../bot/BotAware.js';
 import type { Identifier } from '../../identity/Identifier.js';
 import type { MetaCollection } from '../../meta/MetaCollection.js';
 import type { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
@@ -16,7 +15,7 @@ import type { ReadonlyScheduleRepository } from './repository/ReadonlyScheduleRe
 import type { Schedule } from './schedule/Schedule.js';
 
 /** An object that holds methods for interacting with the bot's {@link Schedule schedules}. */
-export interface ScheduleManager extends BotLifecycleObserver, BotAware {
+export interface ScheduleManager extends BotLifecycleObserver {
   /**
    * Adds a new {@link Schedule}.
    *

@@ -1,5 +1,4 @@
 import type { AutocompleteInteraction, Awaitable } from 'discord.js';
-import type { BotAware } from '../../bot/BotAware.js';
 import type { MetaCollection } from '../../meta/MetaCollection.js';
 import type { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
@@ -16,7 +15,7 @@ import type { ReadonlyCommandRepository } from './repository/ReadonlyCommandRepo
 import type { CommandResolver } from './resolve/CommandResolver';
 
 /** An object that holds methods for interacting with the bot's {@link Command commands}. */
-export interface CommandManager extends BotAware, BotLifecycleObserver {
+export interface CommandManager extends BotLifecycleObserver {
   /**
    * Executes a command using the {@link CommandExecutor}.
    * @fires CommandEvent#CommandRun

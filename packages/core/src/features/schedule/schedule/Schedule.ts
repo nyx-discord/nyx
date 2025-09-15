@@ -16,12 +16,6 @@ export interface Schedule
   /** Runs this schedule. */
   tick(...args: ScheduleTickArgs): Awaitable<void>;
 
-  /** Called when the schedule is registered on a {@link ScheduleRepository}. */
-  onRegister(bot: NyxBot): Awaitable<void>;
-
-  /** Called when the schedule is unregistered from a {@link ScheduleRepository}. */
-  onUnregister(bot: NyxBot): Awaitable<void>;
-
   /** Returns this schedule's execution interval. */
   getInterval(): ScheduleInterval;
 

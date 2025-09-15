@@ -21,7 +21,7 @@ import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFa
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 
 export class DefaultPluginManager implements PluginManager {
-  public readonly bot: NyxBot;
+  protected readonly bot: NyxBot;
 
   protected readonly plugins: Collection<Identifier, NyxPlugin>;
 
@@ -46,11 +46,11 @@ export class DefaultPluginManager implements PluginManager {
   }
 
   public async onStart(): Promise<void> {
-    await this.bus.onRegister();
+    /** Do nothing by default */
   }
 
   public async onStop(): Promise<void> {
-    await this.bus.onUnregister();
+    /** Do nothing by default */
   }
 
   public async register(...plugins: NyxPlugin[]): Promise<this> {

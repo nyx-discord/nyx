@@ -1,5 +1,4 @@
 import type { Awaitable, ClientEvents, Events } from 'discord.js';
-import type { BotAware } from '../../bot/BotAware.js';
 import type { MetaCollection } from '../../meta/MetaCollection.js';
 import type { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
 import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
@@ -15,7 +14,7 @@ import type { ReadonlySessionRepository } from './repository/ReadonlySessionRepo
 import type { Session } from './session/Session.js';
 
 /** An object that holds the objects and methods that make together a bot's session system. */
-export interface SessionManager extends BotAware, BotLifecycleObserver {
+export interface SessionManager extends BotLifecycleObserver {
   /**
    * Starts a new session.
    *

@@ -22,7 +22,7 @@ import { NotImplementedError } from '../../../../errors/NotImplementedError.js';
 export abstract class AbstractSessionStage<Result = void>
   implements SessionStage<Result>
 {
-  public readonly bot: NyxBot;
+  protected readonly bot: NyxBot;
 
   protected readonly codec: SessionCustomIdCodec;
 
@@ -33,10 +33,10 @@ export abstract class AbstractSessionStage<Result = void>
   protected result: Result | null = null;
 
   constructor(session: StagePaginationSession<unknown>) {
-    this.bot = session.bot;
+    this.bot = session.getBot();
     this.session = session;
     this.customIdData = session.getCustomIdData();
-    this.codec = session.bot.getSessionManager().getCustomIdCodec();
+    this.codec = session.getBot().getSessionManager().getCustomIdCodec();
   }
 
   public abstract onSwitch(

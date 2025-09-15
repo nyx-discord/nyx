@@ -22,7 +22,7 @@ type StartPromiseData = {
 };
 
 export class DefaultBotService implements BotService {
-  public readonly bot: NyxBot;
+  protected readonly bot: NyxBot;
 
   protected readonly bus: EventBus<BotServiceEventArgs>;
 
@@ -124,7 +124,6 @@ export class DefaultBotService implements BotService {
         .error('Uncaught bus error while emitting stop event.', error);
     });
 
-    await this.bus.onUnregister();
     await this.bot.getClient().destroy();
 
     return this;

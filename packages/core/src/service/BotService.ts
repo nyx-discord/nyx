@@ -1,11 +1,10 @@
 import type { Awaitable } from 'discord.js';
-import type { BotAware } from '../bot/BotAware.js';
 import type { NyxBot } from '../bot/NyxBot.js';
-import { Identifier } from '../identity/Identifier';
-import { BotStatus } from './BotStatus';
+import type { Identifier } from '../identity/Identifier';
+import type { BotStatus } from './BotStatus';
 
 /** The object responsible for managing a bot's . */
-export interface BotService extends BotAware {
+export interface BotService {
   /**
    * Starts the bot, that is setting it up and logging.
    *

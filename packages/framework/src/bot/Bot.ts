@@ -84,6 +84,7 @@ export class Bot<
     deployCommands: boolean,
   ) => {
     const eventManager = DefaultEventManager.create(bot, client);
+    const clientBus = eventManager.getClientBus();
 
     return {
       eventManager: eventManager,
@@ -94,7 +95,7 @@ export class Bot<
         deployCommands,
       ),
       scheduleManager: DefaultScheduleManager.create(bot),
-      sessionManager: DefaultSessionManager.create(bot),
+      sessionManager: DefaultSessionManager.create(bot, clientBus),
       service: DefaultBotService.create(bot),
       pluginManager: DefaultPluginManager.create(bot),
     };

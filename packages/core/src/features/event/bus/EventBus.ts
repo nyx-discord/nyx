@@ -19,12 +19,6 @@ export interface EventBus<
     Identifiable,
     Metadatable,
     IterableIterator<[Identifier, AnyEventSubscriberFrom<ArgsRecord>]> {
-  /** Called by the {@link EventManager} after this bus is registered on it. */
-  onRegister(): Awaitable<void>;
-
-  /** Called by the {@link EventManager} after this bus is unregistered from it. */
-  onUnregister(): Awaitable<void>;
-
   /**
    * Subscribes a list of {@link EventSubscriber}.
    *

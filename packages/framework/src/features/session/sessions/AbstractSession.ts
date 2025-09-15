@@ -32,7 +32,7 @@ export abstract class AbstractSession<Result = void>
 {
   public static readonly DefaultTTL = 180_000; // 3 minutes
 
-  public readonly bot: NyxBot;
+  protected readonly bot: NyxBot;
 
   protected readonly id: string;
 
@@ -169,6 +169,10 @@ export abstract class AbstractSession<Result = void>
       ...this.customIdData,
       extra: extra ?? null,
     };
+  }
+
+  public getBot(): NyxBot {
+    return this.bot;
   }
 
   public buildCustomId(extra?: string): string {

@@ -242,14 +242,6 @@ export class BasicEventBus<
     return this.metaFactory;
   }
 
-  public onUnregister(): Awaitable<void> {
-    /** Do nothing by default. */
-  }
-
-  public onRegister(): Awaitable<void> {
-    /** Do nothing by default. */
-  }
-
   public isProtected(): boolean {
     return this.protected;
   }

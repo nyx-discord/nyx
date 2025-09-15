@@ -18,7 +18,7 @@ import {
   ProtectedObjectError,
   TypedFields,
 } from '@nyx-discord/core';
-import type { Client, ClientEvents } from 'discord.js';
+import type { Awaitable, Client, ClientEvents } from 'discord.js';
 import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
 import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from './bus/BasicEventBus.js';
@@ -30,16 +30,13 @@ type EventManagerOptions = {
 };
 
 export class DefaultEventManager implements EventManager {
-  public readonly bot: NyxBot;
-
   protected readonly buses: Collection<Identifier, AnyEventBus>;
 
   protected readonly managerBus: EventBus<EventManagerEventsArgs>;
 
   protected readonly clientBus: EventBus<ClientEvents>;
 
-  constructor(bot: NyxBot, options: EventManagerOptions) {
-    this.bot = bot;
+  constructor(options: EventManagerOptions) {
     this.managerBus = options.managerBus;
     this.clientBus = options.clientBus;
     this.buses = new Collection<Identifier, AnyEventBus>();
@@ -77,22 +74,17 @@ export class DefaultEventManager implements EventManager {
       ),
     );
 
-    return new DefaultEventManager(bot, constructorOptions);
+    return new DefaultEventManager(constructorOptions);
   }
 
-  public async onStart(): Promise<void> {
-    await this.managerBus.onRegister();
-    await this.clientBus.onRegister();
+  public onStart(): Awaitable<void> {
+    /** Do nothing by default */
   }
 
-  public async onStop(): Promise<void> {
+  public onStop(): Awaitable<void> {
     for (const bus of this.buses.values()) {
-      await bus.onUnregister();
       this.buses.delete(bus.getId());
     }
-
-    await this.managerBus.onUnregister();
-    await this.clientBus.onUnregister();
   }
 
   public async addEventBuses(...buses: AnyEventBus[]): Promise<this> {
@@ -106,21 +98,11 @@ export class DefaultEventManager implements EventManager {
           `Bus '${String(id)}' is already registered.`,
         );
       }
-
       this.buses.set(id, bus);
-
-      await bus.onRegister();
 
       Promise.resolve(
         this.managerBus.emit(EventManagerEventEnum.EventBusAdd, [bus]),
-      ).catch((error) => {
-        this.bot
-          .getLogger()
-          .error(
-            `Uncaught bus error while emitting bus add of '${String(id)}'.`,
-            error,
-          );
-      });
+      ).catch((_error) => {});
     }
 
     return this;
@@ -147,20 +129,9 @@ export class DefaultEventManager implements EventManager {
     await presentBus.clearSubscribers(undefined, true);
     this.buses.delete(id);
 
-    await presentBus.onUnregister();
-
     Promise.resolve(
       this.managerBus.emit(EventManagerEventEnum.EventBusRemove, [presentBus]),
-    ).catch((error) => {
-      const busId = String(presentBus.getId());
-
-      this.bot
-        .getLogger()
-        .error(
-          `Uncaught bus error while emitting event bus remove '${busId}'.`,
-          error,
-        );
-    });
+    ).catch((_error) => {});
 
     return this;
   }
