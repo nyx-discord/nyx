@@ -1,10 +1,29 @@
-import { SlashCommandSubcommandBuilder } from 'discord.js';
+import {
+  APIApplicationCommandSubcommandOption,
+  SlashCommandSubcommandBuilder,
+} from 'discord.js';
 import { vi } from 'vitest';
-import { AbstractSubCommand } from '../../../src';
+import {
+  AbstractSubCommand,
+  ParentCommand,
+  SubCommandGroup,
+} from '../../../src';
 import { MockParentCommand } from './MockParentCommand';
 import { MockSubCommandGroup } from './MockSubcommandGroup';
 
 export class MockSubCommand extends AbstractSubCommand {
+  public execute = vi.fn();
+
+  protected readonly data: APIApplicationCommandSubcommandOption;
+
+  constructor(parent: ParentCommand | SubCommandGroup, name?: string) {
+    super(parent);
+    this.data = new SlashCommandSubcommandBuilder()
+      .setName(name ?? 'mock-subcommand')
+      .setDescription('Mock subcommand')
+      .toJSON();
+  }
+
   public static createOnGroup() {
     const parent = new MockParentCommand();
     const group = new MockSubCommandGroup(parent);
@@ -14,13 +33,5 @@ export class MockSubCommand extends AbstractSubCommand {
   public static createOnParent() {
     const parent = new MockParentCommand();
     return new MockSubCommand(parent);
-  }
-
-  public execute = vi.fn();
-
-  protected createData() {
-    return new SlashCommandSubcommandBuilder()
-      .setName('mock-subcommand')
-      .setDescription('Mock subcommand');
   }
 }

@@ -1,3 +1,4 @@
+import { describe, expect, it, test } from 'vitest';
 import { DefaultCommandRepository } from '../../../../src';
 import { MockParentCommand } from '../../mocks/MockParentCommand';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
@@ -172,50 +173,6 @@ describe('DefaultCommandRepository', () => {
           group.getData().name,
           subcommand.getData().name,
         ),
-      ).toBe(subcommand);
-    });
-  });
-
-  describe('CustomId Location', () => {
-    test('GIVEN a top level command THEN it can be custom id located', () => {
-      const repo = createRepo();
-      const standalone = new MockStandaloneCommand();
-      const data = standalone.getCustomIdData();
-
-      expect(repo.locateExecutableByCustomIdData(data)).toBe(null);
-      repo.addCommand(standalone);
-      expect(repo.locateExecutableByCustomIdData(data)).toBe(standalone);
-    });
-
-    test('GIVEN a subcommand in parent THEN the subcommand can be custom id located', () => {
-      const repo = createRepo();
-      const parent = new MockParentCommand();
-      const subcommand = new MockSubCommand(parent);
-      parent.addChildren(subcommand);
-
-      expect(
-        repo.locateExecutableByCustomIdData(subcommand.getCustomIdData()),
-      ).toBe(null);
-      repo.addCommand(parent);
-      expect(
-        repo.locateExecutableByCustomIdData(subcommand.getCustomIdData()),
-      ).toBe(subcommand);
-    });
-
-    test('GIVEN a subcommand in group in parent THEN the subcommand can be custom id located', () => {
-      const repo = createRepo();
-      const parent = new MockParentCommand();
-      const group = new MockSubCommandGroup(parent);
-      const subcommand = new MockSubCommand(group);
-      group.addChildren(subcommand);
-      parent.addChildren(group);
-
-      expect(
-        repo.locateExecutableByCustomIdData(subcommand.getCustomIdData()),
-      ).toBe(null);
-      repo.addCommand(parent);
-      expect(
-        repo.locateExecutableByCustomIdData(subcommand.getCustomIdData()),
       ).toBe(subcommand);
     });
   });

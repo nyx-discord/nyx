@@ -1,5 +1,14 @@
-import type { NyxBot, SubCommandGroup } from '@nyx-discord/core';
+import type {
+  NyxBot,
+  SubCommandGroup
+} from '@nyx-discord/core';
 import { ApplicationCommandType } from 'discord.js';
+import {
+  describe,
+  expect,
+  it,
+  test
+} from 'vitest';
 import { MockBot } from '../../../bot/MockBot';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
 import { MockSubCommand } from '../../mocks/MockSubCommand';
