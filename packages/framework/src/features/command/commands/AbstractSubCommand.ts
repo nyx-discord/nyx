@@ -1,4 +1,5 @@
 import type {
+  CommandCustomIdData,
   MetaCollection,
   NyxBot,
   ParentCommand,
@@ -50,7 +51,12 @@ export abstract class AbstractSubCommand
   }
 
   public override buildCustomId(bot: NyxBot, extra?: string): string {
-    const data = {
+    const data = this.getCustomIdData(extra);
+    return bot.getCommandManager().getCustomIdCodec().serialize(data);
+  }
+
+  public override getCustomIdData(extra?: string): CommandCustomIdData {
+    return {
       type: ApplicationCommandType.ChatInput,
       name: this.parent.isParent()
         ? this.parent.getData().name
@@ -61,6 +67,5 @@ export abstract class AbstractSubCommand
         ? this.parent.getData().name
         : null,
     };
-    return bot.getCommandManager().getCustomIdCodec().serialize(data);
   }
 }
