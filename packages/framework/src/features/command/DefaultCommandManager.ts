@@ -41,7 +41,6 @@ type CommandManagerOptions = {
   customIdCodec: CommandCustomIdCodec;
   deployer: CommandDeployer;
   eventBus: EventBus<CommandEventArgs>;
-  deploy: boolean;
   metaFactory: MetaCollectionFactory;
 };
 
@@ -60,8 +59,6 @@ export class DefaultCommandManager implements CommandManager {
 
   protected readonly eventBus: EventBus<CommandEventArgs>;
 
-  protected readonly deployOnStart: boolean;
-
   protected readonly metaFactory: MetaCollectionFactory;
 
   constructor(options: CommandManagerOptions) {
@@ -72,7 +69,6 @@ export class DefaultCommandManager implements CommandManager {
     this.subscriptionsContainer = options.subscriptionsContainer;
     this.eventBus = options.eventBus;
     this.deployer = options.deployer;
-    this.deployOnStart = options.deploy;
     this.metaFactory = options.metaFactory;
   }
 
@@ -80,7 +76,6 @@ export class DefaultCommandManager implements CommandManager {
     bot: NyxBot;
     client: Client;
     clientBus: EventBus<ClientEvents>;
-    deploy: boolean;
     injections?: Partial<CommandManagerOptions>;
   }): CommandManager {
     const constructorOptions: Partial<CommandManagerOptions> =
@@ -90,7 +85,6 @@ export class DefaultCommandManager implements CommandManager {
       options.bot,
     ]);
 
-    ensureKey(constructorOptions, 'deploy', options.deploy);
     ensureKey(
       constructorOptions,
       'eventBus',
@@ -132,9 +126,6 @@ export class DefaultCommandManager implements CommandManager {
 
   public async onStart(): Promise<void> {
     await this.subscriptionsContainer.onStart();
-    if (this.deployOnStart) {
-      await this.deployer.deploy();
-    }
   }
 
   public async onStop(): Promise<void> {

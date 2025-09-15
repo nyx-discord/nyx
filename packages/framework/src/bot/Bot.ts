@@ -44,9 +44,10 @@ export class Bot<
 
   protected readonly token: string;
 
+  protected readonly deployCommands: boolean;
+
   constructor(optionsGenerator: (bot: NyxBot) => BotOptions<Implementations>) {
     const options = optionsGenerator(this);
-
     this.client = options.client;
     this.token = options.token;
     this.logger = options.logger;
@@ -56,6 +57,7 @@ export class Bot<
     this.schedules = options.scheduleManager;
     this.sessions = options.sessionManager;
     this.plugins = options.pluginManager;
+    this.deployCommands = options.deployCommands;
   }
 
   public static create<
@@ -68,7 +70,6 @@ export class Bot<
       const defaultOptions = Bot.DefaultOptionsGenerator(
         bot,
         generatedOptions.client,
-        generatedOptions.deployCommands,
       );
 
       return {
@@ -81,7 +82,6 @@ export class Bot<
   public static readonly DefaultOptionsGenerator = (
     bot: NyxBot,
     client: Client,
-    deployCommands: boolean,
   ) => {
     const eventManager = DefaultEventManager.create({ bot, client });
     const clientBus = eventManager.getClientBus();
@@ -92,7 +92,6 @@ export class Bot<
         bot,
         client,
         clientBus: eventManager.getClientBus(),
-        deploy: deployCommands,
       }),
       scheduleManager: DefaultScheduleManager.create({ bot }),
       sessionManager: DefaultSessionManager.create({ bot, clientBus }),
@@ -103,6 +102,9 @@ export class Bot<
 
   public async start(): Promise<this> {
     await this.service.start();
+    if (this.deployCommands) {
+      await this.commands.deploy();
+    }
     return this;
   }
 
