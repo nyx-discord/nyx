@@ -1,6 +1,6 @@
 import type {
-  CommandCustomIdData,
   MetaCollection,
+  NyxBot,
   ParentCommand,
   SubCommand,
   SubCommandGroup,
@@ -23,24 +23,11 @@ export abstract class AbstractSubCommand
   >
   implements SubCommand
 {
-  protected readonly customIdData: CommandCustomIdData;
-
   protected readonly parent: ParentCommand | SubCommandGroup;
 
   constructor(parent: ParentCommand | SubCommandGroup) {
     super();
     this.parent = parent;
-    this.customIdData = {
-      type: ApplicationCommandType.ChatInput,
-      name: this.parent.isParent()
-        ? this.parent.getData().name
-        : this.parent.getParent().getData().name,
-      extra: null,
-      subcommand: this.getData().name,
-      group: this.parent.isSubCommandGroup()
-        ? this.parent.getData().name
-        : null,
-    };
   }
 
   public getParent(): ParentCommand | SubCommandGroup {
@@ -60,5 +47,20 @@ export abstract class AbstractSubCommand
 
   public getNameTree(): ReadonlyArray<string> {
     return this.parent.getNameTree().concat(this.data.name);
+  }
+
+  public override buildCustomId(bot: NyxBot, extra?: string): string {
+    const data = {
+      type: ApplicationCommandType.ChatInput,
+      name: this.parent.isParent()
+        ? this.parent.getData().name
+        : this.parent.getParent().getData().name,
+      extra: extra ?? null,
+      subcommand: this.getData().name,
+      group: this.parent.isSubCommandGroup()
+        ? this.parent.getData().name
+        : null,
+    };
+    return bot.getCommandManager().getCustomIdCodec().serialize(data);
   }
 }
