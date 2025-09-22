@@ -27,31 +27,43 @@ import type {
   UserContextMenuCommandInteraction,
 } from 'discord.js';
 import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
+import { ensureKey } from '../../../util/ensureKey';
 import { CommandMiddlewareList } from '../middleware/CommandMiddlewareList.js';
+
+type CommandExecutorOptions = {
+  errorHandler: CommandErrorHandler;
+  middleware: MiddlewareList<CommandMiddlewareResolvable>;
+};
 
 export class DefaultCommandExecutor implements CommandExecutor {
   protected readonly errorHandler: CommandErrorHandler;
 
   protected readonly middleware: MiddlewareList<CommandMiddlewareResolvable>;
 
-  constructor(
-    errorHandler: CommandErrorHandler,
-    middleware: MiddlewareList<CommandMiddlewareResolvable>,
-  ) {
-    this.errorHandler = errorHandler;
-    this.middleware = middleware;
+  constructor(options: CommandExecutorOptions) {
+    this.errorHandler = options.errorHandler;
+    this.middleware = options.middleware;
   }
 
-  public static create(): CommandExecutor {
-    return new this(
+  public static create(options: {
+    injections?: Partial<CommandExecutorOptions>;
+  }): CommandExecutor {
+    const constructorOptions = options.injections ?? {};
+
+    ensureKey(
+      constructorOptions,
+      'errorHandler',
       BasicErrorHandler.createWithFallbackLogger<
         AnyExecutableCommand,
         CommandExecutionArgs
       >((_error, _cmd, [, meta]) =>
         TypedFields.Bot.get(meta, true).getLogger(),
       ),
-      CommandMiddlewareList.create(),
     );
+
+    ensureKey(constructorOptions, 'middleware', CommandMiddlewareList.create());
+
+    return new this(constructorOptions);
   }
 
   public async execute(
