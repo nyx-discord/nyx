@@ -45,10 +45,10 @@ export class DefaultCommandExecutor implements CommandExecutor {
     this.middleware = options.middleware;
   }
 
-  public static create(options: {
+  public static create(options?: {
     injections?: Partial<CommandExecutorOptions>;
   }): CommandExecutor {
-    const constructorOptions = options.injections ?? {};
+    const constructorOptions = options?.injections ?? {};
 
     ensureKey(
       constructorOptions,
