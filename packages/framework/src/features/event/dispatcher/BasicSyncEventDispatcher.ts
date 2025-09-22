@@ -43,14 +43,14 @@ export class BasicSyncEventDispatcher
     subscribers: AnyEventSubscriber[],
     args: EventDispatchArgs,
   ): Promise<void> {
-    const timeout = this.syncTimeout;
     const callFunction: (subscriber: AnyEventSubscriber) => Promise<void> =
-      timeout === null
+      this.syncTimeout === null
         ? async (subscriber) => await subscriber.handleEvent(...args)
         : async (subscriber) =>
             await this.executeWithTimeout(
               () => subscriber.handleEvent(...args),
-              timeout,
+              (error) =>
+                this.errorHandler.handle(error as Error, subscriber, args),
             );
 
     for (const subscriber of subscribers) {
@@ -92,16 +92,20 @@ export class BasicSyncEventDispatcher
   /** Resolves once either the given function concluded executing or the given timeout has passed. */
   protected async executeWithTimeout(
     fn: () => Awaitable<void>,
-    timeout: number,
+    onLateError: (error: unknown) => unknown,
   ): Promise<void> {
-    if (timeout === 0) {
+    if (this.syncTimeout === null || this.syncTimeout === 0) {
       return fn();
     }
 
+    const fnPromise = Promise.resolve().then(fn).catch(onLateError);
+
+    // saving to avoid issues with setTimeout
+    const timeout = this.syncTimeout;
     const timedPromise = new Promise<void>(function (resolve) {
       setTimeout(resolve, timeout);
     });
 
-    return Promise.race([fn(), timedPromise]);
+    await Promise.race([fnPromise, timedPromise]);
   }
 }
