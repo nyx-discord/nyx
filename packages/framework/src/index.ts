@@ -81,6 +81,7 @@ export * from './filter/filters/NotFilter';
 export * from './filter/filters/OrFilter';
 export * from './filter/filters/TrueFilter';
 export * from './filter/middleware/BasicFilterCheckMiddleware';
+export * from './meta/DefaultMetaCollectionFactory';
 export * from './middleware/AbstractMiddleware';
 export * from './middleware/AbstractMiddlewareList';
 export * from './service/DefaultBotService';
