@@ -27,6 +27,7 @@
     "prepush": "pnpm validate"
   },
   "devDependencies": {
+    "@repo/typedoc-plugin-entities": "workspace:*",
     "@commitlint/cli": "17.7.2",
     "@commitlint/config-conventional": "17.7.0",
     "@eslint/js": "9.23.0",
@@ -35,12 +36,12 @@
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
     "@types/node": "18.16.9",
-    "@typescript-eslint/eslint-plugin": "8.15.0",
-    "@typescript-eslint/parser": "8.15.0",
+    "@typescript-eslint/eslint-plugin": "8.46.1",
+    "@typescript-eslint/parser": "8.46.1",
     "@vitest/coverage-v8": "3.0.9",
     "barrelsby": "2.8.0",
     "conventional-changelog-conventionalcommits": "7.0.2",
-    "eslint": "9.23.0",
+    "eslint": "9.38.0",
     "eslint-config-prettier": "10.1.1",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-jsdoc": "50.6.8",
@@ -54,11 +55,15 @@
     "tsc-files": "1.1.4",
     "tsup": "7.2.0",
     "turbo": "2.4.2",
-    "typedoc": "0.25.13",
-    "typedoc-plugin-djs-links": "2.1.1",
-    "typedoc-plugin-extras": "3.0.0",
+    "typedoc": "0.28.14",
+    "typedoc-github-theme": "0.3.1",
+    "typedoc-plugin-djs-links": "2.2.1",
+    "typedoc-plugin-dt-links": "2.0.25",
+    "typedoc-plugin-extras": "4.0.1",
+    "typedoc-plugin-mdn-links": "5.0.10",
     "typescript": "5.7.3",
-    "vitest": "3.0.9"
+    "vitest": "3.0.9",
+    "zod": "4.1.12"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {

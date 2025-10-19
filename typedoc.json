@@ -2,16 +2,22 @@
   "entryPoints": [
     "packages/*"
   ],
+  "exclude": [
+    "packages/typedoc-plugin-entities"
+  ],
   "customTitle": "nyx Typedoc",
   "customDescription": "Typedoc documentation of the nyx framework",
   "entryPointStrategy": "packages",
+  "hostedBaseUrl": "https://nyx-discord.github.io/nyx/typedoc",
   "includeVersion": false,
-  "theme": "my-theme",
   "out": "build/docs",
   "favicon": "assets/favicon.ico",
   "plugin": [
-    "@mxssfd/typedoc-theme",
+    "typedoc-github-theme",
     "typedoc-plugin-extras",
-    "typedoc-plugin-djs-links"
+    "typedoc-plugin-djs-links",
+    "typedoc-plugin-dt-links",
+    "typedoc-plugin-mdn-links",
+    "@repo/typedoc-plugin-entities"
   ]
 }
