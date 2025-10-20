@@ -6,7 +6,7 @@ import { object, record, string, url } from 'zod';
 export const Schema = record(
   string(),
   object({
-    typedoc: url(),
+    typedoc: string(),
     github: url(),
   }),
 );
@@ -20,24 +20,16 @@ const supportedTopLevelKinds = new Set([
   ReflectionKind.Function,
 ]);
 
-const supportedNestedKindsSet = new Set([
+const supportedNestedKinds = new Set([
   ReflectionKind.Method,
   ReflectionKind.Property,
   ReflectionKind.GetSignature,
   ReflectionKind.SetSignature,
+  ReflectionKind.EnumMember,
 ]);
 
 /** @param {import("typedoc").Application} app */
 export function load(app) {
-  let baseUrl = app.options.getValue('hostedBaseUrl');
-  if (!baseUrl) {
-    app.logger.warn(
-      "[typedoc-plugin-entities] No hostedBaseUrl set in typedoc config, won't generate entities",
-    );
-    return;
-  }
-  baseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
-
   app.renderer.on(
     Renderer.EVENT_BEGIN,
     (/** @type {import("typedoc").RendererEvent}*/ event) => {
@@ -48,10 +40,10 @@ export function load(app) {
           page.model instanceof DeclarationReflection
           && supportedTopLevelKinds.has(page.model.kind)
         ) {
-          const typedoc = new URL(page.url, baseUrl).href;
+          const typedoc = page.url;
           const name = `${page.model.getFullName()}${page.model.kind === ReflectionKind.Function ? '()' : ''}`;
           entities[name] = {
-            typedoc: typedoc,
+            typedoc,
             github: page.model.sources?.[0]?.url,
           };
 
@@ -63,14 +55,14 @@ export function load(app) {
 
           for (const nested of page.model.children ?? []) {
             if (
-              !supportedNestedKindsSet.has(nested.kind)
+              !supportedNestedKinds.has(nested.kind)
               || !nested.sources?.[0]?.url
             ) {
               continue;
             }
 
             const nestedName = `${name}.${nested.name}${nested.kind === ReflectionKind.Method ? '()' : ''}`;
-            const nestedTypedoc = new URL(`#${nested.name}`, typedoc).href;
+            const nestedTypedoc = `${typedoc}#${nested.name}`;
 
             entities[nestedName] = {
               typedoc: nestedTypedoc,
