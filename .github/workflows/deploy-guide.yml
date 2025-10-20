@@ -2,7 +2,9 @@ name: Deploy Guide
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'v*'
     paths:
       - apps/guide/**
   workflow_dispatch:
