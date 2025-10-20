@@ -61,7 +61,7 @@
     "typedoc-plugin-dt-links": "2.0.25",
     "typedoc-plugin-extras": "4.0.1",
     "typedoc-plugin-mdn-links": "5.0.10",
-    "typescript": "5.7.3",
+    "typescript": "5.9.2",
     "vitest": "3.0.9",
     "zod": "4.1.12"
   },
