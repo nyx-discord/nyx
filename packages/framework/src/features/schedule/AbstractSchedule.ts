@@ -1,9 +1,8 @@
-import { Collection } from '@discordjs/collection';
 import type {
   Identifier,
-  MetaCollection,
+  Metadata,
   NyxBot,
-  ReadonlyMetaCollection,
+  ReadonlyMetadata,
   Schedule,
   ScheduleFilterResolvable,
   UndestroyableScheduleJobAdapter,
@@ -16,10 +15,7 @@ export abstract class AbstractSchedule implements Schedule {
 
   protected readonly filter: ScheduleFilterResolvable | null = null;
 
-  protected readonly meta: MetaCollection = new Collection<
-    Identifier,
-    unknown
-  >();
+  protected readonly meta: Metadata = Object.create(null);
 
   protected abstract readonly interval: string | Date;
 
@@ -58,7 +54,7 @@ export abstract class AbstractSchedule implements Schedule {
     return this.interval;
   }
 
-  public getMeta(): ReadonlyMetaCollection {
+  public getMeta(): ReadonlyMetadata {
     return this.meta;
   }
 
@@ -70,5 +66,5 @@ export abstract class AbstractSchedule implements Schedule {
     /** Do nothing by default */
   }
 
-  public abstract tick(meta: MetaCollection): Awaitable<void>;
+  public abstract tick(meta: Metadata): Awaitable<void>;
 }

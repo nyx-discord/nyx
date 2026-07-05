@@ -1,6 +1,6 @@
 import type {
   CommandCustomIdData,
-  MetaCollection,
+  Metadata,
   NyxBot,
   ParentCommand,
   SubCommand,
@@ -41,7 +41,7 @@ export abstract class AbstractSubCommand
 
   public autocomplete(
     _interaction: AutocompleteInteraction,
-    _metadata: MetaCollection,
+    _metadata: Metadata,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }

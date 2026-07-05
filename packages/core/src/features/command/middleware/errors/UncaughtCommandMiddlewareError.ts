@@ -1,4 +1,4 @@
-import type { MetaCollection } from '../../../../meta/MetaCollection';
+import type { Metadata } from '../../../../meta/Metadata';
 import type { MiddlewareList } from '../../../../middleware/list/MiddlewareList';
 import type { AnyExecutableCommand } from '../../commands/executable/AnyExecutableCommand';
 import { CommandError } from '../../errors/CommandError.js';
@@ -13,7 +13,7 @@ export class UncaughtCommandMiddlewareError extends CommandError {
     middlewareList: MiddlewareList<CommandMiddlewareResolvable>,
     command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
-    meta: MetaCollection,
+    meta: Metadata,
   ) {
     super(error, command, interaction, meta);
     this.middlewareList = middlewareList;

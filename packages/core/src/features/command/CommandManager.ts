@@ -1,7 +1,7 @@
 import type { AutocompleteInteraction, Awaitable } from 'discord.js';
-import type { MetaCollection } from '../../meta/MetaCollection.js';
-import type { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
-import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
+import type { BotLifecycleObserver } from '../../bot/BotLifecycleObserver';
+import type { Metadata } from '../../meta/Metadata';
+import type { MetadataFactory } from '../../meta/MetadataFactory';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber.js';
 import type { TopLevelCommand } from './commands/TopLevelCommand.js';
@@ -24,7 +24,7 @@ export interface CommandManager extends BotLifecycleObserver {
    */
   execute(
     source: CommandExecutableInteraction,
-    meta?: MetaCollection,
+    meta?: Metadata,
   ): Awaitable<boolean>;
 
   /**
@@ -35,7 +35,7 @@ export interface CommandManager extends BotLifecycleObserver {
    */
   autocomplete(
     interaction: AutocompleteInteraction,
-    meta?: MetaCollection,
+    meta?: Metadata,
   ): Awaitable<boolean>;
 
   /**
@@ -117,6 +117,6 @@ export interface CommandManager extends BotLifecycleObserver {
   /** Returns the {@link CommandDeployer} for this manager. */
   getDeployer(): ReadonlyCommandDeployer;
 
-  /** Returns the {@link MetaCollectionFactory} for creating or populating {@link MetaCollection}s for command executions. */
-  getMetaCollectionFactory(): MetaCollectionFactory;
+  /** Returns the {@link MetadataFactory} for creating or populating {@link Metadata}s for command executions. */
+  getMetadataFactory(): MetadataFactory;
 }

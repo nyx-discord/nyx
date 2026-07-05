@@ -1,7 +1,7 @@
 import type { Awaitable } from 'discord.js';
 import type { Filterable } from '../../../filter/Filterable.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
-import type { MetaCollection } from '../../../meta/MetaCollection.js';
+import type { Metadata } from '../../../meta/Metadata';
 import type { Metadatable } from '../../../meta/Metadatable.js';
 import type { Priority } from '../../../priority/Priority.js';
 import type { Protectable } from '../../../protect/Protectable';
@@ -18,10 +18,7 @@ export interface EventSubscriber<
     Filterable<EventSubscriberFilterResolvable<ArgsRecord, Event>>,
     Metadatable {
   /** Handles an event given the passed args and metadata. */
-  handleEvent(
-    meta: MetaCollection,
-    ...args: ArgsRecord[Event]
-  ): Awaitable<void>;
+  handleEvent(meta: Metadata, ...args: ArgsRecord[Event]): Awaitable<void>;
 
   /** Notifies the subscriber that it's been subscribed to a given event bus. */
   onSubscribe(bus: EventBus<ArgsRecord>): Awaitable<void>;

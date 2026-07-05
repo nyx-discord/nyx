@@ -1,4 +1,4 @@
-import type { ContextMenuCommand, MetaCollection } from '@nyx-discord/core';
+import type { ContextMenuCommand, Metadata } from '@nyx-discord/core';
 import type { ContextMenuCommandInteraction } from 'discord.js';
 import {
   type Awaitable,
@@ -19,7 +19,7 @@ export abstract class AbstractContextMenuCommand
 {
   public execute(
     interaction: ContextMenuCommandInteraction,
-    metadata: MetaCollection,
+    metadata: Metadata,
   ): Awaitable<void> {
     if (interaction.isMessageContextMenuCommand()) {
       return this.executeMessage(interaction, metadata);
@@ -47,7 +47,7 @@ export abstract class AbstractContextMenuCommand
   /** Executes a {@link UserContextMenuCommandInteraction}. */
   protected executeUser(
     _interaction: UserContextMenuCommandInteraction,
-    _metadata: MetaCollection,
+    _metadata: Metadata,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }
@@ -55,7 +55,7 @@ export abstract class AbstractContextMenuCommand
   /** Executes a {@link MessageContextMenuCommandInteraction}. */
   protected executeMessage(
     _interaction: MessageContextMenuCommandInteraction,
-    _metadata: MetaCollection,
+    _metadata: Metadata,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }

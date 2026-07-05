@@ -1,5 +1,3 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
-import { Collection } from '@discordjs/collection';
 import type {
   ClassImplements,
   Command,
@@ -14,6 +12,8 @@ import type {
   TopLevelCommand,
 } from '@nyx-discord/core';
 import { IllegalDuplicateError, ObjectNotFoundError } from '@nyx-discord/core';
+import type { ReadonlyCollection } from 'discord.js';
+import { Collection } from 'discord.js';
 
 export class DefaultCommandRepository implements CommandRepository {
   protected readonly commands: Collection<string, TopLevelCommand> =

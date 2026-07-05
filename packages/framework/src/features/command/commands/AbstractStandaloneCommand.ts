@@ -1,4 +1,4 @@
-import type { MetaCollection, StandaloneCommand } from '@nyx-discord/core';
+import type { Metadata, StandaloneCommand } from '@nyx-discord/core';
 import {
   type AutocompleteInteraction,
   type Awaitable,
@@ -30,7 +30,7 @@ export abstract class AbstractStandaloneCommand
 
   public autocomplete(
     _interaction: AutocompleteInteraction,
-    _metadata: MetaCollection,
+    _metadata: Metadata,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }

@@ -1,13 +1,12 @@
-import { Collection } from '@discordjs/collection';
 import type {
   EventBus,
   EventSubscriber,
   EventSubscriberFilterResolvable,
   EventSubscriberLifetime,
   Identifier,
-  MetaCollection,
+  Metadata,
   Priority,
-  ReadonlyMetaCollection,
+  ReadonlyMetadata,
 } from '@nyx-discord/core';
 import {
   EventSubscriberLifetimeEnum,
@@ -21,7 +20,7 @@ export abstract class AbstractEventSubscriber<
   Event extends keyof EventArgsObject & string,
 > implements EventSubscriber<EventArgsObject, Event>
 {
-  protected readonly meta: MetaCollection = new Collection();
+  protected readonly meta: Metadata = Object.create(null);
 
   protected readonly ignoreHandled: boolean = true;
 
@@ -80,7 +79,7 @@ export abstract class AbstractEventSubscriber<
     return this.id;
   }
 
-  public getMeta(): ReadonlyMetaCollection {
+  public getMeta(): ReadonlyMetadata {
     return this.meta;
   }
 
@@ -99,15 +98,15 @@ export abstract class AbstractEventSubscriber<
   }
 
   public abstract handleEvent(
-    meta: MetaCollection,
+    meta: Metadata,
     ...args: EventArgsObject[Event]
   ): Awaitable<void>;
 
-  protected isHandled(meta: MetaCollection): boolean {
+  protected isHandled(meta: Metadata): boolean {
     return TypedFields.EventHandled.get(meta) === true;
   }
 
-  protected setHandled(meta: MetaCollection, handled = true): void {
+  protected setHandled(meta: Metadata, handled = true): void {
     TypedFields.EventHandled.set(meta, handled);
   }
 }

@@ -1,4 +1,4 @@
-import { MetaCollection } from '../../../../meta/MetaCollection';
+import type { Metadata } from '../../../../meta/Metadata';
 
 /** Type of arguments used to call a {@link Schedule}. */
-export type ScheduleTickArgs = [MetaCollection];
+export type ScheduleTickArgs = [Metadata];

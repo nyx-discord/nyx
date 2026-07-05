@@ -9,7 +9,7 @@ import type {
   CommandMiddlewareResolvable,
   ComponentCommandInteraction,
   ContextMenuCommand,
-  MetaCollection,
+  Metadata,
   MiddlewareList,
   Nameable,
 } from '@nyx-discord/core';
@@ -69,7 +69,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async execute(
     command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
-    metadata: MetaCollection,
+    metadata: Metadata,
   ): Promise<boolean> {
     if (
       interaction.isChatInputCommand()
@@ -104,7 +104,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async autocomplete(
     command: ChatExecutableCommand<Nameable>,
     interaction: AutocompleteInteraction,
-    metadata: MetaCollection,
+    metadata: Metadata,
   ): Promise<void> {
     try {
       await command.autocomplete(interaction, metadata);
@@ -126,7 +126,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async executeChatInput(
     command: ChatExecutableCommand<Nameable>,
     interaction: ChatInputCommandInteraction,
-    metadata: MetaCollection,
+    metadata: Metadata,
   ): Promise<void> {
     await this.executeCommandMethod(
       command,
@@ -139,7 +139,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async executeComponent(
     command: AnyExecutableCommand,
     interaction: ComponentCommandInteraction,
-    metadata: MetaCollection,
+    metadata: Metadata,
   ): Promise<void> {
     await this.executeCommandMethod(
       command,
@@ -152,7 +152,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async executeMessage(
     command: ContextMenuCommand,
     interaction: MessageContextMenuCommandInteraction,
-    metadata: MetaCollection,
+    metadata: Metadata,
   ): Promise<void> {
     await this.executeCommandMethod(
       command,
@@ -165,7 +165,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   public async executeUser(
     command: ContextMenuCommand,
     interaction: UserContextMenuCommandInteraction,
-    metadata: MetaCollection,
+    metadata: Metadata,
   ): Promise<void> {
     await this.executeCommandMethod(
       command,
@@ -188,11 +188,8 @@ export class DefaultCommandExecutor implements CommandExecutor {
   >(
     command: AnyExecutableCommand,
     interaction: PassedInteraction,
-    metadata: MetaCollection,
-    method: (
-      interact: PassedInteraction,
-      meta: MetaCollection,
-    ) => Awaitable<void>,
+    metadata: Metadata,
+    method: (interact: PassedInteraction, meta: Metadata) => Awaitable<void>,
   ): Promise<void> {
     const middlewareResult = await this.checkMiddleware(
       command,
@@ -215,7 +212,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
   protected async checkMiddleware(
     command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
-    meta: MetaCollection,
+    meta: Metadata,
   ): Promise<boolean> {
     let result;
     try {
@@ -246,7 +243,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
     error: Error,
     command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
-    meta: MetaCollection,
+    meta: Metadata,
   ): CommandError {
     if (error instanceof CommandMiddlewareError) {
       return error;
@@ -266,7 +263,7 @@ export class DefaultCommandExecutor implements CommandExecutor {
     error: Error,
     command: AnyExecutableCommand,
     interaction: AutocompleteInteraction,
-    meta: MetaCollection,
+    meta: Metadata,
   ): CommandError {
     return new CommandAutocompleteError(error, command, interaction, meta);
   }

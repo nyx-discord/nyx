@@ -1,5 +1,3 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
-import { Collection } from '@discordjs/collection';
 import type {
   AnyEventBus,
   ClassImplements,
@@ -18,8 +16,14 @@ import {
   ProtectedObjectError,
   TypedFields,
 } from '@nyx-discord/core';
-import type { Awaitable, Client, ClientEvents } from 'discord.js';
-import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
+import type {
+  Awaitable,
+  Client,
+  ClientEvents,
+  ReadonlyCollection,
+} from 'discord.js';
+import { Collection } from 'discord.js';
+import { DefaultMetadataFactory } from '../../meta/DefaultMetadataFactory';
 import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from './bus/BasicEventBus.js';
 import { BasicEventEmitterBus } from './bus/BasicEventEmitterBus.js';
@@ -50,7 +54,7 @@ export class DefaultEventManager implements EventManager {
     injections?: Partial<EventManagerOptions>;
   }): EventManager {
     const constructorOptions = options.injections ?? {};
-    const metaFactory = DefaultMetaCollectionFactory.createWith([
+    const metaFactory = DefaultMetadataFactory.createWith([
       TypedFields.Bot,
       options.bot,
     ]);

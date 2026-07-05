@@ -1,5 +1,3 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
-import { Collection } from '@discordjs/collection';
 import type {
   ChildableCommand,
   ChildCommand,
@@ -11,6 +9,8 @@ import {
   IllegalDuplicateError,
   ObjectNotFoundError,
 } from '@nyx-discord/core';
+import type { ReadonlyCollection } from 'discord.js';
+import { Collection } from 'discord.js';
 import { AbstractCommand } from '../AbstractCommand';
 
 export abstract class AbstractChildableCommand<

@@ -3,8 +3,8 @@ import type {
   EventBus,
   EventSubscriber,
   Identifier,
-  MetaCollection,
-  MetaCollectionFactory,
+  Metadata,
+  MetadataFactory,
   NyxBot,
   Schedule,
   ScheduleEventArgs,
@@ -22,7 +22,7 @@ import {
   ScheduleEventEnum,
   TypedFields,
 } from '@nyx-discord/core';
-import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
+import { DefaultMetadataFactory } from '../../meta/DefaultMetadataFactory';
 import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultScheduleExecutor } from './execution/executor/DefaultScheduleExecutor.js';
@@ -34,7 +34,7 @@ type ScheduleManagerOptions = {
   repository: ScheduleRepository;
   scheduler: ScheduleExecutionScheduler;
   eventBus: EventBus<ScheduleEventArgs>;
-  metaFactory: MetaCollectionFactory;
+  metaFactory: MetadataFactory;
 };
 
 export class DefaultScheduleManager implements ScheduleManager {
@@ -46,7 +46,7 @@ export class DefaultScheduleManager implements ScheduleManager {
 
   protected readonly bus: EventBus<ScheduleEventArgs>;
 
-  protected readonly metaFactory: MetaCollectionFactory;
+  protected readonly metaFactory: MetadataFactory;
 
   constructor(options: ScheduleManagerOptions) {
     this.repository = options.repository;
@@ -61,7 +61,7 @@ export class DefaultScheduleManager implements ScheduleManager {
     injections?: Partial<ScheduleManagerOptions>;
   }): ScheduleManager {
     const constructorOptions = options.injections ?? {};
-    const metaFactory = DefaultMetaCollectionFactory.createWith([
+    const metaFactory = DefaultMetadataFactory.createWith([
       TypedFields.Bot,
       options.bot,
     ]);
@@ -162,7 +162,7 @@ export class DefaultScheduleManager implements ScheduleManager {
 
   public async tick(
     scheduleOrId: Schedule | Identifier,
-    meta?: MetaCollection,
+    meta?: Metadata,
   ): Promise<this> {
     const id = canBeIdentifier(scheduleOrId)
       ? scheduleOrId
@@ -224,7 +224,7 @@ export class DefaultScheduleManager implements ScheduleManager {
     return this.bus;
   }
 
-  public getMetaCollectionFactory(): MetaCollectionFactory {
+  public getMetadataFactory(): MetadataFactory {
     return this.metaFactory;
   }
 }

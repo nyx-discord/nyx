@@ -1,5 +1,5 @@
 import { FeatureError } from '../../../errors/FeatureError.js';
-import type { MetaCollection } from '../../../meta/MetaCollection.js';
+import type { Metadata } from '../../../meta/Metadata';
 import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
 import type { CommandResolvableInteraction } from '../interaction/CommandResolvableInteraction.js';
 
@@ -7,13 +7,13 @@ import type { CommandResolvableInteraction } from '../interaction/CommandResolva
 export class CommandError extends FeatureError<AnyExecutableCommand> {
   protected readonly interaction: CommandResolvableInteraction;
 
-  protected readonly meta: MetaCollection;
+  protected readonly meta: Metadata;
 
   constructor(
     error: Error,
     command: AnyExecutableCommand,
     interaction: CommandResolvableInteraction,
-    meta: MetaCollection,
+    meta: Metadata,
     message?: string,
   ) {
     super(
@@ -26,7 +26,7 @@ export class CommandError extends FeatureError<AnyExecutableCommand> {
   }
 
   /** Returns the execution meta that was passed alongside the interaction. */
-  public getMeta(): MetaCollection {
+  public getMeta(): Metadata {
     return this.meta;
   }
 

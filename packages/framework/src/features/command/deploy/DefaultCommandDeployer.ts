@@ -1,13 +1,16 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
-import { Collection } from '@discordjs/collection';
 import type { CommandDeployer, TopLevelCommand } from '@nyx-discord/core';
 import {
   AssertionError,
   IllegalStateError,
   ObjectNotFoundError,
 } from '@nyx-discord/core';
-import type { ApplicationCommand, Client, Snowflake } from 'discord.js';
-import { ApplicationCommandType } from 'discord.js';
+import type {
+  ApplicationCommand,
+  Client,
+  ReadonlyCollection,
+  Snowflake,
+} from 'discord.js';
+import { ApplicationCommandType, Collection } from 'discord.js';
 
 export class DefaultCommandDeployer implements CommandDeployer {
   protected readonly client: Client;

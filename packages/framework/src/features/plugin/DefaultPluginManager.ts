@@ -1,5 +1,3 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
-import { Collection } from '@discordjs/collection';
 import type {
   ClassImplements,
   EventBus,
@@ -17,12 +15,15 @@ import {
   PluginEventEnum,
   TypedFields,
 } from '@nyx-discord/core';
-import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
+import type { ReadonlyCollection } from 'discord.js';
+import { Collection } from 'discord.js';
+import { DefaultMetadataFactory } from '../../meta/DefaultMetadataFactory';
 import { ensureKey } from '../../util/ensureKey';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 
 type PluginManagerOptions = {
   bus: EventBus<PluginEventArgs>;
+  bot: NyxBot;
 };
 
 export class DefaultPluginManager implements PluginManager {
@@ -32,7 +33,7 @@ export class DefaultPluginManager implements PluginManager {
 
   protected readonly bus: EventBus<PluginEventArgs>;
 
-  constructor(options: { bot: NyxBot; bus: EventBus<PluginEventArgs> }) {
+  constructor(options: PluginManagerOptions) {
     this.bot = options.bot;
     this.bus = options.bus;
     this.plugins = new Collection<Identifier, NyxPlugin>();
@@ -40,10 +41,10 @@ export class DefaultPluginManager implements PluginManager {
 
   public static create(options: {
     bot: NyxBot;
-    injections?: Partial<PluginManagerOptions>;
+    injections?: Partial<Omit<PluginManagerOptions, 'bot'>>;
   }): PluginManager {
     const constructorOptions = options.injections ?? {};
-    const metaFactory = DefaultMetaCollectionFactory.createWith([
+    const metaFactory = DefaultMetadataFactory.createWith([
       TypedFields.Bot,
       options.bot,
     ]);
@@ -143,10 +144,14 @@ export class DefaultPluginManager implements PluginManager {
 
   public getPluginByClass(
     PluginClass: ClassImplements<NyxPlugin>,
+    force: boolean = false,
   ): InstanceType<typeof PluginClass> | null {
     const foundPlugin = this.plugins.find(
       (plugin) => plugin instanceof PluginClass,
     );
+    if (force && !foundPlugin) {
+      throw new ObjectNotFoundError(`${PluginClass.name} not found`);
+    }
     return foundPlugin ?? null;
   }
 

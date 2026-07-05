@@ -12,8 +12,8 @@ import type {
   EventBus,
   EventSubscriber,
   Identifier,
-  MetaCollection,
-  MetaCollectionFactory,
+  Metadata,
+  MetadataFactory,
   NyxBot,
   ReadonlyCommandDeployer,
   TopLevelCommand,
@@ -21,7 +21,7 @@ import type {
 import { CommandEventEnum, TypedFields } from '@nyx-discord/core';
 import type { AutocompleteInteraction, Client, ClientEvents } from 'discord.js';
 import { InteractionType } from 'discord.js';
-import { DefaultMetaCollectionFactory } from '../../meta/DefaultMetaCollectionFactory.js';
+import { DefaultMetadataFactory } from '../../meta/DefaultMetadataFactory';
 import { ensureKey } from '../../util/ensureKey.js';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
 import { DefaultCommandCustomIdCodec } from './customId/DefaultCommandCustomIdCodec.js';
@@ -41,7 +41,7 @@ type CommandManagerOptions = {
   customIdCodec: CommandCustomIdCodec;
   deployer: CommandDeployer;
   eventBus: EventBus<CommandEventArgs>;
-  metaFactory: MetaCollectionFactory;
+  metaFactory: MetadataFactory;
 };
 
 export class DefaultCommandManager implements CommandManager {
@@ -59,7 +59,7 @@ export class DefaultCommandManager implements CommandManager {
 
   protected readonly eventBus: EventBus<CommandEventArgs>;
 
-  protected readonly metaFactory: MetaCollectionFactory;
+  protected readonly metaFactory: MetadataFactory;
 
   constructor(options: CommandManagerOptions) {
     this.repository = options.repository;
@@ -80,7 +80,7 @@ export class DefaultCommandManager implements CommandManager {
   }): CommandManager {
     const constructorOptions: Partial<CommandManagerOptions> =
       options.injections ?? {};
-    const metaFactory = DefaultMetaCollectionFactory.createWith([
+    const metaFactory = DefaultMetadataFactory.createWith([
       TypedFields.Bot,
       options.bot,
     ]);
@@ -212,7 +212,7 @@ export class DefaultCommandManager implements CommandManager {
 
   public async autocomplete(
     interaction: AutocompleteInteraction,
-    meta?: MetaCollection,
+    meta?: Metadata,
   ): Promise<boolean> {
     const command = this.resolver.resolveFromAutocompleteInteraction(
       interaction,
@@ -258,7 +258,7 @@ export class DefaultCommandManager implements CommandManager {
 
   public async execute(
     interaction: CommandExecutableInteraction,
-    meta?: MetaCollection,
+    meta?: Metadata,
   ): Promise<boolean> {
     let command: AnyExecutableCommand | null;
     let customIdExtra: string | null = null;
@@ -359,19 +359,19 @@ export class DefaultCommandManager implements CommandManager {
     return this.deployer;
   }
 
-  public getMetaCollectionFactory(): MetaCollectionFactory {
+  public getMetadataFactory(): MetadataFactory {
     return this.metaFactory;
   }
 
   /** Creates a meta collection for a session, or populates an existing one. */
   protected createOrPopulateMeta(options: {
-    meta: MetaCollection | undefined;
+    meta: Metadata | undefined;
     command: AnyExecutableCommand;
     customIdExtra: string | null;
     interaction: CommandExecutableInteraction | AutocompleteInteraction;
     extraData: { name: string; value: string }[];
   }): {
-    metadata: MetaCollection;
+    metadata: Metadata;
     executionId: Identifier;
   } {
     const commandName = options.command.getNameTree().join(' ');

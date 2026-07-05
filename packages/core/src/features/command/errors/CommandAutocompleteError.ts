@@ -1,5 +1,5 @@
 import type { AutocompleteInteraction } from 'discord.js';
-import type { MetaCollection } from '../../../meta/MetaCollection';
+import type { Metadata } from '../../../meta/Metadata';
 import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
 import { CommandError } from './CommandError.js';
 
@@ -11,7 +11,7 @@ export class CommandAutocompleteError extends CommandError {
     error: Error,
     command: AnyExecutableCommand,
     interaction: AutocompleteInteraction,
-    meta: MetaCollection,
+    meta: Metadata,
     message?: string,
   ) {
     super(

@@ -1,8 +1,8 @@
 import type { Awaitable } from 'discord.js';
+import type { BotLifecycleObserver } from '../../bot/BotLifecycleObserver';
 import type { Identifier } from '../../identity/Identifier.js';
-import type { MetaCollection } from '../../meta/MetaCollection.js';
-import type { MetaCollectionFactory } from '../../meta/MetaCollectionFactory.js';
-import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
+import type { Metadata } from '../../meta/Metadata';
+import type { MetadataFactory } from '../../meta/MetadataFactory';
 import type { ClassImplements } from '../../types/ClassImplements.js';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber';
@@ -35,10 +35,7 @@ export interface ScheduleManager extends BotLifecycleObserver {
    *
    * @throws {ObjectNotFoundError} If the schedule is not currently registered.
    */
-  tick(
-    scheduleOrId: Schedule | Identifier,
-    meta?: MetaCollection,
-  ): Awaitable<this>;
+  tick(scheduleOrId: Schedule | Identifier, meta?: Metadata): Awaitable<this>;
 
   /**
    * Subscribes a list of event subscribers to the manager's bus.
@@ -78,6 +75,6 @@ export interface ScheduleManager extends BotLifecycleObserver {
   /** Returns the {@link ScheduleExecutionScheduler} for this manager. */
   getScheduler(): ReadonlyScheduleExecutionScheduler;
 
-  /** Returns the {@link MetaCollectionFactory} for creating or populating {@link MetaCollection}s for schedule ticks. */
-  getMetaCollectionFactory(): MetaCollectionFactory;
+  /** Returns the {@link MetadataFactory} for creating or populating {@link Metadata}s for schedule ticks. */
+  getMetadataFactory(): MetadataFactory;
 }

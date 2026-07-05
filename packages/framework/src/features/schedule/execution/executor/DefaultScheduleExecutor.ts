@@ -1,5 +1,5 @@
 import type {
-  MetaCollection,
+  Metadata,
   MiddlewareList,
   Schedule,
   ScheduleErrorHandler,
@@ -37,7 +37,7 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
     );
   }
 
-  public async tick(schedule: Schedule, meta: MetaCollection): Promise<void> {
+  public async tick(schedule: Schedule, meta: Metadata): Promise<void> {
     const args: ScheduleTickArgs = [meta];
 
     try {

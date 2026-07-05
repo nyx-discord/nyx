@@ -1,16 +1,15 @@
-import type { Comparator, ReadonlyCollection } from '@discordjs/collection';
-import { Collection } from '@discordjs/collection';
 import type {
   AnyEventBus,
   AnyEventSubscriberFrom,
+  Comparator,
   EventBus,
   EventBusEventArgs,
   EventDispatchArgs,
   EventDispatcher,
   EventSubscriberCollection,
   Identifier,
-  MetaCollection,
-  MetaCollectionFactory,
+  Metadata,
+  MetadataFactory,
   ReadonlyCollectionFrom,
 } from '@nyx-discord/core';
 import {
@@ -19,8 +18,9 @@ import {
   IllegalStateError,
   ObjectNotFoundError,
 } from '@nyx-discord/core';
-import type { Awaitable } from 'discord.js';
-import { DefaultMetaCollectionFactory } from '../../../meta/DefaultMetaCollectionFactory.js';
+import type { Awaitable, ReadonlyCollection } from 'discord.js';
+import { Collection } from 'discord.js';
+import { DefaultMetadataFactory } from '../../../meta/DefaultMetadataFactory';
 import { BasicAsyncEventDispatcher } from '../dispatcher/BasicAsyncEventDispatcher.js';
 import { BasicSyncEventDispatcher } from '../dispatcher/BasicSyncEventDispatcher.js';
 
@@ -42,15 +42,15 @@ export class BasicEventBus<
     AnyEventSubscriberFrom<EventArgsObject>
   >;
 
-  protected readonly meta: MetaCollection = new Collection();
+  protected readonly meta: Metadata = Object.create(null);
 
-  protected readonly metaFactory: MetaCollectionFactory;
+  protected readonly metaFactory: MetadataFactory;
 
   constructor(
     id: Identifier,
     sorter: Comparator<Identifier, AnyEventSubscriberFrom<EventArgsObject>>,
     dispatcher: EventDispatcher,
-    metaFactory: MetaCollectionFactory,
+    metaFactory: MetadataFactory,
   ) {
     this.id = id;
     this.dispatcher = dispatcher;
@@ -60,31 +60,25 @@ export class BasicEventBus<
 
   public static createSync<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-  >(
-    id: Identifier,
-    metaFactory?: MetaCollectionFactory,
-  ): EventBus<EventArgsObject> {
+  >(id: Identifier, metaFactory?: MetadataFactory): EventBus<EventArgsObject> {
     return new this<EventArgsObject>(
       id,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicSyncEventDispatcher.create(),
-      metaFactory ?? new DefaultMetaCollectionFactory(),
+      metaFactory ?? new DefaultMetadataFactory(),
     );
   }
 
   public static createAsync<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-  >(
-    id: Identifier,
-    metaFactory?: MetaCollectionFactory,
-  ): EventBus<EventArgsObject> {
+  >(id: Identifier, metaFactory?: MetadataFactory): EventBus<EventArgsObject> {
     return new this<EventArgsObject>(
       id,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicAsyncEventDispatcher.create(),
-      metaFactory ?? new DefaultMetaCollectionFactory(),
+      metaFactory ?? new DefaultMetadataFactory(),
     );
   }
 
@@ -182,7 +176,7 @@ export class BasicEventBus<
   public async emit<const EventName extends keyof EventArgsObject & string>(
     eventName: EventName,
     args: EventArgsObject[EventName],
-    meta?: MetaCollection,
+    meta?: Metadata,
   ): Promise<this> {
     const subscriberMap = this.subscribers.get(eventName);
     if (!subscriberMap) return this;
@@ -215,7 +209,7 @@ export class BasicEventBus<
     return this.id;
   }
 
-  public getMeta(): MetaCollection {
+  public getMeta(): Metadata {
     return this.meta;
   }
 
@@ -238,7 +232,7 @@ export class BasicEventBus<
     );
   }
 
-  public getMetaCollectionFactory(): MetaCollectionFactory {
+  public getMetadataFactory(): MetadataFactory {
     return this.metaFactory;
   }
 
@@ -288,9 +282,9 @@ export class BasicEventBus<
   protected generateArgsForEvent<Args extends unknown[]>(
     eventName: string,
     eventArgs: Args,
-    meta?: MetaCollection,
+    meta?: Metadata,
   ): EventDispatchArgs<Args> {
-    const metadata = this.createMetaCollection(meta, eventName);
+    const metadata = this.createMetadata(meta, eventName);
     return [metadata, ...eventArgs];
   }
 
@@ -341,10 +335,10 @@ export class BasicEventBus<
   }
 
   /** Creates a meta collection for an event dispatch. */
-  protected createMetaCollection(
-    meta: MetaCollection | undefined,
+  protected createMetadata(
+    meta: Metadata | undefined,
     event: string,
-  ): MetaCollection {
+  ): Metadata {
     const id = Symbol(`Event:${event} @${Date.now()}`);
     return this.metaFactory.createOrPopulate(meta, id);
   }

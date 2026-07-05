@@ -1,15 +1,15 @@
-import type { Comparator } from '@discordjs/collection';
 import type {
   AnyEventSubscriberFrom,
+  Comparator,
   EventBusEventArgs,
   EventDispatcher,
   EventEmitterBus,
   EventEmitterLike,
   Identifier,
-  MetaCollectionFactory,
+  MetadataFactory,
 } from '@nyx-discord/core';
 import { EventEmitter } from 'events';
-import { DefaultMetaCollectionFactory } from '../../../meta/DefaultMetaCollectionFactory.js';
+import { DefaultMetadataFactory } from '../../../meta/DefaultMetadataFactory';
 import { BasicAsyncEventDispatcher } from '../dispatcher/BasicAsyncEventDispatcher.js';
 import { BasicSyncEventDispatcher } from '../dispatcher/BasicSyncEventDispatcher.js';
 import { BasicEventBus } from './BasicEventBus.js';
@@ -30,7 +30,7 @@ export class BasicEventEmitterBus<
     emitter: Emitter,
     sorter: Comparator<Identifier, AnyEventSubscriberFrom<EventArgsObject>>,
     dispatcher: EventDispatcher,
-    metaFactory: MetaCollectionFactory,
+    metaFactory: MetadataFactory,
   ) {
     super(id, sorter, dispatcher, metaFactory);
     this.emitter = emitter;
@@ -39,21 +39,21 @@ export class BasicEventEmitterBus<
   public static createSyncWithEmitter<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
     Emitter extends EventEmitter,
-  >(id: Identifier, emitter: Emitter, metaFactory?: MetaCollectionFactory) {
+  >(id: Identifier, emitter: Emitter, metaFactory?: MetadataFactory) {
     return new BasicEventEmitterBus<EventArgsObject, Emitter>(
       id,
       emitter,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicSyncEventDispatcher.create(),
-      metaFactory ?? new DefaultMetaCollectionFactory(),
+      metaFactory ?? new DefaultMetadataFactory(),
     );
   }
 
   public static createAsyncWithEmitter<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
     Emitter extends EventEmitter,
-  >(id: Identifier, emitter: Emitter, metaFactory?: MetaCollectionFactory) {
+  >(id: Identifier, emitter: Emitter, metaFactory?: MetadataFactory) {
     const newEmitter = emitter ?? (new EventEmitter() as Emitter);
 
     return new BasicEventEmitterBus<EventArgsObject, Emitter>(
@@ -62,7 +62,7 @@ export class BasicEventEmitterBus<
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicAsyncEventDispatcher.create(),
-      metaFactory ?? new DefaultMetaCollectionFactory(),
+      metaFactory ?? new DefaultMetadataFactory(),
     );
   }
 

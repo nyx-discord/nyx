@@ -1,5 +1,3 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
-import { Collection } from '@discordjs/collection';
 import type {
   ClassImplements,
   Identifier,
@@ -11,7 +9,8 @@ import {
   IllegalDuplicateError,
   ObjectNotFoundError,
 } from '@nyx-discord/core';
-import type { Awaitable } from 'discord.js';
+import type { Awaitable, ReadonlyCollection } from 'discord.js';
+import { Collection } from 'discord.js';
 
 export class DefaultScheduleRepository implements ScheduleRepository {
   protected readonly schedules: Collection<Identifier, Schedule> =

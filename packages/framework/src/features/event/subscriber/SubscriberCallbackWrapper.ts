@@ -1,9 +1,9 @@
-import type { MetaCollection } from '@nyx-discord/core';
+import type { Metadata } from '@nyx-discord/core';
 import type { Awaitable } from 'discord.js';
 import { AbstractEventSubscriber } from './AbstractEventSubscriber.js';
 
 type EventCallback<Arguments extends unknown[] = unknown[]> = (
-  meta: MetaCollection,
+  meta: Metadata,
   ...args: Arguments
 ) => Awaitable<void>;
 

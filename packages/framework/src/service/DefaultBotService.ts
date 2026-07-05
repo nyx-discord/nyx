@@ -13,7 +13,7 @@ import {
   TypedFields,
 } from '@nyx-discord/core';
 import { BasicEventBus } from '../features/event/bus/BasicEventBus.js';
-import { DefaultMetaCollectionFactory } from '../meta/DefaultMetaCollectionFactory.js';
+import { DefaultMetadataFactory } from '../meta/DefaultMetadataFactory';
 import { ensureKey } from '../util/ensureKey';
 
 type StartPromiseData = {
@@ -53,7 +53,7 @@ export class DefaultBotService implements BotService {
     injections?: Partial<BotServiceOptions>;
   }): BotService {
     const constructorOptions = options.injections ?? {};
-    const metaFactory = DefaultMetaCollectionFactory.createWith([
+    const metaFactory = DefaultMetadataFactory.createWith([
       TypedFields.Bot,
       options.bot,
     ]);
@@ -85,7 +85,6 @@ export class DefaultBotService implements BotService {
       await this.bot.getEventManager().onStart();
       await Promise.all([
         await this.bot.getScheduleManager().onStart(),
-        await this.bot.getSessionManager().onStart(),
         await this.bot.getPluginManager().onStart(),
       ]);
 
@@ -125,7 +124,6 @@ export class DefaultBotService implements BotService {
       await this.bot.getCommandManager().onStop(),
       await this.bot.getScheduleManager().onStop(),
       await this.bot.getEventManager().onStop(),
-      await this.bot.getSessionManager().onStop(),
       await this.bot.getPluginManager().onStop(),
     ]);
 

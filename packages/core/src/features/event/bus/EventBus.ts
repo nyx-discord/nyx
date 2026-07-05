@@ -2,9 +2,9 @@ import type { Comparator, ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable } from 'discord.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Identifier } from '../../../identity/Identifier.js';
-import type { MetaCollection } from '../../../meta/MetaCollection.js';
-import type { MetaCollectionFactory } from '../../../meta/MetaCollectionFactory.js';
+import type { Metadata } from '../../../meta/Metadata';
 import type { Metadatable } from '../../../meta/Metadatable';
+import type { MetadataFactory } from '../../../meta/MetadataFactory';
 import type { Protectable } from '../../../protect/Protectable';
 import type { ReadonlyCollectionFrom } from '../../../types/ReadonlyCollectionFrom.js';
 import type { EventDispatcher } from '../dispatch/dispatcher/EventDispatcher.js';
@@ -53,7 +53,7 @@ export interface EventBus<
   emit<const EventName extends keyof ArgsRecord & string>(
     eventName: EventName,
     args: ArgsRecord[EventName],
-    meta?: MetaCollection,
+    meta?: Metadata,
   ): Awaitable<this>;
 
   /** Removes all subscribers from the given event, or from all events if an eventName is not provided. */
@@ -87,8 +87,8 @@ export interface EventBus<
     EventSubscriberCollection<ArgsRecord>
   >;
 
-  /** Returns the {@link MetaCollectionFactory} for creating or populating {@link MetaCollection}s for event emits. */
-  getMetaCollectionFactory(): MetaCollectionFactory;
+  /** Returns the {@link MetadataFactory} for creating or populating {@link Metadata}s for event emits. */
+  getMetadataFactory(): MetadataFactory;
 
   /** Returns an iterator of all {@link EventSubscriber}s. */
   values(): IterableIterator<AnyEventSubscriberFrom<ArgsRecord>>;

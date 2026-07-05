@@ -4,7 +4,7 @@ import type {
   CommandFilterResolvable,
   ComponentCommandInteraction,
   ExecutableCommand,
-  MetaCollection,
+  Metadata,
   Nameable,
   NyxBot,
 } from '@nyx-discord/core';
@@ -29,7 +29,7 @@ export abstract class AbstractExecutableCommand<
 
   public handleInteraction(
     interaction: ComponentCommandInteraction,
-    metadata: MetaCollection,
+    metadata: Metadata,
   ): Awaitable<void> {
     if (interaction.isButton()) return this.handleButton(interaction, metadata);
     if (interaction.isModalSubmit()) {
@@ -65,13 +65,13 @@ export abstract class AbstractExecutableCommand<
 
   public abstract execute(
     interaction: Interaction,
-    metadata: MetaCollection,
+    metadata: Metadata,
   ): Awaitable<void>;
 
   /** Handles a {@link ButtonInteraction} whose customId matches this command. */
   protected handleButton(
     _interaction: ButtonInteraction,
-    _metadata: MetaCollection,
+    _metadata: Metadata,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }
@@ -79,7 +79,7 @@ export abstract class AbstractExecutableCommand<
   /** Handles an {@link AnySelectMenuInteraction} whose customId matches this command. */
   protected handleSelectMenu(
     _interaction: AnySelectMenuInteraction,
-    _metadata: MetaCollection,
+    _metadata: Metadata,
   ): Awaitable<void> {
     throw new NotImplementedError();
   }
@@ -87,14 +87,8 @@ export abstract class AbstractExecutableCommand<
   /** Handles a {@link ModalSubmitInteraction} whose customId matches this command. */
   protected handleModal(
     _interaction: ModalSubmitInteraction,
-    _metadata: MetaCollection,
+    _metadata: Metadata,
   ): Awaitable<void> {
     throw new NotImplementedError();
-  }
-
-  /** Returns this command's customId on the given bot. */
-  protected getCustomId(bot: NyxBot, extra?: string): string {
-    const data = this.getCustomIdData(extra);
-    return bot.getCommandManager().getCustomIdCodec().serialize(data);
   }
 }

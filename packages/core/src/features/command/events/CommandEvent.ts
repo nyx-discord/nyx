@@ -1,5 +1,5 @@
 import type { AutocompleteInteraction } from 'discord.js';
-import type { MetaCollection } from '../../../meta/MetaCollection';
+import type { Metadata } from '../../../meta/Metadata';
 import type { AnyExecutableCommand } from '../commands/executable/AnyExecutableCommand';
 import type { TopLevelCommand } from '../commands/TopLevelCommand.js';
 import type { CommandExecutableInteraction } from '../interaction/CommandExecutableInteraction.js';
@@ -23,11 +23,11 @@ export interface CommandEventArgs {
   commandRun: [
     command: AnyExecutableCommand,
     interaction: CommandExecutableInteraction,
-    meta: MetaCollection,
+    meta: Metadata,
   ];
   commandAutocomplete: [
     command: AnyExecutableCommand,
     interaction: AutocompleteInteraction,
-    meta: MetaCollection,
+    meta: Metadata,
   ];
 }

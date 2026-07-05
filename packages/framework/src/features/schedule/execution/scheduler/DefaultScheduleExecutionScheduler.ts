@@ -1,8 +1,7 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
 import type {
   Identifier,
-  MetaCollection,
-  MetaCollectionFactory,
+  Metadata,
+  MetadataFactory,
   Schedule,
   ScheduleExecutionScheduler,
   ScheduleExecutor,
@@ -15,7 +14,7 @@ import {
 } from '@nyx-discord/core';
 import type { CronJobParams } from 'cron';
 import { CronJob } from 'cron';
-import type { Awaitable } from 'discord.js';
+import type { Awaitable, ReadonlyCollection } from 'discord.js';
 import { Collection } from 'discord.js';
 import { CronJobAdapter } from '../../adapter/CronJobAdapter.js';
 
@@ -36,11 +35,11 @@ export class DefaultScheduleExecutionScheduler
 
   protected readonly jobParameters: ScheduleJobParams;
 
-  protected metaFactory: MetaCollectionFactory;
+  protected metaFactory: MetadataFactory;
 
   constructor(
     executor: ScheduleExecutor,
-    metaFactory: MetaCollectionFactory,
+    metaFactory: MetadataFactory,
     jobParameters: ScheduleJobParams,
   ) {
     this.executor = executor;
@@ -50,7 +49,7 @@ export class DefaultScheduleExecutionScheduler
 
   public static create(
     executor: ScheduleExecutor,
-    metaFactory: MetaCollectionFactory,
+    metaFactory: MetadataFactory,
     jobParameters?: ScheduleJobParams,
   ): ScheduleExecutionScheduler {
     const parameters =
@@ -146,7 +145,7 @@ export class DefaultScheduleExecutionScheduler
     const parameters: CronJobParams = {
       cronTime: interval,
       onTick: async () => {
-        const meta = this.createMetaCollection(schedule);
+        const meta = this.createMetadata(schedule);
         await this.executor.tick(schedule, meta);
       },
     };
@@ -160,7 +159,7 @@ export class DefaultScheduleExecutionScheduler
     return `*/${interval} * * * * *`;
   }
 
-  protected createMetaCollection(schedule: Schedule): MetaCollection {
+  protected createMetadata(schedule: Schedule): Metadata {
     const executionId = Symbol(
       `Schedule '${String(schedule.getId())}' @${Date.now()}`,
     );

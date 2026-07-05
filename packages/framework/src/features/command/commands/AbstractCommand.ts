@@ -1,11 +1,10 @@
-import { Collection } from '@discordjs/collection';
 import type {
   Command,
   ContextMenuCommand,
-  MetaCollection,
+  Metadata,
   Nameable,
   ParentCommand,
-  ReadonlyMetaCollection,
+  ReadonlyMetadata,
   StandaloneCommand,
   SubCommand,
   SubCommandGroup,
@@ -16,7 +15,7 @@ export abstract class AbstractCommand<Data extends Nameable>
 {
   protected abstract readonly data: Data;
 
-  protected readonly meta: MetaCollection = new Collection();
+  protected readonly meta: Metadata = Object.create(null);
 
   public isStandalone(): this is StandaloneCommand {
     return false;
@@ -38,7 +37,7 @@ export abstract class AbstractCommand<Data extends Nameable>
     return false;
   }
 
-  public getMeta(): ReadonlyMetaCollection {
+  public getMeta(): ReadonlyMetadata {
     return this.meta;
   }
 
