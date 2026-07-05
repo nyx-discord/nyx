@@ -1,6 +1,6 @@
 import type {
   AnyEventSubscriber,
-  MetaCollection,
+  Metadata,
   MiddlewareResponse,
 } from '@nyx-discord/core';
 import { PriorityEnum, TypedFields } from '@nyx-discord/core';
@@ -13,7 +13,7 @@ export class HandleCheckEventMiddleware extends AbstractEventSubscriberMiddlewar
 
   public check(
     checked: AnyEventSubscriber,
-    meta: MetaCollection,
+    meta: Metadata,
   ): MiddlewareResponse {
     if (TypedFields.EventHandled.get(meta) && checked.ignoresHandledEvents()) {
       return this.false();

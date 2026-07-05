@@ -58,15 +58,6 @@ satisfy the respective interface.
 - Stop and resume `Schedules` as needed.
 - Uses [Cron](https://crontab.guru/) to power the schedules.
 
-### Sessions
-
-- Create Sessions for making expirable, interactable user interfaces.
-  - Some common examples include, pagination, listing, guiding a user through a process, among others.
-- Allows routing interactions (buttons, select menus and modal submits) to the Session, to "update" their state and
-  answer accordingly.
-- Execute actions when a Session has already expired, but an interaction referencing that Session is received, such as
-  telling the user to execute a command again.
-
 ### Plugins
 
 - Create your own plugins that can be loaded inside nyx to allow for even further extensibility.

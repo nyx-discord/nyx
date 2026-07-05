@@ -1,7 +1,7 @@
 import type {
   AnyEventSubscriber,
   MiddlewareResponse,
-  MetaCollection,
+  Metadata,
 } from '@nyx-discord/core';
 import {
   EventSubscriberLifetimeEnum,
@@ -17,7 +17,7 @@ export class LifetimeCheckEventMiddleware extends AbstractEventSubscriberMiddlew
 
   public async check(
     subscriber: AnyEventSubscriber,
-    meta: MetaCollection,
+    meta: Metadata,
   ): Promise<MiddlewareResponse> {
     if (subscriber.getLifetime() === EventSubscriberLifetimeEnum.Once) {
       const bus = TypedFields.EventBus.get(meta, true);

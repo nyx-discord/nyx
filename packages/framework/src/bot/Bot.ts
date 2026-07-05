@@ -10,7 +10,6 @@ import { DefaultCommandManager } from '../features/command/DefaultCommandManager
 import { DefaultEventManager } from '../features/event/DefaultEventManager.js';
 import { DefaultPluginManager } from '../features/plugin/DefaultPluginManager.js';
 import { DefaultScheduleManager } from '../features/schedule/DefaultScheduleManager.js';
-import { DefaultSessionManager } from '../features/session/DefaultSessionManager.js';
 import { DefaultBotService } from '../service/DefaultBotService.js';
 
 type BotOptionsWithDefaults<
@@ -34,8 +33,6 @@ export class Bot<
 
   protected readonly schedules: Implementations['scheduleManager'];
 
-  protected readonly sessions: Implementations['sessionManager'];
-
   protected readonly plugins: Implementations['pluginManager'];
 
   protected readonly service: Implementations['service'];
@@ -55,7 +52,6 @@ export class Bot<
     this.commands = options.commandManager;
     this.events = options.eventManager;
     this.schedules = options.scheduleManager;
-    this.sessions = options.sessionManager;
     this.plugins = options.pluginManager;
     this.deployCommands = options.deployCommands;
   }
@@ -84,7 +80,6 @@ export class Bot<
     client: Client,
   ) => {
     const eventManager = DefaultEventManager.create({ bot, client });
-    const clientBus = eventManager.getClientBus();
 
     return {
       eventManager: eventManager,
@@ -94,7 +89,6 @@ export class Bot<
         clientBus: eventManager.getClientBus(),
       }),
       scheduleManager: DefaultScheduleManager.create({ bot }),
-      sessionManager: DefaultSessionManager.create({ bot, clientBus }),
       service: DefaultBotService.create({ bot }),
       pluginManager: DefaultPluginManager.create({ bot }),
     };
@@ -158,9 +152,5 @@ export class Bot<
 
   public getService(): Implementations['service'] {
     return this.service;
-  }
-
-  public getSessionManager(): Implementations['sessionManager'] {
-    return this.sessions;
   }
 }

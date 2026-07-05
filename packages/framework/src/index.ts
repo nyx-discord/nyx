@@ -3,6 +3,8 @@
  */
 
 export * from './bot/Bot';
+export * from './customId/AbstractCustomIdCodec';
+export * from './customId/SerializableFeatureEnum';
 export * from './error/BasicErrorHandler';
 export * from './errors/NotImplementedError';
 export * from './features/command/DefaultCommandManager';
@@ -52,27 +54,6 @@ export * from './features/schedule/middleware/AbstractScheduleMiddleware';
 export * from './features/schedule/middleware/ScheduleFilterCheckMiddleware';
 export * from './features/schedule/middleware/ScheduleMiddlewareList';
 export * from './features/schedule/repository/DefaultScheduleRepository';
-export * from './features/session/DefaultSessionManager';
-export * from './features/session/customId/DefaultSessionCustomIdCodec';
-export * from './features/session/event/DefaultSessionUpdateSubscriber';
-export * from './features/session/executor/DefaultSessionExecutor';
-export * from './features/session/filter/AbstractSessionStartFilter';
-export * from './features/session/filter/AbstractSessionUpdateFilter';
-export * from './features/session/filter/middleware/AbstractSessionFilterCheckMiddleware';
-export * from './features/session/filter/middleware/SessionStartFilterCheckMiddleware';
-export * from './features/session/filter/middleware/SessionUpdateFilterCheckMiddleware';
-export * from './features/session/middleware/AbstractSessionStartMiddleware';
-export * from './features/session/middleware/AbstractSessionUpdateMiddleware';
-export * from './features/session/middleware/SessionStartMiddlewareList';
-export * from './features/session/middleware/SessionUpdateMiddlewareList';
-export * from './features/session/promise/DefaultSessionPromiseRepository';
-export * from './features/session/repository/DefaultSessionRepository';
-export * from './features/session/sessions/AbstractListPaginationSession';
-export * from './features/session/sessions/AbstractPaginationSession';
-export * from './features/session/sessions/AbstractSession';
-export * from './features/session/sessions/stage/AbstractSessionStage';
-export * from './features/session/sessions/stage/AbstractSessionStartStage';
-export * from './features/session/sessions/stage/AbstractStagePaginationSession';
 export * from './filter/AbstractFilter';
 export * from './filter/filters/AbstractFilterAggregator';
 export * from './filter/filters/AndFilter';
@@ -81,9 +62,10 @@ export * from './filter/filters/NotFilter';
 export * from './filter/filters/OrFilter';
 export * from './filter/filters/TrueFilter';
 export * from './filter/middleware/BasicFilterCheckMiddleware';
-export * from './meta/DefaultMetaCollectionFactory';
+export * from './meta/DefaultMetadataFactory';
 export * from './middleware/AbstractMiddleware';
 export * from './middleware/AbstractMiddlewareList';
 export * from './service/DefaultBotService';
+export * from './util/ensureKey';
 
 export * from '@nyx-discord/core';
