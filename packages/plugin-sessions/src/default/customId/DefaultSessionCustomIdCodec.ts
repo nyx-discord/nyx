@@ -1,10 +1,10 @@
+import type { SessionCustomIdData } from '#src/core/customId/data/SessionCustomIdData';
+import type { SessionCustomIdCodec } from '#src/core/customId/SessionCustomIdCodec';
 import {
   AbstractCustomIdCodec,
   SerializableFeatureEnum,
 } from '@nyx-discord/framework';
 import { Schema, t } from '@sapphire/string-store';
-import type { SessionCustomIdData } from '../../core/customId/data/SessionCustomIdData';
-import type { SessionCustomIdCodec } from '../../core/customId/SessionCustomIdCodec';
 
 export class DefaultSessionCustomIdCodec
   extends AbstractCustomIdCodec<SessionCustomIdData>

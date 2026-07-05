@@ -2,12 +2,19 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
+    "paths": {
+      "#src": ["./src"],
+      "#src/*": ["./src/*"],
+      "#mocks": ["./__tests__/mocks"],
+      "#mocks/*": ["./__tests__/mocks/*"]
+    },
     "customConditions": [
       "@nyx-discord/core"
     ]
   },
   "include": [
-    "src"
+    "src",
+    "__tests__"
   ],
   "exclude": [
     "node_modules",

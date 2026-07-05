@@ -1,5 +1,6 @@
 import { vi } from 'vitest';
-import { AbstractSessionStartStage } from '../../../../framework/src';
+import { getTestBot } from '../../testBot';
+import { AbstractSessionStartStage } from '#src';
 import { MockStagePaginationSession } from './MockStagePaginationSession';
 
 export class MockSessionStartStage extends AbstractSessionStartStage {
@@ -7,7 +8,8 @@ export class MockSessionStartStage extends AbstractSessionStartStage {
   public onLeave = vi.fn();
   public onStart = vi.fn();
 
-  public static createMock() {
-    return new this(MockStagePaginationSession.createMock());
+  public static async createMock() {
+    const bot = await getTestBot();
+    return new this(await MockStagePaginationSession.createMock(bot));
   }
 }

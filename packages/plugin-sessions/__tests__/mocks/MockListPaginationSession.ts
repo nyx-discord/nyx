@@ -1,8 +1,8 @@
-import type { SessionStartInteraction } from '@nyx-discord/core';
+import type { SessionStartInteraction } from '#src';
 import { randomUUID } from 'crypto';
 import { vi } from 'vitest';
-import { MockBot } from '../../../framework/__tests__/bot/MockBot';
-import { AbstractListPaginationSession } from '../../../framework/src';
+import { getTestBot } from '../testBot';
+import { AbstractListPaginationSession } from '#src';
 
 export class MockListPaginationSession<T> extends AbstractListPaginationSession<
   T,
@@ -12,9 +12,9 @@ export class MockListPaginationSession<T> extends AbstractListPaginationSession<
   public onEnd = vi.fn();
   public updatePage = vi.fn();
 
-  public static createMock<T>(items: T[]) {
+  public static async createMock<T>(items: T[]) {
     return new this<T>({
-      bot: MockBot.createMock(),
+      bot: await getTestBot(),
       id: randomUUID(),
       startInteraction: {} as SessionStartInteraction,
       items,

@@ -1,5 +1,6 @@
+import type { SessionCustomIdData } from '#src';
+import { DefaultSessionCustomIdCodec } from '#src';
 import { describe, expect, it, test } from 'vitest';
-import { DefaultSessionCustomIdCodec, SessionCustomIdData } from '../../../src';
 
 const createData = (page?: number) => ({
   id: 'test',

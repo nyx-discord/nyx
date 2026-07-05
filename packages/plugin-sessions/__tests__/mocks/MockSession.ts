@@ -1,16 +1,16 @@
-import type { SessionStartInteraction } from '@nyx-discord/core';
+import type { SessionStartInteraction } from '#src';
 import { randomUUID } from 'crypto';
 import { vi } from 'vitest';
-import { MockBot } from '../../../framework/__tests__/bot/MockBot';
-import { AbstractSession } from '../../../framework/src';
+import { getTestBot } from '../testBot';
+import { AbstractSession } from '#src';
 
 export class MockSession extends AbstractSession {
   public onStart = vi.fn();
   public onEnd = vi.fn();
 
-  public static createMock() {
+  public static async createMock() {
     return new this({
-      bot: MockBot.createMock(),
+      bot: await getTestBot(),
       id: randomUUID(),
       startInteraction: {} as SessionStartInteraction,
     });

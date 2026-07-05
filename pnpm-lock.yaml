@@ -301,6 +301,9 @@ importers:
 
   packages/framework:
     dependencies:
+      '@discordjs/collection':
+        specifier: 1.5.3
+        version: 1.5.3
       '@nyx-discord/core':
         specifier: workspace:*
         version: link:../core

@@ -1,35 +1,36 @@
-import type { PaginationSession, Session } from '@nyx-discord/core';
+import { MockListPaginationSession } from '#mocks/MockListPaginationSession';
+import { MockPaginationSession } from '#mocks/MockPaginationSession';
+import { MockSession } from '#mocks/MockSession';
+import { MockSessionStage } from '#mocks/stage/MockSessionStage';
+import { MockStagePaginationSession } from '#mocks/stage/MockStagePaginationSession';
+import type { PaginationSession, Session } from '#src';
+import { SessionPlugin } from '#src';
 import { describe, expect, it, test } from 'vitest';
-import { MockListPaginationSession } from '../../mocks/MockListPaginationSession';
-import { MockPaginationSession } from '../../mocks/MockPaginationSession';
-import { MockSession } from '../../mocks/MockSession';
-import { MockSessionStage } from '../../mocks/stage/MockSessionStage';
-import { MockStagePaginationSession } from '../../mocks/stage/MockStagePaginationSession';
 
 const createSession = () => MockSession.createMock();
 const createPaginationSession = () => MockPaginationSession.createMock();
-const createListPaginationSession = <T>(items?: T[]) =>
+const createListPaginationSession = async <T>(items?: T[]) =>
   MockListPaginationSession.createMock<T>(items ?? []);
 const createStagePaginationSession = () =>
   MockStagePaginationSession.createMock();
 
 const createSessionStage = () => MockSessionStage.createMock();
 
-function runBaseTests(name: string, factory: () => Session<any>) {
+function runBaseTests(name: string, factory: () => Promise<Session<any>>) {
   describe(name, () => {
-    it('builds a string customId', () => {
-      const session = factory();
+    it('builds a string customId', async () => {
+      const session = await factory();
       expect(typeof session.buildCustomId()).toEqual('string');
       expect(typeof session.buildCustomId('test')).toEqual('string');
     });
 
-    test('GIVEN no extra THEN customId is equal to codec output', () => {
-      const session = factory();
-      const bot = session.bot;
+    test('GIVEN no extra THEN customId is equal to codec output', async () => {
+      const session = await factory();
+      const bot = session.getBot();
 
       const sessionGenerated = session.buildCustomId();
-      const codecGenerated = bot
-        .getSessionManager()
+
+      const codecGenerated = SessionPlugin.getFromBot(bot)
         .getCustomIdCodec()
         .serialize({
           id: session.getId(),
@@ -40,13 +41,12 @@ function runBaseTests(name: string, factory: () => Session<any>) {
       expect(sessionGenerated).toEqual(codecGenerated);
     });
 
-    test('GIVEN extra THEN customId is equal to codec output', () => {
-      const session = factory();
-      const bot = session.bot;
+    test('GIVEN extra THEN customId is equal to codec output', async () => {
+      const session = await factory();
+      const bot = session.getBot();
 
       const sessionGenerated = session.buildCustomId('test');
-      const codecGenerated = bot
-        .getSessionManager()
+      const codecGenerated = SessionPlugin.getFromBot(bot)
         .getCustomIdCodec()
         .serialize({
           id: session.getId(),
@@ -57,8 +57,8 @@ function runBaseTests(name: string, factory: () => Session<any>) {
       expect(sessionGenerated).toEqual(codecGenerated);
     });
 
-    it('returns customId data matching its own data', () => {
-      const session = factory();
+    it('returns customId data matching its own data', async () => {
+      const session = await factory();
       const id = session.getId();
       expect(session.getCustomIdData()).toEqual({
         id,
@@ -76,24 +76,23 @@ function runBaseTests(name: string, factory: () => Session<any>) {
 
 function runPaginationTests(
   name: string,
-  factory: () => PaginationSession<any>,
+  factory: () => Promise<PaginationSession<any>>,
 ) {
   runBaseTests(name, factory);
 
   describe(name, () => {
-    it('GIVEN a page THEN builds a string pagination customId', () => {
-      const session = factory();
+    it('GIVEN a page THEN builds a string pagination customId', async () => {
+      const session = await factory();
       expect(typeof session.buildPageCustomId(1)).toEqual('string');
       expect(typeof session.buildPageCustomId(1, 'test')).toEqual('string');
     });
 
-    test('GIVEN a page and extra THEN customId is equal to codec output', () => {
-      const session = createPaginationSession();
-      const bot = session.bot;
+    test('GIVEN a page and extra THEN customId is equal to codec output', async () => {
+      const session = await createPaginationSession();
+      const bot = session.getBot();
 
       const sessionGenerated = session.buildPageCustomId(1, 'test');
-      const codecGenerated = bot
-        .getSessionManager()
+      const codecGenerated = SessionPlugin.getFromBot(bot)
         .getCustomIdCodec()
         .serialize({
           id: session.getId(),
@@ -119,13 +118,13 @@ describe("AbstractSessions' CustomIds", () => {
   );
 
   describe('AbstractSessionStage', () => {
-    test('GIVEN a page THEN builds a string pagination customId', () => {
-      const stage = createSessionStage();
+    test('GIVEN a page THEN builds a string pagination customId', async () => {
+      const stage = await createSessionStage();
       expect(typeof stage['buildPageCustomId'](1)).toEqual('string');
     });
 
-    test('GIVEN a stage THEN it builds a string pagination customId for that stage', () => {
-      const stage = createSessionStage();
+    test('GIVEN a stage THEN it builds a string pagination customId for that stage', async () => {
+      const stage = await createSessionStage();
       const startStage = stage.getSession().getStages()[0];
 
       expect(typeof stage['buildCustomIdForStage'](startStage)).toEqual(
@@ -136,16 +135,15 @@ describe("AbstractSessions' CustomIds", () => {
       );
     });
 
-    test('GIVEN a stage and extra THEN customId is equal to codec output', () => {
-      const stage = createSessionStage();
-      const bot = stage.bot;
+    test('GIVEN a stage and extra THEN customId is equal to codec output', async () => {
+      const stage = await createSessionStage();
+      const bot = stage.getBot();
 
       const sessionGenerated = stage['buildCustomIdForStage'](
         stage.getSession().getStages()[0],
         'test',
       );
-      const codecGenerated = bot
-        .getSessionManager()
+      const codecGenerated = SessionPlugin.getFromBot(bot)
         .getCustomIdCodec()
         .serialize({
           id: stage.getSession().getId(),
@@ -156,9 +154,9 @@ describe("AbstractSessions' CustomIds", () => {
       expect(sessionGenerated).toEqual(codecGenerated);
     });
 
-    test('GIVEN a non present stage THEN it throws', () => {
-      const stage = createSessionStage();
-      const nonPresent = createSessionStage();
+    test('GIVEN a non present stage THEN it throws', async () => {
+      const stage = await createSessionStage();
+      const nonPresent = await createSessionStage();
       expect(() => stage['buildCustomIdForStage'](nonPresent)).toThrow();
     });
   });
