@@ -1,7 +1,7 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable } from 'discord.js';
+import type { BotLifecycleObserver } from '../../bot/BotLifecycleObserver';
 import type { Identifier } from '../../identity/Identifier.js';
-import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { ClassImplements } from '../../types/ClassImplements.js';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber';
@@ -43,10 +43,22 @@ export interface PluginManager
   /** Returns a plugin by its ID. */
   getPluginById(id: Identifier): NyxPlugin | null;
 
-  /** Returns the first plugin that is an instance of the passed class. */
-  getPluginByClass(
-    PluginClass: ClassImplements<NyxPlugin>,
-  ): InstanceType<typeof PluginClass> | null;
+  /**
+   * Returns the first plugin that is an instance of the passed class.
+   * @throws {ObjectNotFoundError} If `force` is true and no such plugin is found.
+   */
+  getPluginByClass<TPluginClass extends ClassImplements<NyxPlugin>>(
+    PluginClass: TPluginClass,
+    force: true,
+  ): InstanceType<TPluginClass>;
+  getPluginByClass<TPluginClass extends ClassImplements<NyxPlugin>>(
+    PluginClass: TPluginClass,
+    force: false,
+  ): InstanceType<TPluginClass> | null;
+  getPluginByClass<TPluginClass extends ClassImplements<NyxPlugin>>(
+    PluginClass: TPluginClass,
+    force?: boolean,
+  ): InstanceType<TPluginClass> | null;
 
   /** Returns the {@link EventBus} for this manager. */
   getEventBus(): EventBus<PluginEventArgs>;

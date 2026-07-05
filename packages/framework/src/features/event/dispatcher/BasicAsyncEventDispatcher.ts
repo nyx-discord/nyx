@@ -10,31 +10,41 @@ import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
 import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList.js';
 import { AbstractEventDispatcher } from './AbstractEventDispatcher.js';
 
+type AsyncEventDispatcherOptions = {
+  errorHandler: EventSubscriberErrorHandler;
+  middleware: MiddlewareList<EventSubscriberMiddleware>;
+  concurrencyLimit?: number;
+};
+
 export class BasicAsyncEventDispatcher
   extends AbstractEventDispatcher
   implements AsyncEventDispatcher
 {
   protected concurrencyLimit: number | null = 3;
 
-  constructor(
-    errorHandler: EventSubscriberErrorHandler,
-    middleware: MiddlewareList<EventSubscriberMiddleware>,
-    concurrencyLimit?: number | null,
-  ) {
-    super(errorHandler, middleware);
-    if (concurrencyLimit !== undefined) {
-      this.concurrencyLimit = concurrencyLimit;
+  constructor(options: AsyncEventDispatcherOptions) {
+    super(options.errorHandler, options.middleware);
+    if (options.concurrencyLimit !== undefined) {
+      this.concurrencyLimit = options.concurrencyLimit;
     }
   }
 
-  public static create(concurrencyLimit?: number | null): AsyncEventDispatcher {
-    return new this(
-      BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
-        TypedFields.Bot.get(meta, true).getLogger(),
-      ),
-      SubscriberMiddlewareList.create(),
-      concurrencyLimit,
-    );
+  public static create(options?: {
+    concurrencyLimit?: number;
+    injections?: Partial<Omit<AsyncEventDispatcherOptions, 'concurrencyLimit'>>;
+  }): AsyncEventDispatcher {
+    const constructorOptions = options?.injections ?? {};
+
+    return new this({
+      errorHandler:
+        constructorOptions.errorHandler
+        ?? BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
+          TypedFields.Bot.get(meta, true).getLogger(),
+        ),
+      middleware:
+        constructorOptions.middleware ?? SubscriberMiddlewareList.create(),
+      concurrencyLimit: options?.concurrencyLimit,
+    });
   }
 
   public async dispatch(

@@ -1,7 +1,7 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable, ClientEvents } from 'discord.js';
+import type { BotLifecycleObserver } from '../../bot/BotLifecycleObserver';
 import type { Identifier } from '../../identity/Identifier.js';
-import type { BotLifecycleObserver } from '../../types/BotLifecycleObserver';
 import type { ClassImplements } from '../../types/ClassImplements.js';
 import type { AnyEventBus } from './bus/AnyEventBus';
 import type { EventBus } from './bus/EventBus.js';

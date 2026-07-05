@@ -1,7 +1,7 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import type { Awaitable } from 'discord.js';
+import type { BotLifecycleObserver } from '../../../../bot/BotLifecycleObserver';
 import type { Identifier } from '../../../../identity/Identifier.js';
-import type { BotLifecycleObserver } from '../../../../types/BotLifecycleObserver';
 import type { ScheduleJobAdapter } from '../../job/ScheduleJobAdapter.js';
 import type { UndestroyableScheduleJobAdapter } from '../../job/UndestroyableScheduleJobAdapter.js';
 import type { Schedule } from '../../schedule/Schedule.js';

@@ -1,5 +1,5 @@
 import type { Awaitable, ClientEvents, Events } from 'discord.js';
-import type { BotLifecycleObserver } from '../../../types/BotLifecycleObserver.js';
+import type { BotLifecycleObserver } from '../../../bot/BotLifecycleObserver';
 import type { EventSubscriber } from '../../event/subscriber/EventSubscriber.js';
 
 /** An object that stores the current subscribers for a {@link CommandManager} */

@@ -12,31 +12,41 @@ import { BasicErrorHandler } from '../../../error/BasicErrorHandler.js';
 import { SubscriberMiddlewareList } from '../middleware/SubscriberMiddlewareList.js';
 import { AbstractEventDispatcher } from './AbstractEventDispatcher.js';
 
+type SyncEventDispatcherOptions = {
+  errorHandler: EventSubscriberErrorHandler;
+  middleware: MiddlewareList<EventSubscriberMiddleware>;
+  syncTimeout?: number;
+};
+
 export class BasicSyncEventDispatcher
   extends AbstractEventDispatcher
   implements SyncEventDispatcher
 {
   protected syncTimeout: number | null = 10_000; // 10 seconds
 
-  constructor(
-    errorHandler: EventSubscriberErrorHandler,
-    middleware: MiddlewareList<EventSubscriberMiddleware>,
-    syncTimeout?: number | null,
-  ) {
-    super(errorHandler, middleware);
-    if (syncTimeout !== undefined) {
-      this.syncTimeout = syncTimeout;
+  constructor(options: SyncEventDispatcherOptions) {
+    super(options.errorHandler, options.middleware);
+    if (options.syncTimeout !== undefined) {
+      this.syncTimeout = options.syncTimeout;
     }
   }
 
-  public static create(syncTimeout?: number | null): SyncEventDispatcher {
-    return new this(
-      BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
-        TypedFields.Bot.get(meta, true).getLogger(),
-      ),
-      SubscriberMiddlewareList.create(),
-      syncTimeout,
-    );
+  public static create(options?: {
+    syncTimeout?: number;
+    injections?: Partial<Omit<SyncEventDispatcherOptions, 'syncTimeout'>>;
+  }): SyncEventDispatcher {
+    const constructorOptions = options?.injections ?? {};
+
+    return new this({
+      errorHandler:
+        constructorOptions.errorHandler
+        ?? BasicErrorHandler.createWithFallbackLogger((_error, _sub, [meta]) =>
+          TypedFields.Bot.get(meta, true).getLogger(),
+        ),
+      middleware:
+        constructorOptions.middleware ?? SubscriberMiddlewareList.create(),
+      syncTimeout: options?.syncTimeout,
+    });
   }
 
   public async dispatch(
