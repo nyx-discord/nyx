@@ -1,0 +1,143 @@
+---
+title: Job Adapter
+icon: Plug
+definedIn: ['core/ScheduleJobAdapter', 'framework/CronJobAdapter']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The <DocsLink pkg='core' name='ScheduleJobAdapter' decorated={false} /> wraps a specific scheduled job implementation so the schedule system can interact with jobs (pause, resume, destroy) without knowing the underlying library.
+
+The default implementation (<DocsLink pkg='framework' name='CronJobAdapter' decorated={false} />) wraps jobs created by the `cron` library and delegates lifecycle operations through this adapter.
+
+## When to override
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Use a different timing/job backend (not `cron`) through a custom [`ScheduleExecutionScheduler`](/extend/schedules/schedule-execution-scheduler). | Change only schedule storage or execution behavior. Those are responsibilities of `ScheduleRepository` and `ScheduleExecutor`. |
+| Adapt a third-party scheduler/queue API to Nyx's `pause`/`resume`/`destroy` contract. | Only change interval parsing or next-run calculation. That belongs to `ScheduleExecutionScheduler`. |
+| Wrap platform-specific timer handles (e.g., `setTimeout`-based jobs) behind a uniform adapter API. | Add pre-execution checks. That belongs to `ScheduleMiddlewareList`. |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom adapter implementing `ScheduleJobAdapter`.
+
+```ts twoslash
+import type { ScheduleJobAdapter, ScheduleInterval } from '@nyx-discord/framework';
+
+class SimpleTimerAdapter implements ScheduleJobAdapter<NodeJS.Timeout> {
+  constructor(
+    private readonly timer: NodeJS.Timeout,
+    private readonly interval: ScheduleInterval
+  ) {}
+
+  public pause() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public resume() {
+    this.timer.refresh();
+    return this;
+  }
+
+  public destroy() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public isRunning() {
+    // NodeJS.Timeout has no built-in running-state check; illustrative only.
+    return true;
+  }
+
+  public getRaw() {
+    return this.timer;
+  }
+
+  public getInterval() {
+    return this.interval;
+  }
+}
+```
+
+</Step>
+<Step>
+### Registration
+
+Use your adapter from a custom [`ScheduleExecutionScheduler`](/extend/schedules/schedule-execution-scheduler), then pass that scheduler to `DefaultScheduleManager` through `injections`.
+
+```ts twoslash
+import { Client } from 'discord.js';
+import type { ScheduleInterval, ScheduleJobAdapter } from '@nyx-discord/framework';
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/framework';
+
+class MyScheduleJobAdapter implements ScheduleJobAdapter<NodeJS.Timeout> {
+  constructor(
+    private readonly timer: NodeJS.Timeout,
+    private readonly interval: ScheduleInterval
+  ) {}
+
+  public pause() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public resume() {
+    this.timer.refresh();
+    return this;
+  }
+
+  public destroy() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public isRunning() {
+    return true;
+  }
+
+  public getRaw() {
+    return this.timer;
+  }
+
+  public getInterval() {
+    return this.interval;
+  }
+}
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  // Instantiate your documented adapter in your custom scheduler flow.
+  // @ts-expect-error Incomplete example
+  private readonly adapter = new MyScheduleJobAdapter(/** ... */);
+}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/framework';
+import { Bot, DefaultScheduleManager } from '@nyx-discord/framework';
+
+const bot = Bot.create((bot: NyxBot) => ({
+  // ---cut-start---
+  token: 'TOKEN',
+  client: new Client({ intents: [] }),
+  logger: console,
+  deployCommands: true,
+  // ---cut-end---
+  // ... other options
+  scheduleManager: DefaultScheduleManager.create({
+    bot,
+    injections: {
+      // ---cut-start---
+      // @ts-expect-error Incomplete example
+      // ---cut-end---
+      scheduler: new MyScheduler(/** ... */),
+    },
+  }),
+}));
+```
+
+</Step>
+</Steps>

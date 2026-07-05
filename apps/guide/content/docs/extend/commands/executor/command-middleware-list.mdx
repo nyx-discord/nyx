@@ -1,0 +1,89 @@
+---
+title: Middleware List
+icon: Layers
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The `CommandMiddlewareList` is responsible for holding and executing the middlewares that run before a command is executed.
+
+It's inside the [`CommandExecutor`](/extend/commands/executor) object, and will be executed by it.
+
+## When to override
+
+| ✅ Override if you want to...                              | ❌ Don't override if you want to...                                        |
+|-----------------------------------------------------------|---------------------------------------------------------------------------|
+| Do something before, while or after checking middlewares. | Add new middlewares. The list already supports add and remove operations. |
+| Check middlewares in a different way or order.            |                                                                           |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom middleware list by either:
+
+* Extending `CommandMiddlewareList` (recommended, less work).
+* Implementing `MiddlewareList<CommandMiddlewareResolvable>`.
+
+```ts twoslash
+import { CommandMiddlewareList } from '@nyx-discord/framework';
+
+class MyMiddlewareList extends CommandMiddlewareList {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Pass it while instantiating your bot, by injecting it into the [`CommandExecutor`](/extend/commands/executor).
+
+Since the `DefaultCommandManager` depends on the client event bus, you'll first need to create an `EventManager`.
+
+<Callout type="warn">**Make sure** to reuse the `EventManager` instance you created, passing it to your returned bot options.</Callout>
+
+```ts twoslash
+import { CommandMiddlewareList } from '@nyx-discord/framework';
+import { Client } from 'discord.js';
+
+declare const client: Client;
+
+class MyMiddlewareList extends CommandMiddlewareList {}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/framework';
+import { Bot, DefaultCommandManager, DefaultEventManager, DefaultCommandExecutor } from '@nyx-discord/framework';
+
+const bot = Bot.create((bot: NyxBot) => {
+  const eventManager = DefaultEventManager.create({ bot, client });
+  const clientBus = eventManager.getClientBus();
+
+  return {
+    // ---cut-start---
+    token: 'TOKEN',
+    client,
+    logger: console,
+    deployCommands: true,
+    // ---cut-end---
+    // ... other options
+    eventManager,
+    commandManager: DefaultCommandManager.create({
+      bot,
+      client,
+      clientBus,
+      injections: { // [!code highlight]
+        executor: DefaultCommandExecutor.create({ // [!code highlight]
+          injections: { // [!code highlight]
+            middleware: MyMiddlewareList.create(), // [!code highlight]
+          }, // [!code highlight]
+        }), // [!code highlight]
+      }, // [!code highlight]
+    }),
+  };
+});
+```
+
+The `create()` method instantiates your custom middleware list, not the default one.
+
+</Step>
+</Steps>

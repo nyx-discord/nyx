@@ -1,0 +1,232 @@
+---
+title: Stage Pagination Session
+icon: SquareStack
+definedIn: ['plugin-sessions/AbstractStagePaginationSession', 'plugin-sessions/AbstractSessionStage', 'plugin-sessions/AbstractSessionStartStage']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Callout type="warn">It's recommended to read the [Pagination Session](./pagination-session) page first, all of its features apply to this.</Callout>
+
+A `StagePaginationSession` is a special type of pagination session made to paginate a list of stages.
+
+## Stages
+
+A stage is an object inside a `StagePaginationSession` that represents a single page in the pagination. You can view them as a "nested" session.
+
+Switching from one stage to another is the equivalent of switching pages on a pagination component.
+
+A stage can:
+* Be updated, similar to a `Session` update.
+* Be switched to and reply to the interaction switching to it.
+* Be left and perform some cleanup logic.
+* Return a result, similar to a `Session` result.
+
+The first stage is a `SessionStartStage`. It behaves exactly the same as any other, except it also has a `SessionStartStage#onStart()` method.
+
+## Pagination
+
+The pagination works in a similar way as in the `PaginationSession`. In essence:
+
+- A customId not referring to a page is handled by `#update()` of the current stage.
+- A customId referring to a page makes the session switch to that stage, calling `SessionStage#onSwitch()` on the new one and `SessionStage#onLeave()` on the old one.
+
+## Creation
+
+There are three things you need to build to create a full `StagePaginationSession`:
+1. The start stage
+2. The stages (at least one)
+3. The session
+
+### Start stage creation
+
+You'll first need to build the first stage of the session, a `SessionStartStage`.
+
+<Steps>
+<Step>
+
+#### Class creation
+
+Extend the `AbstractSessionStartStage` class:
+
+```ts twoslash
+import { AbstractSessionStartStage } from '@nyx-discord/plugin-sessions';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySessionStartStage extends AbstractSessionStartStage {}
+```
+
+</Step>
+<Step>
+
+#### Implementation
+
+Implement:
+- `onStart()`: Replies to the start interaction.
+- `onSwitch()`: Replies to the interaction when the user switches to this stage.
+- `onLeave()`: Performs some cleanup logic when the user leaves the stage.
+
+<Callout type="warn">You should not reply to the `onLeave()` interaction, as this will be done by the next stage.</Callout>
+
+```ts twoslash
+import {
+  AbstractSessionStartStage,
+  type SessionStartInteraction,
+  type SessionUpdateInteraction
+} from '@nyx-discord/plugin-sessions';
+
+class MySessionStartStage extends AbstractSessionStartStage {
+  // Example property, not required
+  protected userOnStage = true;
+
+  public async onStart(interaction: SessionStartInteraction): Promise<void> {
+    await interaction.reply('Welcome to the session!');
+  }
+
+  public async onSwitch(interaction: SessionUpdateInteraction): Promise<boolean> {
+    await interaction.reply('Welcome to this stage!');
+    this.userOnStage = true;
+    return true;
+  }
+
+  public async onLeave(interaction: SessionUpdateInteraction): Promise<void> {
+    this.userOnStage = false;
+  }
+}
+```
+
+The type argument is the [return type](#stage-result) of your stage, which will be explained later.
+
+</Step>
+</Steps>
+
+### Stages creation
+
+After the first stage, you can create as many stages as you want.
+
+<Steps>
+<Step>
+
+#### Class creation
+
+Extend the `AbstractSessionStage` class:
+
+```ts twoslash
+import { AbstractSessionStage } from '@nyx-discord/plugin-sessions';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySessionStage extends AbstractSessionStage {}
+```
+
+</Step>
+<Step>
+
+#### Implementation
+
+Implement:
+- `onSwitch()`: Replies to the interaction when the user switches to this stage.
+- `onLeave()`: Performs some cleanup logic when the user leaves the stage.
+
+<Callout type="warn">You should not reply to the `onLeave()` interaction, as this will be done by the next stage.</Callout>
+
+```ts twoslash
+import { AbstractSessionStage, type SessionUpdateInteraction } from '@nyx-discord/plugin-sessions';
+
+class MySessionStage extends AbstractSessionStage {
+  // Example property, not required
+  protected userOnStage = true;
+
+  public async onSwitch(interaction: SessionUpdateInteraction): Promise<boolean> {
+    await interaction.reply('Welcome to this stage!');
+    this.userOnStage = true;
+    return true;
+  }
+
+  public async onLeave(interaction: SessionUpdateInteraction): Promise<void> {
+    this.userOnStage = false;
+  }
+}
+```
+
+</Step>
+</Steps>
+
+### Session creation
+
+After all stages are created, you can create the session.
+
+<Steps>
+<Step>
+
+#### Class creation
+
+Extend the `AbstractStagePaginationSession` class:
+
+```ts twoslash
+import { AbstractStagePaginationSession } from '@nyx-discord/plugin-sessions';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyStagePaginationSession extends AbstractStagePaginationSession {}
+```
+
+</Step>
+<Step>
+
+#### Implementation
+
+Implement `onEnd()` and `stages`:
+
+```ts twoslash
+import { AbstractStagePaginationSession, type SessionStageArray } from '@nyx-discord/plugin-sessions';
+
+// ---cut-start---
+import { AbstractSessionStartStage, AbstractSessionStage } from '@nyx-discord/plugin-sessions';
+// @ts-expect-error Incomplete example
+class MySessionStartStage extends AbstractSessionStartStage<void> {}
+// @ts-expect-error Incomplete example
+class MySessionStage extends AbstractSessionStage<void> {}
+// ---cut-end---
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages: SessionStageArray = [
+    new MySessionStartStage(this),
+    new MySessionStage(this)
+  ];
+
+  public async onEnd(): Promise<void> {
+    await this.startInteraction.editReply('Session ended!');
+  }
+}
+```
+
+</Step>
+<Step>
+
+#### Initialization
+
+Instantiate and start your session the same way as a regular one:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/framework';
+import { AbstractStagePaginationSession } from '@nyx-discord/plugin-sessions';
+import type { ChatInputCommandInteraction } from 'discord.js';
+
+declare const startInteraction: ChatInputCommandInteraction;
+declare const bot: NyxBot;
+declare const id: string;
+// @ts-expect-error Incomplete example
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {}
+// ---cut---
+const session = new MyStagePaginationSession({ bot, startInteraction, id });
+await session.start();
+```
+
+</Step>
+</Steps>
+
+

@@ -1,0 +1,72 @@
+---
+title: Middleware List
+icon: Layers
+definedIn: ['framework/ScheduleMiddlewareList', 'core/MiddlewareList']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The `ScheduleMiddlewareList` manages the middlewares that run before a schedule `tick()` is executed. It lives inside the [`ScheduleExecutor`](/extend/schedules/schedule-executor) and is used by it.
+
+## Middleware Execution
+
+Middlewares are executed sequentially. If any middleware throws an error or returns without calling `next()`, the schedule execution is aborted and the executor forwards the error to its configured handler.
+
+The `ScheduleFilterCheckMiddleware` is a built-in middleware that runs first by default (or as configured) to check if the schedule's `filter` method allows execution.
+
+## When to override
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Customize how middlewares are stored or iterated. | Add middlewares to the existing list. Use a custom `ScheduleExecutor` if you only need different injections. |
+| Add priority/group ordering semantics beyond simple insertion order. | Change error handling around `tick()` execution. That belongs to `ScheduleErrorHandler`. |
+| Enforce middleware deduplication or identity-based replacement rules. | Change when schedules are triggered. That belongs to `ScheduleExecutionScheduler`. |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom `ScheduleMiddlewareList` by either:
+
+* Extending `ScheduleMiddlewareList` (recommended, less work).
+* Implementing `MiddlewareList<ScheduleMiddlewareResolvable>`.
+
+```ts twoslash
+import { ScheduleMiddlewareList } from '@nyx-discord/framework';
+
+class MyMiddlewareList extends ScheduleMiddlewareList {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Inject it into a custom `DefaultScheduleExecutor`, then pass that executor to the `ScheduleManager`.
+
+```ts twoslash
+import { BasicErrorHandler, DefaultScheduleExecutor, DefaultScheduleManager, ScheduleMiddlewareList, TypedFields, type NyxBot } from '@nyx-discord/framework';
+
+class MyMiddlewareList extends ScheduleMiddlewareList {}
+// ---cut---
+declare const bot: NyxBot;
+
+const executor = new DefaultScheduleExecutor(
+  MyMiddlewareList.create(),
+  BasicErrorHandler.createWithFallbackLogger((_error, _schedule, [metadata]) =>
+    TypedFields.Bot.get(metadata, true).getLogger(),
+  ),
+);
+
+const manager = DefaultScheduleManager.create({
+  bot,
+  injections: {
+    executor,
+  },
+});
+```
+
+</Step>
+</Steps>
+

@@ -1,0 +1,138 @@
+---
+title:  Filters
+icon: Lock
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Filters restrict the execution of a given schedule. For example:
+- A [maintenance filter](#maintenance-filter) that checks if the system is in maintenance mode
+- A [production filter](#production-filter) that restricts the execution to the production environment.
+
+They receive all the information about the schedule and the execution metadata, and return a boolean indicating whether the schedule should be executed or not.
+
+For more general information about filters, you must first read the general [Filters](/use/other/filters) guide.
+
+## Usage
+
+<Steps>
+<Step>
+
+### Creation
+
+Either:
+
+- Create a class that extends `AbstractScheduleFilter` and implements the `check()` method.
+ ```ts twoslash
+ // ---cut---
+ import { AbstractScheduleFilter } from '@nyx-discord/framework';
+ import type { Schedule, Metadata } from '@nyx-discord/framework';
+
+ class MyFilter extends AbstractScheduleFilter {
+   public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
+     // Do some checks
+     return true; // or false if the schedule should not be executed
+   }
+ }
+ ```
+
+- Create a function that returns a boolean or a Promise that resolves to a boolean.
+ ```ts twoslash
+ // ---cut---
+ import { type ScheduleFilterResolvable } from '@nyx-discord/framework';
+
+ const myFilter: ScheduleFilterResolvable = async (schedule, meta) => {
+   // Do some checks
+   return true; // or false if the schedule should not be executed
+ };
+ ```
+
+</Step>
+<Step>
+
+### Filter usage
+
+Override the `filter` property in your schedule:
+
+- If you created a class, instantiate it:
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/framework';
+
+// ---cut-start---
+import { AbstractScheduleFilter } from '@nyx-discord/framework';
+// @ts-expect-error Incomplete example
+class MyFilter extends AbstractScheduleFilter {}
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySchedule extends AbstractSchedule {
+  protected override readonly filter = new MyFilter();
+}
+```
+
+- If you created a function, assign it directly:
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/framework';
+
+// ---cut-start---
+import { type ScheduleFilterResolvable } from '@nyx-discord/framework';
+declare const myFilter: ScheduleFilterResolvable;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySchedule extends AbstractSchedule {
+  protected override readonly filter = myFilter;
+}
+```
+
+Or use a simple arrow function directly:
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/framework';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySchedule extends AbstractSchedule {
+  protected override readonly filter = () => {
+    // Do some checks
+    return true;
+  };
+}
+```
+
+</Step>
+</Steps>
+
+## Examples
+
+### Maintenance Filter
+
+A filter that checks if the system is in maintenance mode, and prevents the schedule from running if it is.
+
+```ts twoslash
+import { AbstractScheduleFilter } from '@nyx-discord/framework';
+import type { Schedule, Metadata } from '@nyx-discord/framework';
+
+class MaintenanceFilter extends AbstractScheduleFilter {
+  public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
+    // Check if the system is in maintenance mode, e.g. from an env variable or database
+    return process.env.MAINTENANCE_MODE !== 'true';
+  }
+}
+```
+
+### Production Filter
+
+A filter that restricts the execution to the production environment.
+
+```ts twoslash
+import { AbstractScheduleFilter } from '@nyx-discord/framework';
+import type { Schedule, Metadata } from '@nyx-discord/framework';
+
+class ProductionFilter extends AbstractScheduleFilter {
+  public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
+    return process.env.NODE_ENV === 'production';
+  }
+}
+```

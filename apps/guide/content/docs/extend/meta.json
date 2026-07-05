@@ -1,0 +1,31 @@
+{
+  "title": "Extend",
+  "description": "Learn and modify nyx internals.",
+  "root": true,
+  "icon": "GitBranch",
+  "pages": [
+    "index",
+    "---Commands---",
+    "./commands/index",
+    "./commands/command-manager",
+    "./commands/command-resolver",
+    "./commands/executor",
+    "./commands/command-repository",
+    "./commands/command-customidcodec",
+    "./commands/command-deployer",
+    "./commands/command-subscriptions-container.mdx",
+    "./commands/command-bus",
+    "---Events---",
+    "./events/index",
+    "./events/event-manager",
+    "./events/event-bus",
+    "./events/dispatcher",
+    "---Schedules---",
+    "./schedules/index",
+    "./schedules/schedule-manager",
+    "./schedules/schedule-repository",
+    "./schedules/schedule-executor",
+    "./schedules/schedule-execution-scheduler",
+    "./schedules/schedule-job-adapter"
+  ]
+}

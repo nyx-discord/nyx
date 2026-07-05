@@ -1,0 +1,110 @@
+---
+title: Error Handler
+icon: Ambulance
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The `CommandErrorHandler` is responsible for handling errors thrown by middlewares and commands.
+
+It's inside the [`CommandExecutor`](/extend/commands/executor) object, and will be used by it.
+
+## When to override
+
+| ✅ Override if you want to...              | ❌ Don't override if you want to...                                                 |
+|-------------------------------------------|------------------------------------------------------------------------------------|
+| Resolve consumers with a different logic. | Add new consumers or a fallback one. The object already supports these operations. |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom error handler by either:
+
+* Extending `BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs>` (recommended, less work).
+* Implementing `CommandErrorHandler`.
+
+```ts twoslash
+import { BasicErrorHandler, type AnyExecutableCommand, type CommandExecutionArgs } from '@nyx-discord/framework';
+
+class MyErrorHandler extends BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs> {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Pass it while instantiating your bot, by injecting it to the [`CommandExecutor`](/extend/commands/executor).
+
+Since the `DefaultCommandManager` depends on the client event bus, you'll first need to create an `EventManager`.
+
+<Callout type="warn">**Make sure** to reuse the `EventManager` instance you created, passing it to your returned bot options.</Callout>
+
+```ts twoslash
+import { BasicErrorHandler, type AnyExecutableCommand, type CommandExecutionArgs } from '@nyx-discord/framework';
+
+import { Client } from 'discord.js';
+
+declare const client: Client;
+
+class MyErrorHandler extends BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs> {}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/framework';
+import { Bot, DefaultCommandManager, DefaultEventManager, DefaultCommandExecutor } from '@nyx-discord/framework';
+
+const bot = Bot.create((bot: NyxBot) => {
+  const eventManager = DefaultEventManager.create({ bot, client });
+  const clientBus = eventManager.getClientBus();
+
+  return {
+    // ---cut-start---
+    token: 'TOKEN',
+    client,
+    logger: console,
+    deployCommands: true,
+    // ---cut-end---
+    // ... other options
+    eventManager,
+    commandManager: DefaultCommandManager.create({
+      bot,
+      client,
+      clientBus,
+      injections: { // [!code highlight]
+        executor: DefaultCommandExecutor.create({ // [!code highlight]
+          injections: { // [!code highlight]
+            errorHandler: MyErrorHandler.create(), // [!code highlight]
+          }, // [!code highlight]
+        }), // [!code highlight]
+      }, // [!code highlight]
+    }),
+  };
+});
+```
+
+The `create()` method instantiates your custom error handler, not the default one.
+
+<Callout type="warn" title="Using the Bot's logger">
+The default error handler will use `console.error` as a fallback consumer. If you want to change it to the bot's logger, instantiate it this way:
+
+```ts twoslash
+import { BasicErrorHandler } from '@nyx-discord/framework';
+
+class MyErrorHandler extends BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs> {}
+// ---cut---
+import { TypedFields } from '@nyx-discord/framework';
+import type { AnyExecutableCommand, CommandExecutionArgs } from '@nyx-discord/framework';
+
+const myHandler = MyErrorHandler.createWithFallbackLogger<AnyExecutableCommand, CommandExecutionArgs>(
+  (_error, _command, [_interaction, metadata]) => {
+    const bot = TypedFields.Bot.get(metadata, true);
+    return bot.getLogger();
+  }
+);
+```
+
+</Callout>
+
+</Step>
+</Steps>

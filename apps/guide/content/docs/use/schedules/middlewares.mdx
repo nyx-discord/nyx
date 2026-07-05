@@ -1,0 +1,66 @@
+---
+title: Middlewares
+icon: Layers
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Middlewares are objects or callbacks that run before any schedule is executed. They can do some pre-processing logic and store it in the metadata, or even prevent the subscriber from being executed.
+
+For general information about middlewares, you must first read the general [Middlewares](/use/other/middlewares) guide.
+
+## Usage
+
+<Steps>
+<Step>
+
+### Creation
+
+Either:
+- Create a class that extends `AbstractScheduleMiddleware` and implements the `check()` method.
+```ts twoslash
+import { AbstractScheduleMiddleware } from '@nyx-discord/framework';
+import type { Schedule, Metadata, MiddlewareResponse } from '@nyx-discord/framework';
+
+class MyMiddleware extends AbstractScheduleMiddleware {
+  public async check(
+    schedule: Schedule,
+    meta: Metadata
+  ): Promise<MiddlewareResponse> {
+    // Do some pre-processing logic
+    return this.true();
+  }
+}
+```
+
+- Create a function that returns a `MiddlewareResponse`.
+```ts twoslash
+import { type ScheduleMiddlewareResolvable } from '@nyx-discord/framework';
+
+const myCallbackMiddleware: ScheduleMiddlewareResolvable = async (schedule, meta) => {
+  // Do some pre-processing logic
+  return {
+    allowed: true,
+    checkNext: true,
+  };
+};
+```
+
+</Step>
+<Step>
+
+### Registration
+
+Register it to the executor's `MiddlewareList`:
+
+```ts twoslash
+import type { AbstractScheduleMiddleware, ScheduleMiddlewareResolvable, NyxBot } from '@nyx-discord/framework';
+declare const MyMiddleware: new () => AbstractScheduleMiddleware;
+declare const myCallbackMiddleware: ScheduleMiddlewareResolvable;
+declare const bot: NyxBot;
+// ---cut---
+bot.getScheduleManager().getExecutor().getMiddleware().add(new MyMiddleware(), myCallbackMiddleware);
+```
+
+</Step>
+</Steps>

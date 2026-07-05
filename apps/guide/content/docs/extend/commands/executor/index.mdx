@@ -1,0 +1,98 @@
+---
+title: Executor
+icon: Play
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { LayersIcon, AmbulanceIcon } from 'lucide-react';
+
+The `CommandExecutor` is responsible for executing commands, making sure the middleware passes and handling errors.
+
+## When to override
+
+| ✅ Override if you want to...                                      | ❌ Don't override if you want to...                                                                                                                        |
+|--------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Customize how commands are executed.                               | Listen for command runs. [Use the `EventBus` in the `CommandManager` instead](/use/commands/events).                                                                              |
+| Add advanced logic while executing a command, like delaying calls. | Add new middlewares or error consumers. You can interact with the [`MiddlewareList`](/use/commands/middlewares) and [`ErrorHandler`](/use/other/error-handling) objects directly, using the getter on the executor. |
+|                                                                    | Override the default `MiddlewareList` or `ErrorHandler`. You can do that already from the `DefaultCommandExecutor.create()` options, as shown in the respective guide of the object you want to override. |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom executor by either:
+
+* Extending `DefaultCommandExecutor` (recommended, less work).
+* Implementing `CommandExecutor`.
+
+```ts twoslash
+import { DefaultCommandExecutor } from '@nyx-discord/framework';
+
+class MyCommandExecutor extends DefaultCommandExecutor {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Pass it while instantiating your bot.
+
+Since the `DefaultCommandManager` depends on the client event bus, you'll first need to create an `EventManager`.
+
+<Callout type="warn">Make sure to reuse the `EventManager` instance you created, passing it to your returned bot options.</Callout>
+
+```ts twoslash
+
+import { DefaultCommandExecutor } from '@nyx-discord/framework';
+import { Client } from 'discord.js';
+declare const client: Client;
+
+class MyCommandExecutor extends DefaultCommandExecutor {}
+// ---cut---
+import { type NyxBot, Bot, DefaultCommandManager, DefaultEventManager } from '@nyx-discord/framework';
+
+const bot = Bot.create((bot: NyxBot) => {
+  const eventManager = DefaultEventManager.create({ bot, client });
+  const clientBus = eventManager.getClientBus();
+
+  return {
+    // ---cut-start---
+    token: 'TOKEN',
+    client,
+    logger: console,
+    deployCommands: true,
+    // ---cut-end---
+    // ... other options
+    eventManager,
+    commandManager: DefaultCommandManager.create({
+      bot,
+      client,
+      clientBus,
+      injections: { // [!code highlight]
+        executor: MyCommandExecutor.create(), // [!code highlight]
+      }, // [!code highlight]
+    }),
+  };
+});
+```
+
+The `create()` method instantiates the executor with the default `ErrorHandler` and `MiddlewareList` (which are overridable, as described below). It'll also instantiate your custom class, not the base one.
+
+</Step>
+</Steps>
+
+## Dependencies
+
+You can override the executor's dependencies (`ErrorHandler` and `MiddlewareList`) by passing them as options to the `DefaultCommandExecutor.create()` method. More details in the respective guides:
+
+<Cards>
+<Card title="Middleware List" href="/extend/commands/executor/command-middleware-list" icon={<LayersIcon />} external={false}>
+  Holds and executes the command middlewares.
+</Card>
+<Card title="Error Handler" href="/extend/commands/executor/command-error-handler" icon={<AmbulanceIcon />} external={false}>
+  Handles command-related errors.
+</Card>
+</Cards>

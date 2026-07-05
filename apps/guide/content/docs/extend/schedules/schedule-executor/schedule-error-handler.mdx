@@ -1,0 +1,107 @@
+---
+title: Error Handler
+icon: Ambulance
+definedIn: ['core/ScheduleErrorHandler', 'framework/BasicErrorHandler']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The `ScheduleErrorHandler` handles errors thrown while checking middlewares or executing schedule ticks.
+
+It's inside the [`ScheduleExecutor`](/extend/schedules/schedule-executor) object, and will be used by it.
+
+## When to override
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Resolve error consumers with custom logic. | Add or remove middlewares. That's done with the executor's middleware list. |
+| Change fallback behavior for uncaught errors, such as logging or telemetry. | Change when schedules run. That's done with `ScheduleExecutionScheduler` and `ScheduleJobAdapter`. |
+| Route specific error classes to specialized consumers. | Replace the dispatch flow entirely. If you only want custom error handling, replacing this dependency is enough. |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom error handler by either:
+
+* Extending `BasicErrorHandler<Schedule, ScheduleTickArgs>` (recommended, less work).
+* Implementing `ScheduleErrorHandler`.
+
+```ts twoslash
+import { BasicErrorHandler, type Schedule, type ScheduleTickArgs } from '@nyx-discord/framework';
+
+class MyErrorHandler extends BasicErrorHandler<Schedule, ScheduleTickArgs> {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Inject it directly when creating the executor:
+
+```ts twoslash
+import {
+  BasicErrorHandler,
+  DefaultScheduleExecutor,
+  DefaultScheduleManager,
+  ScheduleMiddlewareList,
+  TypedFields,
+  type NyxBot,
+  type Schedule,
+  type ScheduleTickArgs,
+} from '@nyx-discord/framework';
+
+class MyErrorHandler extends BasicErrorHandler<Schedule, ScheduleTickArgs> {}
+// ---cut---
+declare const bot: NyxBot;
+
+const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
+  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+);
+
+const executor = new DefaultScheduleExecutor(
+  ScheduleMiddlewareList.create(),
+  errorHandler,
+);
+
+const manager = DefaultScheduleManager.create({
+  bot,
+  injections: {
+    executor,
+  },
+});
+```
+
+<Callout type="warn" title="Using the Bot's logger">
+To use the bot logger as fallback, create a handler with `createWithFallbackLogger` and inject it:
+
+```ts twoslash
+import {
+  BasicErrorHandler,
+  DefaultScheduleExecutor,
+  ScheduleMiddlewareList,
+  TypedFields,
+  type NyxBot,
+  type Schedule,
+  type ScheduleTickArgs,
+} from '@nyx-discord/framework';
+
+declare const bot: NyxBot;
+
+const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
+  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+);
+
+const executor = new DefaultScheduleExecutor(
+  ScheduleMiddlewareList.create(),
+  errorHandler,
+);
+```
+
+</Callout>
+
+</Step>
+</Steps>
+

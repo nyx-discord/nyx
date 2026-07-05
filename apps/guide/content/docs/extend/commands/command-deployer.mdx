@@ -1,0 +1,85 @@
+---
+title: Deployer
+description: Deploys commands and stores the ApplicationCommand mappings
+icon: Globe
+definedIn: ['framework/DefaultCommandDeployer', 'core/CommandDeployer']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The `CommandDeployer` is responsible for deploying commands to Discord and storing the [ApplicationCommand](https://discord.js.org/docs/packages/discord.js/stable/ApplicationCommand:Class) mappings.
+
+## When to override
+
+| ✅ Override if you want to...        | ❌ Don't override if you want to...                                                                                                                         |
+|-------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Deploy commands in a different way. | Change command serialization. That is done in the command itself, you can override your `data` property or `getData()` method instead.                     |
+|                                     | Deploy commands conditionally or manually. Instead, return `deployCommands: false` on `Bot.create()` and call `CommandManager#deploy()` when you want.     |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom deployer by either:
+
+* Extending `DefaultCommandDeployer` (recommended, less work).
+* Implementing `CommandDeployer`.
+
+```ts twoslash
+import { DefaultCommandDeployer } from '@nyx-discord/framework';
+
+class MyCommandDeployer extends DefaultCommandDeployer {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Pass it to the `CommandManager`'s injections while instantiating your bot.
+
+Since the `DefaultCommandManager` depends on the client event bus, you'll first need to create an `EventManager`.
+
+<Callout type="warn">**Make sure** to reuse the `EventManager` instance you created, passing it to your returned bot options.</Callout>
+
+```ts twoslash
+import { DefaultCommandDeployer } from '@nyx-discord/framework';
+import { Client } from 'discord.js';
+declare const client: Client;
+
+class MyCommandDeployer extends DefaultCommandDeployer {}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/framework';
+import { Bot, DefaultCommandManager, DefaultEventManager } from '@nyx-discord/framework';
+
+const bot = Bot.create((bot: NyxBot) => {
+  const eventManager = DefaultEventManager.create({ bot, client });
+  const clientBus = eventManager.getClientBus();
+
+  return {
+    // ---cut-start---
+    token: 'TOKEN',
+    client,
+    logger: console,
+    deployCommands: true,
+    // ---cut-end---
+    // ... other options
+    eventManager,
+    commandManager: DefaultCommandManager.create({
+      bot,
+      client,
+      clientBus,
+      injections: { // [!code highlight]
+        // The default deployer needs the client to be injected to deploy commands // [!code highlight]
+        deployer: MyCommandDeployer.create(client), // [!code highlight]
+      }, // [!code highlight]
+    }),
+  };
+});
+```
+
+The <DocsLink pkg='framework' name='DefaultCommandDeployer.create()' decorated={false} /> method instantiates your custom deployer, not the default one.
+
+</Step>
+</Steps>

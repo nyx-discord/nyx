@@ -1,0 +1,70 @@
+---
+title: Middleware List
+icon: Layers
+definedIn: ['framework/SubscriberMiddlewareList', 'core/MiddlewareList']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The `SubscriberMiddlewareList` holds and executes the middlewares used by an `EventDispatcher` before each subscriber is called.
+
+It's inside the [`CommandExecutor`](/extend/commands/executor) object, and will be used by it.
+
+## When to override
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Add custom behavior before/after middleware checks. | Change subscriber execution order. That's controlled by the bus and its sorter. |
+| Change how middleware errors are wrapped or reported. | Handle subscriber errors. Use the dispatcher's [`ErrorHandler`](/use/other/error-handling) for that. |
+| Replace the default middleware chain globally for a dispatcher. | Override all dispatcher logic. If only middleware behavior changes, replacing the list is enough. |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom middleware list by either:
+
+* Extending `SubscriberMiddlewareList` (recommended, less work).
+* Implementing `MiddlewareList<EventSubscriberMiddlewareResolvable>`.
+
+```ts twoslash
+import { SubscriberMiddlewareList } from '@nyx-discord/framework';
+
+class MyMiddlewareList extends SubscriberMiddlewareList {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Inject it directly when creating the dispatcher:
+
+```ts twoslash
+import {
+  SubscriberMiddlewareList,
+  type EventBus,
+} from '@nyx-discord/framework';
+
+declare const bus: EventBus<{ someEvent: [string] }>;
+
+class MyMiddlewareList extends SubscriberMiddlewareList {}
+// ---cut---
+import { BasicSyncEventDispatcher } from '@nyx-discord/framework';
+
+// Works the same with the async dispatcher
+const dispatcher = BasicSyncEventDispatcher.create({
+  injections: {
+    middleware: MyMiddlewareList.create(),
+  },
+});
+
+bus.setDispatcher(dispatcher);
+```
+
+If you prefer, you can still wrap this in a custom dispatcher class and call `super.create(...)`.
+
+</Step>
+</Steps>
+

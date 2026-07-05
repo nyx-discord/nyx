@@ -1,0 +1,80 @@
+---
+title: Executor
+icon: Play
+definedIn: ['framework/DefaultScheduleExecutor']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { LayersIcon, AmbulanceIcon } from 'lucide-react';
+
+The `ScheduleExecutor` is responsible for the actual execution of a schedule's logic.
+
+It runs the schedule's `tick()` method, and also:
+
+- Checks the [`ScheduleMiddlewareList`](/extend/schedules/schedule-executor/schedule-middleware-list).
+- Wraps the execution in a try-catch block.
+- Emits events for success or failure.
+
+## When to override
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Customize execution behavior, including middleware injection or error handling. | Only change the middleware chain. Use `ScheduleMiddlewareList` for that. |
+| Instrument executor-owned branches such as success/failure handling. | Only change how errors are consumed. Use `ScheduleErrorHandler` for that. |
+| Implement custom retry/backoff or exception mapping for failed executions. | Change when schedules run. That belongs to `ScheduleExecutionScheduler` and `ScheduleJobAdapter`. |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom executor by either:
+
+* Extending `DefaultScheduleExecutor` (recommended, less work).
+* Implementing <DocsLink pkg='core' name='ScheduleExecutor' decorated={false} />.
+
+```ts twoslash
+import { DefaultScheduleExecutor } from '@nyx-discord/framework';
+
+class MyExecutor extends DefaultScheduleExecutor {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Inject your executor when creating the `ScheduleManager`.
+
+```ts twoslash
+import { DefaultScheduleExecutor, DefaultScheduleManager, type NyxBot } from '@nyx-discord/framework';
+
+class MyExecutor extends DefaultScheduleExecutor {}
+// ---cut---
+declare const bot: NyxBot;
+
+const manager = DefaultScheduleManager.create({
+  bot,
+  injections: {
+    executor: MyExecutor.create(),
+  },
+});
+```
+
+</Step>
+</Steps>
+
+## Dependencies
+
+The executor has two core dependencies you can customize:
+
+<Cards>
+  <Card title="Middleware List" href="/extend/schedules/schedule-executor/schedule-middleware-list" icon={<LayersIcon />} external={false}>
+    Holds and executes schedule middlewares before `tick()` runs.
+  </Card>
+  <Card title="Error Handler" href="/extend/schedules/schedule-executor/schedule-error-handler" icon={<AmbulanceIcon />} external={false}>
+    Handles middleware and schedule execution errors.
+  </Card>
+</Cards>
+

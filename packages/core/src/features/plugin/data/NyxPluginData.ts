@@ -2,6 +2,6 @@
 export type NyxPluginData = {
   name: string;
   description: string;
-  version: string;
+  version?: string;
   git?: string;
 };

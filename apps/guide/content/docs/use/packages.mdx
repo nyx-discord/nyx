@@ -1,0 +1,38 @@
+---
+title: Packages
+description: Explore the packages that make up nyx
+icon: Package
+---
+
+import { FrameworkMention } from '../../../components/tooltip/FrameworkMention';
+import { CoreMention } from '../../../components/tooltip/CoreMention';
+
+## Structure
+
+The framework is built with two packages: `@nyx-discord/core` and `@nyx-discord/framework`, abbreviated in the guide as <CoreMention /> and <FrameworkMention /> (hover anytime to see a quick reminder of their meaning).
+
+| `@nyx-discord/core`                                                                         | `@nyx-discord/framework`                                                                                                                                        |
+|---------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Defines all the object templates (interfaces) and their relations, acting as the blueprint. | Provides default, minimal implementations for <CoreMention />, making it directly usable.                                                                       |
+| Minimal runtime dependencies (since it doesn't have much actual code).                      | Its implementations are designed to depend on interfaces from <CoreMention />, rather than each other, making those dependencies fully replaceable by your own. |
+| It doesn't have any implementations, so it's not usable by itself.                          | Low runtime dependencies due to its "bare bones" ideology.                                                                                                      |
+
+This separation is done to allow for easy replacement of implementations, so you can use your entirely custom implementations, without needing to depend in the default (<FrameworkMention />) one at all.
+
+## Which package to use?
+
+Most of the time, you'll want to use <FrameworkMention />. Even if you want to include your own components, this library makes it easy to replace them via constructor injection. It also re-exports all the interfaces from <CoreMention />.
+
+If you want to develop something for nyx, such as a plugin, you can use <CoreMention />. This way, you can depend on the interfaces and not any actual implementations, ensuring your component will work across all nyx implementations.
+
+## Object nomenclature
+
+There's also a difference of nomenclature between both packages:
+
+- <FrameworkMention /> has objects prefixed by `Abstract`, `Default` or `Basic` (for example, <DocsLink pkg='framework' name='AbstractSubCommand' decorated={false} label={<code>AbstractSubCommand</code>} /> and <DocsLink pkg='framework' name='DefaultCommandManager' decorated={false} label={<code>DefaultCommandManager</code>} />). This means that they're base implementations of their respective interfaces. Specifically:
+  - `Abstract` is self explanatory. It needs to be extended to be used, often used by user-defined objects like commands or subscribers.
+  - `Basic` is a basic implementation of an interface, and can be directly extended, with nothing else needed to customize it.
+  - `Default` is a basic implementation but it's used somewhere internally, so to extend it [you'll also need to inject it](/extend).
+- <CoreMention /> has almost no implementations, and no prefixes either (for example, <DocsLink pkg='core' name='SubCommand' decorated={false} label={<code>SubCommand</code>} /> and <DocsLink pkg='core' name='SubCommand' decorated={false} label={<code>CommandManager</code>} />). These are the base interfaces for any implementation.
+
+When you want to specify a type, prefer using <CoreMention />'s, eg. `consume(cmd: SubCommand)` instead of `consume(cmd: AbstractSubCommand)`, since it'll work across implementations, and aligns with [Dependency inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle): objects shouldn't depend on implementations, only on base interfaces.

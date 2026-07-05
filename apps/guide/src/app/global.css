@@ -1,0 +1,211 @@
+@import url('https://fonts.cdnfonts.com/css/segoe-tv');
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+@import 'fumadocs-twoslash/twoslash.css';
+
+:root {
+  --nyx-color: #7d91fe;
+
+  --session-color: #7dfef3;
+  --use-color: #5fc8fe;
+  --extend-color: #a584ff;
+
+  --xy-handle-background-color: transparent;
+  --xy-handle-border-color: transparent;
+  --xy-edge-stroke-width: 2;
+}
+
+.session {
+  --color-fd-primary: var(--session-color);
+}
+
+.use {
+  --color-fd-primary: var(--use-color);
+}
+
+.extend {
+  --color-fd-primary: var(--extend-color);
+}
+
+body {
+  overscroll-behavior-y: none;
+  background-color: var(--color-fd-background);
+}
+
+:where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+  font-size: 13.5px;
+}
+
+/* === react-flow start === */
+
+.dark:root {
+  --xy-edge-stroke: #b1b1b7;
+}
+
+.react-flow__node ul {
+  margin: inherit;
+}
+
+.react-flow__node div {
+  font-family: 'Segoe TV', sans-serif;
+  cursor: grab;
+}
+
+.react-flow__node div:active {
+  cursor: grabbing;
+}
+
+.react-flow__node div p {
+  --ifm-paragraph-margin-bottom: 0px;
+}
+
+.react-flow__node code {
+  font-size: 18px;
+}
+
+.react-flow__node-group:active {
+  cursor: grabbing;
+}
+
+.dark .react-flow__node-group {
+  --xy-node-group-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.light .react-flow__node-group {
+  --xy-node-group-background-color: rgba(0, 0, 0, 0.1);
+}
+
+.actor-node__body {
+  border-radius: 2px;
+}
+
+.actor-node__label {
+  left: 15px;
+  top: -15px;
+  position: absolute;
+  font-size: 20px;
+  font-weight: 400;
+  overflow: visible;
+  width: auto;
+}
+
+.step-node__tooltip {
+  flex-grow: 1;
+  border-radius: 100%;
+  display: flex;
+  width: 30px;
+  height: 30px;
+  transform: translate(50%, -50%);
+  justify-content: center;
+  align-items: center;
+  right: 0;
+  position: absolute;
+  top: 0;
+  cursor: help;
+}
+
+.step-node__tooltip-icon {
+  background-color: var(--home-color);
+  box-shadow: 1px 1px 4px 1px var(--color-fd-primary);
+
+  color: white;
+  border-radius: 100%;
+
+  display: flex;
+  transform-origin: center center;
+  padding: 1px;
+  z-index: 1;
+}
+
+.step-node__tooltip .step-node__tooltip-label {
+  --ifm-code-padding-vertical: 0rem;
+  --ifm-code-padding-horizontal: 0rem;
+
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 0.3s,
+    visibility 0s 0.3s;
+
+  background-color: white;
+  border-style: solid;
+  border: 2px solid var(--color-fd-primary);
+  border-color: var(--color-fd-primary);
+  border-radius: 6px;
+
+  text-align: center;
+  font-size: 1em;
+
+  transform: translate(0%, -100%);
+  position: absolute;
+  z-index: 1;
+
+  min-height: 30px;
+  width: auto;
+
+  white-space: nowrap;
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 8px 12px;
+}
+
+.dark .step-node__tooltip-label {
+  color: white;
+  background-color: #212121;
+}
+
+.light .step-node__tooltip-label {
+  color: #3c4257;
+  background-color: white;
+}
+
+.step-node__tooltip .step-node__tooltip-label p > code {
+  vertical-align: 1px;
+}
+
+.step-node:hover .step-node__tooltip-label {
+  visibility: visible;
+  transition: opacity 0.3s;
+  opacity: 1;
+}
+
+.step-node__tooltip .step-node__tooltip-label::after {
+  content: '  ';
+  position: absolute;
+  top: 105%;
+  left: 50%;
+  margin-left: -9px;
+  border-width: 9px;
+  border-style: solid;
+  border-color: var(--color-fd-primary) transparent transparent transparent;
+}
+
+.step-node__label {
+  min-height: 70px;
+  border-radius: 8px;
+  border: none;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  font-size: 17px;
+  overflow: hidden;
+  padding: 8px;
+  text-align: center;
+}
+
+.dark .step-node__label {
+  color: white;
+  background-color: #1e1e1e;
+  box-shadow: 1px 1px 4px 1px rgba(256, 256, 256, 0.4);
+}
+
+.light .step-node__label {
+  color: #3c4257;
+  background-color: white;
+  box-shadow: 1px 1px 4px 1px rgba(1, 1, 1, 0.4);
+}
+
+/* === react-flow end === */

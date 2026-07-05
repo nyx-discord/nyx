@@ -1,0 +1,97 @@
+---
+title: Events Overview
+icon: Megaphone
+---
+
+import { EyeIcon, BusIcon } from 'lucide-react';
+
+The event system in nyx is powered by [EventBuses](/use/events/buses). These are objects that store and notify their [EventSubscribers](/use/events/subscribers) when an event is called either internally or from another source.
+
+You can see them as a more batteries-included way of handling events than using the native Node.js `EventEmitter`.
+
+## Quick example
+
+```ts twoslash
+import { AbstractDJSClientSubscriber, Metadata } from '@nyx-discord/framework';
+import { Events, Interaction } from 'discord.js';
+
+class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
+  protected readonly event = Events.InteractionCreate;
+
+  public async handleEvent(meta: Metadata, interaction: Interaction) {
+    console.log(`Interaction created: ${interaction.id}`);
+  }
+}
+
+// ---cut-start---
+import { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut-end---
+await bot.getEventManager().subscribeClient(new InteractionCreateLogger());
+```
+
+That's it! Your bot will now log every interaction created.
+
+## Client Bus
+
+The Discord.js Client is wrapped under an event bus, which you can get:
+
+```ts twoslash
+// ---cut-start---
+import { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut-end---
+const bus = bot.getEventManager().getClientBus();
+//    ^?
+```
+
+And you can directly subscribe to it:
+
+```ts twoslash
+// ---cut-start---
+import { NyxBot, EventSubscriber, AbstractDJSClientSubscriber } from '@nyx-discord/framework';
+import { Events, ClientEvents } from 'discord.js';
+declare const bot: NyxBot;
+class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
+  protected readonly event = Events.InteractionCreate;
+
+  public async handleEvent() {}
+}
+
+// ---cut-end---
+await bot.getEventManager().subscribeClient(new InteractionCreateLogger());
+// Equivalent to:
+await bot.getEventManager().getClientBus().subscribe(new InteractionCreateLogger());
+```
+
+## Bus registry
+
+You can create and directly use any bus you want, but if you'd like to keep track of them, you can add your bus to the [`EventManager`](/extend/events/event-manager):
+
+```ts twoslash
+// ---cut-start---
+import { BasicEventBus, NyxBot } from '@nyx-discord/framework';
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+declare const bot: NyxBot;
+// ---cut-end---
+const bus = BasicEventBus.createSync<MyEventsArgs>('foo');
+await bot.getEventManager().addEventBuses(bus);
+```
+
+You can check more information about bus creation in the [Event Buses](/use/events/buses) page.
+
+## What's next?
+
+<Callout>Click on each card to go to its page.</Callout>
+
+<Cards>
+  <Card href="events/buses" title="Event Buses" icon={<BusIcon />} external={false}>
+    Learn how to create your own event bus, or use built-in ones.
+  </Card>
+  <Card href="events/subscribers" title="Subscribers" icon={<EyeIcon />} external={false}>
+    Learn how to create event subscribers, and the features they provide.
+  </Card>
+</Cards>

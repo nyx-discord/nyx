@@ -1,0 +1,90 @@
+---
+title: Dispatcher
+icon: Send
+definedIn: ['framework/AbstractEventDispatcher', 'core/EventDispatcher']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { LayersIcon, AmbulanceIcon } from 'lucide-react';
+
+The `EventDispatcher` is responsible for calling `EventSubscribers`, checking middlewares, and handling errors of each emitted event.
+
+It's used by every `EventBus` through `EventBus#emit()`, and can be replaced at runtime with `EventBus#setDispatcher()`.
+
+## When to override
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Change how subscribers are dispatched (batching, throttling, etc). | Add/remove event middlewares only. You can do that from the dispatcher's middleware list. |
+| Add custom logic that modify execution (instrumentation, retries, etc). | Add/change error consumers only. You can do that from the dispatcher's error handler. |
+| | Tune runtime behavior like sync timeout or async concurrency. The base dispatchers implementations [already allow that](/use/events/buses#subscriber-concurrency). |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom dispatcher by either:
+
+* Extending `BasicSyncEventDispatcher` or `BasicAsyncEventDispatcher` (recommended, less work).
+* Implementing `EventDispatcher`.
+
+```ts twoslash
+import { BasicSyncEventDispatcher } from '@nyx-discord/framework';
+
+class MyEventDispatcher extends BasicSyncEventDispatcher {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Set your dispatcher on any bus:
+
+```ts twoslash
+import { BasicSyncEventDispatcher, type EventBus } from '@nyx-discord/framework';
+
+declare const bus: EventBus<{ someEvent: [string] }>;
+
+class MyEventDispatcher extends BasicSyncEventDispatcher {}
+// ---cut---
+bus.setDispatcher(MyEventDispatcher.create());
+```
+
+You can do this for built-in buses too, for example the client bus from `EventManager`:
+
+```ts twoslash
+import { Client } from 'discord.js';
+import { Bot, type NyxBot, DefaultEventManager, BasicAsyncEventDispatcher } from '@nyx-discord/framework';
+
+declare const client: Client;
+
+class MyAsyncDispatcher extends BasicAsyncEventDispatcher {}
+// @ts-expect-error incomplete example
+// ---cut---
+const bot = Bot.create((bot: NyxBot) => { /** options */ });
+
+bot
+  .getEventManager()
+  .getClientBus()
+  .setDispatcher(MyAsyncDispatcher.create());
+```
+
+</Step>
+</Steps>
+
+## Dependencies
+
+The dispatcher has two core dependencies you can customize:
+
+<Cards>
+<Card title="Middleware List" href="/extend/events/dispatcher/event-middleware-list" icon={<LayersIcon />} external={false}>
+  Holds and executes event subscriber middlewares.
+</Card>
+<Card title="Error Handler" href="/extend/events/dispatcher/event-error-handler" icon={<AmbulanceIcon />} external={false}>
+  Handles middleware and subscriber execution errors.
+</Card>
+</Cards>
+

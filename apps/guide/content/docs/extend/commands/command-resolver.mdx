@@ -1,0 +1,80 @@
+---
+title: Resolver
+icon: Search
+definedIn: ['framework/DefaultCommandResolver', 'core/CommandResolver']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The `CommandResolver` is responsible for locating commands given an interaction or `customId` context.
+
+## When to override
+
+| ✅ Override if you want to...                                                            | ❌ Don't override if you want to...                                                                           |
+|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| Customize how commands are located from the repository when an interaction is received. | Introduce other localization methods. It's easier to make your own method that uses the `CommandRepository`. |
+| You need to perform extra logic while locating a command.                               | Deserialize `customIds` in different ways. That would be the [`CommandCustomIdCodec`](./command-customid-codec)'s job.                   |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+Create a custom command resolver by either:
+
+* Extending `DefaultCommandResolver` (recommended, less work).
+* Implementing `CommandResolver`.
+
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/framework';
+
+class MyCommandResolver extends DefaultCommandResolver {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Pass it to the `CommandManager`'s injections while instantiating your bot.
+
+Since the `DefaultCommandManager` depends on the client event bus, you'll first need to create an `EventManager`.
+
+<Callout type="warn">**Make sure** to reuse the `EventManager` instance you created, passing it to your returned bot options.</Callout>
+
+```ts twoslash
+
+import { DefaultCommandResolver } from '@nyx-discord/framework';
+import { Client } from 'discord.js';
+declare const client: Client;
+
+class MyCommandResolver extends DefaultCommandResolver {}
+// ---cut---
+import { type NyxBot, Bot, DefaultCommandManager, DefaultEventManager } from '@nyx-discord/framework';
+
+const bot = Bot.create((bot: NyxBot) => {
+  const eventManager = DefaultEventManager.create({ bot, client });
+  const clientBus = eventManager.getClientBus();
+
+  return {
+    // ---cut-start---
+    token: 'TOKEN',
+    client,
+    logger: console,
+    deployCommands: true,
+    // ---cut-end---
+    // ... other options
+    eventManager,
+    commandManager: DefaultCommandManager.create({
+      bot,
+      client,
+      clientBus,
+      injections: { // [!code highlight]
+        resolver: MyCommandResolver.create(), // [!code highlight]
+      }, // [!code highlight]
+    }),
+  };
+});
+```
+
+</Step>
+</Steps>

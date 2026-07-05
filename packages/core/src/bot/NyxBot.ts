@@ -21,9 +21,6 @@ export interface NyxBot<
   /** Returns the {@link ScheduleManager} of this bot for {@link Schedule} managing. */
   getScheduleManager(): Implementations['scheduleManager'];
 
-  /** Returns the {@link SessionManager} of this bot for {@link Session} managing. */
-  getSessionManager(): Implementations['sessionManager'];
-
   /** Returns the {@link PluginManager} of this bot for {@link NyxPlugin} managing. */
   getPluginManager(): Implementations['pluginManager'];
 

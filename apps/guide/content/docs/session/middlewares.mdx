@@ -1,0 +1,114 @@
+---
+title: Middlewares
+icon: Layers
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Middlewares are objects or callbacks that run before any session is executed. They can do some pre-processing logic and store it in the metadata, or even prevent the subscriber from being executed.
+
+Specifically, sessions have two types of middlewares: one for starting sessions, and one for updating them.
+
+For general information about middlewares, you must first read the general [Middlewares](/use/other/middlewares) guide.
+
+## Usage
+
+<Steps>
+<Step>
+
+### Creation
+
+Either:
+- Create a class that extends `AbstractSessionStartMiddleware` or `AbstractSessionUpdateMiddleware` and implements the `check()` method.
+  ```ts twoslash
+  import {
+    AbstractSessionStartMiddleware,
+    AbstractSessionUpdateMiddleware
+  } from '@nyx-discord/plugin-sessions';
+  import type {
+    Metadata,
+    MiddlewareResponse,
+  } from '@nyx-discord/framework';
+  import type { Session, SessionUpdateInteraction } from '@nyx-discord/plugin-sessions';
+
+  class MyStartMiddleware extends AbstractSessionStartMiddleware {
+    public async check(
+      session: Session<unknown>,
+      meta: Metadata
+    ): Promise<MiddlewareResponse> {
+      // Do some pre-processing logic
+      return this.true();
+    }
+  }
+
+  class MyUpdateMiddleware extends AbstractSessionUpdateMiddleware {
+    public async check(
+      session: Session<unknown>,
+      interaction: SessionUpdateInteraction,
+      meta: Metadata
+    ): Promise<MiddlewareResponse> {
+      return this.true();
+    }
+  }
+  ```
+
+- Create a function that returns a `MiddlewareResponse`.
+  ```ts twoslash
+  import type {
+    SessionStartMiddlewareResolvable,
+    SessionUpdateMiddlewareResolvable
+  } from '@nyx-discord/plugin-sessions';
+
+  const myCallbackStartMiddleware: SessionStartMiddlewareResolvable = async (session, meta) => {
+    // Do some pre-processing logic
+    return {
+      allowed: true,
+      checkNext: true,
+    };
+  };
+
+  const myCallbackUpdateMiddleware: SessionUpdateMiddlewareResolvable = async (
+    session,
+    interaction,
+    meta
+  ) => {
+    return {
+      allowed: true,
+      checkNext: true,
+    };
+  };
+  ```
+
+</Step>
+<Step>
+
+### Registration
+
+Register it to the executor's `MiddlewareList`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/framework';
+import type {
+  AbstractSessionStartMiddleware,
+  AbstractSessionUpdateMiddleware,
+  SessionStartMiddlewareResolvable,
+  SessionUpdateMiddlewareResolvable,
+  SessionPlugin
+} from '@nyx-discord/plugin-sessions';
+
+declare const MyStartMiddleware: new () => AbstractSessionStartMiddleware;
+declare const MyUpdateMiddleware: new () => AbstractSessionUpdateMiddleware;
+
+declare const myCallbackUpdateMiddleware: SessionUpdateMiddlewareResolvable;
+declare const myCallbackStartMiddleware: SessionStartMiddlewareResolvable;
+declare const sessionPlugin: SessionPlugin;
+// ---cut---
+const executor = sessionPlugin.getExecutor();
+
+executor.getStartMiddleware().add(new MyStartMiddleware(), myCallbackStartMiddleware);
+executor.getUpdateMiddleware().add(new MyUpdateMiddleware(), myCallbackUpdateMiddleware);
+```
+
+</Step>
+</Steps>
+

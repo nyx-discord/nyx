@@ -1,16 +1,25 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["NODE_ENV"],
+  "globalEnv": ["NODE_ENV", "NYX_DOCS_ENTITIES_SOURCE"],
   "ui": "tui",
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*", "package.json", "tsup.config.ts"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*",
+        "package.json",
+        "tsup.config.ts",
+        "next.config.mjs",
+        "source.config.ts"
+      ],
       "outputs": [
-        "build/**",
         "dist/**",
+        ".next/**",
+        "out/**",
+        "build/**",
         ".docusaurus/**",
-        "apps/guide/build/guide"
+        "coverage/**"
       ]
     },
     "test": {
@@ -21,16 +30,33 @@
         "__tests__/**",
         "vitest.config.ts"
       ],
-      "outputs": ["test-results/**"]
+      "outputs": []
     },
     "lint": {
       "dependsOn": ["^lint"],
-      "inputs": ["$TURBO_DEFAULT$", "src/**", "**/.eslintrc*"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "app/**",
+        "components/**",
+        "lib/**",
+        "content/**",
+        "**/.eslintrc*",
+        "**/eslint.config.*"
+      ],
       "outputs": []
     },
     "check-types": {
       "dependsOn": ["^check-types"],
-      "inputs": ["$TURBO_DEFAULT$", "src/**", "tsconfig.json"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "app/**",
+        "components/**",
+        "lib/**",
+        "tsconfig.json",
+        "next-env.d.ts"
+      ],
       "outputs": []
     },
     "dev": {
@@ -43,7 +69,7 @@
     },
     "coverage": {
       "cache": false,
-      "persistent": true,
+      "persistent": false,
       "outputs": ["coverage/**"]
     },
     "//#typedoc": {
@@ -57,6 +83,10 @@
       "inputs": [
         "$TURBO_DEFAULT$",
         "src/**",
+        "app/**",
+        "components/**",
+        "lib/**",
+        "content/**",
         "**/.prettierrc*",
         ".prettierrc.json"
       ],

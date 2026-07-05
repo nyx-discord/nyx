@@ -1,0 +1,146 @@
+---
+title: Context Menu Commands
+icon: PictureInPicture
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { LayersIcon, LockIcon, MousePointerClickIcon } from 'lucide-react';
+
+Context menu commands are commands executed on special menus. Currently Discord has two types of context menus:
+
+* [Message Context Menus](https://discord.com/developers/docs/interactions/application-commands#message-commands), shown when right clicking on a message.
+* [User Context Menus](https://discord.com/developers/docs/interactions/application-commands#user-commands), shown when right clicking on a user.
+
+## Creation
+
+<Steps>
+<Step>
+### Creation
+
+Extend the `AbstractContextMenuCommand` class:
+
+```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/framework';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyContextMenuCommand extends AbstractContextMenuCommand {}
+```
+
+</Step>
+<Step>
+### Implementation
+
+Implement `data` that stores the command's data, and the respective `executeX()` method:
+
+- `executeMessage()` for message context menus.
+- `executeUser()` for user context menus.
+
+```ts twoslash
+import { ApplicationCommandType, ContextMenuCommandBuilder, type MessageContextMenuCommandInteraction } from 'discord.js';
+import { AbstractContextMenuCommand } from '@nyx-discord/framework';
+
+class MyContextMenuCommand extends AbstractContextMenuCommand {
+  protected readonly data = new ContextMenuCommandBuilder()
+    .setName('My Context Menu')
+    .setType(ApplicationCommandType.User) // or ApplicationCommandType.Message
+    .toJSON();
+
+  public async executeMessage(interaction: MessageContextMenuCommandInteraction) {
+    await interaction.reply('Hello!');
+  }
+}
+```
+
+</Step>
+<Step>
+### Registration
+
+Instantiate and register it to a bot's `CommandManager`.
+
+```ts twoslash
+import type { ContextMenuCommand, NyxBot } from '@nyx-discord/framework';
+declare const MyContextMenuCommand: new () => ContextMenuCommand;
+declare const bot: NyxBot;
+// ---cut---
+await bot.getCommandManager().addCommands(new MyContextMenuCommand());
+```
+
+</Step>
+</Steps>
+
+
+## Guild deployment
+
+By default, all commands will be deployed in the global scope. If you want to deploy them in a specific guild, you can do so by implementing the `getGuilds()` method.
+
+```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/framework';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractContextMenuCommand {
+  public getGuilds() {
+    return ['GUILD_ID', 'ANOTHER_GUILD_ID'];
+  }
+}
+```
+
+## Execution Meta
+
+The second argument of the execute methods is a `Metadata` object, which is a `Record` that stores metadata about the command call.
+
+Apart from the keys saved by the caller or the middleware, the dispatch meta contains:
+
+* The execution ID, via the `TypedFields.Id` field.
+* The execution start date, via the `TypedFields.CreationDate` field.
+* The bot whose `Client` sent the interaction, via the `TypedFields.Bot` field.
+
+To learn more about TypedFields, check the [Metadata](/use/other/meta) page.
+
+## Metadata
+
+When extending nyx with plugins, you may want to specify extra data for them. You can do so with the `Metadata` object, saved on the command.
+
+<Callout>
+While commands internally save a `Metadata`, the return type of `#getMeta()` is a `ReadonlyMetadata`,
+meaning that external objects can read the object, but not modify it.
+</Callout>
+
+```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/framework';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractContextMenuCommand {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const command = new MyCommand();
+const meta = command.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+
+For a more type-safe approach, you can use `TypedFields`. Check the [Metadata](/use/other/meta) page for more information.
+
+## Advanced features
+
+<Callout>Click on each card to learn more about that feature.</Callout>
+
+<Cards>
+  <Card title="Command components" icon={<MousePointerClickIcon />} href="../components">
+    Handle components interactions directly in the subcommand that sent them, without a separate `interactionCreate` listener.
+  </Card>
+  <Card title="Filters" icon={<LockIcon />} href="../filters">
+    Add pre-execution checks to your subcommand, like permissions or cooldowns.
+  </Card>
+  <Card title="Middlewares" icon={<LayersIcon />} href="../middlewares">
+    Run code before every command's execution, like logging or pre-conditions.
+  </Card>
+</Cards>
+
+

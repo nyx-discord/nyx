@@ -21,7 +21,7 @@
   "scripts": {
     "lint": "eslint ./src",
     "format": "prettier --write ./src",
-    "barrel": "barrelsby --directory ./src --delete --singleQuotes",
+    "barrel": "node ../../scripts/barrel.mjs --directory ./src --delete --singleQuotes --append \"export * from '@nyx-discord/core';\"",
     "build": "rimraf dist && tsup-node src/index.ts",
     "prepublishOnly": "pnpm run build",
     "test": "vitest --run",
@@ -44,9 +44,8 @@
     "discord.js": "^14.22.1"
   },
   "dependencies": {
-    "@discordjs/collection": "1.5.3",
-    "@isaacs/ttlcache": "1.4.1",
     "@nyx-discord/core": "workspace:*",
+    "@sapphire/string-store": "3.0.0",
     "cron": "3.0.0",
     "typed-field": "1.2.0"
   }

@@ -1,0 +1,202 @@
+---
+title:  Filters
+icon: Lock
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Filters restrict the execution of a given command. You may be familiar with them from other usages, like:
+- A [cooldown filter](#cooldown-filter) that prevents a command from being executed too frequently
+- A [permission filter](#permission-filter) that checks if a member has some required permissions.
+
+They receive all the information about the command, the interaction that triggered it, and the execution metadata, and return a boolean indicating whether the command should be executed or not.
+
+For more general information about filters, you must first read the general [Filters](/use/other/filters) guide.
+
+Given only these are executable, you can only use this in [Standalone Commands](./types/standalone), [SubCommands](./types/subcommand) and [Context Menu Commands](./types/context-menu).
+
+## Usage
+
+In this example we'll use a standalone command, but the same applies to the rest.
+
+<Steps>
+<Step>
+
+### Creation
+
+<Callout type="warn" title="'Filter Denied' replies">
+The command will simply not be called if the filter returns `false`, so if you want some kind of reply, you'll need to do it yourself in the filter.
+</Callout>
+
+Either:
+
+- Create a class that extends `AbstractCommandFilter` and implements the `check()` method.
+ ```ts twoslash
+ import { AbstractCommandFilter } from '@nyx-discord/framework';
+ import type { AnyExecutableCommand, CommandResolvableInteraction, Metadata } from '@nyx-discord/framework';
+
+ class MyFilter extends AbstractCommandFilter {
+   public async check(
+     command: AnyExecutableCommand,
+     interaction: CommandResolvableInteraction,
+     meta: Metadata
+   ): Promise<boolean> {
+     // Do some checks
+     return true; // or false if the command should not be executed
+   }
+ }
+ ```
+
+- Create a function that returns a boolean or a Promise that resolves to a boolean.
+ ```ts twoslash
+ import { type CommandFilterResolvable } from '@nyx-discord/framework';
+
+ const myFilter: CommandFilterResolvable = async (command, interaction, meta) => {
+   // Do some checks
+   return true; // or false if the command should not be executed
+ };
+ ```
+
+</Step>
+<Step>
+
+### Filter usage
+
+Override the `filter` property in your command:
+
+- If you created a class, instantiate it:
+
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/framework';
+
+// ---cut-start---
+import { AbstractCommandFilter } from '@nyx-discord/framework';
+// @ts-expect-error Incomplete example
+class MyFilter extends AbstractCommandFilter {}
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  protected override readonly filter = new MyFilter();
+}
+```
+
+- If you created a function, assign it directly:
+
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/framework';
+
+// ---cut-start---
+import { type CommandFilterResolvable } from '@nyx-discord/framework';
+declare const myFilter: CommandFilterResolvable;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  protected override readonly filter = myFilter;
+}
+```
+
+Or use a simple arrow function directly:
+
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/framework';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  protected override readonly filter = () => {
+    // Do some checks
+    return true;
+  };
+}
+```
+
+</Step>
+</Steps>
+
+## Examples
+
+### Cooldown Filter
+
+A simple cooldown filter that prevents a command from being executed too frequently, while also cleaning up expired cooldowns every minute:
+
+```ts twoslash
+import { AbstractCommandFilter } from '@nyx-discord/framework';
+import type { AnyExecutableCommand, CommandResolvableInteraction, Metadata } from '@nyx-discord/framework';
+
+class CooldownFilter extends AbstractCommandFilter {
+  protected readonly cooldowns = new Map<string, number>();
+
+  protected readonly sweepInterval: NodeJS.Timeout;
+
+  protected readonly timeout: number;
+
+  constructor(timeout: number = 5000) {
+    super();
+    this.timeout = timeout;
+    this.sweepInterval = setInterval(() => {
+      const now = Date.now();
+      for (const [userId, expiresAt] of this.cooldowns) {
+        if (now >= expiresAt) {
+          this.cooldowns.delete(userId);
+        }
+      }
+    }, 60_000).unref();
+  }
+
+  public async check(
+    command: AnyExecutableCommand,
+    interaction: CommandResolvableInteraction,
+    meta: Metadata
+  ): Promise<boolean> {
+    const userId = interaction.user.id;
+    const now = Date.now();
+    const cooldownUntil = this.cooldowns.get(userId) ?? 0;
+
+    if (now < cooldownUntil) {
+      // Ideally reply to the interaction, telling the user they are on cooldown
+      return false;
+    }
+
+    this.cooldowns.set(userId, now + this.timeout);
+    return true;
+  }
+}
+```
+
+### Permission Filter
+
+A permission filter that checks if a member has the required permissions to execute a command:
+
+```ts twoslash
+import { AbstractCommandFilter } from '@nyx-discord/framework';
+import type { AnyExecutableCommand, CommandResolvableInteraction, Metadata } from '@nyx-discord/framework';
+import { PermissionFlagsBits } from 'discord.js';
+
+class PermissionFilter extends AbstractCommandFilter {
+  protected readonly requiredPermissions: bigint;
+
+  constructor(requiredPermissions: bigint) {
+    super();
+    this.requiredPermissions = requiredPermissions;
+  }
+
+  public async check(
+    command: AnyExecutableCommand,
+    interaction: CommandResolvableInteraction,
+    meta: Metadata
+  ): Promise<boolean> {
+    if (!interaction.member || !interaction.inCachedGuild()) {
+      // This will depend on whether you want to allow outside of cached guilds or not
+      return false;
+    }
+
+    if (!interaction.member.permissions.has(this.requiredPermissions)) {
+      // Ideally reply to the interaction, telling the user they lack permissions
+      return false;
+    }
+
+    return true;
+  }
+}
+```

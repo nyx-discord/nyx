@@ -1,0 +1,115 @@
+---
+title: Error Handling
+icon: Ambulance
+---
+
+Every executor holds an `ErrorHandler`, where errors thrown by middlewares and executed objects are handled.
+
+```ts twoslash
+import { NyxBot, AnyEventBus } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+declare const bus: AnyEventBus;
+// ---cut---
+const commandErrorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
+const eventErrorHandler = bus.getDispatcher().getErrorHandler();
+const scheduleErrorHandler = bot.getScheduleManager().getExecutor().getErrorHandler();
+```
+
+It holds a map of consumers, where each handle a specific error class. It also receives the erroring object, and the arguments that were used to call it.
+
+## Manipulating consumers
+
+<Callout>This example will use the `CommandManager`'s handler, but it works the same for other executors.</Callout>
+
+To add a consumer, use `ErrorHandler#setConsumer()`:
+
+```ts twoslash
+import { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
+// ---cut---
+import { TypedFields, CommandError } from '@nyx-discord/framework';
+import type { CommandExecutionArgs, AnyExecutableCommand } from '@nyx-discord/framework';
+
+errorHandler.setConsumer(
+  CommandError,
+  (
+    error: CommandError,
+    command: AnyExecutableCommand,
+    args: CommandExecutionArgs,
+  ) => {
+    const [_interaction, meta] = args;
+    const bot = TypedFields.Bot.get(meta, true);
+    const { name } = command.getData();
+
+    bot.getLogger().error(
+      `MyError occurred while executing ${name} with args: ${args}`,
+      error
+    );
+  }
+);
+```
+
+You can also remove consumers:
+
+```ts twoslash
+import { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
+import { CommandError } from '@nyx-discord/framework';
+import type { CommandExecutionArgs, AnyExecutableCommand } from '@nyx-discord/framework';
+// ---cut---
+errorHandler.removeConsumerOf(CommandError);
+```
+
+And set a fallback consumer, for all errors that don't have a consumer:
+
+```ts twoslash
+import { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
+import { CommandError } from '@nyx-discord/framework';
+import type { CommandExecutionArgs, AnyExecutableCommand } from '@nyx-discord/framework';
+// ---cut---
+import { TypedFields } from '@nyx-discord/framework';
+
+errorHandler.setFallbackConsumer(
+  (
+    error: object,
+    command: AnyExecutableCommand,
+    args: CommandExecutionArgs,
+  ) => {
+    const [_interaction, meta] = args;
+    const bot = TypedFields.Bot.get(meta, true);
+    const { name } = command.getData();
+
+    bot.getLogger().error(
+      `An unhandled error occurred while executing ${name} with args: ${args}`,
+      error
+    );
+  }
+);
+```
+
+## Consumer resolution
+
+The error handler resolves a consumer based on the error prototype, going from the top to the bottom.
+
+For instance:
+
+```ts twoslash
+import { BasicErrorHandler } from '@nyx-discord/framework';
+const errorHandler = BasicErrorHandler.create<object, unknown[]>();
+// ---cut---
+class MyError extends Error {}
+
+class MyError2 extends MyError {}
+
+errorHandler.setConsumer(MyError, () => {
+  console.log('MyError');
+});
+```
+
+This will log `MyError` when an instance of `MyError2` is thrown, because it's a subclass.
+
+If no consumer is found, the fallback consumer is used, whose error type is simply `object`.

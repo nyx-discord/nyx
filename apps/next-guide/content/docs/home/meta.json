@@ -1,7 +1,0 @@
-{
-  "title": "Home",
-  "description": "Introduction to the framework.",
-  "root": true,
-  "icon": "House",
-  "pages": ["index", "packages", "navigating"]
-}

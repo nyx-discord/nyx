@@ -1,0 +1,201 @@
+---
+title:  Filters
+icon: Lock
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Filters are objects or callbacks that can restrict the execution of a given session. For example:
+- A [user filter](#user-filter) that restricts the interaction to the user who started the session
+- A [permission filter](#permission-filter) that checks if the user has the required permissions to interact.
+
+Filters receive all the information about the session, the interaction and the execution metadata, and return a boolean indicating whether the session should be executed or not.
+
+Unlike other filterable objects, a session can have two filters: the `startFilter` and the `updateFilter`.
+
+For more general information about filters, you must first read the general [Filters](/use/other/filters) guide.
+
+## Usage
+
+<Callout>In this guide we'll use a regular session, but the same applies to the rest.</Callout>
+
+<Steps>
+<Step>
+
+### Creation
+
+Either:
+
+- Create a class that extends `AbstractSessionStartFilter` or `AbstractSessionUpdateFilter` and implements the `check()` method.
+  ```ts twoslash
+  import type { Metadata } from '@nyx-discord/framework';
+  import { AbstractSessionStartFilter, AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions';
+  import type { Session, SessionUpdateInteraction } from '@nyx-discord/plugin-sessions';
+
+  class MyStartFilter extends AbstractSessionStartFilter<unknown> {
+    public async check(session: Session<unknown>, meta: Metadata): Promise<boolean> {
+      // Do some checks
+      return true; // or false if the session should not be executed
+    }
+  }
+
+  class MyUpdateFilter extends AbstractSessionUpdateFilter<unknown> {
+    public async check(
+     session: Session<unknown>,
+     interaction: SessionUpdateInteraction,
+     meta: Metadata
+   ): Promise<boolean> {
+      // Do some checks
+      return true; // or false if the session should not be executed
+    }
+  }
+  ```
+  The type argument is the return type of your session.
+
+- Create a function that returns a boolean or a Promise that resolves to a boolean.
+
+  ```ts twoslash
+  import type {
+    SessionStartFilterResolvable,
+    SessionUpdateFilterResolvable
+  } from '@nyx-discord/plugin-sessions';
+
+  const myStartFilter: SessionStartFilterResolvable<unknown> = async (session, meta) => {
+    // Do some checks
+    return true; // or false if the session should not be executed
+  };
+
+  const myUpdateFilter: SessionUpdateFilterResolvable<unknown> = async (
+    session,
+    interaction,
+    meta,
+  ) => {
+    // Do some checks
+    return true; // or false if the session should not be executed
+  };
+  ```
+
+</Step>
+<Step>
+
+### Filter usage
+
+Override the `startFilter` or `updateFilter` property in your session:
+
+- If you created a class, instantiate it:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions';
+
+// ---cut-start---
+import { AbstractSessionStartFilter, AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions';
+// @ts-expect-error Incomplete example
+class MyStartFilter extends AbstractSessionStartFilter<unknown> {}
+// @ts-expect-error Incomplete example
+class MyUpdateFilter extends AbstractSessionUpdateFilter<unknown> {}
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySession extends AbstractSession {
+  protected override readonly startFilter = new MyStartFilter();
+  
+  protected override readonly updateFilter = new MyUpdateFilter();
+}
+```
+
+- If you created a function, assign it directly:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions';
+
+// ---cut-start---
+import type { SessionStartFilterResolvable, SessionUpdateFilterResolvable } from '@nyx-discord/plugin-sessions';
+declare const myStartFilter: SessionStartFilterResolvable<unknown>;
+declare const myUpdateFilter: SessionUpdateFilterResolvable<unknown>;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySession extends AbstractSession {
+  protected override readonly startFilter = myStartFilter;
+  
+  protected override readonly updateFilter = myUpdateFilter;
+}
+```
+
+Or use a simple arrow function directly:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySession extends AbstractSession {
+  protected override readonly startFilter = () => {
+    return true;
+  };
+
+  protected override readonly updateFilter = () => {
+    return true;
+  };
+}
+```
+
+</Step>
+</Steps>
+
+## Examples
+
+### User Filter
+
+A filter that restricts the interaction to the user who started the session. This is commonly used in `updateFilter` to prevent other users from interacting with the session.
+
+```ts twoslash
+import { AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions';
+import type { Session, SessionUpdateInteraction } from '@nyx-discord/plugin-sessions';
+import type { Metadata } from '@nyx-discord/framework';
+
+class UserFilter extends AbstractSessionUpdateFilter<unknown> {
+  public async check(
+    session: Session<unknown>,
+    interaction: SessionUpdateInteraction,
+    meta: Metadata
+  ): Promise<boolean> {
+    const startInteraction = session.getStartInteraction();
+    if (!startInteraction) return true;
+
+    // Check if the user who interacted is the same as the one who started the session
+    return interaction.user.id === startInteraction.user.id;
+  }
+}
+```
+
+### Permission Filter
+
+A permission filter that checks if the user has the required permissions to interact with the session.
+
+```ts twoslash
+import { AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions';
+import type { Session, SessionUpdateInteraction } from '@nyx-discord/plugin-sessions';
+import type { Metadata } from '@nyx-discord/framework';
+import { PermissionFlagsBits } from 'discord.js';
+
+class PermissionFilter extends AbstractSessionUpdateFilter<unknown> {
+  protected readonly requiredPermissions: bigint;
+
+  constructor(requiredPermissions: bigint) {
+    super();
+    this.requiredPermissions = requiredPermissions;
+  }
+
+  public async check(
+    session: Session<unknown>,
+    interaction: SessionUpdateInteraction,
+    meta: Metadata
+  ): Promise<boolean> {
+    if (!interaction.member || !interaction.inCachedGuild()) {
+      return false;
+    }
+
+    return interaction.member.permissions.has(this.requiredPermissions);
+  }
+}
+```

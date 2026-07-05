@@ -1,0 +1,83 @@
+---
+title: Repository
+icon: Package
+definedIn: ['framework/DefaultCommandRepository', 'core/CommandRepository']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The `CommandRepository` is responsible for storing all the currently registered commands.
+
+## When to override
+
+| ✅ Override if you want to...    | ❌ Don't override if you want to...                                                                                   |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| Change how commands are stored. | Do something when commands are added, including decorating them. Use [Command Events](/use/commands/events) instead. |
+|                                 | Change how commands are deployed. Override the [CommandDeployer](/extend/commands/command-deployer) instead.         |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom command repository by either:
+
+* Extending `DefaultCommandRepository` (recommended, less work).
+* Implementing `CommandRepository`.
+
+```ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/framework';
+
+class MyCommandRepository extends DefaultCommandRepository {}
+```
+
+</Step>
+<Step>
+### Registration
+
+Pass it to the `CommandManager`'s injections while instantiating your bot.
+
+Since the `DefaultCommandManager` depends on the client event bus, you'll first need to create an `EventManager`.
+
+<Callout type="warn">**Make sure** to reuse the `EventManager` instance you created, passing it to your returned bot options.</Callout>
+
+```ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/framework';
+import { Client } from 'discord.js';
+declare const client: Client;
+
+class MyCommandRepository extends DefaultCommandRepository {}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/framework';
+import { Bot, DefaultCommandManager, DefaultEventManager } from '@nyx-discord/framework';
+
+const bot = Bot.create((bot: NyxBot) => {
+  const eventManager = DefaultEventManager.create({ bot, client });
+  const clientBus = eventManager.getClientBus();
+
+  return {
+    // ---cut-start---
+    token: 'TOKEN',
+    client,
+    logger: console,
+    deployCommands: true,
+    // ---cut-end---
+    // ... other options
+    eventManager,
+    commandManager: DefaultCommandManager.create({
+      bot,
+      client,
+      clientBus,
+      injections: { // [!code highlight]
+        repository: MyCommandRepository.create(), // [!code highlight]
+      }, // [!code highlight]
+    }),
+  };
+});
+```
+
+The <DocsLink pkg='framework' name='DefaultCommandRepository.create()' decorated={false} /> method instantiates your custom repository, not the default one.
+
+</Step>
+</Steps>

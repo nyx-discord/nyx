@@ -1,11 +1,7 @@
-![nyx/docs Logo](static/img/nyx_guide.png)
+![nyx/guide Logo](public/nyx_guide.png)
 
 ---
 
 <p align="center">
-  <code>@nyx-discord/guide</code> holds the Docusaurus guide of <code>nyx</code>.
+  <code>@nyx-discord/guide-next</code> holds the nyx Fumadocs guide.
 </p>
-
-## 📚 Introduction
-
-This docusaurus package hosts the Docusaurus guide of <code>nyx</code>.

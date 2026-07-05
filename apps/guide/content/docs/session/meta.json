@@ -1,0 +1,19 @@
+{
+  "title": "Session Plugin",
+  "description": "All about the sessions plugin.",
+  "root": true,
+  "icon": "User",
+  "pages": [
+    "index",
+    "---Types---",
+    "types/session",
+    "types/pagination-session",
+    "types/list-pagination-session",
+    "types/stage-pagination-session",
+    "---Other---",
+    "subscribers",
+    "middlewares",
+    "filters",
+    "events"
+  ]
+}

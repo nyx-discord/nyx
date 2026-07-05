@@ -1,0 +1,42 @@
+---
+title: Extend
+description: Getting started with modifying nyx
+icon: House
+---
+
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { AlarmClockIcon, LaptopIcon, MegaphoneIcon, PuzzleIcon, UserIcon } from 'lucide-react';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { FrameworkMention } from '@/../components/tooltip/FrameworkMention';
+
+Welcome to the **Extend** section of the nyx guide. In this section, you'll learn how to customize <FrameworkMention /> internals and inject your own components into it.
+
+<Callout type="warn">It's recommended you read the [Use](../use) section first to know the behavior of what you're about to modify.</Callout>
+
+For every component, you'll be able to see in the below the title the:
+ - Base definition (in <CoreMention />).
+ - Default implementation (in <FrameworkMention />).
+
+Both of them linked for GitHub and the web documentation. It's strongly recommended to read the source code of which you want to use.
+
+## Features
+
+<Callout>Click on each card to go to that feature's manager docs.</Callout>
+
+<Cards>
+<Card title="Commands" href="/extend/commands" icon={<LaptopIcon />} external={false}>
+  Learn how commands work and how to edit their internal behavior.
+</Card>
+<Card title="Events" href="/extend/events" icon={<MegaphoneIcon />} external={false}>
+  Learn how events work and how to edit their internal behavior.
+</Card>
+<Card title="Schedules" href="/extend/schedules" icon={<AlarmClockIcon />} external={false}>
+  Learn how schedules work and how to edit their internal behavior.
+</Card>
+<Card title="Sessions" href="/extend/sessions" icon={<UserIcon />} external={false}>
+  Learn how sessions work and how to edit their internal behavior.
+</Card>
+<Card title="Plugins" href="/extend/plugins" icon={<PuzzleIcon />} external={false}>
+  Learn how plugins work and how to edit their internal behavior.
+</Card>
+</Cards>

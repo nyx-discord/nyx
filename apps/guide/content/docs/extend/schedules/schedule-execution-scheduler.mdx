@@ -1,0 +1,75 @@
+---
+title: Execution Scheduler
+icon: Calendar
+definedIn: ['framework/DefaultScheduleExecutionScheduler']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The <DocsLink pkg='framework' name='DefaultScheduleExecutionScheduler' decorated={false} /> is responsible for interpreting the schedule's interval (usually a cron string) and creating/managing the <DocsLink pkg='core' name='ScheduleJobAdapter' decorated={false} /> that will trigger execution.
+
+It relies on the [`ScheduleJobAdapter`](/extend/schedules/schedule-job-adapter) to interface with the actual timing mechanism (e.g. `cron`), and the adapter is the one that waits for the scheduled time and invokes the execution.
+
+## When to override
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Use a different timing library or job backend (e.g., not `cron`). | Just adjust the job adapter itself. Create a custom `ScheduleJobAdapter` instead. |
+| Support a different interval format or next-run strategy (e.g., RRULE-like scheduling). | Change schedule execution logic (try/catch, retry, middleware behavior). That belongs to `ScheduleExecutor`. |
+| Implement custom misfire/catch-up behavior for delayed or missed runs. | Change schedule persistence. That belongs to `ScheduleRepository`. |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom scheduler extending <DocsLink pkg='framework' name='DefaultScheduleExecutionScheduler' decorated={false} />.
+
+```ts twoslash
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/framework';
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  // Override internal methods
+}
+```
+
+</Step>
+<Step>
+### Registration
+
+Pass it to the `ScheduleManager` via the `injections` option.
+
+```ts twoslash
+import { Client } from 'discord.js';
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/framework';
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  // Override internal methods
+}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/framework';
+import { Bot, DefaultScheduleManager } from '@nyx-discord/framework';
+
+const bot = Bot.create((bot: NyxBot) => ({
+  // ---cut-start---
+  token: 'TOKEN',
+  client: new Client({ intents: [] }),
+  logger: console,
+  deployCommands: true,
+  // ---cut-end---
+  // ... other options
+  scheduleManager: DefaultScheduleManager.create({
+    bot,
+    injections: {
+      // ---cut-start---
+      // @ts-expect-error Incomplete example
+      // ---cut-end---
+      scheduler: new MyScheduler(/** ... */),
+    },
+  }),
+}));
+```
+
+</Step>
+</Steps>

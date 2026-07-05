@@ -1,0 +1,100 @@
+---
+title: Manager
+icon: Wrench
+definedIn: ['framework/DefaultCommandManager', 'core/CommandManager']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The `CommandManager` is the object that holds together the nyx command system. At a glance:
+
+- Core services: owns the command building blocks, creating defaults in `create()` while still allowing targeted injections.
+- State and deployment sync: add/remove operations update repository and deployer together with rollback on deploy failures, while edit/set keep both layers aligned for bulk updates.
+- Interaction routing and execution: resolves incoming interactions to executable commands (including `customId` decoding for component interactions), then runs execute/autocomplete through the executor.
+- Manager events: emits `CommandAdd`, `CommandRemove`, `CommandRun`, and `CommandAutocomplete` so other parts of the system can react to lifecycle and runtime actions.
+
+In practice, this makes it the boundary where command registration, resolution, execution, deployment, subscriptions, events, and runtime metadata are coordinated.
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+Create a custom command manager by either:
+
+* Extending `DefaultCommandManager`.
+* Implementing `CommandManager`.
+
+```ts twoslash
+import { DefaultCommandManager } from '@nyx-discord/framework';
+
+class MyCommandManager extends DefaultCommandManager {
+  public myCustomPublicMethod() {
+    return 'I work!' as const;
+  }
+}
+```
+
+</Step>
+<Step>
+### Registration
+
+Then you can pass it to your bot:
+
+```ts twoslash
+import { Client } from 'discord.js';
+import { DefaultCommandManager } from '@nyx-discord/framework';
+
+class MyCommandManager extends DefaultCommandManager {
+  public myCustomPublicMethod() {
+    return 'I work!' as const;
+  }
+}
+// ---cut---
+import { Bot, type NyxBot } from '@nyx-discord/framework';
+
+const myBot = Bot.create((bot: NyxBot) => ({
+  // ---cut-start---
+  token: 'TOKEN',
+  client: new Client({ intents: [] }),
+  logger: console,
+  deployCommands: true,
+  // @ts-expect-error Incomplete example
+  // ---cut-end---
+  // ... other options
+  commandManager: new MyCommandManager(/** ... */),
+}));
+
+const manager = myBot.getCommandManager();
+const result = manager.myCustomPublicMethod();
+//     ^?
+```
+
+The class is able to infer the type of your custom manager, so accessing any custom method or property will work without errors.
+
+If you ever want to use this custom bot type with your injected manager somewhere else, you can do so via the generic:
+
+```ts twoslash
+import { Client } from 'discord.js';
+import { DefaultCommandManager } from '@nyx-discord/framework';
+class MyCommandManager extends DefaultCommandManager {
+  public myCustomPublicMethod() {
+    return 'I work!' as const;
+  }
+}
+// ---cut---
+import type { NyxBot, InjectableBotDependencies } from '@nyx-discord/framework';
+
+type BotWithCustomManager = NyxBot<InjectableBotDependencies & { commandManager: MyCommandManager }>;
+
+function functionOnlyForCustomManager(bot: BotWithCustomManager) {
+  const manager = bot.getCommandManager();
+  const result = manager.myCustomPublicMethod();
+  //     ^?
+}
+```
+
+For readability purposes, we recommend storing the type with the generic in a separate type, like in the example.
+
+</Step>
+</Steps>

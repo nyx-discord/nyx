@@ -1,0 +1,77 @@
+---
+title: Repository
+icon: Package
+definedIn: ['framework/DefaultScheduleRepository', 'framework/ScheduleRepository']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+The <DocsLink pkg='core' name='ScheduleRepository' decorated={false} /> is responsible for storing all the currently registered schedules.
+
+## When to override
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Change schedule persistence (e.g., database instead of in-memory). | Adjust schedule execution or job lifecycle. Use `ScheduleExecutor` or `ScheduleJobAdapter` instead. |
+| Enforce custom consistency/uniqueness rules at storage level (e.g., dedup by business key). | Change middleware flow or pre-execution checks. That belongs to `ScheduleMiddlewareList`. |
+| Support multi-tenant partitioning or custom query/filter capabilities in storage. | Change manager event orchestration. That belongs to `ScheduleManager`. |
+
+## Overriding
+
+<Steps>
+<Step>
+### Creation
+
+Create a custom schedule repository by either:
+
+* Extending <DocsLink pkg='framework' name='DefaultScheduleRepository' decorated={false} /> (<FrameworkMention />'s implementation, recommended for less work).
+* Implementing <DocsLink pkg='core' name='ScheduleRepository' decorated={false} /> (<CoreMention />'s base definition).
+
+```ts twoslash
+import { DefaultScheduleRepository } from '@nyx-discord/framework';
+
+class MyScheduleRepository extends DefaultScheduleRepository {
+  public myCustomMethod() {
+    // Custom logic
+  }
+}
+```
+
+</Step>
+<Step>
+### Registration
+
+Pass your custom repository via the `DefaultScheduleManager` options (using `injections`), or manually construct `ScheduleManagerOptions`.
+
+```ts twoslash
+import { Client } from 'discord.js';
+import { DefaultScheduleRepository } from '@nyx-discord/framework';
+
+class MyScheduleRepository extends DefaultScheduleRepository {
+  public myCustomMethod() {
+    // Custom logic
+  }
+}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/framework';
+import { Bot, DefaultScheduleManager } from '@nyx-discord/framework';
+
+const bot = Bot.create((bot: NyxBot) => ({
+  // ---cut-start---
+  token: 'TOKEN',
+  client: new Client({ intents: [] }),
+  logger: console,
+  deployCommands: true,
+  // ---cut-end---
+  // ... other options
+  scheduleManager: DefaultScheduleManager.create({
+    bot,
+    injections: {
+      repository: new MyScheduleRepository(/** ... */),
+    },
+  }),
+}));
+```
+
+</Step>
+</Steps>
