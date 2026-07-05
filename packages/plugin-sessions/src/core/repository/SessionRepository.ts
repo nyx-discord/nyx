@@ -1,4 +1,4 @@
-import type { BotLifecycleObserver } from '@nyx-discord/framework';
+import type { BotLifecycleObserver, Constructor } from '@nyx-discord/framework';
 import type { Awaitable, ReadonlyCollection } from 'discord.js';
 import type { Session } from '../session/Session';
 
@@ -35,6 +35,16 @@ export interface SessionRepository
 
   /** Returns all registered sessions. */
   getSessions(): ReadonlyCollection<string, Session<unknown>>;
+
+  /**
+   * Returns all active sessions whose constructor matches the given one.
+   *
+   * This includes sessions of subclasses. Useful for querying sessions
+   * of a specific type without iterating the entire repository.
+   */
+  getByConstructor(
+    constructor: Constructor<Session<unknown>>,
+  ): ReadonlyCollection<string, Session<unknown>>;
 
   /** Returns an iterator of all {@link Session}s. */
   values(): IterableIterator<Session<unknown>>;
