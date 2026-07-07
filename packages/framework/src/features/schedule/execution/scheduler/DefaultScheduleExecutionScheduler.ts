@@ -163,6 +163,6 @@ export class DefaultScheduleExecutionScheduler
     const executionId = Symbol(
       `Schedule '${String(schedule.getId())}' @${Date.now()}`,
     );
-    return this.metaFactory.create(executionId);
+    return this.metaFactory.createOrPopulate(undefined, executionId);
   }
 }
