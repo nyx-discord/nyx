@@ -5,7 +5,10 @@ import { Pointer, UnalignedUint16Array } from '@sapphire/string-store';
 type SchemaLike<Serialized> = {
   id: number;
   serialize: (data: Serialized) => string;
-  deserialize: (buffer: DuplexBuffer, pointer: Pointer) => Serialized | null;
+  deserialize: (
+    buffer: DuplexBuffer | string,
+    pointer: number,
+  ) => Serialized | null;
 };
 
 export abstract class AbstractCustomIdCodec<Serialized>
@@ -27,7 +30,7 @@ export abstract class AbstractCustomIdCodec<Serialized>
         return null;
       }
 
-      return this.schema.deserialize(buffer, pointer);
+      return this.schema.deserialize(customId, pointer.value);
     } catch {
       return null;
     }
