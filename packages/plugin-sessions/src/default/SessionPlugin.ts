@@ -11,6 +11,7 @@ import type {
 import {
   AssertionError,
   BasicEventBus,
+  BotStatusEnum,
   DefaultMetadataFactory,
   ObjectNotFoundError,
   TypedFields,
@@ -26,6 +27,7 @@ import {
 import type { SessionExecutor } from '../core/execution/executor/SessionExecutor';
 import type { AnySessionInteraction } from '../core/interaction/AnySessionInteraction';
 import type { SessionUpdateInteraction } from '../core/interaction/SessionUpdateInteraction';
+import type { SessionLimitManager } from '../core/limit/SessionLimitManager';
 import type { SessionPromiseRepository } from '../core/promise/SessionPromiseRepository';
 import type { ReadonlySessionRepository } from '../core/repository/ReadonlySessionRepository';
 import type { SessionRepository } from '../core/repository/SessionRepository';
@@ -36,6 +38,7 @@ import { ensureKey } from '../core/util/ensureKey';
 import { DefaultSessionCustomIdCodec } from './customId/DefaultSessionCustomIdCodec';
 import { DefaultSessionUpdateSubscriber } from './event/DefaultSessionUpdateSubscriber';
 import { DefaultSessionExecutor } from './executor/DefaultSessionExecutor';
+import { DefaultSessionLimitManager } from './limit/DefaultSessionLimitManager';
 import { DefaultSessionPromiseRepository } from './promise/DefaultSessionPromiseRepository';
 import { DefaultSessionRepository } from './repository/DefaultSessionRepository';
 
@@ -47,6 +50,7 @@ type SessionManagerOptions = {
   subscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>;
   bus: EventBus<SessionEventArgs>;
   metaFactory: MetadataFactory;
+  limitManager?: SessionLimitManager;
 };
 
 export class SessionPlugin implements NyxPlugin {
@@ -71,6 +75,8 @@ export class SessionPlugin implements NyxPlugin {
 
   protected readonly metaFactory: MetadataFactory;
 
+  protected readonly limitManager: SessionLimitManager;
+
   protected subscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>;
 
   protected bot: NyxBot | null = null;
@@ -83,6 +89,8 @@ export class SessionPlugin implements NyxPlugin {
     this.subscriber = options.subscriber;
     this.bus = options.bus;
     this.metaFactory = options.metaFactory;
+    this.limitManager =
+      options.limitManager ?? new DefaultSessionLimitManager(this);
     this.subscriber.protect();
   }
 
@@ -156,16 +164,18 @@ export class SessionPlugin implements NyxPlugin {
   ): Promise<boolean> {
     this.checkSessionState(session, SessionStateEnum.Running);
 
+    const metadata = this.createOrPopulateMeta({
+      meta,
+      session,
+      customIdExtra: null,
+      interaction: session.getStartInteraction(),
+      extraData: [],
+    });
+
+    await this.limitManager.checkAndReserve(session, metadata);
+
     try {
       await this.repository.save(session);
-
-      const metadata = this.createOrPopulateMeta({
-        meta,
-        session,
-        customIdExtra: null,
-        interaction: session.getStartInteraction(),
-        extraData: [],
-      });
 
       const result = await Promise.resolve(
         this.executor.start(session, metadata),
@@ -275,6 +285,8 @@ export class SessionPlugin implements NyxPlugin {
 
     this.promiseRepository.resolve(session, data);
 
+    this.limitManager.release(session);
+
     Promise.resolve(
       this.bus.emit(SessionEventEnum.SessionEnd, [session, data, metadata]),
     ).catch((_error) => {});
@@ -347,6 +359,14 @@ export class SessionPlugin implements NyxPlugin {
 
   public getMetadataFactory(): MetadataFactory {
     return this.metaFactory;
+  }
+
+  public getSessionLimits(): SessionLimitManager {
+    return this.limitManager;
+  }
+
+  public isRunning(): boolean {
+    return !!this.bot && this.bot.getStatus() === BotStatusEnum.Running;
   }
 
   public getId(): Identifier {

@@ -1,0 +1,428 @@
+---
+title: Limits
+icon: Gauge
+definedIn: ['plugin-sessions/DefaultSessionLimitManager']
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+Session limits cap how many concurrent sessions a user, guild, or channel can have for a given session type.
+They are enforced **before** a session starts, and they are registered externally via `plugin.getSessionLimits().register(...)`.
+
+<Callout type="warn">
+Limits must be registered **before** starting. Calling `register()` after starting the bot throws an `IllegalStateError`.
+</Callout>
+
+## Registration
+
+Register limits through `plugin.getSessionLimits().register()` before starting the plugin. You can use either a plain object or a builder.
+
+<Tabs items={['Plain Object', 'Builder']}>
+<Tab>
+
+```ts twoslash
+import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+import type { SessionLimit } from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+const limit: SessionLimit = {
+  session: MySession,
+  rules: [
+    {
+      max: 1,
+      scope: SessionLimitScope.User,
+      onExceed: SessionExceedAction.Error,
+    },
+  ],
+};
+
+plugin.getSessionLimits().register(limit);
+```
+
+</Tab>
+<Tab>
+
+```ts twoslash
+import {
+  SessionPlugin,
+  SessionLimitBuilder,
+  SessionLimitScope,
+  SessionExceedAction,
+  Session,
+} from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+const limit = new SessionLimitBuilder()
+  .setSession(MySession)
+  .addRule((rule) =>
+    rule
+      .setMax(1)
+      .setScope(SessionLimitScope.User)
+      .setOnExceed(SessionExceedAction.Error),
+  )
+  .toSessionLimit();
+
+plugin.getSessionLimits().register(limit);
+```
+
+</Tab>
+</Tabs>
+
+<Callout>
+You can pass multiple limits to a single `register()` call and register as many limits as needed before the plugin starts.
+</Callout>
+
+## Scopes
+
+A scope determines which sessions count toward the limit. Each scope computes a string key from the session's starting interaction.
+
+### User
+
+One session per user. Multiple users can each have their own session.
+
+```ts twoslash
+import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [{
+    max: 1,
+    scope: SessionLimitScope.User, // [!code highlight]
+    onExceed: SessionExceedAction.displace()
+  }],
+});
+```
+
+<Callout>
+  **Example:** An interactive `/counter` command. A user opens a session with increment/decrement buttons.
+  Limit of 1 per user prevents duplicate counter sessions, and opening a second counter silently displaces the first.
+</Callout>
+
+### Guild
+
+One session per guild. DMs are grouped under the key `'dm'`.
+
+```ts twoslash
+import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [{
+    max: 3,
+    scope: SessionLimitScope.Guild, // [!code highlight]
+    onExceed: SessionExceedAction.Error
+  }],
+});
+```
+
+<Callout>
+  **Example:** A ticket wizard. The wizard walks the user through category, priority, and description steps. Limit of 3 per guild prevents a noisy server from spawning dozens of incomplete wizards.
+</Callout>
+
+### Channel
+
+One session per channel. Sessions without a `channelId` get the key `'unknown'` (at the time of writing, never the case,
+but it's still covered for future-proofing).
+
+```ts twoslash
+import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [{
+    max: 1,
+    scope: SessionLimitScope.Channel, // [!code highlight]
+    onExceed: SessionExceedAction.Error
+  }],
+});
+```
+
+<Callout>
+  **Example:** A live poll session with reaction buttons. Limit of 1 per channel ensures only one active poll runs in a channel at a time.
+</Callout>
+
+### Composite
+
+Combine multiple scopes. For example, one session per user per guild:
+
+```ts twoslash
+import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [
+    {
+      max: 1,
+      scope: SessionLimitScope.composite(SessionLimitScope.User, SessionLimitScope.Guild), // [!code highlight]
+      onExceed: SessionExceedAction.displace(),
+    },
+  ],
+});
+```
+
+<Callout>
+  **Example:** An embedded game like tic-tac-toe. Limit of 1 per user per guild. A user can play one game in each server they're in, but not two games in the same server.
+</Callout>
+
+### Custom
+
+Provide an arbitrary function that returns a string key:
+
+```ts twoslash
+import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [
+    {
+      max: 1,
+      scope: SessionLimitScope.custom((s: Session<unknown>) => s.getStartInteraction().locale), // [!code highlight]
+      onExceed: SessionExceedAction.Error,
+    },
+  ],
+});
+```
+
+<Callout>
+  **Example:** A translation-review session. Users with the same Discord locale share one review session across the
+  bot, and only one reviewer per language at a time.
+</Callout>
+
+## Actions
+
+An action defines what happens when the limit is exceeded.
+
+### Error
+
+Throws `SessionLimitExceededError`, which you can catch and reply to the user:
+
+```ts twoslash
+import { SessionPlugin, SessionLimitScope, SessionExceedAction, SessionLimitExceededError, Session } from '@nyx-discord/plugin-sessions';
+import type { ChatInputCommandInteraction } from 'discord.js';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+declare const session: Session<unknown>;
+declare const interaction: ChatInputCommandInteraction;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [{
+    max: 1,
+    scope: SessionLimitScope.User,
+    onExceed: SessionExceedAction.Error // [!code highlight]
+  }],
+});
+
+// In your command handler:
+try {
+  await session.start();
+} catch (error) {
+  if (error instanceof SessionLimitExceededError) {
+    await interaction.reply({ content: 'You already have an active session.', ephemeral: true });
+  }
+}
+```
+
+<Callout>
+  **Example:** A profile setup wizard with max 1 per user. The second attempt throws, and the handler catches to reply with a friendly ephemeral message.
+</Callout>
+
+### Displace
+
+Evicts an existing session to make room. The displaced session receives `SessionEndCodes.Displaced`.
+
+```ts twoslash
+import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+// Default: replaces the first existing session
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [{
+    max: 1,
+    scope: SessionLimitScope.User,
+    onExceed: SessionExceedAction.displace() // [!code highlight]
+  }],
+});
+
+// With a custom pick function, e.g. oldest first:
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [
+    {
+      max: 1,
+      scope: SessionLimitScope.User,
+      onExceed: SessionExceedAction.displace((existing: Session<unknown>[]) => // [!code highlight]
+        existing.reduce((a, b) => ( // [!code highlight]
+          a.getStartInteraction().createdAt < b.getStartInteraction().createdAt ? a : b // [!code highlight]
+        )), // [!code highlight]
+      ), // [!code highlight]
+    },
+  ],
+});
+```
+
+<Callout>
+  **Example:** An interactive counter. The user runs `/counter`, and if one already exists, it's silently replaced.
+  The old session's `onEnd()` fires, its buttons are disabled, and the promise resolves with `SessionEndCodes.Displaced`.
+</Callout>
+
+### Custom
+
+Full control via `ExceedDecision`:
+
+```ts twoslash
+import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+import type { SessionExceedContext } from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [
+    {
+      max: 3,
+      scope: SessionLimitScope.Guild,
+      onExceed: SessionExceedAction.custom(async (ctx: SessionExceedContext) => { // [!code highlight]
+        await ctx.attempted.getStartInteraction().reply({ // [!code highlight]
+          content: `Queue full (${ctx.existing.length} dashboards active). Try later.`, // [!code highlight]
+          ephemeral: true, // [!code highlight]
+        }); // [!code highlight]
+        return { proceed: false }; // [!code highlight]
+      }), // [!code highlight]
+    },
+  ],
+});
+```
+
+- `{ proceed: false }`: throws `SessionLimitExceededError`
+- `{ proceed: true, displace: null }`: allows the session without eviction (bypassing the limit)
+- `{ proceed: true, displace: session }`: evicts that specific session and starts
+
+<Callout>
+  **Example:** An admin dashboard with max 3 per guild. On exceed, the custom handler replies with a queue
+  status message and blocks the new session.
+</Callout>
+
+## Predicates
+
+When you need different limits for the same session type (e.g. premium vs free users), use predicates.
+
+```ts twoslash
+import { TypedFields } from '@nyx-discord/framework';
+import {
+  SessionPlugin,
+  SessionLimitScope,
+  SessionExceedAction,
+  Session
+} from '@nyx-discord/plugin-sessions';
+
+const Tier = TypedFields.create<'premium' | 'free'>('Tier');
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+plugin.getSessionLimits().register(
+  {
+    session: MySession,
+    predicate: (_, meta) => Tier.get(meta) === 'premium', // [!code highlight]
+    rules: [{ max: 5, scope: SessionLimitScope.User, onExceed: SessionExceedAction.Error }],
+  },
+  {
+    session: MySession,
+    predicate: (_, meta) => Tier.get(meta) !== 'premium', // [!code highlight]
+    rules: [{ max: 1, scope: SessionLimitScope.User, onExceed: SessionExceedAction.Error }],
+  },
+);
+```
+
+<Callout type="warn">
+If two or more policies for the same constructor match (or all lack a predicate), an `AmbiguousSessionLimitError` is thrown. Make sure predicates are mutually exclusive.
+</Callout>
+
+## Inheritance
+
+Limits are inherited through the prototype chain. When you start a child session, both the parent's and the child's policies are checked (AND semantics).
+
+```ts twoslash
+import {
+  SessionPlugin,
+  SessionLimitScope,
+  SessionExceedAction,
+  Session
+} from '@nyx-discord/plugin-sessions';
+import { AbstractSession } from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+// ---cut---
+// @noErrors
+class ParentSession extends AbstractSession {}
+// @noErrors
+class ChildSession extends ParentSession {}
+
+plugin.getSessionLimits().register({
+  session: ParentSession,
+  rules: [{ max: 2, scope: SessionLimitScope.Guild, onExceed: SessionExceedAction.Error }],
+});
+
+plugin.getSessionLimits().register({
+  session: ChildSession,
+  rules: [{ max: 1, scope: SessionLimitScope.User, onExceed: SessionExceedAction.Error }],
+});
+
+// Starting a ChildSession checks both policies:
+//   1. At most 2 sessions in the guild (from ParentSession)
+//   2. At most 1 session per user (from ChildSession)
+```
+
+## Multiple Rules
+
+A single policy can define multiple rules. All rules must pass for the session to start.
+
+```ts twoslash
+import {
+  SessionPlugin,
+  SessionLimitScope,
+  SessionExceedAction,
+  Session
+} from '@nyx-discord/plugin-sessions';
+
+declare const plugin: SessionPlugin;
+declare const MySession: new () => Session<unknown>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [
+    { max: 3, scope: SessionLimitScope.User, onExceed: SessionExceedAction.Error },
+    { max: 10, scope: SessionLimitScope.Guild, onExceed: SessionExceedAction.displace() },
+  ],
+});
+
+// Both rules are checked:
+//   - At most 3 per user => Error
+//   - At most 10 per guild => Displace
+```
