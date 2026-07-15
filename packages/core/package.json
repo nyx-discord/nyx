@@ -36,7 +36,7 @@
     "lint": "eslint ./src",
     "format": "prettier --write ./src",
     "barrel": "barrelsby --directory ./src --delete --singleQuotes",
-    "build": "rimraf dist && tsup-node src/index.ts",
+    "build": "rimraf dist && tsup-node src/index.ts && prettier --write dist/*.d.ts dist/*.d.mts",
     "prepublishOnly": "pnpm run build",
     "test": "vitest --run",
     "coverage": "vitest run --coverage"

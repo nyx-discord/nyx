@@ -9,6 +9,7 @@
       "#mocks/*": ["./__tests__/mocks/*"]
     },
     "customConditions": [
+      "@nyx-discord/framework",
       "@nyx-discord/core"
     ]
   },

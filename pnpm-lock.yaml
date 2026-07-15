@@ -47,6 +47,9 @@ importers:
       conventional-changelog-conventionalcommits:
         specifier: 7.0.2
         version: 7.0.2
+      dts-bundle-generator:
+        specifier: 9.5.1
+        version: 9.5.1
       eslint:
         specifier: 9.38.0
         version: 9.38.0(jiti@2.5.1)
@@ -3750,6 +3753,11 @@ packages:
   dotenv@16.3.2:
     resolution: {integrity: sha512-HTlk5nmhkm8F6JcdXvHIzaorzCoziNQT9mGxLPVXW8wJF1TiGSL60ZGB4gHWabHOaMmWmhvk2/lPHfnBiT78AQ==}
     engines: {node: '>=12'}
+
+  dts-bundle-generator@9.5.1:
+    resolution: {integrity: sha512-DxpJOb2FNnEyOzMkG11sxO2dmxPjthoVWxfKqWYJ/bI/rT1rvTMktF5EKjAYrRZu6Z6t3NhOUZ0sZ5ZXevOfbA==}
+    engines: {node: '>=14.0.0'}
+    hasBin: true
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -11038,6 +11046,11 @@ snapshots:
   dotenv@16.0.3: {}
 
   dotenv@16.3.2: {}
+
+  dts-bundle-generator@9.5.1:
+    dependencies:
+      typescript: 5.9.2
+      yargs: 17.7.2
 
   dunder-proto@1.0.1:
     dependencies:
