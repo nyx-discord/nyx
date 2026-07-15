@@ -1,5 +1,4 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
-import type { Awaitable } from 'discord.js';
+import type { Awaitable, ReadonlyCollection } from 'discord.js';
 import type { BotLifecycleObserver } from '../../../bot/BotLifecycleObserver';
 import type { Identifier } from '../../../identity/Identifier.js';
 import type { ClassImplements } from '../../../types/ClassImplements.js';
@@ -7,8 +6,7 @@ import type { Schedule } from '../schedule/Schedule.js';
 
 /** An object responsible for storing schedules. */
 export interface ScheduleRepository
-  extends BotLifecycleObserver,
-    IterableIterator<[Identifier, Schedule]> {
+  extends BotLifecycleObserver, IterableIterator<[Identifier, Schedule]> {
   /** Returns the number of stored schedules. */
   readonly size: number;
 

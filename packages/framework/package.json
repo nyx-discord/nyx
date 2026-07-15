@@ -58,10 +58,9 @@
     "discord.js": "^14.22.1"
   },
   "dependencies": {
-    "@discordjs/collection": "1.5.3",
     "@nyx-discord/core": "workspace:*",
     "@sapphire/string-store": "3.0.0",
-    "cron": "3.0.0",
-    "typed-field": "1.2.0"
+    "cron": "4.4.0",
+    "typed-field": "1.3.0"
   }
 }

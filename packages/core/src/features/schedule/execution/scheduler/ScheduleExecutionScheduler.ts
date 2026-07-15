@@ -1,5 +1,4 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
-import type { Awaitable } from 'discord.js';
+import type { Awaitable, ReadonlyCollection } from 'discord.js';
 import type { BotLifecycleObserver } from '../../../../bot/BotLifecycleObserver';
 import type { Identifier } from '../../../../identity/Identifier.js';
 import type { ScheduleJobAdapter } from '../../job/ScheduleJobAdapter.js';
@@ -7,8 +6,9 @@ import type { UndestroyableScheduleJobAdapter } from '../../job/UndestroyableSch
 import type { Schedule } from '../../schedule/Schedule.js';
 
 /** An object responsible for tracking the execution of schedules. */
-export interface ScheduleExecutionScheduler<JobType = unknown>
-  extends BotLifecycleObserver {
+export interface ScheduleExecutionScheduler<
+  JobType = unknown,
+> extends BotLifecycleObserver {
   /**
    * Starts scheduling (creates a job) for the passed schedule.
    *

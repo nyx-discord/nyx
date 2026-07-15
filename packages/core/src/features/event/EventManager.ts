@@ -1,5 +1,4 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
-import type { Awaitable, ClientEvents } from 'discord.js';
+import type { Awaitable, ClientEvents, ReadonlyCollection } from 'discord.js';
 import type { BotLifecycleObserver } from '../../bot/BotLifecycleObserver';
 import type { Identifier } from '../../identity/Identifier.js';
 import type { ClassImplements } from '../../types/ClassImplements.js';

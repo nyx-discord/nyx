@@ -1,4 +1,4 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
+import type { ReadonlyCollection } from 'discord.js';
 import type { ClassImplements } from '../../../types/ClassImplements.js';
 import type { Nameable } from '../../../types/Nameable';
 import type { Command } from '../commands/Command';
@@ -11,8 +11,9 @@ import type { SubCommandGroup } from '../commands/SubCommandGroup';
 import type { TopLevelCommand } from '../commands/TopLevelCommand.js';
 
 /** An object responsible for storing commands. */
-export interface CommandRepository
-  extends IterableIterator<[string, TopLevelCommand]> {
+export interface CommandRepository extends IterableIterator<
+  [string, TopLevelCommand]
+> {
   /** Returns the number of stored commands. */
   readonly size: number;
 

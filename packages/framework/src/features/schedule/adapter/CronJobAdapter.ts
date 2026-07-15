@@ -12,11 +12,11 @@ export class CronJobAdapter implements ScheduleJobAdapter<CronJob> {
   }
 
   public isRunning(): boolean {
-    return this.cronjob.running;
+    return this.cronjob.isActive;
   }
 
-  public pause(): this {
-    this.cronjob.stop();
+  public async pause(): Promise<this> {
+    await this.cronjob.stop();
     return this;
   }
 

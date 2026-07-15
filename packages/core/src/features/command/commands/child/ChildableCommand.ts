@@ -1,4 +1,4 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
+import type { ReadonlyCollection } from 'discord.js';
 import type { ClassImplements } from '../../../../types/ClassImplements';
 import type { Nameable } from '../../../../types/Nameable';
 import type { Command } from '../Command';

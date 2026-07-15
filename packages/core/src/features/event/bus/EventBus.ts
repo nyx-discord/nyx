@@ -1,11 +1,11 @@
-import type { Comparator, ReadonlyCollection } from '@discordjs/collection';
-import type { Awaitable } from 'discord.js';
+import type { Awaitable, ReadonlyCollection } from 'discord.js';
 import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Identifier } from '../../../identity/Identifier.js';
 import type { Metadata } from '../../../meta/Metadata';
 import type { Metadatable } from '../../../meta/Metadatable';
 import type { MetadataFactory } from '../../../meta/MetadataFactory';
 import type { Protectable } from '../../../protect/Protectable';
+import type { Comparator } from '../../../types/Comparator';
 import type { ReadonlyCollectionFrom } from '../../../types/ReadonlyCollectionFrom.js';
 import type { EventDispatcher } from '../dispatch/dispatcher/EventDispatcher.js';
 import type { EventSubscriberCollection } from '../subscriber/collection/EventSubscriberCollection.js';
@@ -15,7 +15,9 @@ import type { AnyEventSubscriberFrom } from '../subscriber/types/AnyEventSubscri
 /** An object that holds methods for subscribing to and emitting events, and getting information about the subscribers and subscribed events. */
 export interface EventBus<
   ArgsRecord extends Record<keyof ArgsRecord & string, unknown[]>,
-> extends Protectable,
+>
+  extends
+    Protectable,
     Identifiable,
     Metadatable,
     IterableIterator<[Identifier, AnyEventSubscriberFrom<ArgsRecord>]> {

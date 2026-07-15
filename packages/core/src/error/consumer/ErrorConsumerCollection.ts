@@ -1,4 +1,4 @@
-import type { Collection } from '@discordjs/collection';
+import type { Collection } from 'discord.js';
 import type { AnyClass } from '../../types/AnyClass.js';
 import type { Constructor } from '../../types/Constructor.js';
 import type { ErrorConsumer } from './ErrorConsumer.js';

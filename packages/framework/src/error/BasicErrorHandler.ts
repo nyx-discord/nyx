@@ -1,4 +1,3 @@
-import { Collection } from '@discordjs/collection';
 import type {
   AnyClass,
   Constructor,
@@ -8,12 +7,12 @@ import type {
   NyxLogger,
   ReadonlyCollectionFrom,
 } from '@nyx-discord/core';
+import { Collection } from 'discord.js';
 
 export class BasicErrorHandler<
   ErroredObject extends object,
   Args extends unknown[],
-> implements ErrorHandler<ErroredObject, Args>
-{
+> implements ErrorHandler<ErroredObject, Args> {
   protected fallbackConsumer: ErrorConsumer<object, ErroredObject, Args>;
 
   protected readonly consumers: ErrorConsumerCollection<ErroredObject, Args>;

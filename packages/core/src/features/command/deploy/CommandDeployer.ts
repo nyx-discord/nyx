@@ -1,5 +1,8 @@
-import type { ReadonlyCollection } from '@discordjs/collection';
-import type { ApplicationCommand, Awaitable } from 'discord.js';
+import type {
+  ApplicationCommand,
+  Awaitable,
+  ReadonlyCollection,
+} from 'discord.js';
 import type { TopLevelCommand } from '../commands/TopLevelCommand';
 
 export interface CommandDeployer extends IterableIterator<ApplicationCommand> {

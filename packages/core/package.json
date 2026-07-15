@@ -49,7 +49,6 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@discordjs/collection": "1.5.3",
     "@repo/eslint-config": "workspace:*",
     "@repo/typedoc-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
