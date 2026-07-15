@@ -40,12 +40,8 @@ export class DefaultScheduleExecutor implements ScheduleExecutor {
   public async tick(schedule: Schedule, meta: Metadata): Promise<void> {
     const args: ScheduleTickArgs = [meta];
 
-    try {
-      await this.checkMiddleware(schedule, args);
-    } catch (error) {
-      const wrapped = this.wrapMiddlewareError(error as Error, schedule, args);
-      await this.errorHandler.handle(wrapped, schedule, args);
-    }
+    const middlewareResult = await this.checkMiddleware(schedule, args);
+    if (!middlewareResult) return;
 
     try {
       await schedule.tick(...args);
