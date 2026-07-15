@@ -67,7 +67,8 @@ export class BasicAsyncEventDispatcher
       const promise = Promise.resolve()
         .then(async () => {
           try {
-            await this.checkMiddleware(subscriber, args);
+            const passed = await this.checkMiddleware(subscriber, args);
+            if (!passed) return;
           } catch (middlewareError) {
             throw this.wrapMiddlewareError(
               middlewareError as Error,
@@ -86,6 +87,8 @@ export class BasicAsyncEventDispatcher
       void promise.finally(() => {
         const index = pendingPromises.indexOf(promise);
         if (index !== -1) {
+          // An array of promises is actually intended here
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           pendingPromises.splice(index, 1);
         }
       });
