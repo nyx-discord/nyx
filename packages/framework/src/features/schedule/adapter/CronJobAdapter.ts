@@ -25,8 +25,8 @@ export class CronJobAdapter implements ScheduleJobAdapter<CronJob> {
     return this;
   }
 
-  public destroy(): this {
-    this.cronjob.stop();
+  public async destroy(): Promise<this> {
+    await this.cronjob.stop();
     return this;
   }
 
