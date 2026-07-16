@@ -39,23 +39,22 @@ class MyCommandDeployer extends DefaultCommandDeployer {}
 
 Pass it to the `CommandManager`'s injections while instantiating your bot.
 
-Since the `DefaultCommandManager` depends on the client event bus, you'll first need to create an `EventManager`.
+Since the [DefaultCommandManager](/extend/commands/command-manager) depends on the client event bus, you'll first need to create an [`EventBus`](/extend/events/event-bus).
 
-<Callout type="warn">**Make sure** to reuse the `EventManager` instance you created, passing it to your returned bot options.</Callout>
+<Callout type="warn">**Make sure** to reuse the `EventBus` instance you created, passing it to your returned bot options.</Callout>
 
 ```ts twoslash
 import { DefaultCommandDeployer } from '@nyx-discord/framework';
-import { Client } from 'discord.js';
+import { Client, type ClientEvents } from 'discord.js';
 declare const client: Client;
 
 class MyCommandDeployer extends DefaultCommandDeployer {}
 // ---cut---
 import type { NyxBot } from '@nyx-discord/framework';
-import { Bot, DefaultCommandManager, DefaultEventManager } from '@nyx-discord/framework';
+import { Bot, DefaultCommandManager, BasicEventEmitterBus } from '@nyx-discord/framework';
 
 const bot = Bot.create((bot: NyxBot) => {
-  const eventManager = DefaultEventManager.create({ bot, client });
-  const clientBus = eventManager.getClientBus();
+  const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<ClientEvents>(client);
 
   return {
     // ---cut-start---
@@ -65,11 +64,11 @@ const bot = Bot.create((bot: NyxBot) => {
     deployCommands: true,
     // ---cut-end---
     // ... other options
-    eventManager,
+    clientEventBus,
     commandManager: DefaultCommandManager.create({
       bot,
       client,
-      clientBus,
+      clientBus: clientEventBus,
       injections: { // [!code highlight]
         // The default deployer needs the client to be injected to deploy commands // [!code highlight]
         deployer: MyCommandDeployer.create(client), // [!code highlight]

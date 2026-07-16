@@ -53,11 +53,11 @@ class MyEventDispatcher extends BasicSyncEventDispatcher {}
 bus.setDispatcher(MyEventDispatcher.create());
 ```
 
-You can do this for built-in buses too, for example the client bus from `EventManager`:
+You can do this for built-in buses too, for example the client bus:
 
 ```ts twoslash
 import { Client } from 'discord.js';
-import { Bot, type NyxBot, DefaultEventManager, BasicAsyncEventDispatcher } from '@nyx-discord/framework';
+import { Bot, type NyxBot, BasicAsyncEventDispatcher } from '@nyx-discord/framework';
 
 declare const client: Client;
 
@@ -67,8 +67,7 @@ class MyAsyncDispatcher extends BasicAsyncEventDispatcher {}
 const bot = Bot.create((bot: NyxBot) => { /** options */ });
 
 bot
-  .getEventManager()
-  .getClientBus()
+  .getClientEventBus()
   .setDispatcher(MyAsyncDispatcher.create());
 ```
 

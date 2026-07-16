@@ -61,10 +61,7 @@ export class DefaultBotService implements BotService {
     ensureKey(
       constructorOptions,
       'bus',
-      BasicEventBus.createAsync<BotServiceEventArgs>(
-        Symbol('BotServiceEventBus'),
-        metaFactory,
-      ),
+      BasicEventBus.createAsync<BotServiceEventArgs>(metaFactory),
     );
 
     return new this({ ...constructorOptions, bot: options.bot });
@@ -82,8 +79,8 @@ export class DefaultBotService implements BotService {
     }
 
     try {
-      await this.bot.getEventManager().onStart();
       await Promise.all([
+        await this.bot.getCommandManager().onStart(),
         await this.bot.getScheduleManager().onStart(),
         await this.bot.getPluginManager().onStart(),
       ]);
@@ -120,10 +117,8 @@ export class DefaultBotService implements BotService {
     }
 
     await Promise.all([
-      await this.bot.getEventManager().onStop(),
       await this.bot.getCommandManager().onStop(),
       await this.bot.getScheduleManager().onStop(),
-      await this.bot.getEventManager().onStop(),
       await this.bot.getPluginManager().onStop(),
     ]);
 

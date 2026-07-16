@@ -28,7 +28,6 @@ export * from './features/command/middleware/AbstractCommandMiddleware';
 export * from './features/command/middleware/CommandMiddlewareList';
 export * from './features/command/repository/DefaultCommandRepository';
 export * from './features/command/resolve/DefaultCommandResolver';
-export * from './features/event/DefaultEventManager';
 export * from './features/event/bus/BasicEventBus';
 export * from './features/event/bus/BasicEventEmitterBus';
 export * from './features/event/dispatcher/AbstractEventDispatcher';

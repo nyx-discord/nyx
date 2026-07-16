@@ -76,7 +76,6 @@ describe('DefaultBotService', () => {
 
       await service.start();
 
-      expect(bot.getEventManager().onStart).toHaveBeenCalled();
       expect(bot.getScheduleManager().onStart).toHaveBeenCalled();
       expect(bot.getPluginManager().onStart).toHaveBeenCalled();
       expect(bot.getClient().login).toHaveBeenCalledWith('test-token');
@@ -93,7 +92,9 @@ describe('DefaultBotService', () => {
 
     test('GIVEN start error THEN rejects start promise and rethrows', async () => {
       const bot = StubServiceBot.create();
-      bot.getEventManager().onStart.mockRejectedValue(new Error('start fail'));
+      bot
+        .getCommandManager()
+        .onStart.mockRejectedValue(new Error('start fail'));
       const service = createService(bot);
 
       await expect(service.start()).rejects.toThrow('start fail');

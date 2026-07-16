@@ -19,8 +19,6 @@ type TestEvents = {
   other: [value: number];
 };
 
-const createId = (): Identifier => Symbol('test-bus');
-
 const createSorter =
   (): Comparator<Identifier, AnyEventSubscriberFrom<TestEvents>> => (a, b) =>
     a.getPriority() - b.getPriority();
@@ -34,7 +32,6 @@ const createBus = (
   }>,
 ): BasicEventBus<TestEvents> =>
   new BasicEventBus<TestEvents>(
-    overrides?.id ?? createId(),
     overrides?.sorter ?? createSorter(),
     overrides?.dispatcher ?? StubEventDispatcher.create(),
     overrides?.metaFactory ?? StubEventMetadata.create(),
@@ -43,24 +40,15 @@ const createBus = (
 describe('BasicEventBus', () => {
   describe('static factories', () => {
     it('SHOULD create a sync instance of itself', () => {
-      const bus = BasicEventBus.createSync<TestEvents>(Symbol('sync-bus'));
+      const bus = BasicEventBus.createSync<TestEvents>();
 
       expect(bus).toBeInstanceOf(BasicEventBus);
     });
 
     it('SHOULD create an async instance of itself', () => {
-      const bus = BasicEventBus.createAsync<TestEvents>(Symbol('async-bus'));
+      const bus = BasicEventBus.createAsync<TestEvents>();
 
       expect(bus).toBeInstanceOf(BasicEventBus);
-    });
-  });
-
-  describe('getId', () => {
-    test('GIVEN a constructor id THEN getId returns it', () => {
-      const id = Symbol('my-bus');
-      const bus = createBus({ id });
-
-      expect(bus.getId()).toBe(id);
     });
   });
 

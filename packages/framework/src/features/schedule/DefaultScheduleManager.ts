@@ -83,10 +83,7 @@ export class DefaultScheduleManager implements ScheduleManager {
     ensureKey(
       constructorOptions,
       'eventBus',
-      BasicEventBus.createAsync<ScheduleEventArgs>(
-        Symbol('ScheduleManagerEventBus'),
-        metaFactory,
-      ),
+      BasicEventBus.createAsync<ScheduleEventArgs>(metaFactory),
     );
     ensureKey(constructorOptions, 'metaFactory', metaFactory);
 

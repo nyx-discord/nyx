@@ -8,7 +8,7 @@ export interface BotOptions<Implementations extends InjectableBotDependencies> {
 
   logger: Implementations['logger'];
   commandManager: Implementations['commandManager'];
-  eventManager: Implementations['eventManager'];
+  clientEventBus: Implementations['clientEventBus'];
   scheduleManager: Implementations['scheduleManager'];
   pluginManager: Implementations['pluginManager'];
   service: Implementations['service'];

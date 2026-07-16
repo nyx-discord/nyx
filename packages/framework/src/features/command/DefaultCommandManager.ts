@@ -88,10 +88,7 @@ export class DefaultCommandManager implements CommandManager {
     ensureKey(
       constructorOptions,
       'eventBus',
-      BasicEventBus.createAsync<CommandEventArgs>(
-        Symbol('CommandManagerEventBus'),
-        metaFactory,
-      ),
+      BasicEventBus.createAsync<CommandEventArgs>(metaFactory),
     );
     ensureKey(
       constructorOptions,

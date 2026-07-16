@@ -15,9 +15,9 @@ import { BasicSyncEventDispatcher } from '../dispatcher/BasicSyncEventDispatcher
 import { BasicEventBus } from './BasicEventBus.js';
 
 export class BasicEventEmitterBus<
-    EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-    Emitter extends EventEmitterLike,
-  >
+  EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
+  Emitter extends EventEmitterLike,
+>
   extends BasicEventBus<EventArgsObject>
   implements EventEmitterBus<EventArgsObject>
 {
@@ -26,22 +26,20 @@ export class BasicEventEmitterBus<
   protected readonly emitter: Emitter;
 
   constructor(
-    id: Identifier,
     emitter: Emitter,
     sorter: Comparator<Identifier, AnyEventSubscriberFrom<EventArgsObject>>,
     dispatcher: EventDispatcher,
     metaFactory: MetadataFactory,
   ) {
-    super(id, sorter, dispatcher, metaFactory);
+    super(sorter, dispatcher, metaFactory);
     this.emitter = emitter;
   }
 
   public static createSyncWithEmitter<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
     Emitter extends EventEmitter,
-  >(id: Identifier, emitter: Emitter, metaFactory?: MetadataFactory) {
+  >(emitter: Emitter, metaFactory?: MetadataFactory) {
     return new BasicEventEmitterBus<EventArgsObject, Emitter>(
-      id,
       emitter,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
@@ -53,11 +51,10 @@ export class BasicEventEmitterBus<
   public static createAsyncWithEmitter<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
     Emitter extends EventEmitter,
-  >(id: Identifier, emitter: Emitter, metaFactory?: MetadataFactory) {
+  >(emitter: Emitter, metaFactory?: MetadataFactory) {
     const newEmitter = emitter ?? (new EventEmitter() as Emitter);
 
     return new BasicEventEmitterBus<EventArgsObject, Emitter>(
-      id,
       newEmitter,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),

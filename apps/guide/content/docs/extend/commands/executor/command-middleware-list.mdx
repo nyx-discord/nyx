@@ -39,24 +39,22 @@ class MyMiddlewareList extends CommandMiddlewareList {}
 
 Pass it while instantiating your bot, by injecting it into the [`CommandExecutor`](/extend/commands/executor).
 
-Since the `DefaultCommandManager` depends on the client event bus, you'll first need to create an `EventManager`.
+Since the [DefaultCommandManager](/extend/commands/command-manager) depends on the client event bus, you'll first need to create an [`EventBus`](/extend/events/event-bus).
 
-<Callout type="warn">**Make sure** to reuse the `EventManager` instance you created, passing it to your returned bot options.</Callout>
+<Callout type="warn">**Make sure** to reuse the `EventBus` instance you created, passing it to your returned bot options.</Callout>
 
 ```ts twoslash
 import { CommandMiddlewareList } from '@nyx-discord/framework';
-import { Client } from 'discord.js';
-
+import { Client, type ClientEvents } from 'discord.js';
 declare const client: Client;
 
 class MyMiddlewareList extends CommandMiddlewareList {}
 // ---cut---
 import type { NyxBot } from '@nyx-discord/framework';
-import { Bot, DefaultCommandManager, DefaultEventManager, DefaultCommandExecutor } from '@nyx-discord/framework';
+import { Bot, DefaultCommandManager, BasicEventEmitterBus, DefaultCommandExecutor } from '@nyx-discord/framework';
 
 const bot = Bot.create((bot: NyxBot) => {
-  const eventManager = DefaultEventManager.create({ bot, client });
-  const clientBus = eventManager.getClientBus();
+  const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<ClientEvents>(client);
 
   return {
     // ---cut-start---
@@ -66,11 +64,11 @@ const bot = Bot.create((bot: NyxBot) => {
     deployCommands: true,
     // ---cut-end---
     // ... other options
-    eventManager,
+    clientEventBus,
     commandManager: DefaultCommandManager.create({
       bot,
       client,
-      clientBus,
+      clientBus: clientEventBus,
       injections: { // [!code highlight]
         executor: DefaultCommandExecutor.create({ // [!code highlight]
           injections: { // [!code highlight]

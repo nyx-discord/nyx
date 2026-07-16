@@ -1,15 +1,18 @@
 import type {
   BotOptions,
   BotStatus,
+  EventSubscriber,
   Identifier,
   InjectableBotDependencies,
   NyxBot,
 } from '@nyx-discord/core';
-import type { Client } from 'discord.js';
+import { TypedFields } from '@nyx-discord/core';
+import type { Client, ClientEvents } from 'discord.js';
 import { DefaultCommandManager } from '../features/command/DefaultCommandManager.js';
-import { DefaultEventManager } from '../features/event/DefaultEventManager.js';
+import { BasicEventEmitterBus } from '../features/event/bus/BasicEventEmitterBus';
 import { DefaultPluginManager } from '../features/plugin/DefaultPluginManager.js';
 import { DefaultScheduleManager } from '../features/schedule/DefaultScheduleManager.js';
+import { DefaultMetadataFactory } from '../meta/DefaultMetadataFactory';
 import { DefaultBotService } from '../service/DefaultBotService.js';
 
 type BotOptionsWithDefaults<
@@ -23,13 +26,12 @@ type BotOptionsWithDefaults<
 /** The main Bot class. */
 export class Bot<
   Implementations extends InjectableBotDependencies = InjectableBotDependencies,
-> implements NyxBot<Implementations>
-{
+> implements NyxBot<Implementations> {
   protected readonly logger: Implementations['logger'];
 
   protected readonly commands: Implementations['commandManager'];
 
-  protected readonly events: Implementations['eventManager'];
+  protected readonly clientEventBus: Implementations['clientEventBus'];
 
   protected readonly schedules: Implementations['scheduleManager'];
 
@@ -50,7 +52,7 @@ export class Bot<
     this.logger = options.logger;
     this.service = options.service;
     this.commands = options.commandManager;
-    this.events = options.eventManager;
+    this.clientEventBus = options.clientEventBus;
     this.schedules = options.scheduleManager;
     this.plugins = options.pluginManager;
     this.deployCommands = options.deployCommands;
@@ -79,14 +81,21 @@ export class Bot<
     bot: NyxBot,
     client: Client,
   ) => {
-    const eventManager = DefaultEventManager.create({ bot, client });
+    const metaFactory = DefaultMetadataFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]);
+    const clientBus = BasicEventEmitterBus.createSyncWithEmitter<
+      ClientEvents,
+      Client
+    >(client, metaFactory);
 
     return {
-      eventManager: eventManager,
+      clientEventBus: clientBus,
       commandManager: DefaultCommandManager.create({
         bot,
         client,
-        clientBus: eventManager.getClientBus(),
+        clientBus,
       }),
       scheduleManager: DefaultScheduleManager.create({ bot }),
       service: DefaultBotService.create({ bot }),
@@ -122,6 +131,13 @@ export class Bot<
     });
   }
 
+  public async subscribeToClient(
+    ...subscribers: EventSubscriber<ClientEvents, keyof ClientEvents>[]
+  ): Promise<this> {
+    await this.clientEventBus.subscribe(...subscribers);
+    return this;
+  }
+
   public getToken(): string {
     return this.token;
   }
@@ -134,8 +150,8 @@ export class Bot<
     return this.commands;
   }
 
-  public getEventManager(): Implementations['eventManager'] {
-    return this.events;
+  public getClientEventBus(): Implementations['clientEventBus'] {
+    return this.clientEventBus;
   }
 
   public getLogger(): Implementations['logger'] {

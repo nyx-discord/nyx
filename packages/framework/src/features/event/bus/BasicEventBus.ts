@@ -26,10 +26,7 @@ import { BasicSyncEventDispatcher } from '../dispatcher/BasicSyncEventDispatcher
 
 export class BasicEventBus<
   EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-> implements EventBus<EventArgsObject>
-{
-  protected readonly id: Identifier;
-
+> implements EventBus<EventArgsObject> {
   protected readonly subscribers: EventSubscriberCollection<EventArgsObject> =
     new Collection() as EventSubscriberCollection<EventArgsObject>;
 
@@ -47,12 +44,10 @@ export class BasicEventBus<
   protected readonly metaFactory: MetadataFactory;
 
   constructor(
-    id: Identifier,
     sorter: Comparator<Identifier, AnyEventSubscriberFrom<EventArgsObject>>,
     dispatcher: EventDispatcher,
     metaFactory: MetadataFactory,
   ) {
-    this.id = id;
     this.dispatcher = dispatcher;
     this.sorter = sorter;
     this.metaFactory = metaFactory;
@@ -60,9 +55,8 @@ export class BasicEventBus<
 
   public static createSync<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-  >(id: Identifier, metaFactory?: MetadataFactory): EventBus<EventArgsObject> {
+  >(metaFactory?: MetadataFactory): EventBus<EventArgsObject> {
     return new this<EventArgsObject>(
-      id,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicSyncEventDispatcher.create(),
@@ -72,9 +66,8 @@ export class BasicEventBus<
 
   public static createAsync<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-  >(id: Identifier, metaFactory?: MetadataFactory): EventBus<EventArgsObject> {
+  >(metaFactory?: MetadataFactory): EventBus<EventArgsObject> {
     return new this<EventArgsObject>(
-      id,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicAsyncEventDispatcher.create(),
@@ -203,10 +196,6 @@ export class BasicEventBus<
     EventSubscriberCollection<EventArgsObject>
   > {
     return this.subscribers;
-  }
-
-  public getId(): Identifier {
-    return this.id;
   }
 
   public getMeta(): Metadata {

@@ -83,7 +83,7 @@ const myBot = Bot.create((bot: NyxBot) => ({
     import { Client, GatewayIntentBits } from 'discord.js';
     declare const client: Client<boolean>;
     // ---cut---
-    import { Bot, DefaultEventManager, DefaultPluginManager } from '@nyx-discord/framework';
+    import { Bot, DefaultScheduleManager, DefaultPluginManager } from '@nyx-discord/framework';
 
     // ---cut-start---
     // @ts-expect-error Other managers missing for brevity
@@ -94,7 +94,7 @@ const myBot = Bot.create((bot: NyxBot) => ({
       logger: console,
       deployCommands: true,
 
-      events: DefaultEventManager.create({ bot, client }),
+      schedules: DefaultScheduleManager.create({ bot }),
       plugins: DefaultPluginManager.create({ bot }),
       // and so on
     }));

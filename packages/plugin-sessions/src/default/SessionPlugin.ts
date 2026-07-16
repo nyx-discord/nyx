@@ -128,10 +128,7 @@ export class SessionPlugin implements NyxPlugin {
     ensureKey(
       constructorOptions,
       'bus',
-      BasicEventBus.createAsync<SessionEventArgs>(
-        Symbol('SessionManagerEventBus'),
-        metaFactory,
-      ),
+      BasicEventBus.createAsync<SessionEventArgs>(metaFactory),
     );
     ensureKey(constructorOptions, 'metaFactory', metaFactory);
 
@@ -150,7 +147,7 @@ export class SessionPlugin implements NyxPlugin {
     this.bot = bot;
     this.metaFactory.addDefaultField(TypedFields.Bot, bot);
 
-    await bot.getEventManager().subscribeClient(this.subscriber);
+    await bot.subscribeToClient(this.subscriber);
     await this.repository.onStart();
   }
 
@@ -195,7 +192,10 @@ export class SessionPlugin implements NyxPlugin {
       ).catch((_error) => {});
 
       return true;
-    } catch (_error) {
+    } catch (error) {
+      this.bot
+        ?.getLogger()
+        .error(`Failed to start session with ID '${session.getId()}}`, error);
       return session.getStartInteraction().replied;
     }
   }
@@ -318,7 +318,7 @@ export class SessionPlugin implements NyxPlugin {
     if (!this.bot) {
       throw new AssertionError('Bot not set, has the plugin been registered?');
     }
-    const clientBus = this.bot.getEventManager().getClientBus();
+    const clientBus = this.bot.getClientEventBus();
 
     this.subscriber.unprotect();
     await clientBus.unsubscribe(this.subscriber);

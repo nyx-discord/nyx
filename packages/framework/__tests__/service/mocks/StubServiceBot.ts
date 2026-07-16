@@ -3,10 +3,6 @@ import { vi } from 'vitest';
 export class StubServiceBot {
   static create() {
     return {
-      getEventManager: vi.fn().mockReturnValue({
-        onStart: vi.fn().mockResolvedValue(undefined),
-        onStop: vi.fn(),
-      }),
       getScheduleManager: vi.fn().mockReturnValue({
         onStart: vi.fn().mockResolvedValue(undefined),
         onStop: vi.fn(),

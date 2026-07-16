@@ -130,11 +130,6 @@ await bus.subscribe(subscriber);
 // console: I was subscribed!
 await bus.unsubscribe(subscriber);
 // console: I was unsubscribed!
-
-await bus.subscribe(subscriber);
-// console: I was subscribed!
-await bot.getEventManager().removeEventBus(bus);
-// console: My bus was unregistered!
 ```
 
 ## Event Meta

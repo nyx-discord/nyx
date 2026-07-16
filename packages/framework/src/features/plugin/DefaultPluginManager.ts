@@ -52,10 +52,7 @@ export class DefaultPluginManager implements PluginManager {
     ensureKey(
       constructorOptions,
       'bus',
-      BasicEventBus.createAsync<PluginEventArgs>(
-        Symbol('PluginManagerEventBus'),
-        metaFactory,
-      ),
+      BasicEventBus.createAsync<PluginEventArgs>(metaFactory),
     );
 
     return new this({

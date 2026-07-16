@@ -131,18 +131,18 @@ dispatcher.setSyncTimeout(50_000);
 
 ### Client bus
 
-The `Client` event bus is a built-in bus that wraps its events, and is available in the `EventManager`:
+The `Client` event bus is a built-in bus that wraps its events:
 
 ```ts twoslash
 // ---cut-start---
 import { NyxBot } from '@nyx-discord/framework';
 declare const bot: NyxBot;
 // ---cut-end---
-const bus = bot.getEventManager().getClientBus();
+const bus = bot.getClientEventBus();
 //    ^?
 ```
 
-The manager also has a utility method to directly subscribe to it:
+The bot also has a utility method to directly subscribe to it:
 
 ```ts twoslash
 // ---cut-start---
@@ -151,7 +151,7 @@ import { Events, ClientEvents } from 'discord.js';
 declare const bot: NyxBot;
 declare const eventSubscriber: EventSubscriber<ClientEvents, 'interactionCreate'>;
 // ---cut-end---
-await bot.getEventManager().subscribeClient(eventSubscriber);
+await bot.subscribeToClient(eventSubscriber);
 ```
 
 ### Manager buses
@@ -166,10 +166,6 @@ declare const bot: NyxBot;
 const commandBus = bot.getCommandManager().getEventBus();
 //    ^?
 
-// Named differently to not be confused with the getBus() method
-const eventBus = bot.getEventManager().getManagerBus();
-//    ^?
-
 const scheduleBus = bot.getScheduleManager().getEventBus();
 //    ^?
 
@@ -181,7 +177,7 @@ See the respective guide of each feature for more information about the events t
 
 ## Custom buses
 
-You can create your own event bus, and optionally register it to the `EventManager`.
+You can create your own event bus for your building an event-based bot.
 
 <Steps>
 <Step>
@@ -218,8 +214,8 @@ type MyEventsArgs = {
 };
 // ---cut-end---
 
-const syncBus = BasicEventBus.createSync<MyEventsArgs>(Symbol('mySyncBus'));
-const asyncBus = BasicEventBus.createAsync<MyEventsArgs>(Symbol('myAsyncBus'));
+const syncBus = BasicEventBus.createSync<MyEventsArgs>();
+const asyncBus = BasicEventBus.createAsync<MyEventsArgs>();
 ```
 
 #### From an EventEmitter
@@ -240,70 +236,12 @@ type MyEventsArgs = {
 // ---cut-end---
 
 const emitter = new EventEmitter();
-const syncBus = BasicEventEmitterBus.createSyncWithEmitter<MyEventsArgs, EventEmitter>(Symbol('myBus'), emitter);
-const asyncBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventsArgs, EventEmitter>(Symbol('myBus'), emitter);
+const syncBus = BasicEventEmitterBus.createSyncWithEmitter<MyEventsArgs, EventEmitter>(emitter);
+const asyncBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventsArgs, EventEmitter>(emitter);
 ```
-
-</Step>
-<Step>
-### Optional registration
-
-If you want to make your bus available to other features like plugins, you can register it to the `EventManager`:
-
-```ts twoslash
-// ---cut-start---
-import { NyxBot, EventBus } from '@nyx-discord/framework';
-type MyEventsArgs = {
-  someEvent: [string, number];
-  anotherEvent: [boolean];
-};
-declare const bot: NyxBot;
-declare const bus: EventBus<MyEventsArgs>;
-// ---cut-end---
-await bot.getEventManager().addEventBuses(bus);
-```
-
-It'll use the ID you passed to `create()` as the key.
 
 </Step>
 </Steps>
-
-## Protection
-
-You can choose to protect your bus from being removed, in case it's used for internal purposes and it's not supposed to be removed:
-
-```ts twoslash
-// ---cut-start---
-import { BasicEventBus } from '@nyx-discord/framework';
-type MyEventsArgs = {
-  someEvent: [string, number];
-  anotherEvent: [boolean];
-};
-const bus = BasicEventBus.createSync<MyEventsArgs>('foo');
-// ---cut-end---
-bus.protect();
-// or to unprotect
-bus.unprotect();
-```
-
-That way it'll throw a runtime error if you try to remove it normally:
-
-```ts twoslash
-// ---cut-start---
-import { BasicEventBus, NyxBot } from '@nyx-discord/framework';
-type MyEventsArgs = {
-  someEvent: [string, number];
-  anotherEvent: [boolean];
-};
-declare const bot: NyxBot;
-// ---cut-end---
-const bus = BasicEventBus.createSync<MyEventsArgs>('foo');
-bus.protect();
-
-await bot.getEventManager().addEventBuses(bus);
-// throws ProtectedObjectError
-await bot.getEventManager().removeEventBus(bus);
-```
 
 ## Bus events
 

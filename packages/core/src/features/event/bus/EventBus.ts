@@ -1,10 +1,8 @@
 import type { Awaitable, ReadonlyCollection } from 'discord.js';
-import type { Identifiable } from '../../../identity/Identifiable.js';
 import type { Identifier } from '../../../identity/Identifier.js';
 import type { Metadata } from '../../../meta/Metadata';
 import type { Metadatable } from '../../../meta/Metadatable';
 import type { MetadataFactory } from '../../../meta/MetadataFactory';
-import type { Protectable } from '../../../protect/Protectable';
 import type { Comparator } from '../../../types/Comparator';
 import type { ReadonlyCollectionFrom } from '../../../types/ReadonlyCollectionFrom.js';
 import type { EventDispatcher } from '../dispatch/dispatcher/EventDispatcher.js';
@@ -17,8 +15,6 @@ export interface EventBus<
   ArgsRecord extends Record<keyof ArgsRecord & string, unknown[]>,
 >
   extends
-    Protectable,
-    Identifiable,
     Metadatable,
     IterableIterator<[Identifier, AnyEventSubscriberFrom<ArgsRecord>]> {
   /**

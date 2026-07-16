@@ -15,15 +15,12 @@ type TestEvents = {
   other: [value: number];
 };
 
-const createId = (): Identifier => Symbol('test-emitter-bus');
-
 const createSorter =
   (): Comparator<Identifier, AnyEventSubscriberFrom<TestEvents>> => (a, b) =>
     a.getPriority() - b.getPriority();
 
 const createBus = (
   overrides?: Partial<{
-    id: Identifier;
     emitter: ReturnType<typeof StubEventEmitter.create>;
   }>,
 ): BasicEventEmitterBus<
@@ -34,7 +31,6 @@ const createBus = (
     TestEvents,
     ReturnType<typeof StubEventEmitter.create>
   >(
-    overrides?.id ?? createId(),
     overrides?.emitter ?? StubEventEmitter.create(),
     createSorter(),
     StubEventDispatcher.create(),
@@ -48,7 +44,7 @@ describe('BasicEventEmitterBus', () => {
       const bus = BasicEventEmitterBus.createSyncWithEmitter<
         TestEvents,
         typeof emitter
-      >(Symbol('sync-emitter'), emitter as any);
+      >(emitter as any);
 
       expect(bus).toBeInstanceOf(BasicEventEmitterBus);
     });
@@ -58,7 +54,7 @@ describe('BasicEventEmitterBus', () => {
       const bus = BasicEventEmitterBus.createAsyncWithEmitter<
         TestEvents,
         typeof emitter
-      >(Symbol('async-emitter'), emitter as any);
+      >(emitter as any);
 
       expect(bus).toBeInstanceOf(BasicEventEmitterBus);
     });

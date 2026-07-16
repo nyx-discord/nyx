@@ -1,3 +1,5 @@
+import type { ClientEvents } from 'discord.js';
+import type { EventSubscriber } from '../features/event/subscriber/EventSubscriber';
 import type { Identifier } from '../identity/Identifier';
 import type { BotStatus } from '../service/BotStatus';
 import type { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
@@ -15,8 +17,8 @@ export interface NyxBot<
   /** Returns the {@link CommandManager} of this bot for {@link Command} managing. */
   getCommandManager(): Implementations['commandManager'];
 
-  /** Returns the {@link EventManager} of this bot for event managing. */
-  getEventManager(): Implementations['eventManager'];
+  /** Returns the {@link EventBus} to subscribe to {@link import('discord.js').Client Client} events. */
+  getClientEventBus(): Implementations['clientEventBus'];
 
   /** Returns the {@link ScheduleManager} of this bot for {@link Schedule} managing. */
   getScheduleManager(): Implementations['scheduleManager'];
@@ -44,4 +46,17 @@ export interface NyxBot<
     key: Key,
     value: Value,
   ): asserts this is this & Record<Key, Value>;
+
+  /**
+   * Subscribes a list of event subscribers to the {@link getClientEventBus Client EventBus}.
+   *
+   * Alias of:
+   * ```
+   * const clientBus = bot.getClientEventBus();
+   * await clientBus.subscribe(subscriber);
+   * ```
+   */
+  subscribeToClient(
+    ...subscribers: EventSubscriber<ClientEvents, keyof ClientEvents>[]
+  ): Promise<this>;
 }

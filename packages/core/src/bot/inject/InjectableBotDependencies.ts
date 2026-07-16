@@ -1,6 +1,6 @@
-import type { Client } from 'discord.js';
+import type { Client, ClientEvents } from 'discord.js';
 import type { CommandManager } from '../../features/command/CommandManager';
-import type { EventManager } from '../../features/event/EventManager';
+import type { EventBus } from '../../features/event/bus/EventBus';
 import type { PluginManager } from '../../features/plugin/PluginManager';
 import type { ScheduleManager } from '../../features/schedule/ScheduleManager';
 import type { NyxLogger } from '../../log/NyxLogger';
@@ -10,7 +10,7 @@ export type InjectableBotDependencies = {
   logger: NyxLogger;
   client: Client;
   commandManager: CommandManager;
-  eventManager: EventManager;
+  clientEventBus: EventBus<ClientEvents>;
   scheduleManager: ScheduleManager;
   pluginManager: PluginManager;
   service: BotService;
