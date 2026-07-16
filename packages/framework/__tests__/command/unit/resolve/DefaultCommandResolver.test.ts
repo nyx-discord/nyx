@@ -8,7 +8,7 @@ import {
 import { MockParentCommand } from '../../mocks/MockParentCommand';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
 import { MockSubCommand } from '../../mocks/MockSubCommand';
-import { MockSubCommandGroup } from '../../mocks/MockSubcommandGroup';
+import { MockSubCommandGroup } from '../../mocks/MockSubCommandGroup';
 
 const createRepo = () => DefaultCommandRepository.create();
 const createResolver = () => DefaultCommandResolver.create();
@@ -31,6 +31,36 @@ const setupParentWithGroupAndSubcommand = (repo: CommandRepository) => {
   return { parent, group, subcommand };
 };
 
+const createChatInputInteraction = (
+  commandName: string,
+  subcommandGroup?: string | null,
+  subcommand?: string | null,
+) => ({
+  commandName,
+  isChatInputCommand: vi.fn().mockReturnValue(true),
+  isAutocomplete: vi.fn().mockReturnValue(false),
+  options: {
+    getSubcommandGroup: vi.fn().mockReturnValue(subcommandGroup ?? null),
+    getSubcommand: vi.fn().mockReturnValue(subcommand ?? null),
+  },
+});
+
+const createContextMenuInteraction = (commandName: string) => ({
+  commandName,
+  isChatInputCommand: vi.fn().mockReturnValue(false),
+  isAutocomplete: vi.fn().mockReturnValue(false),
+});
+
+const createAutocompleteInteraction = (commandName: string) => ({
+  commandName,
+  isChatInputCommand: vi.fn().mockReturnValue(false),
+  isAutocomplete: vi.fn().mockReturnValue(true),
+  options: {
+    getSubcommandGroup: vi.fn().mockReturnValue(null),
+    getSubcommand: vi.fn().mockReturnValue(null),
+  },
+});
+
 describe('DefaultCommandResolver', () => {
   it('SHOULD create an instance of itself', () => {
     expect(DefaultCommandResolver.create()).toBeInstanceOf(
@@ -45,15 +75,9 @@ describe('DefaultCommandResolver', () => {
       const standalone = new MockStandaloneCommand();
       repo.addCommand(standalone);
 
-      const interaction = {
-        commandName: standalone.getData().name,
-        isChatInputCommand: vi.fn().mockReturnValue(true),
-        isAutocomplete: vi.fn().mockReturnValue(false),
-        options: {
-          getSubcommandGroup: vi.fn().mockReturnValue(null),
-          getSubcommand: vi.fn().mockReturnValue(null),
-        },
-      } as any;
+      const interaction = createChatInputInteraction(
+        standalone.getData().name,
+      );
 
       const result = resolver.resolveFromCommandInteraction(interaction, repo);
 
@@ -66,15 +90,7 @@ describe('DefaultCommandResolver', () => {
       const parent = new MockParentCommand();
       repo.addCommand(parent);
 
-      const interaction = {
-        commandName: parent.getData().name,
-        isChatInputCommand: vi.fn().mockReturnValue(true),
-        isAutocomplete: vi.fn().mockReturnValue(false),
-        options: {
-          getSubcommandGroup: vi.fn().mockReturnValue(null),
-          getSubcommand: vi.fn().mockReturnValue(null),
-        },
-      } as any;
+      const interaction = createChatInputInteraction(parent.getData().name);
 
       const result = resolver.resolveFromCommandInteraction(interaction, repo);
 
@@ -86,15 +102,11 @@ describe('DefaultCommandResolver', () => {
       const resolver = createResolver();
       const { parent, subcommand } = setupParentWithSubcommand(repo);
 
-      const interaction = {
-        commandName: parent.getData().name,
-        isChatInputCommand: vi.fn().mockReturnValue(true),
-        isAutocomplete: vi.fn().mockReturnValue(false),
-        options: {
-          getSubcommandGroup: vi.fn().mockReturnValue(null),
-          getSubcommand: vi.fn().mockReturnValue(subcommand.getData().name),
-        },
-      } as any;
+      const interaction = createChatInputInteraction(
+        parent.getData().name,
+        null,
+        subcommand.getData().name,
+      );
 
       const result = resolver.resolveFromCommandInteraction(interaction, repo);
 
@@ -107,15 +119,11 @@ describe('DefaultCommandResolver', () => {
       const { parent, group, subcommand } =
         setupParentWithGroupAndSubcommand(repo);
 
-      const interaction = {
-        commandName: parent.getData().name,
-        isChatInputCommand: vi.fn().mockReturnValue(true),
-        isAutocomplete: vi.fn().mockReturnValue(false),
-        options: {
-          getSubcommandGroup: vi.fn().mockReturnValue(group.getData().name),
-          getSubcommand: vi.fn().mockReturnValue(subcommand.getData().name),
-        },
-      } as any;
+      const interaction = createChatInputInteraction(
+        parent.getData().name,
+        group.getData().name,
+        subcommand.getData().name,
+      );
 
       const result = resolver.resolveFromCommandInteraction(interaction, repo);
 
@@ -127,15 +135,11 @@ describe('DefaultCommandResolver', () => {
       const resolver = createResolver();
       const { parent, group } = setupParentWithGroupAndSubcommand(repo);
 
-      const interaction = {
-        commandName: parent.getData().name,
-        isChatInputCommand: vi.fn().mockReturnValue(true),
-        isAutocomplete: vi.fn().mockReturnValue(false),
-        options: {
-          getSubcommandGroup: vi.fn().mockReturnValue(group.getData().name),
-          getSubcommand: vi.fn().mockReturnValue(null),
-        },
-      } as any;
+      const interaction = createChatInputInteraction(
+        parent.getData().name,
+        group.getData().name,
+        null,
+      );
 
       const result = resolver.resolveFromCommandInteraction(interaction, repo);
 
@@ -148,11 +152,9 @@ describe('DefaultCommandResolver', () => {
       const standalone = new MockStandaloneCommand();
       repo.addCommand(standalone);
 
-      const interaction = {
-        commandName: standalone.getData().name,
-        isChatInputCommand: vi.fn().mockReturnValue(false),
-        isAutocomplete: vi.fn().mockReturnValue(false),
-      } as any;
+      const interaction = createContextMenuInteraction(
+        standalone.getData().name,
+      );
 
       const result = resolver.resolveFromCommandInteraction(interaction, repo);
 
@@ -163,15 +165,7 @@ describe('DefaultCommandResolver', () => {
       const repo = createRepo();
       const resolver = createResolver();
 
-      const interaction = {
-        commandName: 'nonexistent',
-        isChatInputCommand: vi.fn().mockReturnValue(true),
-        isAutocomplete: vi.fn().mockReturnValue(false),
-        options: {
-          getSubcommandGroup: vi.fn().mockReturnValue(null),
-          getSubcommand: vi.fn().mockReturnValue(null),
-        },
-      } as any;
+      const interaction = createChatInputInteraction('nonexistent');
 
       const result = resolver.resolveFromCommandInteraction(interaction, repo);
 
@@ -186,15 +180,9 @@ describe('DefaultCommandResolver', () => {
       const standalone = new MockStandaloneCommand();
       repo.addCommand(standalone);
 
-      const interaction = {
-        commandName: standalone.getData().name,
-        isChatInputCommand: vi.fn().mockReturnValue(false),
-        isAutocomplete: vi.fn().mockReturnValue(true),
-        options: {
-          getSubcommandGroup: vi.fn().mockReturnValue(null),
-          getSubcommand: vi.fn().mockReturnValue(null),
-        },
-      } as any;
+      const interaction = createAutocompleteInteraction(
+        standalone.getData().name,
+      );
 
       const result = resolver.resolveFromAutocompleteInteraction(
         interaction,

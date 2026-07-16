@@ -1,11 +1,7 @@
-import { describe, expect, test, vi } from 'vitest';
-import type {
-  EventSubscriberFilter,
-  AnyEventSubscriber,
-  EventDispatchArgs,
-} from '@nyx-discord/core';
+import { describe, expect, test } from 'vitest';
 import { SubscriberFilterCheckMiddleware } from '../../../../src';
 import { MockEventSubscriber } from '../../mocks/MockEventSubscriber';
+import { StubEventSubscriberFilter } from '../../mocks/StubEventSubscriberFilter';
 
 describe('SubscriberFilterCheckMiddleware', () => {
   test('GIVEN a subscriber with no filter THEN returns true', async () => {
@@ -21,9 +17,7 @@ describe('SubscriberFilterCheckMiddleware', () => {
 
   test('GIVEN a subscriber with a passing filter THEN returns true', async () => {
     const middleware = new SubscriberFilterCheckMiddleware();
-    const filter: EventSubscriberFilter<any, any> = {
-      check: vi.fn().mockResolvedValue(true),
-    };
+    const filter = StubEventSubscriberFilter.create(true);
     const subscriber = new MockEventSubscriber();
     (subscriber as any).filter = filter;
     const meta = {};
@@ -36,9 +30,7 @@ describe('SubscriberFilterCheckMiddleware', () => {
 
   test('GIVEN a subscriber with a failing filter THEN returns false', async () => {
     const middleware = new SubscriberFilterCheckMiddleware();
-    const filter: EventSubscriberFilter<any, any> = {
-      check: vi.fn().mockResolvedValue(false),
-    };
+    const filter = StubEventSubscriberFilter.create(false);
     const subscriber = new MockEventSubscriber();
     (subscriber as any).filter = filter;
     const meta = {};

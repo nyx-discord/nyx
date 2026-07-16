@@ -6,7 +6,7 @@ import {
 import { describe, expect, test } from 'vitest';
 import { MockParentCommand } from '../../mocks/MockParentCommand';
 import { MockSubCommand } from '../../mocks/MockSubCommand';
-import { MockSubCommandGroup } from '../../mocks/MockSubcommandGroup';
+import { MockSubCommandGroup } from '../../mocks/MockSubCommandGroup';
 
 describe('AbstractChildableCommand', () => {
   describe('addChildren', () => {

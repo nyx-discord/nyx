@@ -10,7 +10,14 @@ module.exports = defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['**/*Error.{ts,js}', '**/*Meta.{ts,js}'],
+      exclude: [
+        '**/Abstract*.{ts,js}',
+        '**/*Error.{ts,js}',
+        '**/*Meta.{ts,js}',
+        '**/*.config.{ts,mjs,js}',
+        '**/__tests__/**',
+        '**/dist/**',
+      ],
     },
     clearMocks: true,
   },

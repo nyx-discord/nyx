@@ -1,0 +1,18 @@
+import type { CommandMiddleware, MiddlewareResponse, Priority } from '@nyx-discord/core';
+import { PriorityEnum } from '@nyx-discord/core';
+import { vi } from 'vitest';
+
+export class StubMiddleware {
+  static create(
+    response: MiddlewareResponse = { allowed: true, checkNext: true },
+    priority: Priority = PriorityEnum.Normal,
+  ): CommandMiddleware {
+    return {
+      check: vi.fn().mockResolvedValue(response),
+      getPriority: vi.fn().mockReturnValue(priority),
+      protect: vi.fn(),
+      unprotect: vi.fn(),
+      isProtected: vi.fn().mockReturnValue(false),
+    } as unknown as CommandMiddleware;
+  }
+}

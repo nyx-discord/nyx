@@ -3,7 +3,7 @@ import { DefaultCommandRepository } from '../../../../src';
 import { MockParentCommand } from '../../mocks/MockParentCommand';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
 import { MockSubCommand } from '../../mocks/MockSubCommand';
-import { MockSubCommandGroup } from '../../mocks/MockSubcommandGroup';
+import { MockSubCommandGroup } from '../../mocks/MockSubCommandGroup';
 
 const createRepo = () => DefaultCommandRepository.create();
 

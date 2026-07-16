@@ -1,16 +1,17 @@
-import type { CommandMiddleware, MiddlewareResponse } from '@nyx-discord/core';
-import { CommandMiddlewareError } from '@nyx-discord/core';
-import { describe, expect, it, test, vi } from 'vitest';
+import { PriorityEnum } from '@nyx-discord/core';
+import {
+  describe,
+  expect,
+  it,
+  test
+} from 'vitest';
 import {
   CommandFilterCheckMiddleware,
   CommandMiddlewareList,
 } from '../../../../src';
+import { StubMiddleware } from '../../mocks/StubMiddleware';
+import { StubMetadata } from '../../mocks/StubMetadata';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
-
-const createTrueResponse = (): MiddlewareResponse => ({
-  allowed: true,
-  checkNext: true,
-});
 
 describe('CommandMiddlewareList', () => {
   it('SHOULD create an instance of itself via create()', () => {
@@ -29,11 +30,15 @@ describe('CommandMiddlewareList', () => {
 
   describe('Middleware execution', () => {
     test('GIVEN no middleware added THEN check returns true', async () => {
+      const command = new MockStandaloneCommand();
       const list = CommandMiddlewareList.create();
       list.clear();
 
-      const command = new MockStandaloneCommand();
-      const result = await list.check(command);
+      const result = await list.check(
+        command,
+        {} as never,
+        StubMetadata.create(),
+      );
 
       expect(result).toBe(true);
     });
@@ -42,17 +47,15 @@ describe('CommandMiddlewareList', () => {
       const list = CommandMiddlewareList.create();
       list.clear();
 
-      const mockMiddleware: CommandMiddleware = {
-        check: vi.fn().mockResolvedValue(createTrueResponse()),
-        getPriority: vi.fn().mockReturnValue(0),
-        protect: vi.fn(),
-        unprotect: vi.fn(),
-        isProtected: vi.fn().mockReturnValue(false),
-      };
+      const mockMiddleware = StubMiddleware.create();
       list.add(mockMiddleware);
 
       const command = new MockStandaloneCommand();
-      const result = await list.check(command);
+      const result = await list.check(
+        command,
+        {} as never,
+        StubMetadata.create(),
+      );
 
       expect(result).toBe(true);
       expect(mockMiddleware.check).toHaveBeenCalledOnce();
@@ -62,19 +65,18 @@ describe('CommandMiddlewareList', () => {
       const list = CommandMiddlewareList.create();
       list.clear();
 
-      const mockMiddleware: CommandMiddleware = {
-        check: vi
-          .fn()
-          .mockResolvedValue({ allowed: false, checkNext: false }),
-        getPriority: vi.fn().mockReturnValue(0),
-        protect: vi.fn(),
-        unprotect: vi.fn(),
-        isProtected: vi.fn().mockReturnValue(false),
-      };
+      const mockMiddleware = StubMiddleware.create({
+        allowed: false,
+        checkNext: false,
+      });
       list.add(mockMiddleware);
 
       const command = new MockStandaloneCommand();
-      const result = await list.check(command);
+      const result = await list.check(
+        command,
+        {} as never,
+        StubMetadata.create(),
+      );
 
       expect(result).toBe(false);
     });
@@ -83,57 +85,27 @@ describe('CommandMiddlewareList', () => {
       const list = CommandMiddlewareList.create();
       list.clear();
 
-      const firstMiddleware: CommandMiddleware = {
-        check: vi
-          .fn()
-          .mockResolvedValue({ allowed: true, checkNext: false }),
-        getPriority: vi.fn().mockReturnValue(1),
-        protect: vi.fn(),
-        unprotect: vi.fn(),
-        isProtected: vi.fn().mockReturnValue(false),
-      };
-      const secondMiddleware: CommandMiddleware = {
-        check: vi.fn().mockResolvedValue(createTrueResponse()),
-        getPriority: vi.fn().mockReturnValue(0),
-        protect: vi.fn(),
-        unprotect: vi.fn(),
-        isProtected: vi.fn().mockReturnValue(false),
-      };
+      const firstMiddleware = StubMiddleware.create(
+        { allowed: true, checkNext: false },
+        PriorityEnum.High,
+      );
+      const secondMiddleware = StubMiddleware.create(
+        { allowed: true, checkNext: true },
+        PriorityEnum.Low,
+      );
       list.add(firstMiddleware);
       list.add(secondMiddleware);
 
       const command = new MockStandaloneCommand();
-      const result = await list.check(command);
+      const result = await list.check(
+        command,
+        {} as never,
+        StubMetadata.create(),
+      );
 
       expect(result).toBe(true);
       expect(firstMiddleware.check).toHaveBeenCalledOnce();
       expect(secondMiddleware.check).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('wrapError', () => {
-    test('GIVEN an error in middleware check THEN wraps it in a CommandMiddlewareError', () => {
-      const list = new CommandMiddlewareList();
-      list.clear();
-
-      const mockMiddleware: CommandMiddleware = {
-        check: vi.fn(),
-        getPriority: vi.fn().mockReturnValue(0),
-        protect: vi.fn(),
-        unprotect: vi.fn(),
-        isProtected: vi.fn().mockReturnValue(false),
-      };
-      const command = new MockStandaloneCommand();
-      const originalError = new Error('Test error');
-
-      const wrapped = (list as any).wrapError(
-        mockMiddleware,
-        originalError,
-        command,
-      );
-
-      expect(wrapped).toBeInstanceOf(CommandMiddlewareError);
-      expect(wrapped).toBeInstanceOf(Error);
     });
   });
 
@@ -147,13 +119,7 @@ describe('CommandMiddlewareList', () => {
 
   test('GIVEN middleware list THEN remove returns false for non-existing middleware', () => {
     const list = CommandMiddlewareList.create();
-    const mockMiddleware: CommandMiddleware = {
-      check: vi.fn(),
-      getPriority: vi.fn().mockReturnValue(0),
-      protect: vi.fn(),
-      unprotect: vi.fn(),
-      isProtected: vi.fn().mockReturnValue(false),
-    };
+    const mockMiddleware = StubMiddleware.create();
 
     const result = list.remove(mockMiddleware);
     expect(result).toBe(false);

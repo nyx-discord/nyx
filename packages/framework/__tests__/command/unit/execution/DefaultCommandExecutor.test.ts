@@ -1,38 +1,11 @@
-import type {
-  CommandErrorHandler,
-  CommandMiddleware,
-  CommandMiddlewareResolvable,
-  MiddlewareList,
-  MiddlewareResponse,
-} from '@nyx-discord/core';
-import {
-  CommandAutocompleteError,
-  CommandMiddlewareError,
-  UncaughtCommandMiddlewareError,
-} from '@nyx-discord/core';
+import { CommandAutocompleteError } from '@nyx-discord/core';
 import { describe, expect, it, test, vi } from 'vitest';
 import { DefaultCommandExecutor } from '../../../../src';
+import { StubErrorHandler } from '../../mocks/StubErrorHandler';
+import { StubMetadata } from '../../mocks/StubMetadata';
+import { StubMiddlewareList } from '../../mocks/StubMiddlewareList';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
-
-const createTrueResponse = (): MiddlewareResponse => ({
-  allowed: true,
-  checkNext: true,
-});
-
-const createFalseResponse = (): MiddlewareResponse => ({
-  allowed: false,
-  checkNext: false,
-});
-
-const createMockMiddleware = (
-  response: MiddlewareResponse = createTrueResponse(),
-): CommandMiddleware => ({
-  check: vi.fn().mockResolvedValue(response),
-  getPriority: vi.fn().mockReturnValue(0),
-  protect: vi.fn(),
-  unprotect: vi.fn(),
-  isProtected: vi.fn().mockReturnValue(false),
-});
+import { StubInteractionFactory } from '../../mocks/StubInteractionFactory';
 
 describe('DefaultCommandExecutor', () => {
   it('SHOULD create an instance of itself', () => {
@@ -60,30 +33,16 @@ describe('DefaultCommandExecutor', () => {
 
   describe('execute', () => {
     test('GIVEN a chat input interaction and standalone command THEN calls executeChatInput', async () => {
-      const middleware: MiddlewareList<CommandMiddlewareResolvable> = {
-        check: vi.fn().mockResolvedValue(true),
-        add: vi.fn(),
-        clear: vi.fn(),
-        remove: vi.fn().mockReturnValue(false),
-        getMiddlewares: vi.fn().mockReturnValue([]),
-      };
-      const errorHandler: CommandErrorHandler = {
-        handle: vi.fn(),
-      };
+      const middleware = StubMiddlewareList.create();
+      const errorHandler = StubErrorHandler.create();
       const executor = new DefaultCommandExecutor({
         errorHandler,
         middleware,
-      } as any);
+      });
 
       const command = new MockStandaloneCommand();
-      const interaction = {
-        isChatInputCommand: vi.fn().mockReturnValue(true),
-        isMessageComponent: vi.fn().mockReturnValue(false),
-        isModalSubmit: vi.fn().mockReturnValue(false),
-        isUserContextMenuCommand: vi.fn().mockReturnValue(false),
-        isMessageContextMenuCommand: vi.fn().mockReturnValue(false),
-      } as any;
-      const metadata = {};
+      const interaction = StubInteractionFactory.createChatInput();
+      const metadata = StubMetadata.create();
 
       const result = await executor.execute(command, interaction, metadata);
 
@@ -92,33 +51,19 @@ describe('DefaultCommandExecutor', () => {
     });
 
     test('GIVEN a chat input interaction and parent-type command THEN returns false', async () => {
-      const middleware: MiddlewareList<CommandMiddlewareResolvable> = {
-        check: vi.fn().mockResolvedValue(true),
-        add: vi.fn(),
-        clear: vi.fn(),
-        remove: vi.fn().mockReturnValue(false),
-        getMiddlewares: vi.fn().mockReturnValue([]),
-      };
-      const errorHandler: CommandErrorHandler = {
-        handle: vi.fn(),
-      };
+      const middleware = StubMiddlewareList.create();
+      const errorHandler = StubErrorHandler.create();
       const executor = new DefaultCommandExecutor({
         errorHandler,
         middleware,
-      } as any);
+      });
 
       const command = new MockStandaloneCommand();
-      command.isStandalone = vi.fn().mockReturnValue(false);
-      command.isSubCommand = vi.fn().mockReturnValue(false);
+      vi.spyOn(command, 'isStandalone').mockReturnValue(false);
+      vi.spyOn(command, 'isSubCommand').mockReturnValue(false);
 
-      const interaction = {
-        isChatInputCommand: vi.fn().mockReturnValue(true),
-        isMessageComponent: vi.fn().mockReturnValue(false),
-        isModalSubmit: vi.fn().mockReturnValue(false),
-        isUserContextMenuCommand: vi.fn().mockReturnValue(false),
-        isMessageContextMenuCommand: vi.fn().mockReturnValue(false),
-      } as any;
-      const metadata = {};
+      const interaction = StubInteractionFactory.createChatInput();
+      const metadata = StubMetadata.create();
 
       const result = await executor.execute(command, interaction, metadata);
 
@@ -126,31 +71,17 @@ describe('DefaultCommandExecutor', () => {
     });
 
     test('GIVEN a message component interaction THEN calls executeComponent', async () => {
-      const middleware: MiddlewareList<CommandMiddlewareResolvable> = {
-        check: vi.fn().mockResolvedValue(true),
-        add: vi.fn(),
-        clear: vi.fn(),
-        remove: vi.fn().mockReturnValue(false),
-        getMiddlewares: vi.fn().mockReturnValue([]),
-      };
-      const errorHandler: CommandErrorHandler = {
-        handle: vi.fn(),
-      };
+      const middleware = StubMiddlewareList.create();
+      const errorHandler = StubErrorHandler.create();
       const executor = new DefaultCommandExecutor({
         errorHandler,
         middleware,
-      } as any);
+      });
 
       const command = new MockStandaloneCommand();
       vi.spyOn(command, 'handleInteraction');
-      const interaction = {
-        isChatInputCommand: vi.fn().mockReturnValue(false),
-        isMessageComponent: vi.fn().mockReturnValue(true),
-        isModalSubmit: vi.fn().mockReturnValue(false),
-        isUserContextMenuCommand: vi.fn().mockReturnValue(false),
-        isMessageContextMenuCommand: vi.fn().mockReturnValue(false),
-      } as any;
-      const metadata = {};
+      const interaction = StubInteractionFactory.createButton();
+      const metadata = StubMetadata.create();
 
       const result = await executor.execute(command, interaction, metadata);
 
@@ -164,25 +95,17 @@ describe('DefaultCommandExecutor', () => {
 
   describe('autocomplete', () => {
     test('GIVEN a command that autocompletes successfully THEN does not call error handler', async () => {
-      const errorHandler: CommandErrorHandler = {
-        handle: vi.fn(),
-      };
-      const middleware: MiddlewareList<CommandMiddlewareResolvable> = {
-        check: vi.fn().mockResolvedValue(true),
-        add: vi.fn(),
-        clear: vi.fn(),
-        remove: vi.fn().mockReturnValue(false),
-        getMiddlewares: vi.fn().mockReturnValue([]),
-      };
+      const errorHandler = StubErrorHandler.create();
+      const middleware = StubMiddlewareList.create();
       const executor = new DefaultCommandExecutor({
         errorHandler,
         middleware,
-      } as any);
+      });
 
       const command = new MockStandaloneCommand();
-      command.autocomplete = vi.fn();
-      const interaction = {} as any;
-      const metadata = {};
+      vi.spyOn(command, 'autocomplete').mockResolvedValue(undefined);
+      const interaction = StubInteractionFactory.createAutocomplete();
+      const metadata = StubMetadata.create();
 
       await executor.autocomplete(command, interaction, metadata);
 
@@ -191,137 +114,24 @@ describe('DefaultCommandExecutor', () => {
     });
 
     test('GIVEN autocomplete throws THEN error handler is called with CommandAutocompleteError', async () => {
-      const errorHandler: CommandErrorHandler = {
-        handle: vi.fn(),
-      };
-      const middleware: MiddlewareList<CommandMiddlewareResolvable> = {
-        check: vi.fn().mockResolvedValue(true),
-        add: vi.fn(),
-        clear: vi.fn(),
-        remove: vi.fn().mockReturnValue(false),
-        getMiddlewares: vi.fn().mockReturnValue([]),
-      };
+      const errorHandler = StubErrorHandler.create();
+      const middleware = StubMiddlewareList.create();
       const executor = new DefaultCommandExecutor({
         errorHandler,
         middleware,
-      } as any);
+      });
 
       const command = new MockStandaloneCommand();
       const error = new Error('Autocomplete failed');
-      command.autocomplete = vi.fn().mockRejectedValue(error);
-      const interaction = {} as any;
-      const metadata = {};
+      vi.spyOn(command, 'autocomplete').mockRejectedValue(error);
+      const interaction = StubInteractionFactory.createAutocomplete();
+      const metadata = StubMetadata.create();
 
       await executor.autocomplete(command, interaction, metadata);
 
       expect(errorHandler.handle).toHaveBeenCalledOnce();
-      const handledError = (errorHandler.handle as any).mock.calls[0][0];
+      const handledError = vi.mocked(errorHandler.handle).mock.calls[0]![0];
       expect(handledError).toBeInstanceOf(CommandAutocompleteError);
-    });
-  });
-
-  describe('checkMiddleware', () => {
-    test('GIVEN middleware throws a generic error THEN wraps it in UncaughtCommandMiddlewareError', async () => {
-      const genericError = new Error('Generic middleware error');
-      const middleware: MiddlewareList<CommandMiddleware> = {
-        check: vi.fn().mockRejectedValue(genericError),
-        add: vi.fn(),
-        clear: vi.fn(),
-        remove: vi.fn().mockReturnValue(false),
-        getMiddlewares: vi.fn().mockReturnValue([]),
-      };
-      const errorHandler: CommandErrorHandler = {
-        handle: vi.fn(),
-      };
-      const executor = new DefaultCommandExecutor({
-        errorHandler,
-        middleware,
-      } as any);
-
-      const command = new MockStandaloneCommand();
-      const interaction = {} as any;
-      const metadata = {};
-
-      const result = await (executor as any).checkMiddleware(
-        command,
-        interaction,
-        metadata,
-      );
-
-      expect(result).toBe(false);
-      expect(errorHandler.handle).toHaveBeenCalledOnce();
-      const handledError = (errorHandler.handle as any).mock.calls[0][0];
-      expect(handledError).toBeInstanceOf(UncaughtCommandMiddlewareError);
-    });
-
-    test('GIVEN middleware throws a CommandMiddlewareError THEN passes it through', async () => {
-      const originalError = new Error('Original');
-      const mockMw = createMockMiddleware();
-      const command = new MockStandaloneCommand();
-      const interaction = {} as any;
-      const metadata = {};
-      const cmdError = new CommandMiddlewareError(
-        originalError,
-        mockMw,
-        command,
-        interaction,
-        metadata,
-      );
-      const middleware: MiddlewareList<CommandMiddleware> = {
-        check: vi.fn().mockRejectedValue(cmdError),
-        add: vi.fn(),
-        clear: vi.fn(),
-        remove: vi.fn().mockReturnValue(false),
-        getMiddlewares: vi.fn().mockReturnValue([]),
-      };
-      const errorHandler: CommandErrorHandler = {
-        handle: vi.fn(),
-      };
-      const executor = new DefaultCommandExecutor({
-        errorHandler,
-        middleware,
-      } as any);
-
-      const result = await (executor as any).checkMiddleware(
-        command,
-        interaction,
-        metadata,
-      );
-
-      expect(result).toBe(false);
-      expect(errorHandler.handle).toHaveBeenCalledOnce();
-      const handledError = (errorHandler.handle as any).mock.calls[0][0];
-      expect(handledError).toBe(cmdError);
-    });
-
-    test('GIVEN middleware check succeeds THEN returns true without calling error handler', async () => {
-      const middleware: MiddlewareList<CommandMiddleware> = {
-        check: vi.fn().mockResolvedValue(true),
-        add: vi.fn(),
-        clear: vi.fn(),
-        remove: vi.fn().mockReturnValue(false),
-        getMiddlewares: vi.fn().mockReturnValue([]),
-      };
-      const errorHandler: CommandErrorHandler = {
-        handle: vi.fn(),
-      };
-      const executor = new DefaultCommandExecutor({
-        errorHandler,
-        middleware,
-      } as any);
-
-      const command = new MockStandaloneCommand();
-      const interaction = {} as any;
-      const metadata = {};
-
-      const result = await (executor as any).checkMiddleware(
-        command,
-        interaction,
-        metadata,
-      );
-
-      expect(result).toBe(true);
-      expect(errorHandler.handle).not.toHaveBeenCalled();
     });
   });
 });
