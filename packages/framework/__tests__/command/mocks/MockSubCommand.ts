@@ -9,7 +9,7 @@ import {
   SubCommandGroup,
 } from '../../../src';
 import { MockParentCommand } from './MockParentCommand';
-import { MockSubCommandGroup } from './MockSubcommandGroup';
+import { MockSubCommandGroup } from './MockSubCommandGroup';
 
 export class MockSubCommand extends AbstractSubCommand {
   public execute = vi.fn();

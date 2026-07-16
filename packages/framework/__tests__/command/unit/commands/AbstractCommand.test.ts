@@ -2,7 +2,7 @@ import { describe, expect, it, test } from 'vitest';
 import { MockParentCommand } from '../../mocks/MockParentCommand';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
 import { MockSubCommand } from '../../mocks/MockSubCommand';
-import { MockSubCommandGroup } from '../../mocks/MockSubcommandGroup';
+import { MockSubCommandGroup } from '../../mocks/MockSubCommandGroup';
 
 describe('AbstractCommand type guards', () => {
   describe('MockStandaloneCommand', () => {
