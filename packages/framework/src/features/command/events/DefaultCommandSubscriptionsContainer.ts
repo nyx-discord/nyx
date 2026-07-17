@@ -5,9 +5,7 @@ import type {
 } from '@nyx-discord/core';
 import type { ClientEvents, Events } from 'discord.js';
 
-export class DefaultCommandSubscriptionsContainer
-  implements CommandSubscriptionsContainer
-{
+export class DefaultCommandSubscriptionsContainer implements CommandSubscriptionsContainer {
   protected readonly eventBus: EventBus<ClientEvents>;
 
   protected interactionSubscriber: EventSubscriber<
@@ -53,13 +51,24 @@ export class DefaultCommandSubscriptionsContainer
     return new this(eventBus, interactionSubscriber, autocompleteSubscriber);
   }
 
-  public async onStart(): Promise<void> {
-    await this.eventBus.subscribe(this.interactionSubscriber);
-    await this.eventBus.subscribe(this.autocompleteSubscriber);
+  public async subscribe(): Promise<void> {
+    if (!this.eventBus.isSubscribed(this.interactionSubscriber)) {
+      await this.eventBus.subscribe(this.interactionSubscriber);
+    }
+
+    if (!this.eventBus.isSubscribed(this.autocompleteSubscriber)) {
+      await this.eventBus.subscribe(this.autocompleteSubscriber);
+    }
   }
 
-  public onStop(): void {
-    /** Do nothing by default. */
+  public async unsubscribe(): Promise<void> {
+    if (this.eventBus.isSubscribed(this.interactionSubscriber)) {
+      await this.eventBus.unsubscribe(this.interactionSubscriber);
+    }
+
+    if (this.eventBus.isSubscribed(this.autocompleteSubscriber)) {
+      await this.eventBus.unsubscribe(this.autocompleteSubscriber);
+    }
   }
 
   public getInteractionSubscriber(): EventSubscriber<

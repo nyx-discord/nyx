@@ -1,9 +1,14 @@
 import type { Awaitable, ClientEvents, Events } from 'discord.js';
-import type { BotLifecycleObserver } from '../../../bot/BotLifecycleObserver';
 import type { EventSubscriber } from '../../event/subscriber/EventSubscriber.js';
 
 /** An object that stores the current subscribers for a {@link CommandManager} */
-export interface CommandSubscriptionsContainer extends BotLifecycleObserver {
+export interface CommandSubscriptionsContainer {
+  /** Subscribes this container's subscribers to the client. */
+  subscribe(): Awaitable<void>;
+
+  /** Unsubscribes this container's subscribers from the client. */
+  unsubscribe(): Awaitable<void>;
+
   /** Returns the event subscriber for {@link CommandExecutableInteraction} events. */
   getInteractionSubscriber(): EventSubscriber<
     ClientEvents,

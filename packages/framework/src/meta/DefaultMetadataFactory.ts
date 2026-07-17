@@ -41,6 +41,10 @@ export class DefaultMetadataFactory implements MetadataFactory {
     return this;
   }
 
+  public getFields() {
+    return [...this.fields];
+  }
+
   protected create(id: Identifier): Metadata {
     const collection = Object.create(null) as Metadata;
     this.populate(collection, id);

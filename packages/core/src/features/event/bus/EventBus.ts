@@ -23,11 +23,8 @@ export interface EventBus<
    * @throws {IllegalDuplicateError} If a subscriber with that ID is already
    *   subscribed to the event.
    */
-  subscribe<
-    const Sub extends EventSubscriber<ArgsRecord>,
-    const EventName extends ReturnType<Sub['getEvent']> & keyof ArgsRecord,
-  >(
-    ...subscribers: EventSubscriber<ArgsRecord, EventName>[]
+  subscribe(
+    ...subscribers: AnyEventSubscriberFrom<ArgsRecord>[]
   ): Awaitable<this>;
 
   /**

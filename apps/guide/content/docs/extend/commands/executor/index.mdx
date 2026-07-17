@@ -38,44 +38,16 @@ class MyCommandExecutor extends DefaultCommandExecutor {}
 <Step>
 ### Registration
 
-Pass it while instantiating your bot.
-
-Since the [DefaultCommandManager](/extend/commands/command-manager) depends on the client event bus, you'll first need to create an [`EventBus`](/extend/events/event-bus).
-
-<Callout type="warn">**Make sure** to reuse the `EventBus` instance you created, passing it to your returned bot options.</Callout>
+Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
 ```ts twoslash
 import { DefaultCommandExecutor } from '@nyx-discord/framework';
-import { Client } from 'discord.js';
-declare const client: Client;
-
-class MyCommandExecutor extends DefaultCommandExecutor {}
-// ---cut---
 import type { NyxBot } from '@nyx-discord/framework';
-import { Bot, DefaultCommandManager, BasicEventEmitterBus } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+class MyCommandExecutor extends DefaultCommandExecutor {}
 
-const bot = Bot.create((bot: NyxBot) => {
-  const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<ClientEvents>(client);
-
-  return {
-    // ---cut-start---
-    token: 'TOKEN',
-    client,
-    logger: console,
-    deployCommands: true,
-    // ---cut-end---
-    // ... other options
-    clientEventBus,
-    commandManager: DefaultCommandManager.create({
-      bot,
-      client,
-      clientBus: clientEventBus,
-      injections: { // [!code highlight]
-        executor: MyCommandExecutor.create(), // [!code highlight]
-      }, // [!code highlight]
-    }),
-  };
-});
+bot.getCommandManager().setExecutor(MyCommandExecutor.create());
 ```
 
 The `create()` method instantiates the executor with the default `ErrorHandler` and `MiddlewareList` (which are overridable, as described below). It'll also instantiate your custom class, not the base one.

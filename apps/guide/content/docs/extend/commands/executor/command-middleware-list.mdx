@@ -37,48 +37,23 @@ class MyMiddlewareList extends CommandMiddlewareList {}
 <Step>
 ### Registration
 
-Pass it while instantiating your bot, by injecting it into the [`CommandExecutor`](/extend/commands/executor).
-
-Since the [DefaultCommandManager](/extend/commands/command-manager) depends on the client event bus, you'll first need to create an [`EventBus`](/extend/events/event-bus).
-
-<Callout type="warn">**Make sure** to reuse the `EventBus` instance you created, passing it to your returned bot options.</Callout>
+Create it and set it to the [`CommandExecutor`](/extend/commands/executor), then set the executor on the [`CommandManager`](/extend/commands/command-manager).
 
 ```ts twoslash
 import { CommandMiddlewareList } from '@nyx-discord/framework';
-import { Client, type ClientEvents } from 'discord.js';
-declare const client: Client;
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+import { DefaultCommandExecutor } from '@nyx-discord/framework';
 
 class MyMiddlewareList extends CommandMiddlewareList {}
-// ---cut---
-import type { NyxBot } from '@nyx-discord/framework';
-import { Bot, DefaultCommandManager, BasicEventEmitterBus, DefaultCommandExecutor } from '@nyx-discord/framework';
 
-const bot = Bot.create((bot: NyxBot) => {
-  const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<ClientEvents>(client);
-
-  return {
-    // ---cut-start---
-    token: 'TOKEN',
-    client,
-    logger: console,
-    deployCommands: true,
-    // ---cut-end---
-    // ... other options
-    clientEventBus,
-    commandManager: DefaultCommandManager.create({
-      bot,
-      client,
-      clientBus: clientEventBus,
-      injections: { // [!code highlight]
-        executor: DefaultCommandExecutor.create({ // [!code highlight]
-          injections: { // [!code highlight]
-            middleware: MyMiddlewareList.create(), // [!code highlight]
-          }, // [!code highlight]
-        }), // [!code highlight]
-      }, // [!code highlight]
-    }),
-  };
+const executor = DefaultCommandExecutor.create({
+  injections: {
+    middleware: MyMiddlewareList.create(),
+  },
 });
+bot.getCommandManager().setExecutor(executor);
 ```
 
 The `create()` method instantiates your custom middleware list, not the default one.

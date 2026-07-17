@@ -16,56 +16,23 @@ The `CommandBus` is the [`EventBus`](/use/events/busses) used for emitting comma
 <Step>
 ## Creation and Registration
 
-Pass it to the `CommandManager`'s injections while instantiating your bot.
-
-Since the [DefaultCommandManager](/extend/commands/command-manager) depends on the client event bus, you'll first need to create an [`EventBus`](/extend/events/event-bus).
-
-<Callout type="warn">**Make sure** to reuse the `EventBus` instance you created, passing it to your returned bot options.</Callout>
-
-Additionally, create and inject a `MetadataFactory` so it can inject the bot into the metadata emitted on events.
+Create your own bus [in any way](/use/events/buses) and set it to the [`CommandManager`](/extend/commands/command-manager).
 
 ```ts twoslash
-import { BasicEventBus, type CommandEventArgs } from '@nyx-discord/framework';
+import { type CommandEventArgs, type NyxBot } from '@nyx-discord/framework';
 import { Client, type ClientEvents } from 'discord.js';
 declare const client: Client;
-
+declare const bot: NyxBot;
 // ---cut---
+import { BasicEventBus } from '@nyx-discord/framework';
+
 class MyCommandBus extends BasicEventBus<CommandEventArgs> {
   /** Your overrides */
 }
 
-import type { NyxBot } from '@nyx-discord/framework';
-import { Bot, DefaultCommandManager, BasicEventEmitterBus } from '@nyx-discord/framework';
+const commandBus = MyCommandBus.createAsync();
 
-const bot = Bot.create((bot: NyxBot) => {
-  const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<ClientEvents>(client);
-
-  // Create a meta factory that injects the bot into the metadatas it builds. 
-  const metaFactory = DefaultMetadataFactory.createWith([
-      TypedFields.Bot,
-      bot,
-  ]);
-
-  return {
-    // ---cut-start---
-    token: 'TOKEN',
-    client,
-    logger: console,
-    deployCommands: true,
-    // ---cut-end---
-    // ... other options
-    clientEventBus,
-    commandManager: DefaultCommandManager.create({
-      bot,
-      client,
-      clientBus: clientEventBus,
-      injections: { // [!code highlight]
-        // Or .createAsync(), or any other way to create it. // [!code highlight]
-        eventBus: MyCommandBus.createSync(metaFactory), // [!code highlight]
-      }, // [!code highlight]
-    }),
-  };
-});
+await bot.getCommandManager().setEventBus(commandBus);
 ```
 
 The <DocsLink pkg='framework' name='BasicEventBus.createSync()' decorated={false} /> (or

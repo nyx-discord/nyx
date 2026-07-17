@@ -1,23 +1,31 @@
 import type { CommandCustomIdData, Metadata } from '@nyx-discord/core';
-import {
-  CommandEventEnum,
-} from '@nyx-discord/core';
+import { CommandEventEnum } from '@nyx-discord/core';
+import { InteractionType } from 'discord.js';
 import { describe, expect, test, vi } from 'vitest';
-import { DefaultCommandManager, DefaultCommandRepository } from '../../../../src';
+import {
+  CommandCustomIdCodec,
+  CommandDeployer,
+  CommandExecutor,
+  CommandResolver,
+  CommandSubscriptionsContainer,
+  DefaultCommandManager,
+  DefaultCommandRepository,
+} from '../../../../src';
+import { StubEventBus } from '../../../event/mocks/StubEventBus';
+import { StubEventSubscriber } from '../../../event/mocks/StubEventSubscriber';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
 import { StubInteractionFactory } from '../../mocks/StubInteractionFactory';
-import { StubEventSubscriber } from '../../../event/mocks/StubEventSubscriber';
-import { StubEventBus } from '../../../event/mocks/StubEventBus';
-import { InteractionType } from 'discord.js';
 
 const createOptions = () => {
   const repo = DefaultCommandRepository.create();
+
   const executor = {
     execute: vi.fn().mockResolvedValue(true),
     autocomplete: vi.fn().mockResolvedValue(undefined),
     getErrorHandler: vi.fn(),
     getMiddleware: vi.fn(),
-  };
+  } satisfies CommandExecutor;
+
   const deployer = {
     deployCommands: vi.fn().mockResolvedValue(undefined),
     removeCommands: vi.fn().mockResolvedValue(undefined),
@@ -25,25 +33,39 @@ const createOptions = () => {
     setCommands: vi.fn().mockResolvedValue(undefined),
     deploy: vi.fn().mockResolvedValue(undefined),
     getMappings: vi.fn(),
-  };
+    values: vi.fn(),
+    keys: vi.fn(),
+    entries: vi.fn(),
+    next: vi.fn(),
+    [Symbol.iterator]: vi.fn(),
+  } satisfies CommandDeployer;
+
   const codec = {
     serialize: vi.fn().mockReturnValue('serialized'),
     deserialize: vi.fn().mockReturnValue(null),
-  };
+  } satisfies CommandCustomIdCodec;
+
   const resolver = {
     resolveFromCommandInteraction: vi.fn().mockReturnValue(null),
     resolveFromAutocompleteInteraction: vi.fn().mockReturnValue(null),
     resolveFromCustomIdData: vi.fn().mockReturnValue(null),
-  };
-  const subscriptions = {
-    onStart: vi.fn().mockResolvedValue(undefined),
-    onStop: vi.fn(),
+  } satisfies CommandResolver;
+
+  const subscriptions: CommandSubscriptionsContainer = {
+    subscribe: vi.fn().mockResolvedValue(undefined),
+    unsubscribe: vi.fn().mockResolvedValue(undefined),
     getInteractionSubscriber: vi.fn(),
+    setAutocompleteSubscriber: vi.fn(),
     getAutocompleteSubscriber: vi.fn(),
-  };
-  const eventBus = StubEventBus.create(Symbol('test'));
+    setInteractionSubscriber: vi.fn(),
+  } satisfies CommandSubscriptionsContainer;
+
+  const eventBus = StubEventBus.create();
   const metaFactory = {
-    createOrPopulate: vi.fn((meta: Metadata | undefined, id: symbol) => meta ?? ({ [id.toString()]: {} })),
+    createOrPopulate: vi.fn(
+      (meta: Metadata | undefined, id: symbol) =>
+        meta ?? { [id.toString()]: {} },
+    ),
     addDefaultField: vi.fn(),
   };
 
@@ -59,11 +81,20 @@ const createOptions = () => {
   };
 };
 
-const createManager = (overrides?: Partial<ReturnType<typeof createOptions>>) => {
+const createManager = (
+  overrides?: Partial<ReturnType<typeof createOptions>>,
+) => {
   const opts = createOptions();
   Object.assign(opts, overrides);
   const {
-    repo, executor, deployer, codec, resolver, subscriptions, eventBus, metaFactory,
+    repo,
+    executor,
+    deployer,
+    codec,
+    resolver,
+    subscriptions,
+    eventBus,
+    metaFactory,
   } = opts;
   return [
     new DefaultCommandManager({
@@ -130,9 +161,7 @@ describe('DefaultCommandManager', () => {
       const [manager, opts] = createManager({
         deployer: {
           ...createOptions().deployer,
-          removeCommands: vi
-            .fn()
-            .mockRejectedValue(new Error('undeploy fail')),
+          removeCommands: vi.fn().mockRejectedValue(new Error('undeploy fail')),
         },
       });
       const command = new MockStandaloneCommand();
@@ -294,7 +323,9 @@ describe('DefaultCommandManager', () => {
       const interaction = Object.assign(
         StubInteractionFactory.createAutocomplete(),
         {
-          options: { getFocused: vi.fn().mockReturnValue({ name: 'opt', value: 'val' }) },
+          options: {
+            getFocused: vi.fn().mockReturnValue({ name: 'opt', value: 'val' }),
+          },
           responded: true,
         },
       );
@@ -311,11 +342,15 @@ describe('DefaultCommandManager', () => {
       opts.resolver.resolveFromAutocompleteInteraction.mockReturnValue(command);
       const errorHandler = { handle: vi.fn() };
       opts.executor.getErrorHandler.mockReturnValue(errorHandler);
-      opts.executor.autocomplete.mockRejectedValue(new Error('autocomplete fail'));
+      opts.executor.autocomplete.mockRejectedValue(
+        new Error('autocomplete fail'),
+      );
       const interaction = Object.assign(
         StubInteractionFactory.createAutocomplete(),
         {
-          options: { getFocused: vi.fn().mockReturnValue({ name: 'opt', value: 'val' }) },
+          options: {
+            getFocused: vi.fn().mockReturnValue({ name: 'opt', value: 'val' }),
+          },
           responded: true,
         },
       );
@@ -370,7 +405,7 @@ describe('DefaultCommandManager', () => {
 
       await manager.onStart();
 
-      expect(opts.subscriptions.onStart).toHaveBeenCalled();
+      expect(opts.subscriptions.subscribe).toHaveBeenCalled();
     });
 
     test('GIVEN onStop THEN delegates to subscriptions', () => {
@@ -378,7 +413,7 @@ describe('DefaultCommandManager', () => {
 
       manager.onStop();
 
-      expect(opts.subscriptions.onStop).toHaveBeenCalled();
+      expect(opts.subscriptions.unsubscribe).toHaveBeenCalled();
     });
   });
 

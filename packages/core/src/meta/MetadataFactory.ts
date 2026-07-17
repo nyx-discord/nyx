@@ -12,4 +12,6 @@ export interface MetadataFactory {
     field: TypedField<T>,
     valueOrGetter: NoInfer<T> | (() => NoInfer<T>),
   ): this;
+
+  getFields(): [TypedField<unknown>, unknown | (() => unknown)][];
 }

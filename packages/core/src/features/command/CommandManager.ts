@@ -6,6 +6,7 @@ import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber.js';
 import type { TopLevelCommand } from './commands/TopLevelCommand.js';
 import type { CommandCustomIdCodec } from './customId/CommandCustomIdCodec.js';
+import type { CommandDeployer } from './deploy/CommandDeployer';
 import type { ReadonlyCommandDeployer } from './deploy/ReadonlyCommandDeployer';
 import type { CommandSubscriptionsContainer } from './event/CommandSubscriptionsContainer.js';
 import type { CommandEventArgs } from './events/CommandEvent.js';
@@ -99,23 +100,58 @@ export interface CommandManager extends BotLifecycleObserver {
   /** Returns the {@link CommandSubscriptionsContainer} for this manager. */
   getSubscriptions(): CommandSubscriptionsContainer;
 
+  /**
+   * Sets the {@link CommandSubscriptionsContainer} for this manager.
+   * This unsubscribes the container's previous subscribers from the bus.
+   */
+  setSubscriptions(
+    subscriptions: CommandSubscriptionsContainer,
+  ): Awaitable<this>;
+
   /** Returns the {@link CommandCustomIdCodec} for this manager. */
   getCustomIdCodec(): CommandCustomIdCodec;
+
+  /** Sets the {@link CommandCustomIdCodec} for this manager. */
+  setCustomIdCodec(codec: CommandCustomIdCodec): this;
 
   /** Returns the {@link CommandResolver} for this manager. */
   getResolver(): CommandResolver;
 
+  /** Sets the {@link CommandResolver} for this manager. */
+  setResolver(resolver: CommandResolver): this;
+
   /** Returns the {@link CommandExecutor} for this manager. */
   getExecutor(): CommandExecutor;
+
+  /** Sets the {@link CommandExecutor} for this manager. */
+  setExecutor(executor: CommandExecutor): this;
 
   /** Returns the {@link CommandRepository} for this manager. */
   getRepository(): ReadonlyCommandRepository;
 
+  /**
+   * Sets the {@link CommandRepository} for this manager.
+   * @throws {IllegalStateError} If the bot has already started.
+   */
+  setRepository(repository: ReadonlyCommandRepository): this;
+
   /** Returns the {@link EventBus} for this manager. */
   getEventBus(): EventBus<CommandEventArgs>;
 
+  /**
+   * Sets the {@link EventBus} for this manager.
+   * This subscribes all the current subscribers to the new bus.
+   */
+  setEventBus(eventBus: EventBus<CommandEventArgs>): Awaitable<this>;
+
   /** Returns the {@link CommandDeployer} for this manager. */
   getDeployer(): ReadonlyCommandDeployer;
+
+  /**
+   * Sets the {@link CommandDeployer} for this manager.
+   * @throws {IllegalStateError} If the bot has already started.
+   */
+  setDeployer(deployer: CommandDeployer): this;
 
   /** Returns the {@link MetadataFactory} for creating or populating {@link Metadata}s for command executions. */
   getMetadataFactory(): MetadataFactory;

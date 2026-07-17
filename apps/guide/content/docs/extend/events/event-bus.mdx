@@ -48,12 +48,9 @@ declare const socket: { on: (event: string, cb: (data: string) => void) => void 
 
 class MySocketBus extends BasicEventBus<{ message: [string] }> {
   constructor(
-    id: Identifier,
     metaFactory: MetadataFactory = new DefaultMetadataFactory(),
   ) {
     super(
-        id,
-        // Simple priority sorter
         (a, b) => a.getPriority() - b.getPriority(),
         BasicSyncEventDispatcher.create(),
         metaFactory

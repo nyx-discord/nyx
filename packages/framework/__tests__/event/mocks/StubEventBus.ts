@@ -1,8 +1,8 @@
-import type { AnyEventBus, Identifier } from '@nyx-discord/core';
+import type { AnyEventBus } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubEventBus {
-  static create(id: Identifier, isProtected = false): AnyEventBus {
+  static create(isProtected = false): AnyEventBus {
     let protected_ = isProtected;
     return {
       subscribe: vi.fn().mockResolvedValue(undefined),
@@ -17,17 +17,7 @@ export class StubEventBus {
       getSubscribers: vi.fn(),
       getSubscribedEvents: vi.fn(),
       getMetadataFactory: vi.fn(),
-      getId: vi.fn().mockReturnValue(id),
       getMeta: vi.fn().mockReturnValue({}),
-      isProtected: vi.fn(() => protected_),
-      protect: vi.fn(function (this: any) {
-        protected_ = true;
-        return this;
-      }),
-      unprotect: vi.fn(function (this: any) {
-        protected_ = false;
-        return this;
-      }),
       next: vi.fn().mockReturnValue({ done: true, value: undefined }),
       [Symbol.iterator]: vi.fn(function* (this: any) {}),
       values: vi.fn(function* (this: any) {}),

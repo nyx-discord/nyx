@@ -16,56 +16,30 @@ The `CommandSubscriptionsContainer` is responsible for storing the subscribers t
 <Step>
 ## Creation and Registration
 
-Pass it to the `CommandManager`'s injections while instantiating your bot.
-
-Since the [DefaultCommandManager](/extend/commands/command-manager) depends on the client event bus, you'll first need to create an [`EventBus`](/extend/events/event-bus).
-
-<Callout type="warn">**Make sure** to reuse the `EventBus` instance you created, passing it to your returned bot options.</Callout>
-
-Additionally, create and inject a `MetadataFactory` so it can inject the bot into the metadata emitted on events.
+Create your own container by extending `DefaultCommandSubscriptionsContainer` and set it to the [`CommandManager`](/extend/commands/command-manager).
 
 ```ts twoslash
-import { BasicEventBus, type CommandEventArgs } from '@nyx-discord/framework';
-import { Client } from 'discord.js';
-declare const client: Client;
-
-class MyCommandBus extends BasicEventBus<CommandEventArgs> {}
-// ---cut---
+import { DefaultCommandSubscriptionsContainer } from '@nyx-discord/framework';
 import type { NyxBot } from '@nyx-discord/framework';
-import { Bot, DefaultCommandManager, BasicEventEmitterBus, DefaultMetadataFactory, TypedFields } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+import { DefaultCommandInteractionSubscriber, DefaultCommandAutocompleteSubscriber } from '@nyx-discord/framework';
 
-const bot = Bot.create((bot: NyxBot) => {
-  const clientEventBus = BasicEventEmitterBus.createAsyncWithEmitter<ClientEvents>(client);
+class MySubscriptionsContainer extends DefaultCommandSubscriptionsContainer {
+  /** Your overrides */
+}
 
-  // Create a meta factory that injects the bot into the metadatas it builds. 
-  const metaFactory = DefaultMetadataFactory.createWith([
-      TypedFields.Bot,
-      bot,
-  ]);
 
-  return {
-    // ---cut-start---
-    token: 'TOKEN',
-    client,
-    logger: console,
-    deployCommands: true,
-    // ---cut-end---
-    // ... other options
-    clientEventBus,
-    commandManager: DefaultCommandManager.create({
-      bot,
-      client,
-      clientBus: clientEventBus,
-      injections: { // [!code highlight]
-        // Or .createAsync(), or any other way to create it. // [!code highlight]
-        eventBus: MyCommandBus.createSync(Symbol('myCommandBus'), metaFactory), // [!code highlight]
-      }, // [!code highlight]
-    }),
-  };
-});
+const container = MySubscriptionsContainer.create(
+  bot.getClientEventBus(),
+  new DefaultCommandInteractionSubscriber(),
+  new DefaultCommandAutocompleteSubscriber(),
+);
+
+bot.getCommandManager().setSubscriptions(container);
 ```
 
-The `create()` method instantiates your custom bus, not the default one.
+The <DocsLink pkg='framework' name='DefaultCommandSubscriptionsContainer.create()' decorated={false} /> method instantiates your custom container, not the default one.
 
 </Step>
 </Steps>

@@ -18,7 +18,11 @@ import type {
   ReadonlyCommandDeployer,
   TopLevelCommand,
 } from '@nyx-discord/core';
-import { CommandEventEnum, TypedFields } from '@nyx-discord/core';
+import {
+  CommandEventEnum,
+  IllegalStateError,
+  TypedFields,
+} from '@nyx-discord/core';
 import type { AutocompleteInteraction, Client, ClientEvents } from 'discord.js';
 import { InteractionType } from 'discord.js';
 import { DefaultMetadataFactory } from '../../meta/DefaultMetadataFactory';
@@ -45,21 +49,21 @@ type CommandManagerOptions = {
 };
 
 export class DefaultCommandManager implements CommandManager {
-  protected readonly subscriptionsContainer: CommandSubscriptionsContainer;
+  protected subscriptionsContainer: CommandSubscriptionsContainer;
 
-  protected readonly resolver: CommandResolver;
+  protected resolver: CommandResolver;
 
-  protected readonly repository: CommandRepository;
+  protected repository: CommandRepository;
 
-  protected readonly executor: CommandExecutor;
+  protected executor: CommandExecutor;
 
-  protected readonly customIdCodec: CommandCustomIdCodec;
+  protected customIdCodec: CommandCustomIdCodec;
 
-  protected readonly deployer: CommandDeployer;
+  protected deployer: CommandDeployer;
 
-  protected readonly eventBus: EventBus<CommandEventArgs>;
+  protected eventBus: EventBus<CommandEventArgs>;
 
-  protected readonly metaFactory: MetadataFactory;
+  protected metaFactory: MetadataFactory;
 
   constructor(options: CommandManagerOptions) {
     this.repository = options.repository;
@@ -122,11 +126,11 @@ export class DefaultCommandManager implements CommandManager {
   }
 
   public async onStart(): Promise<void> {
-    await this.subscriptionsContainer.onStart();
+    await this.subscriptionsContainer.subscribe();
   }
 
   public async onStop(): Promise<void> {
-    await this.subscriptionsContainer.onStop();
+    await this.subscriptionsContainer.unsubscribe();
   }
 
   public async addCommands(...commands: TopLevelCommand[]): Promise<this> {
@@ -162,6 +166,7 @@ export class DefaultCommandManager implements CommandManager {
       await this.deployer.removeCommands(...commands);
     } catch (error) {
       for (const command of commands) {
+        if (this.repository.isCommandInstance(command)) continue;
         this.repository.addCommand(command);
       }
 
@@ -332,28 +337,84 @@ export class DefaultCommandManager implements CommandManager {
     return this.executor;
   }
 
+  public setExecutor(executor: CommandExecutor): this {
+    this.executor = executor;
+    return this;
+  }
+
   public getCustomIdCodec(): CommandCustomIdCodec {
     return this.customIdCodec;
+  }
+
+  public setCustomIdCodec(codec: CommandCustomIdCodec): this {
+    this.customIdCodec = codec;
+    return this;
   }
 
   public getResolver(): CommandResolver {
     return this.resolver;
   }
 
+  public setResolver(resolver: CommandResolver): this {
+    this.resolver = resolver;
+    return this;
+  }
+
   public getRepository(): CommandRepository {
     return this.repository;
+  }
+
+  public setRepository(repository: CommandRepository): this {
+    if (this.repository.getCommands().size) {
+      throw new IllegalStateError(
+        'Cannot set repository while commands are registered.',
+      );
+    }
+    this.repository = repository;
+    return this;
   }
 
   public getSubscriptions(): CommandSubscriptionsContainer {
     return this.subscriptionsContainer;
   }
 
+  public async setSubscriptions(
+    subscriptions: CommandSubscriptionsContainer,
+  ): Promise<this> {
+    await this.subscriptionsContainer.unsubscribe();
+    this.subscriptionsContainer = subscriptions;
+    return this;
+  }
+
   public getEventBus(): EventBus<CommandEventArgs> {
     return this.eventBus;
   }
 
+  public async setEventBus(
+    eventBus: EventBus<CommandEventArgs>,
+  ): Promise<this> {
+    const oldSubscribers = [...eventBus.getSubscribers().values()];
+    await eventBus.subscribe(...oldSubscribers);
+
+    const oldMetadataFields = eventBus.getMetadataFactory().getFields();
+    for (const pair of oldMetadataFields) {
+      eventBus.getMetadataFactory().addDefaultField(...pair);
+    }
+    return this;
+  }
+
   public getDeployer(): ReadonlyCommandDeployer {
     return this.deployer;
+  }
+
+  public setDeployer(deployer: CommandDeployer): this {
+    if (this.deployer.getMappings().size) {
+      throw new IllegalStateError(
+        'Cannot set deployer after commands are deployed.',
+      );
+    }
+    this.deployer = deployer;
+    return this;
   }
 
   public getMetadataFactory(): MetadataFactory {
