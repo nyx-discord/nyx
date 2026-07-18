@@ -66,14 +66,35 @@ export interface ScheduleManager extends BotLifecycleObserver {
   /** Returns the {@link ScheduleExecutor} for this manager. */
   getExecutor(): ScheduleExecutor;
 
+  /** Sets the {@link ScheduleExecutor} for this manager. */
+  setExecutor(executor: ScheduleExecutor): this;
+
   /** Returns the {@link ScheduleRepository} for this manager. */
   getRepository(): ReadonlyScheduleRepository;
+
+  /**
+   * Sets the {@link ScheduleRepository} for this manager.
+   * @throws {IllegalStateError} If schedules are currently registered.
+   */
+  setRepository(repository: ReadonlyScheduleRepository): this;
 
   /** Returns the {@link EventBus} for this manager. */
   getEventBus(): EventBus<ScheduleEventArgs>;
 
+  /**
+   * Sets the {@link EventBus} for this manager.
+   * This subscribes all the current subscribers to the new bus.
+   */
+  setEventBus(eventBus: EventBus<ScheduleEventArgs>): Awaitable<this>;
+
   /** Returns the {@link ScheduleExecutionScheduler} for this manager. */
   getScheduler(): ReadonlyScheduleExecutionScheduler;
+
+  /**
+   * Sets the {@link ScheduleExecutionScheduler} for this manager.
+   * @throws {IllegalStateError} If jobs are currently scheduled.
+   */
+  setScheduler(scheduler: ReadonlyScheduleExecutionScheduler): this;
 
   /** Returns the {@link MetadataFactory} for creating or populating {@link Metadata}s for schedule ticks. */
   getMetadataFactory(): MetadataFactory;

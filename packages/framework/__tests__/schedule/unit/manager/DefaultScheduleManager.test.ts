@@ -1,5 +1,5 @@
 import type { Metadata } from '@nyx-discord/core';
-import { IllegalDuplicateError, ObjectNotFoundError } from '@nyx-discord/core';
+import { IllegalDuplicateError, IllegalStateError, ObjectNotFoundError } from '@nyx-discord/core';
 import { describe, expect, it, test, vi } from 'vitest';
 import { DefaultScheduleManager } from '../../../../src';
 import { MockSchedule } from '../../mocks/MockSchedule';
@@ -66,6 +66,87 @@ describe('DefaultScheduleManager', () => {
       const manager = createManager({ metaFactory });
 
       expect(manager.getMetadataFactory()).toBe(metaFactory);
+    });
+  });
+
+  describe('setters', () => {
+    test('GIVEN a new executor THEN setExecutor updates and returns this', () => {
+      const executor = StubScheduleExecutor.create();
+      const manager = createManager({ executor });
+
+      const result = manager.setExecutor(StubScheduleExecutor.create());
+
+      expect(result).toBe(manager);
+      expect(result.getExecutor()).not.toBe(executor);
+    });
+
+    test('GIVEN a new repository THEN setRepository updates and returns this', () => {
+      const manager = createManager();
+
+      const result = manager.setRepository(StubScheduleRepository.create());
+
+      expect(result).toBe(manager);
+    });
+
+    test('GIVEN schedules are registered THEN setRepository throws IllegalStateError', () => {
+      const repository = StubScheduleRepository.create();
+      const manager = createManager({ repository });
+      const schedule = new MockSchedule();
+      repository.getSchedules = vi.fn().mockReturnValue(
+        new Map([[schedule.getId(), schedule]]),
+      );
+
+      expect(() => manager.setRepository(StubScheduleRepository.create()))
+        .toThrow(IllegalStateError);
+    });
+
+    test('GIVEN a new scheduler THEN setScheduler updates and returns this', () => {
+      const manager = createManager();
+
+      const result = manager.setScheduler(
+        StubScheduleExecutionScheduler.create(),
+      );
+
+      expect(result).toBe(manager);
+    });
+
+    test('GIVEN jobs are scheduled THEN setScheduler throws IllegalStateError', () => {
+      const scheduler = StubScheduleExecutionScheduler.create();
+      const manager = createManager({ scheduler });
+      scheduler.getJobs = vi.fn().mockReturnValue(
+        new Map([[Symbol('job'), {}]]),
+      );
+
+      expect(() =>
+        manager.setScheduler(StubScheduleExecutionScheduler.create()),
+      ).toThrow(IllegalStateError);
+    });
+
+    test('GIVEN a new event bus THEN setEventBus transfers subscribers and updates', async () => {
+      const oldBus = StubScheduleEventBus.create();
+      const metaFactory = StubScheduleMetadata.create();
+      const subscriber = { getId: () => Symbol('sub'), handleEvent: vi.fn(), getEvent: vi.fn() };
+      vi.mocked(oldBus.getSubscribers).mockReturnValue(
+        new Map([[subscriber.getId(), subscriber]]) as never,
+      );
+      vi.mocked(oldBus.getMetadataFactory).mockReturnValue(metaFactory);
+      const manager = createManager({ eventBus: oldBus });
+      const newBus = StubScheduleEventBus.create();
+
+      await manager.setEventBus(newBus);
+
+      expect(manager.getEventBus()).toBe(newBus);
+      expect(newBus.subscribe).toHaveBeenCalledWith(subscriber);
+    });
+
+    test('GIVEN a new metadata factory THEN setMetadataFactory updates and returns this', () => {
+      const metaFactory = StubScheduleMetadata.create();
+      const manager = createManager({ metaFactory });
+
+      const result = manager.setMetadataFactory(StubScheduleMetadata.create());
+
+      expect(result).toBe(manager);
+      expect(result.getMetadataFactory()).not.toBe(metaFactory);
     });
   });
 

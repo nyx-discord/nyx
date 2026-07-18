@@ -18,6 +18,7 @@ import type {
 import {
   canBeIdentifier,
   IllegalDuplicateError,
+  IllegalStateError,
   ObjectNotFoundError,
   ScheduleEventEnum,
   TypedFields,
@@ -38,15 +39,15 @@ type ScheduleManagerOptions = {
 };
 
 export class DefaultScheduleManager implements ScheduleManager {
-  protected readonly executor: ScheduleExecutor;
+  protected executor: ScheduleExecutor;
 
-  protected readonly repository: ScheduleRepository;
+  protected repository: ScheduleRepository;
 
-  protected readonly scheduler: ScheduleExecutionScheduler;
+  protected scheduler: ScheduleExecutionScheduler;
 
-  protected readonly bus: EventBus<ScheduleEventArgs>;
+  protected bus: EventBus<ScheduleEventArgs>;
 
-  protected readonly metaFactory: MetadataFactory;
+  protected metaFactory: MetadataFactory;
 
   constructor(options: ScheduleManagerOptions) {
     this.repository = options.repository;
@@ -209,19 +210,63 @@ export class DefaultScheduleManager implements ScheduleManager {
     return this.executor;
   }
 
+  public setExecutor(executor: ScheduleExecutor): this {
+    this.executor = executor;
+    return this;
+  }
+
   public getRepository(): ScheduleRepository {
     return this.repository;
+  }
+
+  public setRepository(repository: ScheduleRepository): this {
+    if (this.repository.getSchedules().size) {
+      throw new IllegalStateError(
+        'Cannot set repository while schedules are registered.',
+      );
+    }
+    this.repository = repository;
+    return this;
   }
 
   public getScheduler(): ScheduleExecutionScheduler {
     return this.scheduler;
   }
 
+  public setScheduler(scheduler: ScheduleExecutionScheduler): this {
+    if (this.scheduler.getJobs().size) {
+      throw new IllegalStateError(
+        'Cannot set scheduler while jobs are scheduled.',
+      );
+    }
+    this.scheduler = scheduler;
+    return this;
+  }
+
   public getEventBus(): EventBus<ScheduleEventArgs> {
     return this.bus;
   }
 
+  public async setEventBus(
+    eventBus: EventBus<ScheduleEventArgs>,
+  ): Promise<this> {
+    const oldSubscribers = [...this.bus.getSubscribers().values()];
+    await eventBus.subscribe(...oldSubscribers);
+
+    const oldMetadataFields = this.bus.getMetadataFactory().getFields();
+    for (const pair of oldMetadataFields) {
+      eventBus.getMetadataFactory().addDefaultField(...pair);
+    }
+    this.bus = eventBus;
+    return this;
+  }
+
   public getMetadataFactory(): MetadataFactory {
     return this.metaFactory;
+  }
+
+  public setMetadataFactory(metaFactory: MetadataFactory): this {
+    this.metaFactory = metaFactory;
+    return this;
   }
 }

@@ -9,6 +9,7 @@ export class StubScheduleMetadata {
           meta ?? ({ [id.toString()]: {} } as Metadata),
       ),
       addDefaultField: vi.fn(),
+      getFields: vi.fn().mockReturnValue([]),
     } as unknown as MetadataFactory;
   }
 }
