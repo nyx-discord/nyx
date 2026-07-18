@@ -393,13 +393,14 @@ export class DefaultCommandManager implements CommandManager {
   public async setEventBus(
     eventBus: EventBus<CommandEventArgs>,
   ): Promise<this> {
-    const oldSubscribers = [...eventBus.getSubscribers().values()];
+    const oldSubscribers = [...this.eventBus.getSubscribers().values()];
     await eventBus.subscribe(...oldSubscribers);
 
-    const oldMetadataFields = eventBus.getMetadataFactory().getFields();
+    const oldMetadataFields = this.eventBus.getMetadataFactory().getFields();
     for (const pair of oldMetadataFields) {
       eventBus.getMetadataFactory().addDefaultField(...pair);
     }
+    this.eventBus = eventBus;
     return this;
   }
 
