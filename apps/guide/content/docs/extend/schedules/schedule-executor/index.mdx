@@ -45,22 +45,21 @@ class MyExecutor extends DefaultScheduleExecutor {}
 <Step>
 ### Registration
 
-Inject your executor when creating the `ScheduleManager`.
+Create it and set it to the [`ScheduleManager`](/extend/schedules/schedule-manager).
 
 ```ts twoslash
-import { DefaultScheduleExecutor, DefaultScheduleManager, type NyxBot } from '@nyx-discord/framework';
-
-class MyExecutor extends DefaultScheduleExecutor {}
-// ---cut---
+import { DefaultScheduleExecutor } from '@nyx-discord/framework';
+import type { NyxBot } from '@nyx-discord/framework';
 declare const bot: NyxBot;
+// ---cut---
+class MyExecutor extends DefaultScheduleExecutor {
+  /** Your overrides */
+}
 
-const manager = DefaultScheduleManager.create({
-  bot,
-  injections: {
-    executor: MyExecutor.create(),
-  },
-});
+bot.getScheduleManager().setExecutor(MyExecutor.create());
 ```
+
+The <DocsLink pkg='framework' name='DefaultScheduleExecutor.create()' decorated={false} /> method instantiates your custom executor, not the default one.
 
 </Step>
 </Steps>

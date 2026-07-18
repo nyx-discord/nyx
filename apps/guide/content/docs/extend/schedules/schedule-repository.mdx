@@ -41,37 +41,21 @@ class MyScheduleRepository extends DefaultScheduleRepository {
 <Step>
 ### Registration
 
-Pass your custom repository via the `DefaultScheduleManager` options (using `injections`), or manually construct `ScheduleManagerOptions`.
+Create it and set it to the [`ScheduleManager`](/extend/schedules/schedule-manager).
 
 ```ts twoslash
-import { Client } from 'discord.js';
 import { DefaultScheduleRepository } from '@nyx-discord/framework';
-
-class MyScheduleRepository extends DefaultScheduleRepository {
-  public myCustomMethod() {
-    // Custom logic
-  }
-}
-// ---cut---
 import type { NyxBot } from '@nyx-discord/framework';
-import { Bot, DefaultScheduleManager } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+class MyScheduleRepository extends DefaultScheduleRepository {
+  /** Your overrides */
+}
 
-const bot = Bot.create((bot: NyxBot) => ({
-  // ---cut-start---
-  token: 'TOKEN',
-  client: new Client({ intents: [] }),
-  logger: console,
-  deployCommands: true,
-  // ---cut-end---
-  // ... other options
-  scheduleManager: DefaultScheduleManager.create({
-    bot,
-    injections: {
-      repository: new MyScheduleRepository(/** ... */),
-    },
-  }),
-}));
+bot.getScheduleManager().setRepository(MyScheduleRepository.create());
 ```
+
+The <DocsLink pkg='framework' name='DefaultScheduleRepository.create()' decorated={false} /> method instantiates your custom repository, not the default one.
 
 </Step>
 </Steps>

@@ -38,38 +38,22 @@ class MyScheduler extends DefaultScheduleExecutionScheduler {
 <Step>
 ### Registration
 
-Pass it to the `ScheduleManager` via the `injections` option.
+Create it and set it to the [`ScheduleManager`](/extend/schedules/schedule-manager).
 
 ```ts twoslash
-import { Client } from 'discord.js';
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
 import { DefaultScheduleExecutionScheduler } from '@nyx-discord/framework';
 
 class MyScheduler extends DefaultScheduleExecutionScheduler {
-  // Override internal methods
+  /** Your overrides */
 }
-// ---cut---
-import type { NyxBot } from '@nyx-discord/framework';
-import { Bot, DefaultScheduleManager } from '@nyx-discord/framework';
 
-const bot = Bot.create((bot: NyxBot) => ({
-  // ---cut-start---
-  token: 'TOKEN',
-  client: new Client({ intents: [] }),
-  logger: console,
-  deployCommands: true,
-  // ---cut-end---
-  // ... other options
-  scheduleManager: DefaultScheduleManager.create({
-    bot,
-    injections: {
-      // ---cut-start---
-      // @ts-expect-error Incomplete example
-      // ---cut-end---
-      scheduler: new MyScheduler(/** ... */),
-    },
-  }),
-}));
+bot.getScheduleManager().setScheduler(MyScheduler.create());
 ```
+
+The <DocsLink pkg='framework' name='DefaultScheduleExecutionScheduler.create()' decorated={false} /> method instantiates your custom scheduler, not the default one.
 
 </Step>
 </Steps>

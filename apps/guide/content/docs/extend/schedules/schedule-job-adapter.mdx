@@ -69,10 +69,9 @@ class SimpleTimerAdapter implements ScheduleJobAdapter<NodeJS.Timeout> {
 <Step>
 ### Registration
 
-Use your adapter from a custom [`ScheduleExecutionScheduler`](/extend/schedules/schedule-execution-scheduler), then pass that scheduler to `DefaultScheduleManager` through `injections`.
+Use your adapter from a custom [`ScheduleExecutionScheduler`](/extend/schedules/schedule-execution-scheduler), then set that scheduler to the [`ScheduleManager`](/extend/schedules/schedule-manager).
 
 ```ts twoslash
-import { Client } from 'discord.js';
 import type { ScheduleInterval, ScheduleJobAdapter } from '@nyx-discord/framework';
 import { DefaultScheduleExecutionScheduler } from '@nyx-discord/framework';
 
@@ -117,26 +116,9 @@ class MyScheduler extends DefaultScheduleExecutionScheduler {
 }
 // ---cut---
 import type { NyxBot } from '@nyx-discord/framework';
-import { Bot, DefaultScheduleManager } from '@nyx-discord/framework';
+declare const bot: NyxBot;
 
-const bot = Bot.create((bot: NyxBot) => ({
-  // ---cut-start---
-  token: 'TOKEN',
-  client: new Client({ intents: [] }),
-  logger: console,
-  deployCommands: true,
-  // ---cut-end---
-  // ... other options
-  scheduleManager: DefaultScheduleManager.create({
-    bot,
-    injections: {
-      // ---cut-start---
-      // @ts-expect-error Incomplete example
-      // ---cut-end---
-      scheduler: new MyScheduler(/** ... */),
-    },
-  }),
-}));
+bot.getScheduleManager().setScheduler(MyScheduler.create());
 ```
 
 </Step>

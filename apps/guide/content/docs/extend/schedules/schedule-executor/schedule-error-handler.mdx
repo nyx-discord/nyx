@@ -39,22 +39,19 @@ class MyErrorHandler extends BasicErrorHandler<Schedule, ScheduleTickArgs> {}
 <Step>
 ### Registration
 
-Inject it directly when creating the executor:
+Inject it directly when creating the executor, then set that executor to the [`ScheduleManager`](/extend/schedules/schedule-manager):
 
 ```ts twoslash
 import {
   BasicErrorHandler,
-  DefaultScheduleExecutor,
-  DefaultScheduleManager,
   ScheduleMiddlewareList,
+  DefaultScheduleExecutor,
   TypedFields,
-  type NyxBot,
   type Schedule,
   type ScheduleTickArgs,
 } from '@nyx-discord/framework';
-
-class MyErrorHandler extends BasicErrorHandler<Schedule, ScheduleTickArgs> {}
 // ---cut---
+import type { NyxBot } from '@nyx-discord/framework';
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
@@ -66,12 +63,7 @@ const executor = new DefaultScheduleExecutor(
   errorHandler,
 );
 
-const manager = DefaultScheduleManager.create({
-  bot,
-  injections: {
-    executor,
-  },
-});
+bot.getScheduleManager().setExecutor(executor);
 ```
 
 <Callout type="warn" title="Using the Bot's logger">

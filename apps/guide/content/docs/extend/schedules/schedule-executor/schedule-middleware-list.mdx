@@ -43,13 +43,14 @@ class MyMiddlewareList extends ScheduleMiddlewareList {}
 <Step>
 ### Registration
 
-Inject it into a custom `DefaultScheduleExecutor`, then pass that executor to the `ScheduleManager`.
+Inject it into a custom `DefaultScheduleExecutor`, then set that executor to the [`ScheduleManager`](/extend/schedules/schedule-manager).
 
 ```ts twoslash
-import { BasicErrorHandler, DefaultScheduleExecutor, DefaultScheduleManager, ScheduleMiddlewareList, TypedFields, type NyxBot } from '@nyx-discord/framework';
+import { BasicErrorHandler, DefaultScheduleExecutor, ScheduleMiddlewareList, TypedFields } from '@nyx-discord/framework';
 
 class MyMiddlewareList extends ScheduleMiddlewareList {}
 // ---cut---
+import type { NyxBot } from '@nyx-discord/framework';
 declare const bot: NyxBot;
 
 const executor = new DefaultScheduleExecutor(
@@ -59,12 +60,7 @@ const executor = new DefaultScheduleExecutor(
   ),
 );
 
-const manager = DefaultScheduleManager.create({
-  bot,
-  injections: {
-    executor,
-  },
-});
+bot.getScheduleManager().setExecutor(executor);
 ```
 
 </Step>
