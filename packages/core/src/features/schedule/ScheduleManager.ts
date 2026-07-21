@@ -9,6 +9,7 @@ import type { EventSubscriber } from '../event/subscriber/EventSubscriber';
 import type { ScheduleEventArgs } from './events/ScheduleEvent.js';
 import type { ScheduleExecutor } from './execution/executor/ScheduleExecutor.js';
 import type { ReadonlyScheduleExecutionScheduler } from './execution/scheduler/ReadonlyScheduleExecutionScheduler.js';
+import type { ScheduleExecutionScheduler } from './execution/scheduler/ScheduleExecutionScheduler';
 import type { ScheduleJobAdapter } from './job/ScheduleJobAdapter.js';
 import type { UndestroyableScheduleJobAdapter } from './job/UndestroyableScheduleJobAdapter.js';
 import type { ReadonlyScheduleRepository } from './repository/ReadonlyScheduleRepository.js';
@@ -94,7 +95,7 @@ export interface ScheduleManager extends BotLifecycleObserver {
    * Sets the {@link ScheduleExecutionScheduler} for this manager.
    * @throws {IllegalStateError} If jobs are currently scheduled.
    */
-  setScheduler(scheduler: ReadonlyScheduleExecutionScheduler): this;
+  setScheduler(scheduler: ScheduleExecutionScheduler): this;
 
   /** Returns the {@link MetadataFactory} for creating or populating {@link Metadata}s for schedule ticks. */
   getMetadataFactory(): MetadataFactory;
