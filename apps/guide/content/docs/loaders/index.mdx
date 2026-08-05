@@ -1,0 +1,110 @@
+---
+title: Overview
+icon: FolderSearch
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { DocsLink } from '@/../components/links/DocsLink';
+
+The [`@nyx-discord/loaders`](https://www.npmjs.com/package/@nyx-discord/loaders) package provides directory-scanning loaders that automatically discover and instantiate your commands, event subscribers, and schedules from compiled output directories.
+
+Instead of manually importing and registering every project file, you point a loader at a directory and it scans `.js` / `.mjs` files, instantiates them, adds them to the Bot, and returns them.
+
+## Installation
+
+<Steps>
+<Step>
+
+### Installing
+
+```npm
+npm i @nyx-discord/loaders
+```
+
+</Step>
+<Step>
+
+### Usage
+
+Each loader is exposed as a single `load()` method:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+import { CommandLoader, EventLoader, ScheduleLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load({ bot, path: './dist/commands' });
+//    ^?
+
+const events = await EventLoader.load({ bot, path: './dist/events' });
+//    ^?
+
+const schedules = await ScheduleLoader.load({ bot, path: './dist/schedules' });
+//    ^?
+```
+
+These returned objects are already added by the loader, they are only returned for informational purposes.
+
+</Step>
+</Steps>
+
+## Options
+
+All loaders share a common options interface:
+
+```ts twoslash
+type LoaderOptions = {
+  /** The bot to load objects for. Also passed to static create() methods. */
+  bot: NyxBot;
+  /** The directory to scan for .js / .mjs files. */
+  path: string;
+  /**
+   * Whether to auto-register loaded objects with the bot.
+   * @default true
+   */
+  register?: boolean;
+  /**
+   * Optional filter to include only specific files by their absolute path.
+   * Files returning false are silently skipped.
+   */
+  filter?: (filePath: string) => boolean;
+};
+```
+
+### `register`
+
+Set to `false` to skip automatic registration and handle it yourself:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+import { CommandLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load({
+  bot,
+  path: './dist/commands',
+  register: false,
+});
+bot.getCommandManager().addCommands(...commands);
+```
+
+### `filter`
+
+Filter files by their absolute path before they are imported. Useful for excluding tests, dev-only files, or selectively loading subsets:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+const events = await EventLoader.load({
+  bot,
+  path: './dist/events',
+  filter: (file) => !file.includes('.test.') && !file.includes('.spec.'),
+});
+```
+
+The filter is applied before any file is imported, making it efficient for excluding large numbers of files.

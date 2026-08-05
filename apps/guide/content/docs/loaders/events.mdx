@@ -1,0 +1,129 @@
+---
+title: Events
+icon: RadioTower
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
+import { DocsLink } from '@/../components/links/DocsLink';
+
+<Callout type="warn">It's recommended to read the [Events Overview](../use/events) and [Event Subscribers](../events/subscribers) pages first.</Callout>
+
+The <DocsLink pkg="loaders" name="EventLoader" decorated={false} /> scans a directory for event subscriber classes and returns them grouped into six typed arrays.
+
+## Folder structure
+
+There is no enforced folder structure, any file in any subdirectory at any depth will be classified by the subscriber class it extends:
+- <DocsLink pkg="framework" name="AbstractDJSClientSubscriber" decorated={false} /> for Discord.js client events
+- <DocsLink pkg="framework" name="AbstractCommandSubscriber" decorated={false} /> for command manager events
+- <DocsLink pkg="framework" name="AbstractServiceSubscriber" decorated={false} /> for bot service events
+- <DocsLink pkg="framework" name="AbstractPluginSubscriber" decorated={false} /> for plugin manager events
+- <DocsLink pkg="framework" name="AbstractBusSubscriber" decorated={false} /> for event bus events
+- <DocsLink pkg="framework" name="AbstractScheduleSubscriber" decorated={false} /> for schedule manager events
+
+A recommended convention:
+
+<Files>
+  <Folder name="dist/events" defaultOpen>
+    <Folder name="client" defaultOpen>
+      <File name="ready.js" />
+    </Folder>
+    <Folder name="command" defaultOpen>
+      <File name="command-add.js" />
+    </Folder>
+    <Folder name="service" defaultOpen>
+      <File name="service-start.js" />
+    </Folder>
+    <Folder name="plugin" defaultOpen>
+      <File name="plugin-add.js" />
+    </Folder>
+    <Folder name="bus" defaultOpen>
+      <File name="subscriber-add.js" />
+    </Folder>
+    <Folder name="schedule" defaultOpen>
+      <File name="schedule-add.js" />
+    </Folder>
+  </Folder>
+</Files>
+
+## Usage
+
+By default, events are automatically subscribed to the appropriate buses:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+await EventLoader.load({ bot, path: './dist/events' });
+```
+
+Pass `register: false` to handle registration yourself:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+const events = await EventLoader.load({
+  bot,
+  path: './dist/events',
+  register: false,
+});
+
+await bot.subscribeToClient(...events.client);
+await bot.getCommandManager().subscribe(...events.command);
+await bot.getService().subscribe(...events.service);
+await bot.getPluginManager().subscribe(...events.plugin);
+await bot.getScheduleManager().subscribe(...events.schedule);
+```
+
+EventBus subscribers (`events.bus`) cannot be registered automatically, so you need to attach them manually
+
+
+## Writing subscribers for the loader
+
+Any class extending one of the six abstract subscriber base classes will be detected:
+
+```ts twoslash
+import { AbstractDJSClientSubscriber, type Metadata } from '@nyx-discord/framework';
+import type { Client } from 'discord.js';
+
+export class ReadySubscriber extends AbstractDJSClientSubscriber<'ready'> {
+  protected readonly event = 'ready' as const;
+
+  public handleEvent(meta: Metadata, client: Client<true>) {
+    console.log(`Bot logged in as ${client.user.tag}`);
+  }
+}
+```
+
+<Callout>
+Top-level subscribers are instantiated with <code>new Class()</code> (no arguments). Subscribers don't receive a parent instance.
+</Callout>
+
+Alternatively, you can specify a `static create(bot)` factory:
+
+```ts twoslash
+import { AbstractDJSClientSubscriber } from '@nyx-discord/framework';
+import type { NyxBot, Metadata } from '@nyx-discord/framework';
+import type { Client } from 'discord.js';
+
+export class ReadySubscriber extends AbstractDJSClientSubscriber<'ready'> {
+  protected readonly event = 'ready' as const;
+
+  public static create(bot: NyxBot) {
+    return new ReadySubscriber();
+  }
+
+  // ...
+  // ---cut-start---
+  public handleEvent(meta: Metadata, client: Client<true>) {}
+  // ---cut-end---
+}
+```
+
+The loader will call this method instead of the constructor if it exists. This allows you to access the bot instance,
+or add logic, for example to inject services or other dependencies with a DI container.

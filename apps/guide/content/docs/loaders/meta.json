@@ -1,0 +1,7 @@
+{
+  "title": "Loaders",
+  "description": "Scan and load your components from your bot's folders.",
+  "root": true,
+  "icon": "FolderSearch",
+  "pages": ["index", "---Loaders---", "commands", "events", "schedules"]
+}

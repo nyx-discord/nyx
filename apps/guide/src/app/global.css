@@ -7,6 +7,7 @@
 :root {
   --nyx-color: #7d91fe;
 
+  --loaders-color: #fee97d;
   --session-color: #7dfef3;
   --use-color: #5fc8fe;
   --extend-color: #a584ff;
@@ -15,6 +16,12 @@
   --xy-handle-border-color: transparent;
   --xy-edge-stroke-width: 2;
 }
+
+
+.loaders {
+  --color-fd-primary: var(--loaders-color);
+}
+
 
 .session {
   --color-fd-primary: var(--session-color);
@@ -106,7 +113,7 @@ body {
 }
 
 .step-node__tooltip-icon {
-  background-color: var(--home-color);
+  background-color: var(--color-fd-primary);
   box-shadow: 1px 1px 4px 1px var(--color-fd-primary);
 
   color: white;

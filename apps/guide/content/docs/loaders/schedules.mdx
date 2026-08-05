@@ -1,0 +1,98 @@
+---
+title: Schedules
+icon: Clock
+---
+
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
+import { DocsLink } from '@/../components/links/DocsLink';
+
+The <DocsLink pkg="loaders" name="ScheduleLoader" decorated={false} /> is the simplest loader. It scans a directory recursively for any class extending <DocsLink pkg="framework" name="AbstractSchedule" decorated={false} />, instantiates them, and returns a flat <DocsLink pkg="core" name="Schedule" decorated={false} />[].
+
+## Folder structure
+
+Any `.js` or `.mjs` file at any depth that exports a class extending <DocsLink pkg="framework" name="AbstractSchedule" decorated={false} /> will be picked up:
+
+<Files>
+  <Folder name="dist/schedules" defaultOpen>
+    <File name="daily.js" />
+    <File name="weekly.js" />
+    <Folder name="cleanup" defaultOpen>
+      <File name="prune-messages.js" />
+      <File name="archive-logs.js" />
+    </Folder>
+  </Folder>
+</Files>
+
+## Usage
+
+By default, schedules are automatically registered via `scheduleManager.addSchedule()`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+import { ScheduleLoader } from '@nyx-discord/loaders';
+
+await ScheduleLoader.load({ bot, path: './dist/schedules' });
+```
+
+Pass `register: false` to handle registration yourself:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/framework';
+declare const bot: NyxBot;
+// ---cut---
+import { ScheduleLoader } from '@nyx-discord/loaders';
+
+const schedules = await ScheduleLoader.load({
+  bot,
+  path: './dist/schedules',
+  register: false,
+});
+
+for (const schedule of schedules) {
+  await bot.getScheduleManager().addSchedule(schedule);
+}
+```
+
+## Writing schedules for the loader
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/framework';
+import type { Metadata } from '@nyx-discord/framework';
+
+export class DailyReport extends AbstractSchedule {
+  protected readonly interval = '0 0 * * *'; // Every day at midnight
+
+  public async tick(meta: Metadata) {
+    // Send daily report...
+  }
+}
+```
+
+<Callout>
+Schedules are instantiated with <code>new Class()</code> (no arguments). They don't receive a parent instance.
+</Callout>
+
+Alternatively, you can specify a `static create(bot)` factory:
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/framework';
+import type { Metadata, NyxBot } from '@nyx-discord/framework';
+
+export class DailyReport extends AbstractSchedule {
+  protected readonly interval = '0 0 * * *';
+
+  public static create(bot: NyxBot) {
+    return new DailyReport();
+  }
+
+  // ...
+  // ---cut-start---
+  async tick(meta: Metadata) {}
+  // ---cut-end---
+}
+```
+
+The loader will call this method instead of the constructor if it exists. This allows you to access the bot instance,
+or add logic, for example to inject services or other dependencies with a DI container.
