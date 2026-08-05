@@ -2,7 +2,7 @@ import type { Client } from 'discord.js';
 import { vi } from 'vitest';
 
 export class StubClient {
-  static create(overrides?: {
+  public static create(overrides?: {
     set?: ReturnType<typeof vi.fn>;
     delete?: ReturnType<typeof vi.fn>;
     edit?: ReturnType<typeof vi.fn>;

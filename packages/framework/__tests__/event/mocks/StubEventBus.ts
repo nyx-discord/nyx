@@ -2,7 +2,7 @@ import type { AnyEventBus } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubEventBus {
-  static create(isProtected = false): AnyEventBus {
+  public static create(isProtected = false): AnyEventBus {
     let protected_ = isProtected;
     return {
       subscribe: vi.fn().mockResolvedValue(undefined),

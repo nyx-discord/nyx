@@ -8,11 +8,11 @@ type Handler = BasicErrorHandler<Obj, Args>;
 type Consumer = ErrorConsumer<Obj, Obj, Args>;
 
 export class StubErrorHandler {
-  static create(fallback: Consumer = vi.fn<Consumer>()): Handler {
+  public static create(fallback: Consumer = vi.fn<Consumer>()): Handler {
     return new BasicErrorHandler<Obj, Args>(undefined as never, fallback);
   }
 
-  static createNull(fallback: Consumer = vi.fn<Consumer>()): Handler {
+  public static createNull(fallback: Consumer = vi.fn<Consumer>()): Handler {
     return new BasicErrorHandler<Obj, Args>(null as never, fallback);
   }
 }

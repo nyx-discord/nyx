@@ -69,69 +69,73 @@ class InteractionStub {
 }
 
 export class StubInteractionFactory {
-  static createChatInput(commandName = 'mock'): ChatInputCommandInteraction {
+  public static createChatInput(
+    commandName = 'mock',
+  ): ChatInputCommandInteraction {
     const stub = new InteractionStub();
     stub.isChatInputCommand = () => true;
     stub.cmdName = commandName;
     return stub as unknown as ChatInputCommandInteraction;
   }
 
-  static createAutocomplete(commandName = 'mock'): AutocompleteInteraction {
+  public static createAutocomplete(
+    commandName = 'mock',
+  ): AutocompleteInteraction {
     const stub = new InteractionStub();
     stub.isAutocomplete = () => true;
     stub.cmdName = commandName;
     return stub as unknown as AutocompleteInteraction;
   }
 
-  static createButton(): ButtonInteraction {
+  public static createButton(): ButtonInteraction {
     const stub = new InteractionStub();
     stub.isMessageComponent = () => true;
     stub.isButton = () => true;
     return stub as unknown as ButtonInteraction;
   }
 
-  static createStringSelectMenu(): StringSelectMenuInteraction {
+  public static createStringSelectMenu(): StringSelectMenuInteraction {
     const stub = new InteractionStub();
     stub.isMessageComponent = () => true;
     stub.isStringSelectMenu = () => true;
     return stub as unknown as StringSelectMenuInteraction;
   }
 
-  static createUserSelectMenu(): UserSelectMenuInteraction {
+  public static createUserSelectMenu(): UserSelectMenuInteraction {
     const stub = new InteractionStub();
     stub.isMessageComponent = () => true;
     stub.isUserSelectMenu = () => true;
     return stub as unknown as UserSelectMenuInteraction;
   }
 
-  static createRoleSelectMenu(): RoleSelectMenuInteraction {
+  public static createRoleSelectMenu(): RoleSelectMenuInteraction {
     const stub = new InteractionStub();
     stub.isMessageComponent = () => true;
     stub.isRoleSelectMenu = () => true;
     return stub as unknown as RoleSelectMenuInteraction;
   }
 
-  static createMentionableSelectMenu(): MentionableSelectMenuInteraction {
+  public static createMentionableSelectMenu(): MentionableSelectMenuInteraction {
     const stub = new InteractionStub();
     stub.isMessageComponent = () => true;
     stub.isMentionableSelectMenu = () => true;
     return stub as unknown as MentionableSelectMenuInteraction;
   }
 
-  static createChannelSelectMenu(): ChannelSelectMenuInteraction {
+  public static createChannelSelectMenu(): ChannelSelectMenuInteraction {
     const stub = new InteractionStub();
     stub.isMessageComponent = () => true;
     stub.isChannelSelectMenu = () => true;
     return stub as unknown as ChannelSelectMenuInteraction;
   }
 
-  static createModalSubmit(): ModalSubmitInteraction {
+  public static createModalSubmit(): ModalSubmitInteraction {
     const stub = new InteractionStub();
     stub.isModalSubmit = () => true;
     return stub as unknown as ModalSubmitInteraction;
   }
 
-  static createUserContextMenu(
+  public static createUserContextMenu(
     commandName = 'mock',
   ): UserContextMenuCommandInteraction {
     const stub = new InteractionStub();
@@ -140,7 +144,7 @@ export class StubInteractionFactory {
     return stub as unknown as UserContextMenuCommandInteraction;
   }
 
-  static createMessageContextMenu(
+  public static createMessageContextMenu(
     commandName = 'mock',
   ): MessageContextMenuCommandInteraction {
     const stub = new InteractionStub();

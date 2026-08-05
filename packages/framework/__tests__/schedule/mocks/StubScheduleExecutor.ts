@@ -2,7 +2,7 @@ import type { ScheduleExecutor } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubScheduleExecutor {
-  static create(): ScheduleExecutor {
+  public static create(): ScheduleExecutor {
     return {
       tick: vi.fn(),
       getMiddleware: vi.fn(),

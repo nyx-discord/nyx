@@ -1,9 +1,13 @@
-import type { MiddlewareResponse, Priority, ScheduleMiddleware } from '@nyx-discord/core';
+import type {
+  MiddlewareResponse,
+  Priority,
+  ScheduleMiddleware,
+} from '@nyx-discord/core';
 import { PriorityEnum } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubScheduleMiddleware {
-  static create(
+  public static create(
     response: MiddlewareResponse = { allowed: true, checkNext: true },
     priority: Priority = PriorityEnum.Normal,
   ): ScheduleMiddleware {

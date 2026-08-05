@@ -2,21 +2,28 @@ import type { Identifier, ScheduleRepository } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubScheduleRepository {
-  static create(overrides?: Partial<{ size: number }>): ScheduleRepository {
+  public static create(
+    overrides?: Partial<{ size: number }>,
+  ): ScheduleRepository {
     let schedules: Map<Identifier, unknown> = new Map();
 
     return {
       get size() {
         return overrides?.size ?? schedules.size;
       },
-      addSchedule: vi.fn().mockImplementation(function (this: typeof stub, schedule: { getId: () => Identifier }) {
+      addSchedule: vi.fn().mockImplementation(function (
+        this: typeof stub,
+        schedule: { getId: () => Identifier },
+      ) {
         schedules.set(schedule.getId(), schedule);
         return this;
       }),
       removeSchedule: vi.fn().mockImplementation(function (this: typeof stub) {
         return this;
       }),
-      getScheduleByID: vi.fn().mockImplementation((id: Identifier) => schedules.get(id) ?? null),
+      getScheduleByID: vi
+        .fn()
+        .mockImplementation((id: Identifier) => schedules.get(id) ?? null),
       getScheduleByClass: vi.fn().mockReturnValue(null),
       has: vi.fn().mockImplementation((id: Identifier) => schedules.has(id)),
       getSchedules: vi.fn().mockReturnValue(new Map()),

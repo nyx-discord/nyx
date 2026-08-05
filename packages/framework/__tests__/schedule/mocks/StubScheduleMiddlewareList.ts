@@ -1,8 +1,13 @@
-import type { MiddlewareList, ScheduleMiddlewareResolvable } from '@nyx-discord/core';
+import type {
+  MiddlewareList,
+  ScheduleMiddlewareResolvable,
+} from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubScheduleMiddlewareList {
-  static create(checkResult = true): MiddlewareList<ScheduleMiddlewareResolvable> {
+  public static create(
+    checkResult = true,
+  ): MiddlewareList<ScheduleMiddlewareResolvable> {
     return {
       check: vi.fn().mockResolvedValue(checkResult),
       add: vi.fn(),

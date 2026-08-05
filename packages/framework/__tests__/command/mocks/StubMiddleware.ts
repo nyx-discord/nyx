@@ -1,9 +1,13 @@
-import type { CommandMiddleware, MiddlewareResponse, Priority } from '@nyx-discord/core';
+import type {
+  CommandMiddleware,
+  MiddlewareResponse,
+  Priority,
+} from '@nyx-discord/core';
 import { PriorityEnum } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubMiddleware {
-  static create(
+  public static create(
     response: MiddlewareResponse = { allowed: true, checkNext: true },
     priority: Priority = PriorityEnum.Normal,
   ): CommandMiddleware {

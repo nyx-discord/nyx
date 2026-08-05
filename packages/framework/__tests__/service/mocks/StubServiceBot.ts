@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
 export class StubServiceBot {
-  static create() {
+  public static create() {
     return {
       getScheduleManager: vi.fn().mockReturnValue({
         onStart: vi.fn().mockResolvedValue(undefined),

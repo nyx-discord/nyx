@@ -2,7 +2,7 @@ import type { Metadata, MetadataFactory } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubScheduleMetadata {
-  static create(): MetadataFactory {
+  public static create(): MetadataFactory {
     return {
       createOrPopulate: vi.fn(
         (meta: Metadata | undefined, id: symbol) =>

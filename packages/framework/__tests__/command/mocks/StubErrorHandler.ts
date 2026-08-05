@@ -2,7 +2,7 @@ import type { CommandErrorHandler } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubErrorHandler {
-  static create(): CommandErrorHandler {
+  public static create(): CommandErrorHandler {
     return {
       handle: vi.fn(),
       setConsumer: vi.fn(),

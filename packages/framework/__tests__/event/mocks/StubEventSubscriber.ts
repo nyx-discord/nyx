@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
 export class StubEventSubscriber {
-  static create(overrides: Record<string, unknown> = {}) {
+  public static create(overrides: Record<string, unknown> = {}) {
     return {
       getEvent: vi.fn(),
       getId: vi.fn().mockReturnValue(Symbol('sub')),

@@ -2,7 +2,7 @@ import type { EventDispatcher } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubEventDispatcher {
-  static create(): EventDispatcher {
+  public static create(): EventDispatcher {
     return {
       dispatch: vi.fn(),
       getErrorHandler: vi.fn(),

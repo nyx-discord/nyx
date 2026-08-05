@@ -2,7 +2,7 @@ import type { ScheduleFilter } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubScheduleFilter {
-  static create(allowed = true): ScheduleFilter {
+  public static create(allowed = true): ScheduleFilter {
     return {
       check: vi.fn().mockResolvedValue(allowed),
     } as unknown as ScheduleFilter;

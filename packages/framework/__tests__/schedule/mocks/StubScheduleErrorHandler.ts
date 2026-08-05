@@ -2,7 +2,7 @@ import type { ScheduleErrorHandler } from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubScheduleErrorHandler {
-  static create(): ScheduleErrorHandler {
+  public static create(): ScheduleErrorHandler {
     return {
       handle: vi.fn(),
       setConsumer: vi.fn(),

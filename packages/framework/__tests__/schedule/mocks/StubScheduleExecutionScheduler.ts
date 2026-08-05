@@ -1,31 +1,44 @@
-import type { Identifier, ScheduleExecutionScheduler, ScheduleJobAdapter } from '@nyx-discord/core';
+import type {
+  Identifier,
+  ScheduleExecutionScheduler,
+  ScheduleJobAdapter,
+} from '@nyx-discord/core';
 import { vi } from 'vitest';
 
 export class StubScheduleExecutionScheduler {
-  static create(): ScheduleExecutionScheduler & { jobs: Map<Identifier, unknown> } {
+  public static create(): ScheduleExecutionScheduler & {
+    jobs: Map<Identifier, unknown>;
+  } {
     const jobs = new Map<Identifier, unknown>();
     return {
       jobs,
-      start: vi.fn().mockImplementation((schedule: { getId: () => Identifier }) => {
-        const adapter = StubScheduleJobAdapter.create();
-        jobs.set(schedule.getId(), adapter);
-        return adapter;
-      }),
+      start: vi
+        .fn()
+        .mockImplementation((schedule: { getId: () => Identifier }) => {
+          const adapter = StubScheduleJobAdapter.create();
+          jobs.set(schedule.getId(), adapter);
+          return adapter;
+        }),
       pause: vi.fn(),
       destroy: vi.fn(),
       getJobs: vi.fn().mockReturnValue(new Map()),
       getJobForSchedule: vi.fn().mockImplementation((scheduleOrId: unknown) => {
-        const id = typeof scheduleOrId === 'symbol' ? scheduleOrId : (scheduleOrId as { getId: () => Identifier }).getId();
+        const id =
+          typeof scheduleOrId === 'symbol'
+            ? scheduleOrId
+            : (scheduleOrId as { getId: () => Identifier }).getId();
         return jobs.get(id) ?? null;
       }),
       onStart: vi.fn(),
       onStop: vi.fn(),
-    } as unknown as ScheduleExecutionScheduler & { jobs: Map<Identifier, unknown> };
+    } as unknown as ScheduleExecutionScheduler & {
+      jobs: Map<Identifier, unknown>;
+    };
   }
 }
 
 export class StubScheduleJobAdapter {
-  static create(): ScheduleJobAdapter<unknown> {
+  public static create(): ScheduleJobAdapter<unknown> {
     return {
       pause: vi.fn().mockResolvedValue(undefined),
       resume: vi.fn().mockResolvedValue(undefined),
