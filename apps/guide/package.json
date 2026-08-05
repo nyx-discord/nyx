@@ -9,6 +9,8 @@
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
+    "@base-ui/react": "^1.6.0",
+    "@fumadocs/base-ui": "16.12.1",
     "@icons-pack/react-simple-icons": "13.7.0",
     "@orama/orama": "3.1.18",
     "@radix-ui/react-collapsible": "1.1.12",
@@ -18,6 +20,7 @@
     "@radix-ui/react-scroll-area": "1.2.10",
     "@xyflow/react": "12.3.5",
     "class-variance-authority": "0.7.1",
+    "cnfast": "^0.0.8",
     "fumadocs-core": "16.6.17",
     "fumadocs-mdx": "14.2.10",
     "fumadocs-twoslash": "3.1.14",
