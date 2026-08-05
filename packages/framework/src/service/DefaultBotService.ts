@@ -3,6 +3,7 @@ import type {
   BotServiceEventArgs,
   BotStatus,
   EventBus,
+  EventSubscriber,
   Identifier,
   NyxBot,
 } from '@nyx-discord/core';
@@ -30,7 +31,7 @@ type BotServiceOptions = {
 export class DefaultBotService implements BotService {
   protected readonly bot: NyxBot;
 
-  protected readonly bus: EventBus<BotServiceEventArgs>;
+  protected bus: EventBus<BotServiceEventArgs>;
 
   protected startPromise!: StartPromiseData;
 
@@ -148,5 +149,26 @@ export class DefaultBotService implements BotService {
 
   public getEventBus(): EventBus<BotServiceEventArgs> {
     return this.bus;
+  }
+
+  public async setEventBus(
+    eventBus: EventBus<BotServiceEventArgs>,
+  ): Promise<this> {
+    const oldSubscribers = [...this.bus.getSubscribers().values()];
+    await eventBus.subscribe(...oldSubscribers);
+
+    const oldMetadataFields = this.bus.getMetadataFactory().getFields();
+    for (const pair of oldMetadataFields) {
+      eventBus.getMetadataFactory().addDefaultField(...pair);
+    }
+    this.bus = eventBus;
+    return this;
+  }
+
+  public async subscribe(
+    ...subscribers: EventSubscriber<BotServiceEventArgs>[]
+  ): Promise<this> {
+    await this.bus.subscribe(...subscribers);
+    return this;
   }
 }
