@@ -1,0 +1,179 @@
+import type {
+  ClassImplements,
+  Command,
+  CommandRepository,
+  ImplementsParentCommand,
+  ImplementsStandaloneCommand,
+  ImplementsSubCommand,
+  ImplementsSubCommandGroup,
+  InteractionTypes,
+  Nameable,
+  SubCommand,
+  SubCommandGroup,
+  TopLevelCommand,
+} from '@nyx-discord/types';
+import { IllegalDuplicateError, ObjectNotFoundError } from '@nyx-discord/types';
+import type { ReadonlyCollection } from '@discordjs/collection';
+import { Collection } from '@discordjs/collection';
+
+export class DefaultCommandRepository<
+  Types extends InteractionTypes = InteractionTypes,
+> implements CommandRepository<Types> {
+  protected readonly commands: Collection<string, TopLevelCommand<Types>> =
+    new Collection<string, TopLevelCommand<Types>>();
+
+  public get size() {
+    return this.commands.size;
+  }
+
+  public static create<
+    Types extends InteractionTypes = InteractionTypes,
+  >(): CommandRepository<Types> {
+    return new this();
+  }
+
+  public addCommand(command: TopLevelCommand<Types>): this {
+    const commandId = command.getId();
+    const existentCommand = this.commands.get(commandId);
+    if (existentCommand) {
+      throw new IllegalDuplicateError(
+        existentCommand,
+        command,
+        `The command '${command.constructor.name}' wasn't added. Another command '${existentCommand.constructor.name}' already exists with that ID.`,
+      );
+    }
+
+    this.commands.set(commandId, command);
+    return this;
+  }
+
+  public removeCommand(command: TopLevelCommand<Types>): this {
+    const commandId = command.getId();
+    if (!this.commands.has(commandId)) {
+      throw new ObjectNotFoundError(
+        `The command '${command.constructor.name}' wasn't removed. A command with that ID doesn't exist.`,
+      );
+    }
+
+    this.commands.delete(commandId);
+    return this;
+  }
+
+  public getCommandByName(id: string): TopLevelCommand<Types> | null {
+    return this.commands.get(id) ?? null;
+  }
+
+  public isCommandId(id: string): boolean {
+    return this.commands.has(id);
+  }
+
+  public isCommandInstance(instance: TopLevelCommand<Types>): boolean {
+    return this.commands.find((command) => command === instance) !== undefined;
+  }
+
+  public locateByClassTree<T extends ImplementsSubCommand<Types>>(
+    ParentCommandClass: ImplementsParentCommand<Types>,
+    SubCommandGroupClass: T,
+  ): InstanceType<T> | null;
+  public locateByClassTree<T extends ImplementsSubCommand<Types>>(
+    ParentCommandClass: ImplementsParentCommand<Types>,
+    SubCommandGroupClass: ImplementsSubCommandGroup<Types>,
+    SubCommandClass: T,
+  ): InstanceType<T> | null;
+  public locateByClassTree<T extends ImplementsSubCommand<Types>>(
+    ParentCommandClass: ImplementsParentCommand<Types>,
+    SubCommandClass: T,
+  ): InstanceType<T> | null;
+  public locateByClassTree<T extends ImplementsParentCommand<Types>>(
+    ParentCommandClass: T,
+  ): InstanceType<T> | null;
+  public locateByClassTree<T extends ImplementsStandaloneCommand<Types>>(
+    StandaloneCommandClass: T,
+  ): InstanceType<T> | null;
+  public locateByClassTree<T extends ClassImplements<Command<Nameable, Types>>>(
+    TopLevelCommandClass: ClassImplements<TopLevelCommand<Types>>,
+    FirstChildClass?:
+      ImplementsSubCommandGroup<Types> | ImplementsSubCommand<Types>,
+    SecondChildClass?: ImplementsSubCommand<Types>,
+  ): InstanceType<T> | null {
+    let command: Command<Nameable, Types> | null =
+      this.commands.find(
+        (registeredCommand) =>
+          registeredCommand instanceof TopLevelCommandClass,
+      ) ?? null;
+    if (!command) return null;
+
+    if (!FirstChildClass) return command as InstanceType<T>;
+
+    if (command.isParent()) {
+      command = command.findChildByClass(FirstChildClass);
+      if (!command) return null;
+
+      if (!SecondChildClass) return command as InstanceType<T>;
+
+      if (command.isSubCommandGroup()) {
+        command = command.findChildByClass(SecondChildClass);
+      }
+    }
+    return (command as InstanceType<T>) ?? null;
+  }
+
+  public locateByNameTree(parent: string): TopLevelCommand<Types> | null;
+  public locateByNameTree(
+    parent: string,
+    firstChild: string,
+  ): SubCommand<Types> | SubCommandGroup<Types> | null;
+  public locateByNameTree(
+    parent: string,
+    firstChild: string,
+    secondChild: string,
+  ): SubCommand<Types> | null;
+  public locateByNameTree(
+    parent: string,
+    firstChild?: string,
+    secondChild?: string,
+  ):
+    TopLevelCommand<Types> | SubCommand<Types> | SubCommandGroup<Types> | null {
+    const parentCommand = this.commands.get(parent) ?? null;
+    if (!firstChild) return parentCommand;
+    if (!parentCommand || !parentCommand.isParent()) return null;
+
+    const firstChildCommand = parentCommand.findChildByName(firstChild);
+    if (!secondChild) return firstChildCommand;
+    if (!firstChildCommand || !firstChildCommand.isSubCommandGroup()) {
+      return null;
+    }
+
+    return firstChildCommand.findChildByName(secondChild);
+  }
+
+  public getCommands(): ReadonlyCollection<string, TopLevelCommand<Types>> {
+    return this.commands;
+  }
+
+  public clear() {
+    this.commands.clear();
+  }
+
+  public *entries(): IterableIterator<[string, TopLevelCommand<Types>]> {
+    yield* this.commands.entries();
+  }
+
+  public *keys(): IterableIterator<string> {
+    yield* this.commands.keys();
+  }
+
+  public *values(): IterableIterator<TopLevelCommand<Types>> {
+    yield* this.commands.values();
+  }
+
+  public next(): IteratorResult<[string, TopLevelCommand<Types>]> {
+    return this.entries().next();
+  }
+
+  public [Symbol.iterator](): IterableIterator<
+    [string, TopLevelCommand<Types>]
+  > {
+    return this.entries();
+  }
+}

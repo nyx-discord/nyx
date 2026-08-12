@@ -58,6 +58,7 @@
     "@discordjs/collection": "1.5.3",
     "@nyx-discord/types": "workspace:*",
     "@sapphire/string-store": "3.0.0",
-    "cron": "4.4.0"
+    "cron": "4.4.0",
+    "discord-api-types": "0.38.22"
   }
 }

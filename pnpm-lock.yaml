@@ -300,6 +300,9 @@ importers:
       cron:
         specifier: 4.4.0
         version: 4.4.0
+      discord-api-types:
+        specifier: 0.38.22
+        version: 0.38.22
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
