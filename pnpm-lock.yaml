@@ -286,6 +286,34 @@ importers:
 
   configs/vitest-config: {}
 
+  packages/base:
+    dependencies:
+      '@discordjs/collection':
+        specifier: 1.5.3
+        version: 1.5.3
+      '@nyx-discord/types':
+        specifier: workspace:*
+        version: link:../types
+      '@sapphire/string-store':
+        specifier: 3.0.0
+        version: 3.0.0
+      cron:
+        specifier: 4.4.0
+        version: 4.4.0
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
+      '@repo/typedoc-config':
+        specifier: workspace:*
+        version: link:../../configs/typedoc-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript-config
+      '@repo/vitest-config':
+        specifier: workspace:*
+        version: link:../../configs/vitest-config
+
   packages/core:
     dependencies:
       discord.js:

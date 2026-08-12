@@ -1,0 +1,39 @@
+import type {
+  EventSubscriberMiddleware as SubMiddleware,
+  MiddlewareList,
+  Tail,
+} from '@nyx-discord/types';
+import { EventSubscriberMiddlewareError } from '@nyx-discord/types';
+import { AbstractMiddlewareList } from '../../../middleware/AbstractMiddlewareList';
+import { LifetimeCheckEventMiddleware } from '../lifetime/LifetimeCheckEventMiddleware.js';
+import { HandleCheckEventMiddleware } from '../meta/HandleCheckEventMiddleware.js';
+import { SubscriberFilterCheckMiddleware } from './SubscriberFilterCheckMiddleware.js';
+
+export class SubscriberMiddlewareList extends AbstractMiddlewareList<SubMiddleware> {
+  public static create(): MiddlewareList<SubMiddleware> {
+    const handledEventMiddleware = new HandleCheckEventMiddleware();
+    const filterMiddleware = new SubscriberFilterCheckMiddleware();
+    const lifetimeEventMiddleware = new LifetimeCheckEventMiddleware();
+
+    return new this().add(
+      handledEventMiddleware,
+      filterMiddleware,
+      lifetimeEventMiddleware,
+    );
+  }
+
+  /** Wraps a generic error in a {@link EventSubscriberMiddlewareError}. */
+  protected wrapError(
+    erroredMiddleware: SubMiddleware,
+    error: Error,
+    subscriber: Parameters<SubMiddleware['check']>[0],
+    ...args: Tail<Parameters<SubMiddleware['check']>>
+  ): Error {
+    return new EventSubscriberMiddlewareError(
+      error,
+      erroredMiddleware,
+      subscriber,
+      args,
+    );
+  }
+}
