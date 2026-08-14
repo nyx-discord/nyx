@@ -3,7 +3,8 @@ import type { EventSubscriber } from '../../event/subscriber/EventSubscriber.js'
 
 /** An object that stores the current subscribers for a {@link CommandManager} */
 export interface CommandSubscriptionsContainer<
-  ClientEventMap extends Record<string, unknown[]> = Record<string, unknown[]>,
+  ClientEventMap extends Record<keyof ClientEventMap & string, unknown[]> =
+    Record<string, unknown[]>,
 > {
   /** Subscribes this container's subscribers to the client. */
   subscribe(): Awaitable<void>;

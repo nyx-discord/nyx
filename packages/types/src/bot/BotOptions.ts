@@ -1,7 +1,9 @@
 import type { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
 
 /** Type of options to create a bot. */
-export interface BotOptions<Implementations extends InjectableBotDependencies> {
+export interface BotOptions<
+  Implementations extends InjectableBotDependencies<any, any, any, any>,
+> {
   token: string;
   client: Implementations['client'];
   deployCommands: boolean;

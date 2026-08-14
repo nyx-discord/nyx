@@ -3,7 +3,8 @@ import { AbstractEventSubscriber } from './AbstractEventSubscriber.js';
 
 /** Utility to make a subscriber for the client event bus. */
 export abstract class BaseClientSubscriber<
-  ClientEventMap extends Record<string, unknown[]> = Record<string, unknown[]>,
+  ClientEventMap extends Record<keyof ClientEventMap & string, unknown[]> =
+    Record<string, unknown[]>,
   Event extends keyof ClientEventMap & string = keyof ClientEventMap & string,
 >
   extends AbstractEventSubscriber<ClientEventMap, Event>

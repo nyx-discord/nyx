@@ -1,19 +1,11 @@
-import type { EventBus } from '../features/event/bus/EventBus';
-import type { EventSubscriber } from '../features/event/subscriber/EventSubscriber';
 import type { Identifier } from '../identity/Identifier';
 import type { BotStatus } from '../service/BotStatus';
 import type { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
 
-type ClientEventMapOf<Implementations extends InjectableBotDependencies> =
-  Implementations['clientEventBus'] extends EventBus<
-    infer ArgsRecord extends Record<string, unknown[]>
-  >
-    ? ArgsRecord
-    : never;
-
 /** A bot of the nyx framework. */
 export interface NyxBot<
-  Implementations extends InjectableBotDependencies = InjectableBotDependencies,
+  Implementations extends InjectableBotDependencies<any, any, any, any> =
+    InjectableBotDependencies,
 > {
   /** Returns the logger of this bot for console output. */
   getLogger(): Implementations['logger'];
@@ -64,9 +56,6 @@ export interface NyxBot<
    * ```
    */
   subscribeToClient(
-    ...subscribers: EventSubscriber<
-      ClientEventMapOf<Implementations>,
-      keyof ClientEventMapOf<Implementations> & string
-    >[]
+    ...subscribers: Parameters<Implementations['clientEventBus']['subscribe']>
   ): Promise<this>;
 }

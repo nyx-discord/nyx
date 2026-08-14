@@ -2,6 +2,7 @@ import type { BotLifecycleObserver } from '../../bot/BotLifecycleObserver';
 import type { Metadata } from '../../meta/Metadata';
 import type { MetadataFactory } from '../../meta/MetadataFactory';
 import type { Awaitable } from '../../types/Awaitable.js';
+import type { APIApplicationCommand } from 'discord-api-types/v10';
 import type { InteractionTypes } from './InteractionTypes';
 import type { EventBus } from '../event/bus/EventBus.js';
 import type { EventSubscriber } from '../event/subscriber/EventSubscriber.js';
@@ -19,7 +20,9 @@ import type { CommandResolver } from './resolve/CommandResolver';
 /** An object that holds methods for interacting with the bot's {@link Command commands}. */
 export interface CommandManager<
   Types extends InteractionTypes = InteractionTypes,
-  ClientEventMap extends Record<string, unknown[]> = Record<string, unknown[]>,
+  ClientEventMap extends Record<keyof ClientEventMap & string, unknown[]> =
+    Record<string, unknown[]>,
+  ApplicationCommand = APIApplicationCommand,
 > extends BotLifecycleObserver {
   /**
    * Executes a command using the {@link CommandExecutor}.
@@ -149,13 +152,13 @@ export interface CommandManager<
   setEventBus(eventBus: EventBus<CommandEventArgs<Types>>): Awaitable<this>;
 
   /** Returns the {@link CommandDeployer} for this manager. */
-  getDeployer(): ReadonlyCommandDeployer<Types>;
+  getDeployer(): ReadonlyCommandDeployer<Types, ApplicationCommand>;
 
   /**
    * Sets the {@link CommandDeployer} for this manager.
    * @throws {IllegalStateError} If the bot has already started.
    */
-  setDeployer(deployer: CommandDeployer<Types>): this;
+  setDeployer(deployer: CommandDeployer<Types, ApplicationCommand>): this;
 
   /** Returns the {@link MetadataFactory} for creating or populating {@link Metadata}s for command executions. */
   getMetadataFactory(): MetadataFactory;

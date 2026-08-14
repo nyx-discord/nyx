@@ -1,0 +1,65 @@
+{
+  "name": "@nyx-discord/djs",
+  "version": "1.0.0",
+  "description": "The discord.js adapter for nyx, the Discord bot framework.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyx-discord/nyx.git"
+  },
+  "exports": {
+    ".": {
+      "require": {
+        "@nyx-discord/djs": "./src/index.ts",
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "@nyx-discord/djs": "./src/index.ts",
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    }
+  },
+  "files": [
+    "dist/**",
+    "assets/**"
+  ],
+  "scripts": {
+    "lint": "eslint ./src",
+    "format": "prettier --write ./src",
+    "barrel": "node ../../scripts/barrel.mjs --directory ./src --delete --singleQuotes --append \"export * from '@nyx-discord/types';export * from '@nyx-discord/base';\"",
+    "build": "rimraf dist && tsup-node src/index.ts && prettier --write dist/*.d.ts dist/*.d.mts",
+    "prepublishOnly": "pnpm run build",
+    "test": "vitest --run",
+    "coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord.js",
+    "framework"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typedoc-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/vitest-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "discord.js": "^14.22.1"
+  },
+  "dependencies": {
+    "@nyx-discord/base": "workspace:*",
+    "@nyx-discord/types": "workspace:*",
+    "discord-api-types": "0.38.22"
+  }
+}
