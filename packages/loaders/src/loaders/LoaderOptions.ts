@@ -1,4 +1,4 @@
-import { NyxBot } from '@nyx-discord/core';
+import type { NyxBot } from '@nyx-discord/types';
 
 /** Options for a Loader. */
 export type LoaderOptions = {

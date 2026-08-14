@@ -1,6 +1,6 @@
-import { AbstractDJSClientSubscriber } from '@nyx-discord/framework';
+import { BaseClientSubscriber } from '@nyx-discord/base';
 
-export class ClientReadySubscriber extends AbstractDJSClientSubscriber {
+export class ClientReadySubscriber extends BaseClientSubscriber {
   event = 'ready';
 
   handleEvent(meta, client) {}

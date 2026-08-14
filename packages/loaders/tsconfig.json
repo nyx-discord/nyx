@@ -6,7 +6,7 @@
       "#mocks": ["./__tests__/mocks"],
       "#mocks/*": ["./__tests__/mocks/*"]
     },
-    "customConditions": ["@nyx-discord/framework", "@nyx-discord/core"]
+    "customConditions": ["@nyx-discord/base", "@nyx-discord/types"]
   },
   "include": ["src", "__tests__"],
   "exclude": ["node_modules", "dist"]

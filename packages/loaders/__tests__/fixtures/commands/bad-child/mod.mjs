@@ -1,8 +1,5 @@
-import { AbstractParentCommand } from '@nyx-discord/framework';
-import { SlashCommandBuilder } from 'discord.js';
+import { BaseParentCommand } from '@nyx-discord/base';
 
-export class BadChildModCommand extends AbstractParentCommand {
-  data = new SlashCommandBuilder().setName('mod').setDescription('Moderation commands').toJSON();
-
-  execute() {}
+export class BadChildModCommand extends BaseParentCommand {
+  data = { name: 'mod', description: 'Moderation commands', type: 1 };
 }

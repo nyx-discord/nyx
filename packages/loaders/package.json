@@ -41,7 +41,10 @@
     "@repo/vitest-config": "workspace:*"
   },
   "peerDependencies": {
-    "@nyx-discord/framework": "workspace:*",
-    "discord.js": "^14.22.1"
+    "@nyx-discord/base": "workspace:*"
+  },
+  "dependencies": {
+    "@nyx-discord/base": "workspace:*",
+    "@nyx-discord/types": "workspace:*"
   }
 }

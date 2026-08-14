@@ -1,12 +1,13 @@
-import { AbstractSubCommand } from '@nyx-discord/framework';
-import { SlashCommandSubcommandBuilder } from 'discord.js';
+import { BaseSubCommand } from '@nyx-discord/base';
 
-export class BanCommand extends AbstractSubCommand {
-  data = new SlashCommandSubcommandBuilder().setName('ban').setDescription('Ban a user').toJSON();
+export class BanCommand extends BaseSubCommand {
+  data = { name: 'ban', description: 'Ban a user', type: 1 };
 
   constructor(parent) {
     super(parent);
   }
 
   execute() {}
+
+  handleInteraction() {}
 }

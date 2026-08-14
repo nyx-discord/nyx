@@ -1,4 +1,4 @@
-import { AbstractBusSubscriber } from '@nyx-discord/framework';
+import { AbstractBusSubscriber } from '@nyx-discord/base';
 
 export class BusAddSubscriber extends AbstractBusSubscriber {
   event = 'eventSubscriberAdd';

@@ -1,4 +1,4 @@
-import { AbstractPluginSubscriber } from '@nyx-discord/framework';
+import { AbstractPluginSubscriber } from '@nyx-discord/base';
 
 export class PluginAddSubscriber extends AbstractPluginSubscriber {
   event = 'pluginAdd';

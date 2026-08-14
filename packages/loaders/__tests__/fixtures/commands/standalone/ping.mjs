@@ -1,8 +1,9 @@
-import { AbstractStandaloneCommand } from '@nyx-discord/framework';
-import { SlashCommandBuilder } from 'discord.js';
+import { BaseStandaloneCommand } from '@nyx-discord/base';
 
-export class PingCommand extends AbstractStandaloneCommand {
-  data = new SlashCommandBuilder().setName('ping').setDescription('Replies with pong').toJSON();
+export class PingCommand extends BaseStandaloneCommand {
+  data = { name: 'ping', description: 'Replies with pong', type: 1 };
 
   execute() {}
+
+  handleInteraction() {}
 }

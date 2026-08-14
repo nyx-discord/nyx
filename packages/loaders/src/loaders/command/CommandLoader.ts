@@ -5,20 +5,20 @@ import type {
   SubCommand,
   SubCommandGroup,
   TopLevelCommand,
-} from '@nyx-discord/framework';
+} from '@nyx-discord/types';
 import {
-  AbstractContextMenuCommand,
-  AbstractParentCommand,
-  AbstractStandaloneCommand,
-  AbstractSubCommand,
-  AbstractSubCommandGroup,
-} from '@nyx-discord/framework';
+  BaseContextMenuCommand,
+  BaseParentCommand,
+  BaseStandaloneCommand,
+  BaseSubCommand,
+  BaseSubCommandGroup,
+} from '@nyx-discord/base';
 import { readdir, stat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { LoaderError } from '../../error/LoaderError';
 import { ModuleUtils } from '../../util/ModuleUtils';
 import { ObjectInstantiator } from '../../util/ObjectInstantiator';
-import { LoaderOptions } from '../LoaderOptions';
+import type { LoaderOptions } from '../LoaderOptions';
 
 interface ClassifiedRoot {
   type: 'standalone' | 'parent' | 'contextMenu';
@@ -347,13 +347,13 @@ export class CommandLoader {
     const proto = value.prototype;
     if (!proto) return null;
 
-    if (proto instanceof AbstractStandaloneCommand) {
+    if (proto instanceof BaseStandaloneCommand) {
       return { type: 'standalone', Class: value, file: '' };
     }
-    if (proto instanceof AbstractParentCommand) {
+    if (proto instanceof BaseParentCommand) {
       return { type: 'parent', Class: value, file: '' };
     }
-    if (proto instanceof AbstractContextMenuCommand) {
+    if (proto instanceof BaseContextMenuCommand) {
       return { type: 'contextMenu', Class: value, file: '' };
     }
     return null;
@@ -365,10 +365,10 @@ export class CommandLoader {
     const proto = value.prototype;
     if (!proto) return null;
 
-    if (proto instanceof AbstractSubCommand) {
+    if (proto instanceof BaseSubCommand) {
       return { type: 'subCommand', Class: value, file: '' };
     }
-    if (proto instanceof AbstractSubCommandGroup) {
+    if (proto instanceof BaseSubCommandGroup) {
       return { type: 'subCommandGroup', Class: value, file: '' };
     }
     return null;

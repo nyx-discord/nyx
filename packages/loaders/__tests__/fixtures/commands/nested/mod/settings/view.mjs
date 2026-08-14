@@ -1,12 +1,13 @@
-import { AbstractSubCommand } from '@nyx-discord/framework';
-import { SlashCommandSubcommandBuilder } from 'discord.js';
+import { BaseSubCommand } from '@nyx-discord/base';
 
-export class ViewSettingsCommand extends AbstractSubCommand {
-  data = new SlashCommandSubcommandBuilder().setName('view').setDescription('View settings').toJSON();
+export class ViewSettingsCommand extends BaseSubCommand {
+  data = { name: 'view', description: 'View settings', type: 1 };
 
   constructor(parent) {
     super(parent);
   }
 
   execute() {}
+
+  handleInteraction() {}
 }

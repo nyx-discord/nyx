@@ -1,12 +1,13 @@
-import { AbstractParentCommand, AbstractStandaloneCommand } from '@nyx-discord/framework';
-import { SlashCommandBuilder } from 'discord.js';
+import { BaseParentCommand, BaseStandaloneCommand } from '@nyx-discord/base';
 
-export class MultiStandalone extends AbstractStandaloneCommand {
-  data = new SlashCommandBuilder().setName('multi-standalone').setDescription('A standalone').toJSON();
+export class MultiStandalone extends BaseStandaloneCommand {
+  data = { name: 'multi-standalone', description: 'A standalone', type: 1 };
+
   execute() {}
+
+  handleInteraction() {}
 }
 
-export class MultiParent extends AbstractParentCommand {
-  data = new SlashCommandBuilder().setName('multi-parent').setDescription('A parent').toJSON();
-  execute() {}
+export class MultiParent extends BaseParentCommand {
+  data = { name: 'multi-parent', description: 'A parent', type: 1 };
 }

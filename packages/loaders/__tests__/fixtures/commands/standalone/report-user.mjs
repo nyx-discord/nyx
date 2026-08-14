@@ -1,11 +1,9 @@
-import { AbstractContextMenuCommand } from '@nyx-discord/framework';
-import { ContextMenuCommandBuilder, ApplicationCommandType } from 'discord.js';
+import { BaseContextMenuCommand } from '@nyx-discord/base';
 
-export class ReportUserCommand extends AbstractContextMenuCommand {
-  data = new ContextMenuCommandBuilder()
-    .setName('Report User')
-    .setType(ApplicationCommandType.User)
-    .toJSON();
+export class ReportUserCommand extends BaseContextMenuCommand {
+  data = { name: 'Report User', type: 2 };
 
   execute() {}
+
+  handleInteraction() {}
 }

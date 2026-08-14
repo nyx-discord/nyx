@@ -372,12 +372,12 @@ importers:
 
   packages/loaders:
     dependencies:
-      '@nyx-discord/framework':
+      '@nyx-discord/base':
         specifier: workspace:*
-        version: link:../framework
-      discord.js:
-        specifier: ^14.22.1
-        version: 14.22.1
+        version: link:../base
+      '@nyx-discord/types':
+        specifier: workspace:*
+        version: link:../types
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*

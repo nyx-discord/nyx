@@ -1,8 +1,9 @@
-import { AbstractStandaloneCommand } from '@nyx-discord/framework';
-import { SlashCommandBuilder } from 'discord.js';
+import { BaseStandaloneCommand } from '@nyx-discord/base';
 
-export class FormatCommand extends AbstractStandaloneCommand {
-  data = new SlashCommandBuilder().setName('format').setDescription('Format something').toJSON();
+export class FormatCommand extends BaseStandaloneCommand {
+  data = { name: 'format', description: 'Format something', type: 1 };
 
   execute() {}
+
+  handleInteraction() {}
 }

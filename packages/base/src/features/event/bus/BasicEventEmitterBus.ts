@@ -37,7 +37,7 @@ export class BasicEventEmitterBus<
 
   public static createSyncWithEmitter<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-    Emitter extends EventEmitter,
+    Emitter extends EventEmitterLike,
   >(emitter: Emitter, metaFactory?: MetadataFactory) {
     return new BasicEventEmitterBus<EventArgsObject, Emitter>(
       emitter,
@@ -50,9 +50,9 @@ export class BasicEventEmitterBus<
 
   public static createAsyncWithEmitter<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
-    Emitter extends EventEmitter,
+    Emitter extends EventEmitterLike,
   >(emitter: Emitter, metaFactory?: MetadataFactory) {
-    const newEmitter = emitter ?? (new EventEmitter() as Emitter);
+    const newEmitter = (emitter ?? new EventEmitter()) as Emitter;
 
     return new BasicEventEmitterBus<EventArgsObject, Emitter>(
       newEmitter,

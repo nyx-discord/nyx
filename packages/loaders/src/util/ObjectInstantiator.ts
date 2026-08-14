@@ -1,4 +1,4 @@
-import type { Constructor, NyxBot } from '@nyx-discord/framework';
+import type { Constructor, NyxBot } from '@nyx-discord/types';
 import { LoaderError } from '../error/LoaderError.js';
 
 type AbstractCtor<T extends object> = abstract new (...args: any[]) => T;

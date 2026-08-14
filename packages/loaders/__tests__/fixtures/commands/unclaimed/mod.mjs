@@ -1,8 +1,5 @@
-import { AbstractParentCommand } from '@nyx-discord/framework';
-import { SlashCommandBuilder } from 'discord.js';
+import { BaseParentCommand } from '@nyx-discord/base';
 
-export class UnclaimedModCommand extends AbstractParentCommand {
-  data = new SlashCommandBuilder().setName('unclaimed').setDescription('Unclaimed parent').toJSON();
-
-  execute() {}
+export class UnclaimedModCommand extends BaseParentCommand {
+  data = { name: 'unclaimed', description: 'Unclaimed parent', type: 1 };
 }

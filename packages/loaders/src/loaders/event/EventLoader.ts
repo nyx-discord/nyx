@@ -1,26 +1,24 @@
 import type {
   BotServiceEvent,
-  CommandEvent,
   PluginEvent,
   ScheduleEvent,
-} from '@nyx-discord/framework';
+} from '@nyx-discord/types';
 import {
   AbstractBusSubscriber,
-  AbstractCommandSubscriber,
-  AbstractDJSClientSubscriber,
   AbstractPluginSubscriber,
   AbstractScheduleSubscriber,
   AbstractServiceSubscriber,
-} from '@nyx-discord/framework';
-import type { ClientEvents } from 'discord.js';
+  BaseClientSubscriber,
+  BaseCommandSubscriber,
+} from '@nyx-discord/base';
 import { LoaderError } from '../../error/LoaderError';
 import { ModuleUtils } from '../../util/ModuleUtils';
 import { ObjectInstantiator } from '../../util/ObjectInstantiator';
-import { LoaderOptions } from '../LoaderOptions';
+import type { LoaderOptions } from '../LoaderOptions';
 
 type EventSubscriberBuckets = {
-  client: AbstractDJSClientSubscriber<keyof ClientEvents>[];
-  command: AbstractCommandSubscriber<CommandEvent>[];
+  client: BaseClientSubscriber[];
+  command: BaseCommandSubscriber[];
   service: AbstractServiceSubscriber<BotServiceEvent>[];
   plugin: AbstractPluginSubscriber<PluginEvent>[];
   bus: AbstractBusSubscriber[];
@@ -31,11 +29,11 @@ export class EventLoader {
   private static readonly SUBSCRIBER_CHECKS = [
     {
       bucket: 'client' as const,
-      Class: AbstractDJSClientSubscriber,
+      Class: BaseClientSubscriber,
     },
     {
       bucket: 'command' as const,
-      Class: AbstractCommandSubscriber,
+      Class: BaseCommandSubscriber,
     },
     {
       bucket: 'service' as const,

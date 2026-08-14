@@ -1,12 +1,13 @@
-import { AbstractSubCommand } from '@nyx-discord/framework';
-import { SlashCommandSubcommandBuilder } from 'discord.js';
+import { BaseSubCommand } from '@nyx-discord/base';
 
-export class MuteCommand extends AbstractSubCommand {
-  data = new SlashCommandSubcommandBuilder().setName('mute').setDescription('Mute a user').toJSON();
+export class MuteCommand extends BaseSubCommand {
+  data = { name: 'mute', description: 'Mute a user', type: 1 };
 
   constructor(parent) {
     super(parent);
   }
 
   execute() {}
+
+  handleInteraction() {}
 }

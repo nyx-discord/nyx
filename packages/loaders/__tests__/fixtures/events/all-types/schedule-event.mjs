@@ -1,4 +1,4 @@
-import { AbstractScheduleSubscriber } from '@nyx-discord/framework';
+import { AbstractScheduleSubscriber } from '@nyx-discord/base';
 
 export class ScheduleAddSubscriber extends AbstractScheduleSubscriber {
   event = 'scheduleAdd';

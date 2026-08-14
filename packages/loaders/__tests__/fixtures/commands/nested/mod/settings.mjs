@@ -1,15 +1,9 @@
-import { AbstractSubCommandGroup } from '@nyx-discord/framework';
-import { SlashCommandSubcommandGroupBuilder } from 'discord.js';
+import { BaseSubCommandGroup } from '@nyx-discord/base';
 
-export class SettingsGroup extends AbstractSubCommandGroup {
-  data = new SlashCommandSubcommandGroupBuilder()
-    .setName('settings')
-    .setDescription('View or edit mod settings')
-    .toJSON();
+export class SettingsGroup extends BaseSubCommandGroup {
+  data = { name: 'settings', description: 'View or edit mod settings', type: 2 };
 
   constructor(parent) {
     super(parent);
   }
-
-  execute() {}
 }

@@ -1,9 +1,9 @@
-import type { Schedule } from '@nyx-discord/framework';
-import { AbstractSchedule } from '@nyx-discord/framework';
+import type { Schedule } from '@nyx-discord/types';
+import { AbstractSchedule } from '@nyx-discord/base';
 import { LoaderError } from '../../error/LoaderError';
 import { ModuleUtils } from '../../util/ModuleUtils';
 import { ObjectInstantiator } from '../../util/ObjectInstantiator';
-import { LoaderOptions } from '../LoaderOptions';
+import type { LoaderOptions } from '../LoaderOptions';
 
 export class ScheduleLoader {
   public static async load(options: LoaderOptions): Promise<Schedule[]> {

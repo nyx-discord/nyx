@@ -1,8 +1,9 @@
-import { AbstractStandaloneCommand } from '@nyx-discord/framework';
-import { SlashCommandBuilder } from 'discord.js';
+import { BaseStandaloneCommand } from '@nyx-discord/base';
 
-export class BadChildStandalone extends AbstractStandaloneCommand {
-  data = new SlashCommandBuilder().setName('standalone').setDescription('Should not be here').toJSON();
+export class BadChildStandalone extends BaseStandaloneCommand {
+  data = { name: 'standalone', description: 'Should not be here', type: 1 };
 
   execute() {}
+
+  handleInteraction() {}
 }
