@@ -1,7 +1,7 @@
 {
-  "name": "@nyx-discord/types",
+  "name": "@nyx-discord/djs-core",
   "version": "1.0.0",
-  "description": "The types and interfaces that define nyx's components, decoupled from any Discord library implementation.",
+  "description": "The @discordjs/core adapter for nyx, the Discord bot framework.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.mjs",
@@ -17,12 +17,12 @@
   "exports": {
     ".": {
       "require": {
-        "@nyx-discord/types": "./src/index.ts",
+        "@nyx-discord/djs-core": "./src/index.ts",
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       },
       "import": {
-        "@nyx-discord/types": "./src/index.ts",
+        "@nyx-discord/djs-core": "./src/index.ts",
         "types": "./dist/index.d.mts",
         "default": "./dist/index.mjs"
       }
@@ -35,7 +35,7 @@
   "scripts": {
     "lint": "eslint ./src",
     "format": "prettier --write ./src",
-    "barrel": "barrelsby --directory ./src --delete --singleQuotes",
+    "barrel": "node ../../scripts/barrel.mjs --directory ./src --delete --singleQuotes --append \"export * from '@nyx-discord/types';export * from '@nyx-discord/base';\"",
     "build": "rimraf dist && tsup-node src/index.ts && prettier --write dist/*.d.ts dist/*.d.mts",
     "prepublishOnly": "pnpm run build",
     "test": "vitest --run",
@@ -56,7 +56,11 @@
   },
   "dependencies": {
     "@discordjs/collection": "1.5.3",
-    "discord-api-types": "^0.38.50",
-    "typed-field": "1.3.0"
+    "@discordjs/core": "^2.6.0",
+    "@discordjs/rest": "^2.6.3",
+    "@discordjs/ws": "^2.0.4",
+    "@nyx-discord/base": "workspace:*",
+    "@nyx-discord/types": "workspace:*",
+    "discord-api-types": "^0.38.50"
   }
 }

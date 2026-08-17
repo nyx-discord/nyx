@@ -60,6 +60,6 @@
   "dependencies": {
     "@nyx-discord/base": "workspace:*",
     "@nyx-discord/types": "workspace:*",
-    "discord-api-types": "0.38.22"
+    "discord-api-types": "^0.38.50"
   }
 }

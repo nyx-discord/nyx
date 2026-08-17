@@ -1,0 +1,253 @@
+import type { CommandDeployer, TopLevelCommand } from '@nyx-discord/types';
+import {
+  AssertionError,
+  IllegalStateError,
+  ObjectNotFoundError,
+} from '@nyx-discord/types';
+import type { ReadonlyCollection } from '@discordjs/collection';
+import { Collection } from '@discordjs/collection';
+import type { API } from '@discordjs/core';
+import type { APIApplicationCommand, Snowflake } from 'discord-api-types/v10';
+import { ApplicationCommandType } from 'discord-api-types/v10';
+import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
+
+export class DefaultCommandDeployer implements CommandDeployer<
+  CoreInteractionTypes,
+  APIApplicationCommand
+> {
+  protected readonly api: API;
+
+  protected readonly applicationId: Snowflake;
+
+  protected readonly mappings: Collection<string, APIApplicationCommand> =
+    new Collection();
+
+  // Array while unstarted, null if started
+  protected pendingAdd: TopLevelCommand<CoreInteractionTypes>[] | null = [];
+
+  constructor(api: API, applicationId: Snowflake) {
+    this.api = api;
+    this.applicationId = applicationId;
+  }
+
+  public static create(
+    api: API,
+    applicationId: Snowflake,
+  ): CommandDeployer<CoreInteractionTypes, APIApplicationCommand> {
+    return new this(api, applicationId);
+  }
+
+  public async deploy(): Promise<
+    ReadonlyCollection<string, APIApplicationCommand>
+  > {
+    if (this.pendingAdd === null) {
+      throw new IllegalStateError('Already started.');
+    }
+
+    await this.deployOnly(...this.pendingAdd);
+    this.pendingAdd = null;
+
+    return this.mappings;
+  }
+
+  public async setCommands(
+    ...commands: TopLevelCommand<CoreInteractionTypes>[]
+  ): Promise<this> {
+    if (this.pendingAdd === null) {
+      this.mappings.clear();
+      await this.deployOnly(...commands);
+
+      return this;
+    }
+
+    this.pendingAdd = commands;
+    return this;
+  }
+
+  public async deployCommands(
+    ...commands: TopLevelCommand<CoreInteractionTypes>[]
+  ): Promise<this> {
+    if (this.pendingAdd === null) {
+      await this.deployOnly(...commands);
+    } else {
+      this.pendingAdd.push(...commands);
+    }
+
+    return this;
+  }
+
+  public async removeCommands(
+    ...commands: TopLevelCommand<CoreInteractionTypes>[]
+  ): Promise<this> {
+    if (this.pendingAdd === null) {
+      await this.unDeploy(...commands);
+    } else {
+      for (const command of commands) {
+        const index = this.pendingAdd.indexOf(command);
+        if (index === -1) {
+          throw new AssertionError('Command not found in pending add.');
+        }
+
+        this.pendingAdd.splice(index, 1);
+      }
+    }
+
+    return this;
+  }
+
+  public async editCommands(
+    ...commands: TopLevelCommand<CoreInteractionTypes>[]
+  ): Promise<this> {
+    for (const command of commands) {
+      const id = command.getId();
+      const applicationCommand = this.mappings.get(id);
+      if (!applicationCommand) {
+        throw new ObjectNotFoundError(`Command application not found: ${id}.`);
+      }
+
+      const guildId = applicationCommand.guild_id ?? null;
+      const newMapping =
+        guildId === null
+          ? await this.api.applicationCommands.editGlobalCommand(
+              this.applicationId,
+              applicationCommand.id,
+              command.getData(),
+            )
+          : await this.api.applicationCommands.editGuildCommand(
+              this.applicationId,
+              guildId,
+              applicationCommand.id,
+              command.getData(),
+            );
+
+      this.mappings.set(id, newMapping);
+    }
+
+    return this;
+  }
+
+  public getMappings(): ReadonlyCollection<string, APIApplicationCommand> {
+    return this.mappings;
+  }
+
+  public *keys(): IterableIterator<string> {
+    yield* this.mappings.keys();
+  }
+
+  public *values(): IterableIterator<APIApplicationCommand> {
+    yield* this.mappings.values();
+  }
+
+  public *entries(): IterableIterator<[string, APIApplicationCommand]> {
+    yield* this.mappings.entries();
+  }
+
+  public next(): IteratorResult<APIApplicationCommand> {
+    return this.values().next();
+  }
+
+  public [Symbol.iterator](): IterableIterator<APIApplicationCommand> {
+    return this.values();
+  }
+
+  protected async unDeploy(
+    ...commands: TopLevelCommand<CoreInteractionTypes>[]
+  ): Promise<void> {
+    for (const command of commands) {
+      const id = command.getId();
+      const mapping = this.mappings.get(id);
+      if (!mapping) {
+        throw new ObjectNotFoundError(`Command not found: ${id}.`);
+      }
+
+      if (mapping.guild_id) {
+        await this.api.applicationCommands.deleteGuildCommand(
+          this.applicationId,
+          mapping.guild_id,
+          mapping.id,
+        );
+      } else {
+        await this.api.applicationCommands.deleteGlobalCommand(
+          this.applicationId,
+          mapping.id,
+        );
+      }
+      this.mappings.delete(id);
+    }
+  }
+
+  protected async deployOnly(
+    ...commands: TopLevelCommand<CoreInteractionTypes>[]
+  ): Promise<void> {
+    // Aggregate to Collection<guildId | null if global, commands> to minimize API calls
+    const guildAggregate = new Collection<
+      Snowflake | null,
+      TopLevelCommand<CoreInteractionTypes>[]
+    >();
+    for (const command of commands) {
+      const possibleDuplicate = this.mappings.get(command.getId());
+      if (possibleDuplicate) {
+        throw new AssertionError(
+          `Already deployed command ${command}, found duplicate: '${possibleDuplicate}'.`,
+        );
+      }
+
+      const guilds = command.getGuilds();
+      for (const guild of guilds ?? [null]) {
+        const guildCommands = guildAggregate.get(guild) ?? [];
+        guildCommands.push(command);
+        guildAggregate.set(guild, guildCommands);
+      }
+    }
+
+    const deployPromises: Promise<void>[] = [];
+    for (const [guild, guildCommands] of guildAggregate) {
+      const promise = Promise.resolve().then<void>(async () => {
+        const datas = guildCommands.map((command) => command.getData());
+
+        const result =
+          guild === null
+            ? await this.api.applicationCommands.bulkOverwriteGlobalCommands(
+                this.applicationId,
+                datas,
+              )
+            : await this.api.applicationCommands.bulkOverwriteGuildCommands(
+                this.applicationId,
+                guild,
+                datas,
+              );
+
+        this.mapCommands(result, guildCommands);
+      });
+
+      deployPromises.push(promise);
+    }
+
+    await Promise.all(deployPromises);
+  }
+
+  /** Maps ApplicationCommands to their respective TopLevelCommand, and updates the mappings. */
+  protected mapCommands(
+    applications: APIApplicationCommand[],
+    commands: TopLevelCommand<CoreInteractionTypes>[],
+  ): void {
+    for (const application of applications) {
+      const name = application.name;
+      const command = commands.find((command) => {
+        const data = command.getData();
+        const type = data.type ?? ApplicationCommandType.ChatInput;
+
+        return data.name === name && type === application.type;
+      });
+
+      if (!command) {
+        throw new ObjectNotFoundError(
+          `Could not associate any command in '${commands}' with an application of type '${application.type}' and name '${name}'.`,
+        );
+      }
+
+      // We assume duplicates have already been checked
+      this.mappings.set(command.getId(), application);
+    }
+  }
+}

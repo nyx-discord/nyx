@@ -1,7 +1,4 @@
-/**
- * A bundle of the concrete interaction types used by a Discord backend,
- * each adapter fills them with its own native interaction types.
- */
+/** A bundle of the concrete interaction types used by a Discord backend. */
 export interface InteractionTypes {
   /** The interaction type for chat input (slash) commands. */
   readonly ChatInputInteraction: unknown;
