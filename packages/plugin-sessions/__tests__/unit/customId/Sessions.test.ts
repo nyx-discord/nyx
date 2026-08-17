@@ -4,7 +4,7 @@ import { MockSession } from '#mocks/MockSession';
 import { MockSessionStage } from '#mocks/stage/MockSessionStage';
 import { MockStagePaginationSession } from '#mocks/stage/MockStagePaginationSession';
 import type { PaginationSession, Session } from '#src';
-import { SessionPlugin } from '#src';
+import { DjsSessionPlugin } from '#src';
 import { describe, expect, it, test } from 'vitest';
 
 const createSession = () => MockSession.createMock();
@@ -30,7 +30,7 @@ function runBaseTests(name: string, factory: () => Promise<Session<any>>) {
 
       const sessionGenerated = session.buildCustomId();
 
-      const codecGenerated = SessionPlugin.getFromBot(bot)
+      const codecGenerated = DjsSessionPlugin.getFromBot(bot)
         .getCustomIdCodec()
         .serialize({
           id: session.getId(),
@@ -46,7 +46,7 @@ function runBaseTests(name: string, factory: () => Promise<Session<any>>) {
       const bot = session.getBot();
 
       const sessionGenerated = session.buildCustomId('test');
-      const codecGenerated = SessionPlugin.getFromBot(bot)
+      const codecGenerated = DjsSessionPlugin.getFromBot(bot)
         .getCustomIdCodec()
         .serialize({
           id: session.getId(),
@@ -92,7 +92,7 @@ function runPaginationTests(
       const bot = session.getBot();
 
       const sessionGenerated = session.buildPageCustomId(1, 'test');
-      const codecGenerated = SessionPlugin.getFromBot(bot)
+      const codecGenerated = DjsSessionPlugin.getFromBot(bot)
         .getCustomIdCodec()
         .serialize({
           id: session.getId(),
@@ -143,7 +143,7 @@ describe("AbstractSessions' CustomIds", () => {
         stage.getSession().getStages()[0],
         'test',
       );
-      const codecGenerated = SessionPlugin.getFromBot(bot)
+      const codecGenerated = DjsSessionPlugin.getFromBot(bot)
         .getCustomIdCodec()
         .serialize({
           id: stage.getSession().getId(),

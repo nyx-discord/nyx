@@ -9,8 +9,10 @@
       "#mocks/*": ["./__tests__/mocks/*"]
     },
     "customConditions": [
-      "@nyx-discord/framework",
-      "@nyx-discord/core"
+      "@nyx-discord/djs",
+      "@nyx-discord/djs-core",
+      "@nyx-discord/base",
+      "@nyx-discord/types"
     ]
   },
   "include": [

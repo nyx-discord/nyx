@@ -3,10 +3,10 @@ import {
   SessionExceedAction,
   SessionLimitExceededError,
   SessionLimitScope,
-  SessionPlugin,
+  DjsSessionPlugin,
 } from '#src';
-import type { Metadata, NyxBot } from '@nyx-discord/framework';
-import { TypedFields } from '@nyx-discord/framework';
+import type { Metadata, NyxBot } from '@nyx-discord/types';
+import { TypedFields } from '@nyx-discord/types';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { getTestBot } from '../../testBot';
 
@@ -30,7 +30,7 @@ const Scope = SessionLimitScope;
 describe('SessionPlugin integration', () => {
   describe('scope: User', () => {
     it('allows different users independently', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [{ max: 1, scope: Scope.User, onExceed: AE.Error }],
@@ -45,7 +45,7 @@ describe('SessionPlugin integration', () => {
     });
 
     it('blocks the same user at max=1', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [{ max: 1, scope: Scope.User, onExceed: AE.Error }],
@@ -60,7 +60,7 @@ describe('SessionPlugin integration', () => {
 
   describe('scope: Guild', () => {
     it('allows different guilds independently', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [{ max: 1, scope: Scope.Guild, onExceed: AE.Error }],
@@ -75,7 +75,7 @@ describe('SessionPlugin integration', () => {
     });
 
     it('blocks the same guild at max=1', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [{ max: 1, scope: Scope.Guild, onExceed: AE.Error }],
@@ -88,7 +88,7 @@ describe('SessionPlugin integration', () => {
     });
 
     it("treats null guildId as 'dm' for DM sessions", async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [{ max: 1, scope: Scope.Guild, onExceed: AE.Error }],
@@ -103,7 +103,7 @@ describe('SessionPlugin integration', () => {
 
   describe('scope: Channel', () => {
     it('blocks the same channel at max=1', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [{ max: 1, scope: Scope.Channel, onExceed: AE.Error }],
@@ -116,7 +116,7 @@ describe('SessionPlugin integration', () => {
     });
 
     it('allows different channels independently', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [{ max: 1, scope: Scope.Channel, onExceed: AE.Error }],
@@ -133,7 +133,7 @@ describe('SessionPlugin integration', () => {
 
   describe('scope: composite', () => {
     it('blocks same user in same guild, allows otherwise', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [
@@ -159,7 +159,7 @@ describe('SessionPlugin integration', () => {
 
   describe('scope: custom', () => {
     it('uses a custom key function', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [
@@ -185,7 +185,7 @@ describe('SessionPlugin integration', () => {
 
   describe('action: displace', () => {
     it('displaces the oldest session and starts the new one', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [{ max: 1, scope: Scope.User, onExceed: AE.displace() }],
@@ -205,7 +205,7 @@ describe('SessionPlugin integration', () => {
 
   describe('action: custom', () => {
     it('proceed=true lets through', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         rules: [
@@ -227,7 +227,7 @@ describe('SessionPlugin integration', () => {
 
   describe('predicates', () => {
     it('applies premium-tier max to matching users', async () => {
-      const plugin = SessionPlugin.create();
+      const plugin = DjsSessionPlugin.create();
       plugin.getSessionLimits().register({
         session: MockSession,
         predicate: (_, meta) => Tier.get(meta) === 'premium',

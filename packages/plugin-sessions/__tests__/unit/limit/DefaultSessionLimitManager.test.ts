@@ -3,13 +3,13 @@ import {
   SessionExceedAction,
   SessionLimitExceededError,
   SessionLimitScope,
-  SessionPlugin,
+  DjsSessionPlugin,
 } from '#src';
 import type {
   Metadata,
   NyxBot
-} from '@nyx-discord/framework';
-import { TypedFields } from '@nyx-discord/framework';
+} from '@nyx-discord/types';
+import { TypedFields } from '@nyx-discord/types';
 import {
   beforeAll,
   describe,
@@ -29,8 +29,8 @@ const makeSession = (overrides?: {
   channelId?: string;
 }) => MockSession.withInteraction(bot, overrides);
 
-function createPlugin(): SessionPlugin {
-  return SessionPlugin.create();
+function createPlugin(): DjsSessionPlugin {
+  return DjsSessionPlugin.create();
 }
 
 beforeAll(async () => {

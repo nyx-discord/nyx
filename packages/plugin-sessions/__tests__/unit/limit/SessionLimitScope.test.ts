@@ -8,6 +8,9 @@ function makeSession(
   channelId: string | null,
 ): Session<unknown> {
   return {
+    getUserId: () => userId,
+    getGuildId: () => guildId,
+    getChannelId: () => channelId ?? 'unknown',
     getStartInteraction: () =>
       ({
         user: { id: userId },

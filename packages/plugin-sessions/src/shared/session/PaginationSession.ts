@@ -1,0 +1,20 @@
+import type { InteractionTypes } from '@nyx-discord/types';
+import type { Session } from './Session.js';
+
+/** A type of session that can be paginated. For example, {@link ListPaginationSession} or {@link StagePaginationSession}. */
+export interface PaginationSession<
+  Result,
+  Types extends InteractionTypes = InteractionTypes,
+> extends Session<Result, Types> {
+  /** Returns the current page of this session. */
+  getCurrentPage(): number;
+
+  /** Returns the next page of this session, or `null` if there is no next page. */
+  getNextPage(): number | null;
+
+  /** Returns the previous page of this session, or `null` if there is no previous page. */
+  getPreviousPage(): number | null;
+
+  /** Builds this session's custom id to a specific page, optionally with extra data. */
+  buildPageCustomId(page: number, extra?: string): string;
+}

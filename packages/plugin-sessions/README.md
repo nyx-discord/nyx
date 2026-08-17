@@ -12,11 +12,30 @@ It helps you transform one-shot commands and components into rich, long-lived co
 - **Interactive menus**: any message where the user can press buttons, pick from dropdowns, or fill in modals to drive behavior.
 - **Rich result flows**: let users build something interactively, then `await session.getEndPromise()` to receive the final result and continue your command logic.
 
+## 📦 Adapters
+
+The plugin is decoupled from any Discord library. Pick the entry point that matches your bot's backend:
+
+- `@nyx-discord/plugin-sessions/djs` for [discord.js](https://discord.js.org) bots.
+- `@nyx-discord/plugin-sessions/djs-core` for [@discordjs/core](https://www.npmjs.com/package/@discordjs/core) bots.
+
+The root entry (`@nyx-discord/plugin-sessions`) re-exports `/djs` for convenience.
+
+## ⚙️ Registration
+
+Register the plugin on your bot so sessions can resolve themselves:
+
+```ts
+import { DjsSessionPlugin } from '@nyx-discord/plugin-sessions/djs';
+
+await bot.getPluginManager().register(DjsSessionPlugin.create());
+```
+
 ## 💻 Full example
 
 ```ts
-import { AbstractSession } from '@nyx-discord/plugin-sessions';
-import { TypedFields, type Metadata } from '@nyx-discord/framework';
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+import { TypedFields, type Metadata } from '@nyx-discord/djs';
 import {
   StringSelectMenuBuilder, StringSelectMenuOptionBuilder,
   ButtonBuilder, ButtonStyle, ActionRowBuilder,

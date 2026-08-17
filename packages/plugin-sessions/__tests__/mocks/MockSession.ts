@@ -1,5 +1,5 @@
 import type { SessionStartInteraction } from '#src';
-import type { NyxBot } from '@nyx-discord/framework';
+import type { NyxBot } from '@nyx-discord/types';
 import { randomUUID } from 'crypto';
 import { vi } from 'vitest';
 import { getTestBot } from '../testBot';
