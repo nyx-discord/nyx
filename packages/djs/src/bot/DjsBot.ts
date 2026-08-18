@@ -1,22 +1,23 @@
+import {
+  BaseBot,
+  BasicEventEmitterBus,
+  DefaultBotService,
+  DefaultMetadataFactory,
+  DefaultPluginManager,
+  DefaultScheduleManager,
+} from '@nyx-discord/base';
 import type {
   BotOptions,
   InjectableBotDependencies,
   NyxBot,
 } from '@nyx-discord/types';
 import { TypedFields } from '@nyx-discord/types';
-import {
-  BasicEventEmitterBus,
-  BaseBot,
-  DefaultBotService,
-  DefaultMetadataFactory,
-  DefaultPluginManager,
-  DefaultScheduleManager,
-} from '@nyx-discord/base';
 import type { ApplicationCommand, Client, ClientEvents } from 'discord.js';
-import type { DjsNyxClient } from '../client/DjsNyxClient.js';
+import { DjsNyxClient } from '../client/DjsNyxClient.js';
 import { DefaultCommandManager } from '../features/command/DefaultCommandManager.js';
 import type { DjsInteractionTypes } from '../types/DjsInteractionTypes.js';
 
+// Base dependencies injected to the BaseBot for the getter return types
 type DjsBotDependencies = InjectableBotDependencies<
   DjsInteractionTypes,
   DjsNyxClient,
@@ -24,11 +25,20 @@ type DjsBotDependencies = InjectableBotDependencies<
   ApplicationCommand
 >;
 
+// Helper type that replaces the DjsBotDependencies['client'] (NyxClient) with a d.js Client
+// Used in the .create() method to allow the user to specify a Client directly instead of
+// a NyxClient for convenience
+type DjsBotDependenciesWithDjsClient = Omit<DjsBotDependencies, 'client'> & {
+  client: Client;
+};
+
+// Required return type for the generator callback in .create(), partializes most
+// options but requires the user to provide required ones (logger, client, etc)
 type DjsBotOptionsWithDefaults<
-  Implementations extends Partial<DjsBotDependencies>,
+  Implementations extends Partial<DjsBotDependenciesWithDjsClient>,
 > = Implementations
   & Pick<
-    BotOptions<DjsBotDependencies>,
+    BotOptions<DjsBotDependenciesWithDjsClient>,
     'logger' | 'client' | 'token' | 'deployCommands'
   >;
 
@@ -36,7 +46,9 @@ type DjsBotOptionsWithDefaults<
 export class DjsBot<
   Implementations extends DjsBotDependencies = DjsBotDependencies,
 > extends BaseBot<Implementations> {
-  public static create<Implementations extends Partial<DjsBotDependencies>>(
+  public static create<
+    Implementations extends Partial<DjsBotDependenciesWithDjsClient>,
+  >(
     generator: (bot: NyxBot) => DjsBotOptionsWithDefaults<Implementations>,
   ): NyxBot<DjsBotDependencies & Implementations> {
     return new this((bot) => {
@@ -49,13 +61,14 @@ export class DjsBot<
       return {
         ...defaultOptions,
         ...generatedOptions,
+        client: new DjsNyxClient(generatedOptions.client),
       };
     });
   }
 
   public static readonly DefaultOptionsGenerator = (
     bot: NyxBot,
-    client: DjsNyxClient,
+    client: Client,
   ) => {
     const metaFactory = DefaultMetadataFactory.createWith([
       TypedFields.Bot,
@@ -64,13 +77,13 @@ export class DjsBot<
     const clientBus = BasicEventEmitterBus.createSyncWithEmitter<
       ClientEvents,
       Client
-    >(client.getEmitter(), metaFactory);
+    >(client, metaFactory);
 
     return {
       clientEventBus: clientBus,
       commandManager: DefaultCommandManager.create({
         bot,
-        client: client.getEmitter(),
+        client,
         clientBus,
       }),
       scheduleManager: DefaultScheduleManager.create({ bot }),

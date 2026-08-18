@@ -5,11 +5,8 @@ import type { Client } from 'discord.js';
 export class DjsNyxClient implements NyxClient<Client> {
   protected readonly client: Client;
 
-  protected readonly token: string;
-
-  constructor(client: Client, token: string) {
+  constructor(client: Client) {
     this.client = client;
-    this.token = token;
   }
 
   public getEmitter(): Client {
@@ -17,7 +14,7 @@ export class DjsNyxClient implements NyxClient<Client> {
   }
 
   public async login(): Promise<void> {
-    await this.client.login(this.token);
+    await this.client.login();
   }
 
   public destroy(): Promise<void> {

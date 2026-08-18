@@ -1,9 +1,4 @@
-import type {
-  BotOptions,
-  InjectableBotDependencies,
-  NyxBot,
-} from '@nyx-discord/types';
-import { TypedFields } from '@nyx-discord/types';
+import type { Client, MappedEvents } from '@discordjs/core';
 import {
   BaseBot,
   BasicEventEmitterBus,
@@ -12,19 +7,25 @@ import {
   DefaultPluginManager,
   DefaultScheduleManager,
 } from '@nyx-discord/base';
-import type { Client, MappedEvents } from '@discordjs/core';
-import type { APIApplicationCommand } from 'discord-api-types/v10';
+import type {
+  BotOptions,
+  InjectableBotDependencies,
+  NyxBot,
+} from '@nyx-discord/types';
+import { TypedFields } from '@nyx-discord/types';
 import type { CoreNyxClient } from '../client/CoreNyxClient.js';
 import { DefaultCommandManager } from '../features/command/DefaultCommandManager.js';
 import type { CoreInteractionTypes } from '../types/CoreInteractionTypes.js';
 
+// Base dependencies injected to the BaseBot for the getter return types
 type CoreBotDependencies = InjectableBotDependencies<
   CoreInteractionTypes,
   CoreNyxClient,
-  MappedEvents,
-  APIApplicationCommand
+  MappedEvents
 >;
 
+// Required return type for the generator callback in .create(), partializes most
+// options but requires the user to provide required ones (logger, client, etc)
 type CoreBotOptionsWithDefaults<
   Implementations extends Partial<CoreBotDependencies>,
 > = Implementations
