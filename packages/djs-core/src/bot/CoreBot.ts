@@ -12,9 +12,9 @@ import type {
   InjectableBotDependencies,
   NyxBot,
 } from '@nyx-discord/types';
-import { TypedFields } from '@nyx-discord/types';
 import type { CoreNyxClient } from '../client/CoreNyxClient.js';
 import { DefaultCommandManager } from '../features/command/DefaultCommandManager.js';
+import { TypedFields } from '../fields/TypedFields';
 import type { CoreInteractionTypes } from '../types/CoreInteractionTypes.js';
 
 // Base dependencies injected to the BaseBot for the getter return types
@@ -59,10 +59,10 @@ export class CoreBot<
     bot: NyxBot,
     client: CoreNyxClient,
   ) => {
-    const metaFactory = DefaultMetadataFactory.createWith([
-      TypedFields.Bot,
-      bot,
-    ]);
+    const metaFactory = DefaultMetadataFactory.createWith(
+      [TypedFields.Bot, bot],
+      [TypedFields.CoreBot, bot as unknown as CoreBot],
+    );
     const clientBus = BasicEventEmitterBus.createSyncWithEmitter<
       MappedEvents,
       Client

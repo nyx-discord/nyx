@@ -11,10 +11,10 @@ import type {
   InjectableBotDependencies,
   NyxBot,
 } from '@nyx-discord/types';
-import { TypedFields } from '@nyx-discord/types';
 import type { ApplicationCommand, Client, ClientEvents } from 'discord.js';
 import { DjsNyxClient } from '../client/DjsNyxClient.js';
 import { DefaultCommandManager } from '../features/command/DefaultCommandManager.js';
+import { TypedFields } from '../fields/TypedFields';
 import type { DjsInteractionTypes } from '../types/DjsInteractionTypes.js';
 
 // Base dependencies injected to the BaseBot for the getter return types
@@ -70,10 +70,10 @@ export class DjsBot<
     bot: NyxBot,
     client: Client,
   ) => {
-    const metaFactory = DefaultMetadataFactory.createWith([
-      TypedFields.Bot,
-      bot,
-    ]);
+    const metaFactory = DefaultMetadataFactory.createWith(
+      [TypedFields.Bot, bot],
+      [TypedFields.DjsBot, bot as unknown as DjsBot],
+    );
     const clientBus = BasicEventEmitterBus.createSyncWithEmitter<
       ClientEvents,
       Client

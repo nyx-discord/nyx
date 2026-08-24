@@ -1,6 +1,6 @@
 import {
-  TypedFields as BaseTypedFields,
   type TypedField,
+  TypedFields as BaseTypedFields,
 } from '@nyx-discord/types';
 import type { DjsBot } from '../bot/DjsBot';
 
@@ -9,5 +9,5 @@ export const TypedFields: typeof BaseTypedFields & {
   readonly DjsBot: TypedField<DjsBot>;
 } = {
   ...BaseTypedFields,
-  DjsBot: BaseTypedFields.create<DjsBot>('NyxBot'),
+  DjsBot: BaseTypedFields.create<DjsBot>('DjsBot'),
 } as const;
