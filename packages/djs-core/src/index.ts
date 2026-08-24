@@ -21,6 +21,7 @@ export * from './types/CoreCommandInteraction';
 export * from './types/CoreComponentInteraction';
 export * from './types/CoreInteractionContext';
 export * from './types/CoreInteractionTypes';
+export { TypedFields } from './fields/TypedFields';
 
 export * from '@nyx-discord/types';
 export * from '@nyx-discord/base';

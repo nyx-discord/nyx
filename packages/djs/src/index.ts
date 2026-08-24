@@ -1,4 +1,5 @@
 export { DjsBot as Bot } from './bot/DjsBot';
+export { DjsBot } from './bot/DjsBot';
 export * from './client/DjsNyxClient';
 export * from './features/command/commands/AbstractCommand';
 export * from './features/command/commands/AbstractContextMenuCommand';
@@ -20,6 +21,7 @@ export * from './features/event/subscriber/AbstractDJSClientSubscriber';
 export * from './types/DjsCommandInteraction';
 export * from './types/DjsComponentInteraction';
 export * from './types/DjsInteractionTypes';
+export { TypedFields } from './fields/TypedFields';
 
 export * from '@nyx-discord/types';
 export * from '@nyx-discord/base';
