@@ -4,6 +4,7 @@ icon: Laptop
 ---
 
 import { BabyIcon, CommandIcon, FolderIcon, FoldersIcon, PictureInPicture } from 'lucide-react';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 Commands are how your bot responds to user interactions.
 
@@ -17,27 +18,58 @@ If you really need such functionality, you can implement it yourself using the `
 
 Let's create a simple ping command:
 
-```ts twoslash
-import { type NyxBot } from '@nyx-discord/framework';
-declare const bot: NyxBot;
-// ---cut---
-import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
-import { AbstractStandaloneCommand } from '@nyx-discord/framework';
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
+    import { type NyxBot } from '@nyx-discord/djs';
+    declare const bot: NyxBot;
+    // ---cut---
+    import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
+    import { AbstractStandaloneCommand } from '@nyx-discord/djs';
 
-class PingCommand extends AbstractStandaloneCommand {
-  protected readonly data = new SlashCommandBuilder()
-    .setName('ping')
-    .setDescription('Replies with Pong!')
-    .toJSON();
+    class PingCommand extends AbstractStandaloneCommand {
+      protected readonly data = new SlashCommandBuilder()
+        .setName('ping')
+        .setDescription('Replies with Pong!')
+        .toJSON();
 
-  public async execute(interaction: ChatInputCommandInteraction) {
-    await interaction.reply('Pong!');
-  }
-}
+      public async execute(interaction: ChatInputCommandInteraction) {
+        await interaction.reply('Pong!');
+      }
+    }
 
-// Register the command
-await bot.getCommandManager().addCommands(new PingCommand());
-```
+    // Register the command
+    await bot.getCommandManager().addCommands(new PingCommand());
+    ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+    import { type NyxBot } from '@nyx-discord/djs-core';
+    import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+    declare const bot: NyxBot;
+    // ---cut---
+    import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+
+    class PingCommand extends AbstractStandaloneCommand {
+      protected readonly data = {
+        name: 'ping',
+        description: 'Replies with Pong!',
+      };
+
+      public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+        await interaction.api.interactions.reply(
+          interaction.data.id,
+          interaction.data.token,
+          { content: 'Pong!' },
+        );
+      }
+    }
+
+    // Register the command
+    await bot.getCommandManager().addCommands(new PingCommand());
+    ```
+  </Tab>
+</Tabs>
 
 That's it! Your bot now has a `/ping` command that replies with "Pong!" when used.
 
@@ -45,35 +77,71 @@ The framework doesn't store any state in the instance, so you can reuse it acros
 
 ## Command deployment
 
-For commands to be deployed at Discord, you must either:
+For commands to be deployed at Discord, you must either pass `deployCommands: true` when creating the bot, or deploy them manually.
 
-- Pass `deployCommands: true` when creating the bot
-  ```ts twoslash
-  import { Client } from 'discord.js';
-  declare const client: Client<boolean>;
-  // ---cut---
-  import { Bot } from '@nyx-discord/framework';
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
+    import { Client } from 'discord.js';
+    declare const client: Client<boolean>;
+    // ---cut---
+    import { Bot, DjsNyxClient } from '@nyx-discord/djs';
 
-  const myBot = Bot.create((bot) => ({
-    // ---cut-start---
-    token: 'TOKEN', client, logger: console,
-    // ---cut-end---
-    // ... other options
-    deployCommands: true,
-  }));
-  ```
-  Then, when starting the bot, it will automatically deploy them.
+    const myBot = Bot.create((bot) => ({
+      // ---cut-start---
+      token: 'TOKEN', client: new DjsNyxClient(client, 'TOKEN'), logger: console,
+      // ---cut-end---
+      // ... other options
+      deployCommands: true,
+    }));
+    ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+    import { Client, GatewayIntentBits } from '@discordjs/core';
+    import { REST } from '@discordjs/rest';
+    import { WebSocketManager } from '@discordjs/ws';
+    const rest = new REST({ version: '10' }).setToken('TOKEN');
+    const gateway = new WebSocketManager({ token: 'TOKEN', intents: GatewayIntentBits.Guilds, rest });
+    const client = new Client({ rest, gateway });
+    // ---cut---
+    import { Bot, CoreNyxClient } from '@nyx-discord/djs-core';
 
-- Manually deploy:
+    const myBot = Bot.create((bot) => ({
+      // ---cut-start---
+      token: 'TOKEN', client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'), logger: console,
+      // ---cut-end---
+      // ... other options
+      deployCommands: true,
+    }));
+    ```
+  </Tab>
+</Tabs>
 
-  <Callout type="error">This will throw if you passed `deployCommands: true` or already called it before.</Callout>
+Then, when starting the bot, it will automatically deploy them.
 
-  ```ts twoslash
-  import { Bot } from '@nyx-discord/framework';
-  declare const bot: Bot;
-  // ---cut---
-  await bot.getCommandManager().deploy();
-  ```
+You can also deploy manually:
+
+<Callout type="error">This will throw if you passed `deployCommands: true` or already called it before.</Callout>
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
+    import { Bot } from '@nyx-discord/djs';
+    declare const bot: Bot;
+    // ---cut---
+    await bot.getCommandManager().deploy();
+    ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+    import { Bot } from '@nyx-discord/djs-core';
+    declare const bot: Bot;
+    // ---cut---
+    await bot.getCommandManager().deploy();
+    ```
+  </Tab>
+</Tabs>
 
 ### Add or deploy first?
 

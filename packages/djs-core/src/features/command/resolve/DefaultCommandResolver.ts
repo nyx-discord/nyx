@@ -1,3 +1,4 @@
+import type { ToEventProps } from '@discordjs/core';
 import type {
   AnyExecutableCommand,
   ApplicationCommandInteraction,
@@ -15,7 +16,6 @@ import {
   ApplicationCommandType,
   InteractionType,
 } from 'discord-api-types/v10';
-import type { CoreInteractionContext } from '../../../types/CoreInteractionContext.js';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 
 export class DefaultCommandResolver implements CommandResolver<CoreInteractionTypes> {
@@ -31,7 +31,7 @@ export class DefaultCommandResolver implements CommandResolver<CoreInteractionTy
   }
 
   public resolveFromAutocompleteInteraction(
-    interaction: CoreInteractionContext<APIApplicationCommandAutocompleteInteraction>,
+    interaction: ToEventProps<APIApplicationCommandAutocompleteInteraction>,
     repository: CommandRepository<CoreInteractionTypes>,
   ): AnyExecutableCommand<CoreInteractionTypes> | null {
     return this.resolve(interaction, repository);
@@ -81,7 +81,7 @@ export class DefaultCommandResolver implements CommandResolver<CoreInteractionTy
   protected resolve(
     interaction:
       | ApplicationCommandInteraction<CoreInteractionTypes>
-      | CoreInteractionContext<APIApplicationCommandAutocompleteInteraction>,
+      | ToEventProps<APIApplicationCommandAutocompleteInteraction>,
     repository: CommandRepository<CoreInteractionTypes>,
   ): AnyExecutableCommand<CoreInteractionTypes> | null {
     const data = interaction.data;

@@ -4,6 +4,7 @@ icon: Megaphone
 ---
 
 import { EyeIcon, BusIcon } from 'lucide-react';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 The event system in nyx is powered by [EventBuses](/use/events/buses). These are objects that store and notify their [EventSubscribers](/use/events/subscribers) when an event is called either internally or from another source.
 
@@ -11,46 +12,86 @@ You can see them as a more batteries-included way of handling events than using 
 
 ## Quick example
 
-```ts twoslash
-import { AbstractDJSClientSubscriber, Metadata } from '@nyx-discord/framework';
-import { Events, Interaction } from 'discord.js';
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
+    import { AbstractDJSClientSubscriber, type Metadata } from '@nyx-discord/djs';
+    import { Events, type Interaction } from 'discord.js';
 
-class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
-  protected readonly event = Events.InteractionCreate;
+    class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
+      protected readonly event = Events.InteractionCreate;
 
-  public async handleEvent(meta: Metadata, interaction: Interaction) {
-    console.log(`Interaction created: ${interaction.id}`);
-  }
-}
+      public async handleEvent(meta: Metadata, interaction: Interaction) {
+        console.log(`Interaction created: ${interaction.id}`);
+      }
+    }
 
-// ---cut-start---
-import { NyxBot } from '@nyx-discord/framework';
-declare const bot: NyxBot;
-// ---cut-end---
-await bot.subscribeToClient(new InteractionCreateLogger());
-```
+    // ---cut-start---
+    import type { NyxBot } from '@nyx-discord/djs';
+    declare const bot: NyxBot;
+    // ---cut-end---
+    await bot.subscribeToClient(new InteractionCreateLogger());
+    ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+    import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/djs-core';
+    import { GatewayDispatchEvents, type ToEventProps, type APIInteraction } from '@discordjs/core';
+
+    class InteractionCreateLogger extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
+      protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+      public async handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {
+        console.log(`Interaction created: ${payload.data.id}`);
+      }
+    }
+
+    // ---cut-start---
+    import type { NyxBot } from '@nyx-discord/djs-core';
+    declare const bot: NyxBot;
+    // ---cut-end---
+    await bot.subscribeToClient(new InteractionCreateLogger());
+    ```
+  </Tab>
+</Tabs>
 
 That's it! Your bot will now log every interaction.
 
 ## Client Bus
 
-The Discord.js Client is wrapped under an event bus, which you can get:
+The client is wrapped under an event bus, which you can get:
 
-```ts twoslash
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
 // ---cut-start---
-import { NyxBot } from '@nyx-discord/framework';
+import { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut-end---
 const bus = bot.getClientEventBus();
 //    ^?
 ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+// ---cut-start---
+import { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut-end---
+const bus = bot.getClientEventBus();
+//    ^?
+```
+  </Tab>
+</Tabs>
 
 And you can directly subscribe to it:
 
-```ts twoslash
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
 // ---cut-start---
-import { NyxBot, EventSubscriber, AbstractDJSClientSubscriber } from '@nyx-discord/framework';
-import { Events, ClientEvents } from 'discord.js';
+import { NyxBot, AbstractDJSClientSubscriber } from '@nyx-discord/djs';
+import { Events } from 'discord.js';
 declare const bot: NyxBot;
 class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
   protected readonly event = Events.InteractionCreate;
@@ -63,23 +104,59 @@ await bot.subscribeToClient(new InteractionCreateLogger());
 // Equivalent to:
 await bot.getClientEventBus().subscribe(new InteractionCreateLogger());
 ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+// ---cut-start---
+import { NyxBot, AbstractDJSClientSubscriber } from '@nyx-discord/djs-core';
+import { Events } from 'discord.js';
+declare const bot: NyxBot;
+class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
+  protected readonly event = Events.InteractionCreate;
+
+  public async handleEvent() {}
+}
+
+// ---cut-end---
+await bot.subscribeToClient(new InteractionCreateLogger());
+// Equivalent to:
+await bot.getClientEventBus().subscribe(new InteractionCreateLogger());
+```
+  </Tab>
+</Tabs>
 
 ## Custom buses
 
 You can create and directly use any bus you want:
 
-```ts twoslash
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
 // ---cut-start---
-import { BasicEventBus, NyxBot } from '@nyx-discord/framework';
+import { BasicEventBus } from '@nyx-discord/djs';
 type MyEventsArgs = {
   someEvent: [string, number];
   anotherEvent: [boolean];
 };
-declare const bot: NyxBot;
 // ---cut-end---
 const syncBus = BasicEventBus.createSync<MyEventsArgs>(); // Waits for its subscribers to finish, with a timeout
 const asyncBus = BasicEventBus.createAsync<MyEventsArgs>(); // Executes a pool of subscribers at once
 ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+// ---cut-start---
+import { BasicEventBus } from '@nyx-discord/djs-core';
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+const syncBus = BasicEventBus.createSync<MyEventsArgs>(); // Waits for its subscribers to finish, with a timeout
+const asyncBus = BasicEventBus.createAsync<MyEventsArgs>(); // Executes a pool of subscribers at once
+```
+  </Tab>
+</Tabs>
 
 You can check more information about bus creation in the [Event Buses](/use/events/buses) page.
 

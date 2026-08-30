@@ -5,6 +5,7 @@ icon: PictureInPicture
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { LayersIcon, LockIcon, MousePointerClickIcon } from 'lucide-react';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 Context menu commands are commands executed on special menus. Currently Discord has two types of context menus:
 
@@ -19,13 +20,26 @@ Context menu commands are commands executed on special menus. Currently Discord 
 
 Extend the `AbstractContextMenuCommand` class:
 
-```ts twoslash
-import { AbstractContextMenuCommand } from '@nyx-discord/framework';
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/djs';
 // ---cut-start---
 // @ts-expect-error Incomplete example
 // ---cut-end---
 class MyContextMenuCommand extends AbstractContextMenuCommand {}
 ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyContextMenuCommand extends AbstractContextMenuCommand {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -36,21 +50,47 @@ Implement `data` that stores the command's data, and the respective `executeX()`
 - `executeMessage()` for message context menus.
 - `executeUser()` for user context menus.
 
-```ts twoslash
-import { ApplicationCommandType, ContextMenuCommandBuilder, type MessageContextMenuCommandInteraction } from 'discord.js';
-import { AbstractContextMenuCommand } from '@nyx-discord/framework';
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
+    import { ApplicationCommandType, ContextMenuCommandBuilder, type MessageContextMenuCommandInteraction } from 'discord.js';
+    import { AbstractContextMenuCommand } from '@nyx-discord/djs';
 
-class MyContextMenuCommand extends AbstractContextMenuCommand {
-  protected readonly data = new ContextMenuCommandBuilder()
-    .setName('My Context Menu')
-    .setType(ApplicationCommandType.User) // or ApplicationCommandType.Message
-    .toJSON();
+    class MyContextMenuCommand extends AbstractContextMenuCommand {
+      protected readonly data = new ContextMenuCommandBuilder()
+        .setName('My Context Menu')
+        .setType(ApplicationCommandType.User) // or ApplicationCommandType.Message
+        .toJSON();
 
-  public async executeMessage(interaction: MessageContextMenuCommandInteraction) {
-    await interaction.reply('Hello!');
-  }
-}
-```
+      public async executeMessage(interaction: MessageContextMenuCommandInteraction) {
+        await interaction.reply('Hello!');
+      }
+    }
+    ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+    import { ApplicationCommandType } from '@discordjs/core';
+    import type { APIMessageApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+    import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
+
+    class MyContextMenuCommand extends AbstractContextMenuCommand {
+      protected readonly data = {
+        name: 'My Context Menu',
+        type: ApplicationCommandType.User, // or ApplicationCommandType.Message
+      } as const;
+
+      public async executeMessage(interaction: ToEventProps<APIMessageApplicationCommandInteraction>) {
+        await interaction.api.interactions.reply(
+          interaction.data.id,
+          interaction.data.token,
+          { content: 'Hello!' },
+        );
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -58,13 +98,26 @@ class MyContextMenuCommand extends AbstractContextMenuCommand {
 
 Instantiate and register it to a bot's `CommandManager`.
 
-```ts twoslash
-import type { ContextMenuCommand, NyxBot } from '@nyx-discord/framework';
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
+import type { ContextMenuCommand, NyxBot } from '@nyx-discord/djs';
 declare const MyContextMenuCommand: new () => ContextMenuCommand;
 declare const bot: NyxBot;
 // ---cut---
 await bot.getCommandManager().addCommands(new MyContextMenuCommand());
 ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+import type { ContextMenuCommand, NyxBot } from '@nyx-discord/djs-core';
+declare const MyContextMenuCommand: new () => ContextMenuCommand;
+declare const bot: NyxBot;
+// ---cut---
+await bot.getCommandManager().addCommands(new MyContextMenuCommand());
+```
+  </Tab>
+</Tabs>
 
 </Step>
 </Steps>
@@ -74,8 +127,10 @@ await bot.getCommandManager().addCommands(new MyContextMenuCommand());
 
 By default, all commands will be deployed in the global scope. If you want to deploy them in a specific guild, you can do so by implementing the `getGuilds()` method.
 
-```ts twoslash
-import { AbstractContextMenuCommand } from '@nyx-discord/framework';
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/djs';
 
 // ---cut-start---
 // @ts-expect-error Incomplete example
@@ -86,6 +141,22 @@ class MyCommand extends AbstractContextMenuCommand {
   }
 }
 ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractContextMenuCommand {
+  public getGuilds() {
+    return ['GUILD_ID', 'ANOTHER_GUILD_ID'];
+  }
+}
+```
+  </Tab>
+</Tabs>
 
 ## Execution Meta
 
@@ -108,8 +179,10 @@ While commands internally save a `Metadata`, the return type of `#getMeta()` is 
 meaning that external objects can read the object, but not modify it.
 </Callout>
 
-```ts twoslash
-import { AbstractContextMenuCommand } from '@nyx-discord/framework';
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    ```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/djs';
 
 // ---cut-start---
 // @ts-expect-error Incomplete example
@@ -124,6 +197,26 @@ const command = new MyCommand();
 const meta = command.getMeta();
 const value = meta['someKey']; // 'someValue'
 ```
+  </Tab>
+  <Tab>
+    ```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractContextMenuCommand {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const command = new MyCommand();
+const meta = command.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+</Tabs>
 
 For a more type-safe approach, you can use `TypedFields`. Check the [Metadata](/use/other/meta) page for more information.
 
@@ -142,5 +235,3 @@ For a more type-safe approach, you can use `TypedFields`. Check the [Metadata](/
     Run code before every command's execution, like logging or pre-conditions.
   </Card>
 </Cards>
-
-

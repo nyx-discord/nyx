@@ -1,16 +1,14 @@
-import type {
-  CoreInteractionContext,
-  CoreInteractionTypes,
-} from '@nyx-discord/djs-core';
+import type { ToEventProps } from '@discordjs/core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+import type { Metadata } from '@nyx-discord/types';
 import type {
   APIMessageComponentButtonInteraction,
   APIMessageComponentSelectMenuInteraction,
   APIModalSubmitInteraction,
 } from 'discord-api-types/v10';
 import { ComponentType, InteractionType } from 'discord-api-types/v10';
-import type { Metadata } from '@nyx-discord/types';
 import type { SessionInteractionInfo } from '../../shared/interaction/SessionInteractionInfo.js';
-import type { SessionUpdateInteraction } from '../../shared/interaction/SessionUpdateInteraction.js';
+import type { SessionUpdateInteraction } from '../../shared/interaction/SessionUpdateInteraction';
 import { BasePaginationSession } from '../../shared/session/BasePaginationSession.js';
 
 export abstract class AbstractPaginationSession<
@@ -27,18 +25,18 @@ export abstract class AbstractPaginationSession<
       const data = interaction.data;
       if (data.type === InteractionType.ModalSubmit) {
         return this.handleModal(
-          interaction as CoreInteractionContext<APIModalSubmitInteraction>,
+          interaction as ToEventProps<APIModalSubmitInteraction>,
           meta,
         );
       }
       if (data.data.component_type === ComponentType.Button) {
         return this.handleButton(
-          interaction as CoreInteractionContext<APIMessageComponentButtonInteraction>,
+          interaction as ToEventProps<APIMessageComponentButtonInteraction>,
           meta,
         );
       }
       return this.handleSelectMenu(
-        interaction as CoreInteractionContext<APIMessageComponentSelectMenuInteraction>,
+        interaction as ToEventProps<APIMessageComponentSelectMenuInteraction>,
         meta,
       );
     }
@@ -66,22 +64,22 @@ export abstract class AbstractPaginationSession<
 
     if (data.type === InteractionType.ModalSubmit) {
       return this.extractPageFromModal(
-        interaction as CoreInteractionContext<APIModalSubmitInteraction>,
+        interaction as ToEventProps<APIModalSubmitInteraction>,
       );
     }
     if (data.data.component_type === ComponentType.Button) {
       return this.extractPageFromButton(
-        interaction as CoreInteractionContext<APIMessageComponentButtonInteraction>,
+        interaction as ToEventProps<APIMessageComponentButtonInteraction>,
       );
     }
     return this.extractPageFromSelectMenu(
-      interaction as CoreInteractionContext<APIMessageComponentSelectMenuInteraction>,
+      interaction as ToEventProps<APIMessageComponentSelectMenuInteraction>,
     );
   }
 
   /** Extracts the referred page in a ButtonInteraction, if any. */
   protected extractPageFromButton(
-    interaction: CoreInteractionContext<APIMessageComponentButtonInteraction>,
+    interaction: ToEventProps<APIMessageComponentButtonInteraction>,
   ): number | null {
     return (
       this.codec.deserialize(interaction.data.data.custom_id)?.page ?? null
@@ -90,7 +88,7 @@ export abstract class AbstractPaginationSession<
 
   /** Extracts the referred page in a SelectMenuInteraction, if any. */
   protected extractPageFromSelectMenu(
-    interaction: CoreInteractionContext<APIMessageComponentSelectMenuInteraction>,
+    interaction: ToEventProps<APIMessageComponentSelectMenuInteraction>,
   ): number | null {
     const data = interaction.data.data;
     const newPage = this.extractPageFromCustomId(data.custom_id);
@@ -111,7 +109,7 @@ export abstract class AbstractPaginationSession<
 
   /** Extracts the referred page in a ModalSubmitInteraction, if any. */
   protected extractPageFromModal(
-    interaction: CoreInteractionContext<APIModalSubmitInteraction>,
+    interaction: ToEventProps<APIModalSubmitInteraction>,
   ): number | null {
     const data = interaction.data.data;
     const newPage = this.extractPageFromCustomId(data.custom_id);

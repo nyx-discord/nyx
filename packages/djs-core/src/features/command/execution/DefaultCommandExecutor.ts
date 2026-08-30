@@ -30,7 +30,7 @@ import type {
   APIUserApplicationCommandInteraction,
 } from 'discord-api-types/v10';
 import { ApplicationCommandType, InteractionType } from 'discord-api-types/v10';
-import type { CoreInteractionContext } from '../../../types/CoreInteractionContext.js';
+import type { ToEventProps } from '@discordjs/core';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 
 type CommandExecutorOptions = {
@@ -88,7 +88,7 @@ export class DefaultCommandExecutor implements CommandExecutor<CoreInteractionTy
         if (command.isSubCommand() || command.isStandalone()) {
           await this.executeChatInput(
             command,
-            interaction as CoreInteractionContext<APIChatInputApplicationCommandInteraction>,
+            interaction as ToEventProps<APIChatInputApplicationCommandInteraction>,
             metadata,
           );
           return true;
@@ -100,7 +100,7 @@ export class DefaultCommandExecutor implements CommandExecutor<CoreInteractionTy
         if (!command.isContextMenu()) return false;
         await this.executeUser(
           command,
-          interaction as CoreInteractionContext<APIUserApplicationCommandInteraction>,
+          interaction as ToEventProps<APIUserApplicationCommandInteraction>,
           metadata,
         );
         return true;
@@ -110,7 +110,7 @@ export class DefaultCommandExecutor implements CommandExecutor<CoreInteractionTy
         if (!command.isContextMenu()) return false;
         await this.executeMessage(
           command,
-          interaction as CoreInteractionContext<APIMessageApplicationCommandInteraction>,
+          interaction as ToEventProps<APIMessageApplicationCommandInteraction>,
           metadata,
         );
         return true;
@@ -136,7 +136,7 @@ export class DefaultCommandExecutor implements CommandExecutor<CoreInteractionTy
 
   public async autocomplete(
     command: ChatExecutableCommand<Nameable, CoreInteractionTypes>,
-    interaction: CoreInteractionContext<APIApplicationCommandAutocompleteInteraction>,
+    interaction: ToEventProps<APIApplicationCommandAutocompleteInteraction>,
     metadata: Metadata,
   ): Promise<void> {
     try {
@@ -158,7 +158,7 @@ export class DefaultCommandExecutor implements CommandExecutor<CoreInteractionTy
 
   public async executeChatInput(
     command: ChatExecutableCommand<Nameable, CoreInteractionTypes>,
-    interaction: CoreInteractionContext<APIChatInputApplicationCommandInteraction>,
+    interaction: ToEventProps<APIChatInputApplicationCommandInteraction>,
     metadata: Metadata,
   ): Promise<void> {
     await this.executeCommandMethod(
@@ -184,7 +184,7 @@ export class DefaultCommandExecutor implements CommandExecutor<CoreInteractionTy
 
   public async executeMessage(
     command: ContextMenuCommand<CoreInteractionTypes>,
-    interaction: CoreInteractionContext<APIMessageApplicationCommandInteraction>,
+    interaction: ToEventProps<APIMessageApplicationCommandInteraction>,
     metadata: Metadata,
   ): Promise<void> {
     await this.executeCommandMethod(
@@ -197,7 +197,7 @@ export class DefaultCommandExecutor implements CommandExecutor<CoreInteractionTy
 
   public async executeUser(
     command: ContextMenuCommand<CoreInteractionTypes>,
-    interaction: CoreInteractionContext<APIUserApplicationCommandInteraction>,
+    interaction: ToEventProps<APIUserApplicationCommandInteraction>,
     metadata: Metadata,
   ): Promise<void> {
     await this.executeCommandMethod(
@@ -295,7 +295,7 @@ export class DefaultCommandExecutor implements CommandExecutor<CoreInteractionTy
   protected wrapAutocompleteError(
     error: Error,
     command: AnyExecutableCommand<CoreInteractionTypes>,
-    interaction: CoreInteractionContext<APIApplicationCommandAutocompleteInteraction>,
+    interaction: ToEventProps<APIApplicationCommandAutocompleteInteraction>,
     meta: Metadata,
   ): CommandError<CoreInteractionTypes> {
     return new CommandAutocompleteError<CoreInteractionTypes>(

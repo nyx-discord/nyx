@@ -1,4 +1,4 @@
-export { CoreBot as Bot } from './bot/CoreBot';
+export { CoreBot as Bot, CoreBot } from './bot/CoreBot';
 export * from './client/CoreNyxClient';
 export * from './features/command/commands/AbstractCommand';
 export * from './features/command/commands/AbstractContextMenuCommand';
@@ -19,7 +19,6 @@ export * from './features/event/subscriber/AbstractCommandSubscriber';
 export * from './features/event/subscriber/AbstractCoreClientSubscriber';
 export * from './types/CoreCommandInteraction';
 export * from './types/CoreComponentInteraction';
-export * from './types/CoreInteractionContext';
 export * from './types/CoreInteractionTypes';
 export { TypedFields } from './fields/TypedFields';
 

@@ -29,14 +29,13 @@ import { DefaultCommandCustomIdCodec } from '@nyx-discord/base';
 import { DefaultCommandRepository } from '@nyx-discord/base';
 import { DefaultMetadataFactory } from '@nyx-discord/base';
 import { ensureKey } from '@nyx-discord/base';
-import type { MappedEvents } from '@discordjs/core';
+import type { MappedEvents, ToEventProps } from '@discordjs/core';
 import type {
   APIApplicationCommand,
   APIApplicationCommandAutocompleteInteraction,
 } from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
 import type { CoreNyxClient } from '../../client/CoreNyxClient.js';
-import type { CoreInteractionContext } from '../../types/CoreInteractionContext.js';
 import type { CoreInteractionTypes } from '../../types/CoreInteractionTypes.js';
 import { DefaultCommandDeployer } from './deploy/DefaultCommandDeployer.js';
 import { DefaultCommandAutocompleteSubscriber } from './events/DefaultCommandAutocompleteSubscriber.js';
@@ -245,7 +244,7 @@ export class DefaultCommandManager implements CommandManager<
   }
 
   public async autocomplete(
-    interaction: CoreInteractionContext<APIApplicationCommandAutocompleteInteraction>,
+    interaction: ToEventProps<APIApplicationCommandAutocompleteInteraction>,
     meta?: Metadata,
   ): Promise<boolean> {
     const command = this.resolver.resolveFromAutocompleteInteraction(
@@ -479,7 +478,7 @@ export class DefaultCommandManager implements CommandManager<
     customIdExtra: string | null;
     interaction:
       | CommandExecutableInteraction<CoreInteractionTypes>
-      | CoreInteractionContext<APIApplicationCommandAutocompleteInteraction>;
+      | ToEventProps<APIApplicationCommandAutocompleteInteraction>;
     extraData: { name: string; value: string }[];
   }): {
     metadata: Metadata;
