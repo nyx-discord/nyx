@@ -69,7 +69,7 @@ export class DefaultBotService implements BotService {
   }
 
   public isRunning(): boolean {
-    throw new Error('Method not implemented.');
+    return this.status === BotStatusEnum.Running;
   }
 
   public async start(): Promise<this> {
