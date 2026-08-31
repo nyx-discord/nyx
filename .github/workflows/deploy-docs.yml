@@ -34,8 +34,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build framework
-        run: pnpm exec lerna run build --scope=@nyx-discord/framework
+      - name: Build base
+        run: pnpm exec lerna run build --scope=@nyx-discord/base
 
       - name: Build docs
         run: pnpm exec docs

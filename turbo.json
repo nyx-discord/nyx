@@ -1,10 +1,15 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["NODE_ENV", "NYX_DOCS_ENTITIES_SOURCE"],
+  "globalEnv": [
+    "NODE_ENV",
+    "NYX_DOCS_ENTITIES_SOURCE"
+  ],
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env*",
@@ -23,7 +28,9 @@
       ]
     },
     "test": {
-      "dependsOn": ["^test"],
+      "dependsOn": [
+        "^test"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "src/**",
@@ -33,7 +40,9 @@
       "outputs": []
     },
     "lint": {
-      "dependsOn": ["^lint"],
+      "dependsOn": [
+        "^lint"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "src/**",
@@ -47,7 +56,9 @@
       "outputs": []
     },
     "check-types": {
-      "dependsOn": ["^check-types"],
+      "dependsOn": [
+        "^check-types"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "src/**",
@@ -70,16 +81,58 @@
     "coverage": {
       "cache": false,
       "persistent": false,
-      "outputs": ["coverage/**"]
+      "outputs": [
+        "coverage/**"
+      ]
     },
     "//#typedoc": {
       "cache": true,
       "persistent": false,
-      "inputs": ["$TURBO_DEFAULT$", "src/**", "typedoc.json"],
-      "outputs": ["build/docs"]
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "typedoc.json"
+      ],
+      "outputs": [
+        "build/docs"
+      ]
     },
     "format": {
-      "dependsOn": ["^format"],
+      "dependsOn": [
+        "^format"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "app/**",
+        "components/**",
+        "lib/**",
+        "content/**",
+        "**/.prettierrc*",
+        ".prettierrc.json"
+      ],
+      "outputs": []
+    },
+    "lint:fix": {
+      "dependsOn": [
+        "^lint:fix"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "app/**",
+        "components/**",
+        "lib/**",
+        "content/**",
+        "**/.eslintrc*",
+        "**/eslint.config.*"
+      ],
+      "outputs": []
+    },
+    "format:check": {
+      "dependsOn": [
+        "^format:check"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "src/**",

@@ -335,28 +335,6 @@ importers:
         specifier: workspace:*
         version: link:../../configs/vitest-config
 
-  packages/core:
-    dependencies:
-      discord.js:
-        specifier: ^14.22.1
-        version: 14.22.1
-      typed-field:
-        specifier: 1.3.0
-        version: 1.3.0
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../configs/eslint-config
-      '@repo/typedoc-config':
-        specifier: workspace:*
-        version: link:../../configs/typedoc-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../configs/typescript-config
-      '@repo/vitest-config':
-        specifier: workspace:*
-        version: link:../../configs/vitest-config
-
   packages/djs:
     dependencies:
       '@nyx-discord/base':
@@ -408,37 +386,6 @@ importers:
       discord-api-types:
         specifier: ^0.38.50
         version: 0.38.53
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../configs/eslint-config
-      '@repo/typedoc-config':
-        specifier: workspace:*
-        version: link:../../configs/typedoc-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../configs/typescript-config
-      '@repo/vitest-config':
-        specifier: workspace:*
-        version: link:../../configs/vitest-config
-
-  packages/framework:
-    dependencies:
-      '@nyx-discord/core':
-        specifier: workspace:*
-        version: link:../core
-      '@sapphire/string-store':
-        specifier: 3.0.0
-        version: 3.0.0
-      cron:
-        specifier: 4.4.0
-        version: 4.4.0
-      discord.js:
-        specifier: ^14.22.1
-        version: 14.22.1
-      typed-field:
-        specifier: 1.3.0
-        version: 1.3.0
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
