@@ -1,11 +1,3 @@
-import type {
-  Constructor,
-  NyxBot,
-  ParentCommand,
-  SubCommand,
-  SubCommandGroup,
-  TopLevelCommand,
-} from '@nyx-discord/types';
 import {
   BaseContextMenuCommand,
   BaseParentCommand,
@@ -13,6 +5,16 @@ import {
   BaseSubCommand,
   BaseSubCommandGroup,
 } from '@nyx-discord/base';
+import type {
+  Constructor,
+  InjectableBotDependencies,
+  InteractionTypes,
+  NyxBot,
+  ParentCommand,
+  SubCommand,
+  SubCommandGroup,
+  TopLevelCommand,
+} from '@nyx-discord/types';
 import { readdir, stat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { LoaderError } from '../../error/LoaderError';
@@ -51,23 +53,25 @@ function emptyInstances(): CommandInstances {
 }
 
 export class CommandLoader {
-  public static async load(options: LoaderOptions): Promise<TopLevelCommand[]> {
+  public static async load<Types extends InteractionTypes = InteractionTypes>(
+    options: LoaderOptions<Types>,
+  ): Promise<TopLevelCommand<Types>[]> {
     const commands = (await this.loadRoot(
       options.path,
       options.bot,
       undefined,
       options.filter,
-    )) as TopLevelCommand[];
+    )) as TopLevelCommand<Types>[];
 
     if (!options.register) return commands;
 
-    await options.bot.getCommandManager().addCommands(...commands);
+    await options.bot.getCommandManager().addCommands(...(commands as any));
     return commands;
   }
 
-  private static async loadRoot(
+  private static async loadRoot<Types extends InteractionTypes>(
     dir: string,
-    bot: NyxBot,
+    bot: NyxBot<InjectableBotDependencies<Types, any, any, any>>,
     parent?: object,
     filter?: (filePath: string) => boolean,
   ): Promise<object[]> {
@@ -197,10 +201,10 @@ export class CommandLoader {
     }
   }
 
-  private static instantiateCommands(
+  private static instantiateCommands<Types extends InteractionTypes>(
     rootClasses: ClassifiedRoot[],
     childClasses: ClassifiedChild[],
-    bot: NyxBot,
+    bot: NyxBot<InjectableBotDependencies<Types>>,
     parent: object | undefined,
     errors: string[],
   ): CommandInstances {
@@ -262,9 +266,9 @@ export class CommandLoader {
     return instances;
   }
 
-  private static async wireChildren(
+  private static async wireChildren<Types extends InteractionTypes>(
     dir: string,
-    bot: NyxBot,
+    bot: NyxBot<InjectableBotDependencies<Types>>,
     filter: ((filePath: string) => boolean) | undefined,
     parentCommands: Array<{ instance: ParentCommand }>,
     subCommandGroupInstances: Array<{ instance: SubCommandGroup }>,
@@ -296,9 +300,9 @@ export class CommandLoader {
     return claimedDirs;
   }
 
-  private static async collectUnclaimed(
+  private static async collectUnclaimed<Types extends InteractionTypes>(
     dir: string,
-    bot: NyxBot,
+    bot: NyxBot<InjectableBotDependencies<Types>>,
     filter: ((filePath: string) => boolean) | undefined,
     claimedDirs: Set<string>,
   ): Promise<object[]> {

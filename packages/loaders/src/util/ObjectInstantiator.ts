@@ -1,22 +1,34 @@
-import type { Constructor, NyxBot } from '@nyx-discord/types';
+import type {
+  Constructor,
+  InjectableBotDependencies,
+  InteractionTypes,
+  NyxBot,
+} from '@nyx-discord/types';
 import { LoaderError } from '../error/LoaderError.js';
 
 type AbstractCtor<T extends object> = abstract new (...args: any[]) => T;
 
-interface WithCreate<T extends object> {
-  create(bot: NyxBot, parent?: object): T;
+interface WithCreate<
+  T extends object,
+  Types extends InteractionTypes = InteractionTypes,
+> {
+  create(bot: NyxBot<InjectableBotDependencies<Types>>, parent?: object): T;
 }
 
-function hasCreate<T extends object>(
-  Class: AbstractCtor<T>,
-): Class is AbstractCtor<T> & WithCreate<T> {
+function hasCreate<
+  T extends object,
+  Types extends InteractionTypes = InteractionTypes,
+>(Class: AbstractCtor<T>): Class is AbstractCtor<T> & WithCreate<T, Types> {
   return typeof (Class as any).create === 'function';
 }
 
 export class ObjectInstantiator {
-  public static instantiateModule<T extends object>(
+  public static instantiateModule<
+    T extends object,
+    Types extends InteractionTypes = InteractionTypes,
+  >(
     ModuleClass: AbstractCtor<T>,
-    bot: NyxBot,
+    bot: NyxBot<InjectableBotDependencies<Types>>,
     parent?: object,
     modulePath?: string,
   ): T {
@@ -24,7 +36,7 @@ export class ObjectInstantiator {
     const actualArgs = ModuleClass.length;
 
     try {
-      if (hasCreate(ModuleClass)) {
+      if (hasCreate<T, Types>(ModuleClass)) {
         return parent === undefined
           ? ModuleClass.create(bot)
           : ModuleClass.create(bot, parent);

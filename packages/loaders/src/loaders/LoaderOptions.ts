@@ -1,9 +1,13 @@
-import type { NyxBot } from '@nyx-discord/types';
+import type {
+  InjectableBotDependencies,
+  InteractionTypes,
+  NyxBot,
+} from '@nyx-discord/types';
 
 /** Options for a Loader. */
-export type LoaderOptions = {
+export type LoaderOptions<Types extends InteractionTypes = InteractionTypes> = {
   /** The bot to load objects for. This will also be passed to static create() methods. */
-  bot: NyxBot;
+  bot: NyxBot<InjectableBotDependencies<Types, any, any, any>>;
   /** The path to load objects from. */
   path: string;
   /**
