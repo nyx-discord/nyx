@@ -3,6 +3,7 @@ title: Executor
 icon: Play
 ---
 
+
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { Card, Cards } from 'fumadocs-ui/components/card';
 import { LayersIcon, AmbulanceIcon } from 'lucide-react';
@@ -28,11 +29,22 @@ Create a custom executor by either:
 * Extending `DefaultCommandExecutor` (recommended, less work).
 * Implementing `CommandExecutor`.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultCommandExecutor } from '@nyx-discord/framework';
+import { DefaultCommandExecutor } from '@nyx-discord/djs';
 
 class MyCommandExecutor extends DefaultCommandExecutor {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandExecutor } from '@nyx-discord/djs-core';
+
+class MyCommandExecutor extends DefaultCommandExecutor {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -40,15 +52,30 @@ class MyCommandExecutor extends DefaultCommandExecutor {}
 
 Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultCommandExecutor } from '@nyx-discord/framework';
-import type { NyxBot } from '@nyx-discord/framework';
-declare const bot: NyxBot;
+import { DefaultCommandExecutor } from '@nyx-discord/djs';
+import type { Bot } from '@nyx-discord/djs';
+declare const bot: Bot;
 // ---cut---
 class MyCommandExecutor extends DefaultCommandExecutor {}
 
 bot.getCommandManager().setExecutor(MyCommandExecutor.create());
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandExecutor } from '@nyx-discord/djs-core';
+import type { Bot } from '@nyx-discord/djs-core';
+declare const bot: Bot;
+// ---cut---
+class MyCommandExecutor extends DefaultCommandExecutor {}
+
+bot.getCommandManager().setExecutor(MyCommandExecutor.create());
+```
+  </Tab>
+</Tabs>
 
 The `create()` method instantiates the executor with the default `ErrorHandler` and `MiddlewareList` (which are overridable, as described below). It'll also instantiate your custom class, not the base one.
 

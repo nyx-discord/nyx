@@ -1,8 +1,9 @@
 ---
 title: Dispatcher
 icon: Send
-definedIn: ['framework/AbstractEventDispatcher', 'core/EventDispatcher']
+definedIn: ['base/AbstractEventDispatcher', 'types/EventDispatcher']
 ---
+
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { Card, Cards } from 'fumadocs-ui/components/card';
@@ -31,11 +32,22 @@ Create a custom dispatcher by either:
 * Extending `BasicSyncEventDispatcher` or `BasicAsyncEventDispatcher` (recommended, less work).
 * Implementing `EventDispatcher`.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { BasicSyncEventDispatcher } from '@nyx-discord/framework';
+import { BasicSyncEventDispatcher } from '@nyx-discord/djs';
 
 class MyEventDispatcher extends BasicSyncEventDispatcher {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BasicSyncEventDispatcher } from '@nyx-discord/djs-core';
+
+class MyEventDispatcher extends BasicSyncEventDispatcher {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -43,8 +55,10 @@ class MyEventDispatcher extends BasicSyncEventDispatcher {}
 
 Set your dispatcher on any bus:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { BasicSyncEventDispatcher, type EventBus } from '@nyx-discord/framework';
+import { BasicSyncEventDispatcher, type EventBus } from '@nyx-discord/djs';
 
 declare const bus: EventBus<{ someEvent: [string] }>;
 
@@ -52,12 +66,27 @@ class MyEventDispatcher extends BasicSyncEventDispatcher {}
 // ---cut---
 bus.setDispatcher(MyEventDispatcher.create());
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BasicSyncEventDispatcher, type EventBus } from '@nyx-discord/djs-core';
+
+declare const bus: EventBus<{ someEvent: [string] }>;
+
+class MyEventDispatcher extends BasicSyncEventDispatcher {}
+// ---cut---
+bus.setDispatcher(MyEventDispatcher.create());
+```
+  </Tab>
+</Tabs>
 
 You can do this for built-in buses too, for example the client bus:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 import { Client } from 'discord.js';
-import { Bot, type NyxBot, BasicAsyncEventDispatcher } from '@nyx-discord/framework';
+import { Bot, type NyxBot, BasicAsyncEventDispatcher } from '@nyx-discord/djs';
 
 declare const client: Client;
 
@@ -70,6 +99,25 @@ bot
   .getClientEventBus()
   .setDispatcher(MyAsyncDispatcher.create());
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { Client } from 'discord.js';
+import { Bot, type NyxBot, BasicAsyncEventDispatcher } from '@nyx-discord/djs-core';
+
+declare const client: Client;
+
+class MyAsyncDispatcher extends BasicAsyncEventDispatcher {}
+// @ts-expect-error incomplete example
+// ---cut---
+const bot = Bot.create((bot: NyxBot) => { /** options */ });
+
+bot
+  .getClientEventBus()
+  .setDispatcher(MyAsyncDispatcher.create());
+```
+  </Tab>
+</Tabs>
 
 </Step>
 </Steps>

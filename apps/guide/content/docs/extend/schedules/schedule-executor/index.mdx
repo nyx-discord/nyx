@@ -1,8 +1,9 @@
 ---
 title: Executor
 icon: Play
-definedIn: ['framework/DefaultScheduleExecutor']
+definedIn: ['base/DefaultScheduleExecutor']
 ---
+
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { Card, Cards } from 'fumadocs-ui/components/card';
@@ -33,13 +34,24 @@ It runs the schedule's `tick()` method, and also:
 Create a custom executor by either:
 
 * Extending `DefaultScheduleExecutor` (recommended, less work).
-* Implementing <DocsLink pkg='core' name='ScheduleExecutor' decorated={false} />.
+* Implementing <DocsLink pkg='types' name='ScheduleExecutor' decorated={false} />.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultScheduleExecutor } from '@nyx-discord/framework';
+import { DefaultScheduleExecutor } from '@nyx-discord/djs';
 
 class MyExecutor extends DefaultScheduleExecutor {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleExecutor } from '@nyx-discord/djs-core';
+
+class MyExecutor extends DefaultScheduleExecutor {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -47,9 +59,11 @@ class MyExecutor extends DefaultScheduleExecutor {}
 
 Create it and set it to the [`ScheduleManager`](/extend/schedules/schedule-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultScheduleExecutor } from '@nyx-discord/framework';
-import type { NyxBot } from '@nyx-discord/framework';
+import { DefaultScheduleExecutor } from '@nyx-discord/djs';
+import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut---
 class MyExecutor extends DefaultScheduleExecutor {
@@ -58,8 +72,23 @@ class MyExecutor extends DefaultScheduleExecutor {
 
 bot.getScheduleManager().setExecutor(MyExecutor.create());
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleExecutor } from '@nyx-discord/djs-core';
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+class MyExecutor extends DefaultScheduleExecutor {
+  /** Your overrides */
+}
 
-The <DocsLink pkg='framework' name='DefaultScheduleExecutor.create()' decorated={false} /> method instantiates your custom executor, not the default one.
+bot.getScheduleManager().setExecutor(MyExecutor.create());
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='base' name='DefaultScheduleExecutor.create()' decorated={false} /> method instantiates your custom executor, not the default one.
 
 </Step>
 </Steps>

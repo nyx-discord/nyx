@@ -3,7 +3,6 @@ title: Events
 icon: RadioTower
 ---
 
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { File, Folder, Files } from 'fumadocs-ui/components/files';
 import { DocsLink } from '@/../components/links/DocsLink';
@@ -53,7 +52,7 @@ By default, events are automatically subscribed to the appropriate buses:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut---
@@ -63,7 +62,7 @@ await EventLoader.load({ bot, path: './dist/events' });
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs-core';
 declare const bot: NyxBot;
 // ---cut---
@@ -78,7 +77,7 @@ Pass `register: false` to handle registration yourself:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut---
@@ -98,7 +97,7 @@ await bot.getScheduleManager().subscribe(...events.schedule);
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs-core';
 declare const bot: NyxBot;
 // ---cut---
@@ -128,7 +127,7 @@ Any class extending one of the six abstract subscriber base classes will be dete
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractDJSClientSubscriber, type Metadata } from '@nyx-discord/djs';
 import type { Client } from 'discord.js';
 
@@ -142,7 +141,7 @@ export class ReadySubscriber extends AbstractDJSClientSubscriber<'ready'> {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/djs-core';
 import { type ToEventProps, type GatewayReadyDispatchData, GatewayDispatchEvents } from '@discordjs/core';
 
@@ -165,7 +164,7 @@ Alternatively, you can specify a `static create(bot)` factory:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractDJSClientSubscriber } from '@nyx-discord/djs';
 import type { NyxBot, Metadata } from '@nyx-discord/djs';
 import type { Client } from 'discord.js';
@@ -185,10 +184,10 @@ export class ReadySubscriber extends AbstractDJSClientSubscriber<'ready'> {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractCoreClientSubscriber } from '@nyx-discord/djs-core';
 import type { Bot, Metadata } from '@nyx-discord/djs-core';
-import type { ToEventProps, GatewayReadyDispatchData, GatewayDispatchEvents } from '@discordjs/core';
+import { type ToEventProps, type GatewayReadyDispatchData, GatewayDispatchEvents } from '@discordjs/core';
 
 export class ReadySubscriber extends AbstractCoreClientSubscriber<typeof GatewayDispatchEvents.Ready> {
   protected readonly event = GatewayDispatchEvents.Ready;

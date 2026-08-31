@@ -6,7 +6,6 @@ icon: Command
 import { LayersIcon, LockIcon, MousePointerClickIcon } from 'lucide-react';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { Cards, Card } from 'fumadocs-ui/components/card';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 <Callout type="warn">It's recommended to read the [Commands Overview](../index) page first.</Callout>
 
@@ -24,7 +23,7 @@ Extend the `AbstractStandaloneCommand` class:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractStandaloneCommand } from '@nyx-discord/djs';
 
 // ---cut-start---
@@ -34,7 +33,7 @@ class MyCommand extends AbstractStandaloneCommand {}
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
 // ---cut-start---
@@ -54,7 +53,7 @@ Implement `data` that stores the command's data, and `execute()` that executes t
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
     import { AbstractStandaloneCommand } from '@nyx-discord/djs';
 
@@ -68,10 +67,10 @@ Implement `data` that stores the command's data, and `execute()` that executes t
         await interaction.reply('Hello!');
       }
     }
-    ```
+```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
     import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
@@ -89,7 +88,7 @@ Implement `data` that stores the command's data, and `execute()` that executes t
         );
       }
     }
-    ```
+```
   </Tab>
 </Tabs>
 
@@ -102,7 +101,7 @@ Instantiate and register it to a bot's `CommandManager`.
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { StandaloneCommand, NyxBot } from '@nyx-discord/djs';
 declare const MyCommand: new () => StandaloneCommand;
 declare const bot: NyxBot;
@@ -111,7 +110,7 @@ await bot.getCommandManager().addCommands(new MyCommand());
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { StandaloneCommand, NyxBot } from '@nyx-discord/djs-core';
 declare const MyCommand: new () => StandaloneCommand;
 declare const bot: NyxBot;
@@ -130,7 +129,7 @@ By default, all commands will be deployed in the global scope. If you want to de
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractStandaloneCommand } from '@nyx-discord/djs';
 
 // ---cut-start---
@@ -144,7 +143,7 @@ class MyCommand extends AbstractStandaloneCommand {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
 // ---cut-start---
@@ -179,44 +178,44 @@ If your command has autocompletable options, you can implement the `autocomplete
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
-    import { AbstractStandaloneCommand } from '@nyx-discord/djs';
-    import type { AutocompleteInteraction } from 'discord.js';
+```ts twoslash
+import type { AutocompleteInteraction } from 'discord.js';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
 
-    // ---cut-start---
-    // @ts-expect-error Incomplete example
-    // ---cut-end---
-    class MyCommand extends AbstractStandaloneCommand {
-      public async autocomplete(interaction: AutocompleteInteraction) {
-        await interaction.respond([
-          { name: 'First option', value: 'first' },
-          { name: 'Second option', value: 'second' },
-        ]);
-      }
-    }
-    ```
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async autocomplete(interaction: AutocompleteInteraction) {
+    await interaction.respond([
+      { name: 'First option', value: 'first' },
+      { name: 'Second option', value: 'second' },
+    ]);
+  }
+}
+```
   </Tab>
   <Tab>
-    ```ts twoslash
-    import type { APIApplicationCommandAutocompleteInteraction, ToEventProps } from '@discordjs/core';
-    import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+```ts twoslash
+import type { APIApplicationCommandAutocompleteInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
-    // ---cut-start---
-    // @ts-expect-error Incomplete example
-    // ---cut-end---
-    class MyCommand extends AbstractStandaloneCommand {
-      public async autocomplete(interaction: ToEventProps<APIApplicationCommandAutocompleteInteraction>) {
-        await interaction.api.interactions.createAutocompleteResponse(
-          interaction.data.id,
-          interaction.data.token,
-          { choices: [
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async autocomplete(interaction: ToEventProps<APIApplicationCommandAutocompleteInteraction>) {
+    await interaction.api.interactions.createAutocompleteResponse(
+      interaction.data.id,
+      interaction.data.token,
+      { choices: [
             { name: 'First option', value: 'first' },
             { name: 'Second option', value: 'second' },
-          ] },
-        );
-      }
-    }
-    ```
+      ] },
+    );
+  }
+}
+```
   </Tab>
 </Tabs>
 
@@ -231,7 +230,7 @@ meaning that external objects can read the object, but not modify it.
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractStandaloneCommand } from '@nyx-discord/djs';
 
 // ---cut-start---
@@ -249,7 +248,7 @@ const value = meta['someKey']; // 'someValue'
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
 // ---cut-start---

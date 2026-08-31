@@ -3,7 +3,6 @@ title: Overview
 icon: User
 ---
 
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 The [`@nyx-discord/plugin-sessions/djs`](https://www.npmjs.com/package/@nyx-discord/plugin-sessions/djs) package is an official [plugin](/use/plugins) that provides and manages user interaction sessions.
@@ -27,7 +26,7 @@ This example features many components used in the same session. Some required co
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { StringSelectMenuBuilder, ButtonBuilder, ActionRowBuilder, ModalBuilder } from 'discord.js';
 import type { ButtonInteraction, AnySelectMenuInteraction, ModalSubmitInteraction } from 'discord.js';
 import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
@@ -77,7 +76,7 @@ class MySession extends AbstractSession {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { StringSelectMenuBuilder, ButtonBuilder, ActionRowBuilder, ModalBuilder } from '@discordjs/builders';
 import { ComponentType } from '@discordjs/core';
 import type {
@@ -163,7 +162,7 @@ Then somewhere in your code, like inside a command:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
 import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
 import { type ChatInputCommandInteraction } from 'discord.js';
@@ -188,7 +187,7 @@ await startInteraction.editReply('Bye from command!');
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs-core';
 import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
 import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
@@ -253,7 +252,7 @@ Instantiate and register it to your bot's plugin manager:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { type NyxBot } from '@nyx-discord/djs';
 
 declare const bot: NyxBot;
@@ -264,7 +263,7 @@ await bot.getPluginManager().register(DjsSessionPlugin.create());
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { type NyxBot } from '@nyx-discord/djs-core';
 
 declare const bot: NyxBot;

@@ -5,7 +5,6 @@ icon: PictureInPicture
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { LayersIcon, LockIcon, MousePointerClickIcon } from 'lucide-react';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 Context menu commands are commands executed on special menus. Currently Discord has two types of context menus:
 
@@ -22,7 +21,7 @@ Extend the `AbstractContextMenuCommand` class:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs';
 // ---cut-start---
 // @ts-expect-error Incomplete example
@@ -31,7 +30,7 @@ class MyContextMenuCommand extends AbstractContextMenuCommand {}
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
 // ---cut-start---
 // @ts-expect-error Incomplete example
@@ -52,7 +51,7 @@ Implement `data` that stores the command's data, and the respective `executeX()`
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { ApplicationCommandType, ContextMenuCommandBuilder, type MessageContextMenuCommandInteraction } from 'discord.js';
     import { AbstractContextMenuCommand } from '@nyx-discord/djs';
 
@@ -66,10 +65,10 @@ Implement `data` that stores the command's data, and the respective `executeX()`
         await interaction.reply('Hello!');
       }
     }
-    ```
+```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { ApplicationCommandType } from '@discordjs/core';
     import type { APIMessageApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
     import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
@@ -88,7 +87,7 @@ Implement `data` that stores the command's data, and the respective `executeX()`
         );
       }
     }
-    ```
+```
   </Tab>
 </Tabs>
 
@@ -100,7 +99,7 @@ Instantiate and register it to a bot's `CommandManager`.
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { ContextMenuCommand, NyxBot } from '@nyx-discord/djs';
 declare const MyContextMenuCommand: new () => ContextMenuCommand;
 declare const bot: NyxBot;
@@ -109,7 +108,7 @@ await bot.getCommandManager().addCommands(new MyContextMenuCommand());
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { ContextMenuCommand, NyxBot } from '@nyx-discord/djs-core';
 declare const MyContextMenuCommand: new () => ContextMenuCommand;
 declare const bot: NyxBot;
@@ -129,7 +128,7 @@ By default, all commands will be deployed in the global scope. If you want to de
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs';
 
 // ---cut-start---
@@ -143,7 +142,7 @@ class MyCommand extends AbstractContextMenuCommand {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
 
 // ---cut-start---
@@ -181,7 +180,7 @@ meaning that external objects can read the object, but not modify it.
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs';
 
 // ---cut-start---
@@ -199,7 +198,7 @@ const value = meta['someKey']; // 'someValue'
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
 
 // ---cut-start---

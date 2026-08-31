@@ -5,22 +5,21 @@ icon: Terminal
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { File, Folder, Files } from 'fumadocs-ui/components/files';
-import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
 import { DocsLink } from '@/../components/links/DocsLink';
 
 <Callout type="warn">It's recommended to read the [Commands Overview](../use/commands/) page first.</Callout>
 
-The <DocsLink pkg="loaders" name="CommandLoader" decorated={false} /> scans a directory for command classes and returns a <DocsLink pkg="core" name="TopLevelCommand" decorated={false} />[] ready for `commandManager.addCommands()`.
+The <DocsLink pkg="loaders" name="CommandLoader" decorated={false} /> scans a directory for command classes and returns a <DocsLink pkg="types" name="TopLevelCommand" decorated={false} />[] ready for `commandManager.addCommands()`.
 
 ## Folder structure
 
 The loader expects a specific layout, following these rules:
 
-1. Root-level commands are loaded as-is. They must be <DocsLink pkg="framework" name="AbstractStandaloneCommand" decorated={false} />, <DocsLink pkg="framework" name="AbstractParentCommand" decorated={false} />, or <DocsLink pkg="framework" name="AbstractContextMenuCommand" decorated={false} />.
-2. A <DocsLink pkg="framework" name="AbstractParentCommand" decorated={false} /> may have a children folder with the same name as its `data.name`. The children folder must contain
-<DocsLink pkg="framework" name="AbstractSubCommand" decorated={false} /> and/or <DocsLink pkg="framework" name="AbstractSubCommandGroup" decorated={false} /> classes, which are wired to the parent.
-3. A <DocsLink pkg="framework" name="AbstractSubCommandGroup" decorated={false} /> may have a nested children folder with the same name as its `data.name`. The nested children folder
-must contain <DocsLink pkg="framework" name="AbstractSubCommand" decorated={false} /> classes, which are wired to the group.
+1. Root-level commands are loaded as-is. They must be <DocsLink pkg="djs" name="AbstractStandaloneCommand" decorated={false} />, <DocsLink pkg="djs" name="AbstractParentCommand" decorated={false} />, or <DocsLink pkg="djs" name="AbstractContextMenuCommand" decorated={false} />.
+2. A <DocsLink pkg="djs" name="AbstractParentCommand" decorated={false} /> may have a children folder with the same name as its `data.name`. The children folder must contain
+<DocsLink pkg="djs" name="AbstractSubCommand" decorated={false} /> and/or <DocsLink pkg="djs" name="AbstractSubCommandGroup" decorated={false} /> classes, which are wired to the parent.
+3. A <DocsLink pkg="djs" name="AbstractSubCommandGroup" decorated={false} /> may have a nested children folder with the same name as its `data.name`. The nested children folder
+must contain <DocsLink pkg="djs" name="AbstractSubCommand" decorated={false} /> classes, which are wired to the group.
 4. Any subdirectory that does not match a parent/group `data.name` is treated as an organizational folder and recursed into
 as a new root, continuing the scan with the same rules above. This allows you to organize commands into subfolders without affecting
 the command hierarchy.
@@ -57,37 +56,53 @@ Assuming the exported command classes have their `data.name` set the same as the
 
 | File | Type | Notes |
 |------|------|-------|
-| `ping.js` | <DocsLink pkg="framework" name="AbstractStandaloneCommand" decorated={false} /> | Root-level, loaded as-is |
-| `report-user.js` | <DocsLink pkg="framework" name="AbstractContextMenuCommand" decorated={false} /> | Root-level, loaded as-is |
-| `mod.js` | <DocsLink pkg="framework" name="AbstractParentCommand" decorated={false} /> | `data.name === "mod"`, children folder matches name |
-| `mod/ban.js` | <DocsLink pkg="framework" name="AbstractSubCommand" decorated={false} /> | Inside children folder, wired to parent |
-| `mod/settings.js` | <DocsLink pkg="framework" name="AbstractSubCommandGroup" decorated={false} /> | `data.name === "settings"`, nested folder matches name |
-| `mod/settings/view.js` | <DocsLink pkg="framework" name="AbstractSubCommand" decorated={false} /> | Inside children folder, wired to group |
-| `utils/utils.js` | <DocsLink pkg="framework" name="AbstractStandaloneCommand" decorated={false} /> | Inside organizational folder, loaded as root-level |
-| `utils/format.js` | <DocsLink pkg="framework" name="AbstractStandaloneCommand" decorated={false} /> | Inside organizational folder, loaded as root-level |
+| `ping.js` | <DocsLink pkg="djs" name="AbstractStandaloneCommand" decorated={false} /> | Root-level, loaded as-is |
+| `report-user.js` | <DocsLink pkg="djs" name="AbstractContextMenuCommand" decorated={false} /> | Root-level, loaded as-is |
+| `mod.js` | <DocsLink pkg="djs" name="AbstractParentCommand" decorated={false} /> | `data.name === "mod"`, children folder matches name |
+| `mod/ban.js` | <DocsLink pkg="djs" name="AbstractSubCommand" decorated={false} /> | Inside children folder, wired to parent |
+| `mod/settings.js` | <DocsLink pkg="djs" name="AbstractSubCommandGroup" decorated={false} /> | `data.name === "settings"`, nested folder matches name |
+| `mod/settings/view.js` | <DocsLink pkg="djs" name="AbstractSubCommand" decorated={false} /> | Inside children folder, wired to group |
+| `utils/utils.js` | <DocsLink pkg="djs" name="AbstractStandaloneCommand" decorated={false} /> | Inside organizational folder, loaded as root-level |
+| `utils/format.js` | <DocsLink pkg="djs" name="AbstractStandaloneCommand" decorated={false} /> | Inside organizational folder, loaded as root-level |
 
 ## Usage
 
 By default, commands are automatically registered via `commandManager.addCommands()`:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import type { NyxBot } from '@nyx-discord/framework';
-declare const bot: NyxBot;
+import type { NyxBot, DjsInteractionTypes } from '@nyx-discord/djs';
+declare const bot: NyxBot<any>;
 // ---cut---
 import { CommandLoader } from '@nyx-discord/loaders';
 
-await CommandLoader.load({ bot, path: './dist/commands' });
+await CommandLoader.load<DjsInteractionTypes>({ bot, path: './dist/commands' });
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot, CoreInteractionTypes } from '@nyx-discord/djs-core';
+declare const bot: NyxBot<any>;
+// ---cut---
+import { CommandLoader } from '@nyx-discord/loaders';
+
+await CommandLoader.load<CoreInteractionTypes>({ bot, path: './dist/commands' });
+```
+  </Tab>
+</Tabs>
 
 Pass `register: false` to handle registration yourself:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import type { NyxBot } from '@nyx-discord/framework';
-declare const bot: NyxBot;
+import type { NyxBot, DjsInteractionTypes } from '@nyx-discord/djs';
+declare const bot: NyxBot<any>;
 // ---cut---
 import { CommandLoader } from '@nyx-discord/loaders';
 
-const commands = await CommandLoader.load({
+const commands = await CommandLoader.load<DjsInteractionTypes>({
   bot,
   path: './dist/commands',
   register: false,
@@ -95,6 +110,24 @@ const commands = await CommandLoader.load({
 
 bot.getCommandManager().addCommands(...commands);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot, CoreInteractionTypes } from '@nyx-discord/djs-core';
+declare const bot: NyxBot<any>;
+// ---cut---
+import { CommandLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load<CoreInteractionTypes>({
+  bot,
+  path: './dist/commands',
+  register: false,
+});
+
+bot.getCommandManager().addCommands(...commands);
+```
+  </Tab>
+</Tabs>
 
 ## Writing commands for the loader
 
@@ -103,13 +136,15 @@ bot.getCommandManager().addCommands(...commands);
 
 Top-level commands (standalone, parent, context menu) are instantiated with no constructor arguments:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { AbstractStandaloneCommand } from '@nyx-discord/framework';
-import type { Metadata } from '@nyx-discord/framework';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+import type { Metadata } from '@nyx-discord/djs';
 import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
 
 export class PingCommand extends AbstractStandaloneCommand {
-  data = new SlashCommandBuilder()
+  protected readonly data = new SlashCommandBuilder()
     .setName('ping')
     .setDescription('Replies with pong')
     .toJSON();
@@ -119,12 +154,12 @@ export class PingCommand extends AbstractStandaloneCommand {
   }
 }
 ```
-
-Alternatively, you can specify a `static create(bot)` factory:
-
+  </Tab>
+  <Tab>
 ```ts twoslash
-import { AbstractStandaloneCommand } from '@nyx-discord/framework';
-import type { Metadata, NyxBot } from '@nyx-discord/framework';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+import type { Metadata } from '@nyx-discord/djs-core';
+import type { ToEventProps, APIChatInputApplicationCommandInteraction } from '@discordjs/core';
 import { SlashCommandBuilder } from 'discord.js';
 
 export class PingCommand extends AbstractStandaloneCommand {
@@ -133,7 +168,29 @@ export class PingCommand extends AbstractStandaloneCommand {
     .setDescription('Replies with pong')
     .toJSON();
 
-  public static create(bot: NyxBot) {
+  async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+Alternatively, you can specify a `static create(bot)` factory:
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+import type { Metadata, NyxBot } from '@nyx-discord/djs';
+import { SlashCommandBuilder } from 'discord.js';
+
+export class PingCommand extends AbstractStandaloneCommand {
+  protected readonly data = new SlashCommandBuilder()
+    .setName('ping')
+    .setDescription('Replies with pong')
+    .toJSON();
+
+  public static create(bot: NyxBot<any>) {
     return new PingCommand();
   }
 
@@ -143,15 +200,42 @@ export class PingCommand extends AbstractStandaloneCommand {
   // ---cut-end---
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+import type { Metadata, NyxBot } from '@nyx-discord/djs-core';
+import { SlashCommandBuilder } from 'discord.js';
+
+export class PingCommand extends AbstractStandaloneCommand {
+  protected readonly data = new SlashCommandBuilder()
+    .setName('ping')
+    .setDescription('Replies with pong')
+    .toJSON();
+
+  public static create(bot: NyxBot<any>) {
+    return new PingCommand();
+  }
+
+  // ...
+  // ---cut-start---
+  public async execute(interaction: any, meta: Metadata) {}
+  // ---cut-end---
+}
+```
+  </Tab>
+</Tabs>
 
 </Tab>
 <Tab value="Child">
 
 Child commands (subcommands and subcommand groups) must accept a `parent` argument in their constructor:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { AbstractSubCommand } from '@nyx-discord/framework';
-import type { AbstractParentCommand, AbstractSubCommandGroup, Metadata } from '@nyx-discord/framework';
+import { AbstractSubCommand } from '@nyx-discord/djs';
+import type { AbstractParentCommand, AbstractSubCommandGroup, Metadata } from '@nyx-discord/djs';
 import { SlashCommandSubcommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
 
 export class BanCommand extends AbstractSubCommand {
@@ -169,12 +253,39 @@ export class BanCommand extends AbstractSubCommand {
   }
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/djs-core';
+import type { AbstractParentCommand, AbstractSubCommandGroup, Metadata } from '@nyx-discord/djs-core';
+import type { ToEventProps, APIChatInputApplicationCommandInteraction } from '@discordjs/core';
+import { SlashCommandSubcommandBuilder } from 'discord.js';
+
+export class BanCommand extends AbstractSubCommand {
+  data = new SlashCommandSubcommandBuilder()
+    .setName('ban')
+    .setDescription('Ban a user')
+    .toJSON();
+
+  constructor(parent: AbstractParentCommand | AbstractSubCommandGroup) {
+    super(parent);
+  }
+
+  async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    // ...
+  }
+}
+```
+  </Tab>
+</Tabs>
 
 Alternatively, you can specify a `static create(bot, parent)` factory:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { AbstractSubCommand } from '@nyx-discord/framework';
-import type { AbstractParentCommand, AbstractSubCommandGroup, NyxBot } from '@nyx-discord/framework';
+import { AbstractSubCommand } from '@nyx-discord/djs';
+import type { AbstractParentCommand, AbstractSubCommandGroup, NyxBot } from '@nyx-discord/djs';
 import { SlashCommandSubcommandBuilder } from 'discord.js';
 
 export class BanCommand extends AbstractSubCommand {
@@ -183,7 +294,7 @@ export class BanCommand extends AbstractSubCommand {
     .setDescription('Ban a user')
     .toJSON();
 
-  public static create(bot: NyxBot, parent: AbstractParentCommand | AbstractSubCommandGroup) {
+  public static create(bot: NyxBot<any>, parent: AbstractParentCommand | AbstractSubCommandGroup) {
     return new BanCommand(parent);
   }
 
@@ -193,6 +304,31 @@ export class BanCommand extends AbstractSubCommand {
   // ---cut-end---
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/djs-core';
+import type { AbstractParentCommand, AbstractSubCommandGroup, NyxBot } from '@nyx-discord/djs-core';
+import { SlashCommandSubcommandBuilder } from 'discord.js';
+
+export class BanCommand extends AbstractSubCommand {
+  protected readonly data = new SlashCommandSubcommandBuilder()
+    .setName('ban')
+    .setDescription('Ban a user')
+    .toJSON();
+
+  public static create(bot: NyxBot<any>, parent: AbstractParentCommand | AbstractSubCommandGroup) {
+    return new BanCommand(parent);
+  }
+
+  // ...
+  // ---cut-start---
+  public async execute() {}
+  // ---cut-end---
+}
+```
+  </Tab>
+</Tabs>
 
 </Tab>
 </Tabs>

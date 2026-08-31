@@ -21,28 +21,50 @@ We also recommend using a formatter like [Prettier](https://www.prettier.io/) an
 
 ### Installing
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```npm
-npm i @nyx-discord/framework
+    npm i @nyx-discord/djs discord.js
 ```
-
-You'll also need to install `discord.js` if you haven't already:
-
+  </Tab>
+  <Tab>
 ```npm
-npm i discord.js
+    npm i @nyx-discord/djs-core @discordjs/core @discordjs/rest @discordjs/ws
 ```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
 
 ### Creating a Client
 
-You'll need a Discord.js `Client`. This can be any client, as long as it's not logged in or destroyed, for example:
+You'll need a client, which will depend on the adapter you're using. It can be any client, as long as it's not logged in or destroyed.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { Client, GatewayIntentBits } from 'discord.js';
+    import { Client, GatewayIntentBits } from 'discord.js';
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+    const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+    import { Client, GatewayIntentBits } from '@discordjs/core';
+    import { REST } from '@discordjs/rest';
+    import { WebSocketManager } from '@discordjs/ws';
+
+    const rest = new REST({ version: '10' }).setToken('TOKEN');
+    const gateway = new WebSocketManager({
+      token: 'TOKEN',
+      intents: GatewayIntentBits.Guilds,
+      rest,
+    });
+    const client = new Client({ rest, gateway });
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -57,20 +79,44 @@ of your bot, including loading commands, managing events, and more.
 Create one with `Bot.create()`, which takes a function that gets passed the currently constructing bot
 instance, and should return the options that you want for the bot.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { Bot, type NyxBot } from '@nyx-discord/framework';
-// ---cut-start---
-import { Client, GatewayIntentBits } from 'discord.js';
-declare const client: Client<boolean>;
-// ---cut-end---
+    import { Bot, type NyxBot } from '@nyx-discord/djs';
+    // ---cut-start---
+    import { Client, GatewayIntentBits } from 'discord.js';
+    declare const client: Client<boolean>;
+    // ---cut-end---
 
-const myBot = Bot.create((bot: NyxBot) => ({
-  token: 'TOKEN',
-  client,
-  logger: console, // Can be your own logger, see the NyxLogger docs
-  deployCommands: true, // Whether to deploy commands to Discord on start
-}));
+    const myBot = Bot.create((bot: NyxBot) => ({
+      token: 'TOKEN',
+      client,
+      logger: console, // Can be your own logger, see the NyxLogger docs
+      deployCommands: true, // Whether to deploy commands to Discord on start
+    }));
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+    import { Bot, CoreNyxClient, type NyxBot } from '@nyx-discord/djs-core';
+    // ---cut-start---
+    import { Client, GatewayIntentBits } from '@discordjs/core';
+    import { REST } from '@discordjs/rest';
+    import { WebSocketManager } from '@discordjs/ws';
+    const rest = new REST({ version: '10' }).setToken('TOKEN');
+    const gateway = new WebSocketManager({ token: 'TOKEN', intents: GatewayIntentBits.Guilds, rest });
+    declare const client: Client;
+    // ---cut-end---
+
+    const myBot = Bot.create((bot: NyxBot) => ({
+      token: 'TOKEN',
+      client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'),
+      logger: console, // Can be your own logger, see the NyxLogger docs
+      deployCommands: true, // Whether to deploy commands to Discord on start
+    }));
+```
+  </Tab>
+</Tabs>
 
 <Accordions type="single">
   <Accordion title={<p>About <code>new Bot()</code></p>}>
@@ -79,31 +125,31 @@ const myBot = Bot.create((bot: NyxBot) => ({
 
     You would need to instantiate and pass every manager to it:
 
-    ```ts twoslash
+```ts twoslash
     import { Client, GatewayIntentBits } from 'discord.js';
     declare const client: Client<boolean>;
     // ---cut---
-    import { Bot, DefaultScheduleManager, DefaultPluginManager } from '@nyx-discord/framework';
+    import { Bot, DefaultScheduleManager, DjsNyxClient, DefaultPluginManager } from '@nyx-discord/djs';
 
     // ---cut-start---
     // @ts-expect-error Other managers missing for brevity
     // ---cut-end---
     const myBot = new Bot((bot) => ({
       token: 'TOKEN',
-      client,
+      client: new DjsNyxClient(client),
       logger: console,
       deployCommands: true,
 
-      schedules: DefaultScheduleManager.create({ bot }),
-      plugins: DefaultPluginManager.create({ bot }),
+      scheduleManager: DefaultScheduleManager.create({ bot }),
+      pluginManager: DefaultPluginManager.create({ bot }),
       // and so on
     }));
-    ```
+```
 
-    You'll find this pattern in other `@framework` objects, where you can use either
+    You'll find this pattern in other `@base` objects, where you can use either
     `new Object(depA, ...)` specifying every dependency, or `Object.create()` which uses default dependencies, and you can
     optionally inject your own to that method (while still keeping other defaults).
-</Accordion>
+  </Accordion>
 </Accordions>
 
 </Step>
@@ -113,14 +159,26 @@ const myBot = Bot.create((bot: NyxBot) => ({
 
 Finally, to start it, simply call `.start()`. This will log in the client, set up event listeners, and get everything ready:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { Bot } from '@nyx-discord/framework';
-import { Client, GatewayIntentBits } from 'discord.js';
-declare const client: Client;
+import { Bot } from '@nyx-discord/djs';
+// ---cut-start---
 declare const myBot: Bot;
-// ---cut---
+// ---cut-end---
 await myBot.start();
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { Bot } from '@nyx-discord/djs-core';
+// ---cut-start---
+declare const myBot: Bot;
+// ---cut-end---
+await myBot.start();
+```
+  </Tab>
+</Tabs>
 
 <Callout type="warn">
   If the start errors, it'll reject the promise, and the bot will enter in a `BotStatusEnum.Killed` state, meaning it won't

@@ -15,6 +15,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "customConditions": ["@nyx-discord/types", "@nyx-discord/base"],
     "paths": {
       "@/.source": ["./.source/index.ts"],
       "collections/*": [".source/*"],

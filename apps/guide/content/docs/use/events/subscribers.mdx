@@ -19,8 +19,10 @@ Either:
 
 - Extend `AbstractEventSubscriber` class and implement `handleEvent()` and `event`:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { AbstractEventSubscriber, type Metadata } from '@nyx-discord/framework';
+import { AbstractEventSubscriber, type Metadata } from '@nyx-discord/djs';
 
 type MyEventsArgs = {
   someEvent: [string, number];
@@ -34,11 +36,32 @@ class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
   }
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriber, type Metadata } from '@nyx-discord/djs-core';
+
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+
+class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected readonly event = 'someEvent';
+
+  public async handleEvent(meta: Metadata, ...args: MyEventsArgs['someEvent']) {
+    // Handle event
+  }
+}
+```
+  </Tab>
+</Tabs>
 
 - Use `SubscriberCallbackWrapper` to create a subscriber from a generic callback:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SubscriberCallbackWrapper, type Metadata } from '@nyx-discord/framework';
+import { SubscriberCallbackWrapper, type Metadata } from '@nyx-discord/djs';
 
 type MyEventsArgs = {
   someEvent: [string, number];
@@ -51,6 +74,24 @@ export const mySubscriber = new SubscriberCallbackWrapper<MyEventsArgs, 'someEve
   }
 );
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { SubscriberCallbackWrapper, type Metadata } from '@nyx-discord/djs-core';
+
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+
+export const mySubscriber = new SubscriberCallbackWrapper<MyEventsArgs, 'someEvent'>(
+  'someEvent',
+  (meta: Metadata, ...args: MyEventsArgs['someEvent']) => {
+    // Handle event
+  }
+);
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -58,9 +99,11 @@ export const mySubscriber = new SubscriberCallbackWrapper<MyEventsArgs, 'someEve
 
 Register the subscriber to an `EventBus`:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut-start---
-import type { NyxBot, EventSubscriber, EventBus } from '@nyx-discord/framework';
+import type { NyxBot, EventSubscriber, EventBus } from '@nyx-discord/djs';
 type MyEventsArgs = {
   someEvent: [string, number];
 };
@@ -69,13 +112,27 @@ declare const mySubscriber: EventSubscriber<MyEventsArgs, 'someEvent'>;
 // ---cut-end---
 await bus.subscribe(mySubscriber);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot, EventSubscriber, EventBus } from '@nyx-discord/djs-core';
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+declare const bus: EventBus<MyEventsArgs>;
+declare const mySubscriber: EventSubscriber<MyEventsArgs, 'someEvent'>;
+// ---cut-end---
+await bus.subscribe(mySubscriber);
+```
+  </Tab>
+</Tabs>
 
 </Step>
 </Steps>
 
 <Callout>
-  If you want to create a listener for the `Client` bus, you can extend the `AbstractDJSEventSubscriber` utility class instead, and you won't
-  have to type out the `ClientEvents` generic.
+  If you want to create a listener for the `Client` bus, you can extend the `AbstractDJSClientSubscriber` (or `AbstractCoreClientSubscriber` for `@discordjs/core`) utility class instead, and you won't have to type out the client's event map generic. Check the [Events Overview](./index) page for an example.
 </Callout>
 
 ## Priorities
@@ -87,13 +144,26 @@ The priority determines the order in which they are executed:
   - `HighMonitor` is the first priority to be executed.
   - `LowMonitor` is the last priority to be executed.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { PriorityEnum } from '@nyx-discord/framework';
+import { PriorityEnum } from '@nyx-discord/djs';
 
 // @noErrors
 PriorityEnum.
 //           ^|
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { PriorityEnum } from '@nyx-discord/djs-core';
+
+// @noErrors
+PriorityEnum.
+//           ^|
+```
+  </Tab>
+</Tabs>
 
 The default priority is `Normal`, it's changed by overriding the `priority` property in classes. It can't be changed for callback-based subscribers.
 
@@ -101,9 +171,11 @@ The default priority is `Normal`, it's changed by overriding the `priority` prop
 
 The subscriber will be notified when its un/subscribed to an `EventBus`, and when said bus is unregistered:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut-start---
-import { EventBus, EventSubscriber, AbstractEventSubscriber, NyxBot } from '@nyx-discord/framework';
+import { EventBus, EventSubscriber, AbstractEventSubscriber, NyxBot } from '@nyx-discord/djs';
 type EventArgs = {
   someEvent: [string, number];
 };
@@ -131,6 +203,40 @@ await bus.subscribe(subscriber);
 await bus.unsubscribe(subscriber);
 // console: I was unsubscribed!
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { EventBus, EventSubscriber, AbstractEventSubscriber, NyxBot } from '@nyx-discord/djs-core';
+type EventArgs = {
+  someEvent: [string, number];
+};
+declare const bus: EventBus<EventArgs>;
+declare const bot: NyxBot;
+declare const subscriber: EventSubscriber<EventArgs, 'someEvent'>;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class Subscriber extends AbstractEventSubscriber<EventArgs, 'someEvent'> {
+  public override onSubscribe(bus: EventBus<EventArgs>) {
+    console.log('I was subscribed!');
+  }
+
+  public override onUnsubscribe(bus: EventBus<EventArgs>) {
+    console.log('I was unsubscribed!');
+  }
+
+  public override onBusUnregister(bus: EventBus<EventArgs>) {
+    console.log('My bus was unregistered!');
+  }
+}
+
+await bus.subscribe(subscriber);
+// console: I was subscribed!
+await bus.unsubscribe(subscriber);
+// console: I was unsubscribed!
+```
+  </Tab>
+</Tabs>
 
 ## Event Meta
 
@@ -154,10 +260,12 @@ This is useful for events that only need to be "executed once", for example, rep
 
 However, you can make your subscriber to be always called, even when the event is handled, overriding the `ignoreHandled` property:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut-start---
-import { AbstractEventSubscriber, PriorityEnum, Metadata } from '@nyx-discord/framework';
-import { EventBus } from '@nyx-discord/framework';
+import { AbstractEventSubscriber, PriorityEnum, Metadata } from '@nyx-discord/djs';
+import { EventBus } from '@nyx-discord/djs';
 type EventArgs = {
   someEvent: [];
 };
@@ -205,6 +313,61 @@ class LowestNotIgnored extends AbstractEventSubscriber<EventArgs, 'someEvent'> {
 await bus.subscribe(new Lowest(), new Highest(), new LowestNotIgnored());
 await bus.emit('someEvent', []);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { AbstractEventSubscriber, PriorityEnum, Metadata } from '@nyx-discord/djs-core';
+import { EventBus } from '@nyx-discord/djs-core';
+type EventArgs = {
+  someEvent: [];
+};
+declare const bus: EventBus<EventArgs>;
+// ---cut-end---
+// A subscriber with priority Highest marks the event as handled
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class Highest extends AbstractEventSubscriber<EventArgs, 'someEvent'> {
+  protected readonly priority = PriorityEnum.Highest;
+
+  public handleEvent(meta: Metadata) {
+    console.log('Highest');
+    this.setHandled(meta);
+  }
+}
+
+// A subscriber with priority Lowest doesn't receive the event
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class Lowest extends AbstractEventSubscriber<EventArgs, 'someEvent'> {
+  protected readonly priority = PriorityEnum.Lowest;
+
+  public handleEvent() {
+    console.log('Lowest');
+  }
+}
+
+// A subscriber with priority Lowest but `ignoreHandled = false` receives the event
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class LowestNotIgnored extends AbstractEventSubscriber<EventArgs, 'someEvent'> {
+  protected readonly priority = PriorityEnum.Lowest;
+
+  protected readonly ignoreHandled = false;
+
+  public handleEvent() {
+    console.log('Lowest with ignoreHandled = false');
+  }
+}
+
+await bus.subscribe(new Lowest(), new Highest(), new LowestNotIgnored());
+await bus.emit('someEvent', []);
+```
+  </Tab>
+</Tabs>
 
 Would log:
 ```
@@ -223,10 +386,12 @@ This can be done overriding the `lifetime` property. Currently available lifetim
 * `On` to "permanently" subscribe to the bus until manually unsubscribed (default).
 * `Once` to subscribe for a single call (The `EventSubscriberMiddleware` must allow the execution).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut-start---
-import { AbstractEventSubscriber, PriorityEnum, EventSubscriberLifetimeEnum, Metadata } from '@nyx-discord/framework';
-import { EventBus } from '@nyx-discord/framework';
+import { AbstractEventSubscriber, PriorityEnum, EventSubscriberLifetimeEnum, Metadata } from '@nyx-discord/djs';
+import { EventBus } from '@nyx-discord/djs';
 type EventArgs = {
   someEvent: [];
 };
@@ -256,6 +421,43 @@ await bus.subscribe(new Once(), new On());
 await bus.emit('someEvent', []);
 await bus.emit('someEvent', []);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { AbstractEventSubscriber, PriorityEnum, EventSubscriberLifetimeEnum, Metadata } from '@nyx-discord/djs-core';
+import { EventBus } from '@nyx-discord/djs-core';
+type EventArgs = {
+  someEvent: [];
+};
+declare const bus: EventBus<EventArgs>;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class Once extends AbstractEventSubscriber<EventArgs, 'someEvent'> {
+  protected readonly lifetime = EventSubscriberLifetimeEnum.Once;
+
+  public handleEvent() {
+    console.log('Once');
+  }
+}
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class On extends AbstractEventSubscriber<EventArgs, 'someEvent'> {
+  protected readonly lifetime = EventSubscriberLifetimeEnum.On;
+
+  public handleEvent() {
+    console.log('On');
+  }
+}
+
+await bus.subscribe(new Once(), new On());
+await bus.emit('someEvent', []);
+await bus.emit('someEvent', []);
+```
+  </Tab>
+</Tabs>
 
 Would log:
 ```
@@ -275,8 +477,10 @@ While subscribers internally save a `Metadata`, the return type of `#getMeta()` 
 meaning that external objects can read the object, but not modify it.
 </Callout>
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { AbstractEventSubscriber } from '@nyx-discord/framework';
+import { AbstractEventSubscriber } from '@nyx-discord/djs';
 
 // ---cut-start---
 type MyEventsArgs = {
@@ -294,5 +498,28 @@ const myEventSubscriber = new MyEventSubscriber();
 const meta = myEventSubscriber.getMeta();
 const value = meta['someKey']; // 'someValue'
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriber } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyEventSubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const myEventSubscriber = new MyEventSubscriber();
+const meta = myEventSubscriber.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+</Tabs>
 
 For a more type-safe approach, you can use `TypedFields`. Check the [Metadata](/use/other/meta) page for more information.

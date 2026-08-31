@@ -15,13 +15,26 @@ This is useful for monitoring, logging, or any other custom logic you want to ex
 
 The following events are available:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { ScheduleEventEnum } from '@nyx-discord/framework';
+import { ScheduleEventEnum } from '@nyx-discord/djs';
 
 // @noErrors
 ScheduleEventEnum.
 //                ^|
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { ScheduleEventEnum } from '@nyx-discord/djs-core';
+
+// @noErrors
+ScheduleEventEnum.
+//                ^|
+```
+  </Tab>
+</Tabs>
 
 ## Usage
 
@@ -37,14 +50,29 @@ Create a subscriber that will listen to a given event, use the `ScheduleEventArg
 
 Subscribe to the event using the `ScheduleManager`'s `subscribe()` method.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut-start---
-import { EventSubscriber, ScheduleEventArgs } from '@nyx-discord/framework';
+import { EventSubscriber, ScheduleEventArgs } from '@nyx-discord/djs';
 declare const subscriber: EventSubscriber<ScheduleEventArgs, keyof ScheduleEventArgs>;
-import type { NyxBot } from '@nyx-discord/framework';
+import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut-end---
 await bot.getScheduleManager().subscribe(subscriber);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { EventSubscriber, ScheduleEventArgs } from '@nyx-discord/djs-core';
+declare const subscriber: EventSubscriber<ScheduleEventArgs, keyof ScheduleEventArgs>;
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut-end---
+await bot.getScheduleManager().subscribe(subscriber);
+```
+  </Tab>
+</Tabs>
 </Step>
 </Steps>

@@ -1,12 +1,13 @@
 ---
 title: Repository
 icon: Package
-definedIn: ['framework/DefaultScheduleRepository', 'framework/ScheduleRepository']
+definedIn: ['base/DefaultScheduleRepository', 'base/ScheduleRepository']
 ---
+
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
-The <DocsLink pkg='core' name='ScheduleRepository' decorated={false} /> is responsible for storing all the currently registered schedules.
+The <DocsLink pkg='types' name='ScheduleRepository' decorated={false} /> is responsible for storing all the currently registered schedules.
 
 ## When to override
 
@@ -24,11 +25,13 @@ The <DocsLink pkg='core' name='ScheduleRepository' decorated={false} /> is respo
 
 Create a custom schedule repository by either:
 
-* Extending <DocsLink pkg='framework' name='DefaultScheduleRepository' decorated={false} /> (<FrameworkMention />'s implementation, recommended for less work).
-* Implementing <DocsLink pkg='core' name='ScheduleRepository' decorated={false} /> (<CoreMention />'s base definition).
+* Extending <DocsLink pkg='base' name='DefaultScheduleRepository' decorated={false} /> (<BaseMention />'s implementation, recommended for less work).
+* Implementing <DocsLink pkg='types' name='ScheduleRepository' decorated={false} /> (<TypesMention />'s base definition).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultScheduleRepository } from '@nyx-discord/framework';
+import { DefaultScheduleRepository } from '@nyx-discord/djs';
 
 class MyScheduleRepository extends DefaultScheduleRepository {
   public myCustomMethod() {
@@ -36,6 +39,19 @@ class MyScheduleRepository extends DefaultScheduleRepository {
   }
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleRepository } from '@nyx-discord/djs-core';
+
+class MyScheduleRepository extends DefaultScheduleRepository {
+  public myCustomMethod() {
+    // Custom logic
+  }
+}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -43,9 +59,11 @@ class MyScheduleRepository extends DefaultScheduleRepository {
 
 Create it and set it to the [`ScheduleManager`](/extend/schedules/schedule-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultScheduleRepository } from '@nyx-discord/framework';
-import type { NyxBot } from '@nyx-discord/framework';
+import { DefaultScheduleRepository } from '@nyx-discord/djs';
+import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut---
 class MyScheduleRepository extends DefaultScheduleRepository {
@@ -54,8 +72,23 @@ class MyScheduleRepository extends DefaultScheduleRepository {
 
 bot.getScheduleManager().setRepository(MyScheduleRepository.create());
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleRepository } from '@nyx-discord/djs-core';
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+class MyScheduleRepository extends DefaultScheduleRepository {
+  /** Your overrides */
+}
 
-The <DocsLink pkg='framework' name='DefaultScheduleRepository.create()' decorated={false} /> method instantiates your custom repository, not the default one.
+bot.getScheduleManager().setRepository(MyScheduleRepository.create());
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='base' name='DefaultScheduleRepository.create()' decorated={false} /> method instantiates your custom repository, not the default one.
 
 </Step>
 </Steps>

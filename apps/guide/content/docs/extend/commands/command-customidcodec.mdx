@@ -1,14 +1,15 @@
 ---
 title: CustomId Codec
 icon: ArrowRightLeft
-definedIn: ['framework/DefaultCommandCustomIdCodec', 'core/CommandCustomIdCodec']
+definedIn: ['base/DefaultCommandCustomIdCodec', 'types/CommandCustomIdCodec']
 ---
+
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
-The <DocsLink pkg='core' name='CommandCustomIdCodec' decorated={false} /> is responsible for de/serializing commands to/from customId strings, for the [Command Components](/use/commands/components) feature.
+The <DocsLink pkg='types' name='CommandCustomIdCodec' decorated={false} /> is responsible for de/serializing commands to/from customId strings, for the [Command Components](/use/commands/components) feature.
 
-The default implementation (<DocsLink pkg='framework' name='DefaultCommandCustomIdCodec' decorated={false} />) uses the [`@sapphire/string-store`](https://www.npmjs.com/package/@sapphire/string-store) package to efficiently de/serialize the data.
+The default implementation (<DocsLink pkg='base' name='DefaultCommandCustomIdCodec' decorated={false} />) uses the [`@sapphire/string-store`](https://www.npmjs.com/package/@sapphire/string-store) package to efficiently de/serialize the data.
 
 ## When to override
 
@@ -24,26 +25,39 @@ The default implementation (<DocsLink pkg='framework' name='DefaultCommandCustom
 
 Create a custom codec by either:
 
-* Extending <DocsLink pkg='framework' name='DefaultCommandCustomIdCodec' decorated={false} /> (<FrameworkMention />'s implementation, recommended for less work).
-* Implementing <DocsLink pkg='core' name='CommandCustomIdCodec' decorated={false} /> (<CoreMention />'s base definition).
+* Extending <DocsLink pkg='base' name='DefaultCommandCustomIdCodec' decorated={false} /> (<BaseMention />'s implementation, recommended for less work).
+* Implementing <DocsLink pkg='types' name='CommandCustomIdCodec' decorated={false} /> (<TypesMention />'s base definition).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultCommandCustomIdCodec } from '@nyx-discord/framework';
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs';
 
 class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs-core';
+
+class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {}
+```
+  </Tab>
+</Tabs>
 </Step>
 <Step>
 ### Registration
 
 Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut---
-import type { NyxBot } from '@nyx-discord/framework';
+import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut---
-import { DefaultCommandCustomIdCodec } from '@nyx-discord/framework';
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs';
 
 class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {
   /** Your overrides */
@@ -53,8 +67,27 @@ const customIdCodec = MyCommandCustomIdCodec.create();
 
 bot.getCommandManager().setCustomIdCodec(customIdCodec);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut---
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs-core';
 
-The <DocsLink pkg='framework' name='DefaultCommandCustomIdCodec.create()' decorated={false} /> method instantiates your custom codec, not the default one.
+class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {
+  /** Your overrides */
+}
+
+const customIdCodec = MyCommandCustomIdCodec.create();
+
+bot.getCommandManager().setCustomIdCodec(customIdCodec);
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='base' name='DefaultCommandCustomIdCodec.create()' decorated={false} /> method instantiates your custom codec, not the default one.
 
 </Step>
 </Steps>

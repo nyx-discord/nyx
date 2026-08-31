@@ -2,7 +2,7 @@
 title: Deployer
 description: Deploys commands and stores the ApplicationCommand mappings
 icon: Globe
-definedIn: ['framework/DefaultCommandDeployer', 'core/CommandDeployer']
+definedIn: ['djs/DefaultCommandDeployer', 'types/CommandDeployer']
 ---
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
@@ -27,11 +27,22 @@ Create a custom deployer by either:
 * Extending `DefaultCommandDeployer` (recommended, less work).
 * Implementing `CommandDeployer`.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultCommandDeployer } from '@nyx-discord/framework';
+import { DefaultCommandDeployer } from '@nyx-discord/djs';
 
 class MyCommandDeployer extends DefaultCommandDeployer {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandDeployer } from '@nyx-discord/djs-core';
+
+class MyCommandDeployer extends DefaultCommandDeployer {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -39,12 +50,14 @@ class MyCommandDeployer extends DefaultCommandDeployer {}
 
 Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultCommandDeployer } from '@nyx-discord/framework';
+import { DefaultCommandDeployer } from '@nyx-discord/djs';
 import { Client } from 'discord.js';
-import type { NyxBot } from '@nyx-discord/framework';
+import type { Bot } from '@nyx-discord/djs';
 declare const client: Client;
-declare const bot: NyxBot;
+declare const bot: Bot;
 // ---cut---
 class MyCommandDeployer extends DefaultCommandDeployer {
   /** Your overrides */
@@ -53,7 +66,26 @@ class MyCommandDeployer extends DefaultCommandDeployer {
 bot.getCommandManager().setDeployer(MyCommandDeployer.create(client));
 ```
 
-The <DocsLink pkg='framework' name='DefaultCommandDeployer.create()' decorated={false} /> method instantiates your custom deployer, not the default one.
+The <DocsLink pkg='djs' name='DefaultCommandDeployer.create()' decorated={false} /> method instantiates your custom deployer, not the default one.
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandDeployer, type Bot } from '@nyx-discord/djs-core';
+import type { API, Snowflake } from '@discordjs/core';
+declare const api: API;
+declare const applicationId: Snowflake;
+declare const bot: Bot;
+// ---cut---
+class MyCommandDeployer extends DefaultCommandDeployer {
+  /** Your overrides */
+}
+
+bot.getCommandManager().setDeployer(MyCommandDeployer.create(api, applicationId));
+```
+
+The <DocsLink pkg='djs-core' name='DefaultCommandDeployer.create()' decorated={false} /> method instantiates your custom deployer, not the default one.
+  </Tab>
+</Tabs>
 
 </Step>
 </Steps>

@@ -4,7 +4,6 @@ icon: Megaphone
 ---
 
 import { EyeIcon, BusIcon } from 'lucide-react';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 The event system in nyx is powered by [EventBuses](/use/events/buses). These are objects that store and notify their [EventSubscribers](/use/events/subscribers) when an event is called either internally or from another source.
 
@@ -14,7 +13,7 @@ You can see them as a more batteries-included way of handling events than using 
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { AbstractDJSClientSubscriber, type Metadata } from '@nyx-discord/djs';
     import { Events, type Interaction } from 'discord.js';
 
@@ -27,14 +26,14 @@ You can see them as a more batteries-included way of handling events than using 
     }
 
     // ---cut-start---
-    import type { NyxBot } from '@nyx-discord/djs';
-    declare const bot: NyxBot;
+    import type { Bot } from '@nyx-discord/djs';
+    declare const bot: Bot;
     // ---cut-end---
     await bot.subscribeToClient(new InteractionCreateLogger());
-    ```
+```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/djs-core';
     import { GatewayDispatchEvents, type ToEventProps, type APIInteraction } from '@discordjs/core';
 
@@ -47,11 +46,11 @@ You can see them as a more batteries-included way of handling events than using 
     }
 
     // ---cut-start---
-    import type { NyxBot } from '@nyx-discord/djs-core';
-    declare const bot: NyxBot;
+    import type { Bot } from '@nyx-discord/djs-core';
+    declare const bot: Bot;
     // ---cut-end---
     await bot.subscribeToClient(new InteractionCreateLogger());
-    ```
+```
   </Tab>
 </Tabs>
 
@@ -63,20 +62,20 @@ The client is wrapped under an event bus, which you can get:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 // ---cut-start---
-import { NyxBot } from '@nyx-discord/djs';
-declare const bot: NyxBot;
+import { Bot } from '@nyx-discord/djs';
+declare const bot: Bot;
 // ---cut-end---
 const bus = bot.getClientEventBus();
 //    ^?
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 // ---cut-start---
-import { NyxBot } from '@nyx-discord/djs-core';
-declare const bot: NyxBot;
+import { Bot } from '@nyx-discord/djs-core';
+declare const bot: Bot;
 // ---cut-end---
 const bus = bot.getClientEventBus();
 //    ^?
@@ -88,11 +87,11 @@ And you can directly subscribe to it:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 // ---cut-start---
-import { NyxBot, AbstractDJSClientSubscriber } from '@nyx-discord/djs';
+import { Bot, AbstractDJSClientSubscriber } from '@nyx-discord/djs';
 import { Events } from 'discord.js';
-declare const bot: NyxBot;
+declare const bot: Bot;
 class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
   protected readonly event = Events.InteractionCreate;
 
@@ -106,13 +105,13 @@ await bot.getClientEventBus().subscribe(new InteractionCreateLogger());
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 // ---cut-start---
-import { NyxBot, AbstractDJSClientSubscriber } from '@nyx-discord/djs-core';
-import { Events } from 'discord.js';
-declare const bot: NyxBot;
-class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
-  protected readonly event = Events.InteractionCreate;
+import { Bot, AbstractCoreClientSubscriber } from '@nyx-discord/djs-core';
+import { GatewayDispatchEvents } from '@discordjs/core';
+declare const bot: Bot;
+class InteractionCreateLogger extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
 
   public async handleEvent() {}
 }
@@ -131,7 +130,7 @@ You can create and directly use any bus you want:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 // ---cut-start---
 import { BasicEventBus } from '@nyx-discord/djs';
 type MyEventsArgs = {
@@ -144,7 +143,7 @@ const asyncBus = BasicEventBus.createAsync<MyEventsArgs>(); // Executes a pool o
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 // ---cut-start---
 import { BasicEventBus } from '@nyx-discord/djs-core';
 type MyEventsArgs = {

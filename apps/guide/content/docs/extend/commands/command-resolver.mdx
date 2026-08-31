@@ -1,8 +1,9 @@
 ---
 title: Resolver
 icon: Search
-definedIn: ['framework/DefaultCommandResolver', 'core/CommandResolver']
+definedIn: ['djs/DefaultCommandResolver', 'types/CommandResolver']
 ---
+
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
@@ -25,11 +26,22 @@ Create a custom command resolver by either:
 * Extending `DefaultCommandResolver` (recommended, less work).
 * Implementing `CommandResolver`.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultCommandResolver } from '@nyx-discord/framework';
+import { DefaultCommandResolver } from '@nyx-discord/djs';
 
 class MyCommandResolver extends DefaultCommandResolver {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/djs-core';
+
+class MyCommandResolver extends DefaultCommandResolver {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -37,9 +49,11 @@ class MyCommandResolver extends DefaultCommandResolver {}
 
 Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultCommandResolver } from '@nyx-discord/framework';
-import type { NyxBot } from '@nyx-discord/framework';
+import { DefaultCommandResolver } from '@nyx-discord/djs';
+import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut---
 class MyCommandResolver extends DefaultCommandResolver {
@@ -48,8 +62,23 @@ class MyCommandResolver extends DefaultCommandResolver {
 
 bot.getCommandManager().setResolver(MyCommandResolver.create());
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/djs-core';
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+class MyCommandResolver extends DefaultCommandResolver {
+  /** Your overrides */
+}
 
-The <DocsLink pkg='framework' name='DefaultCommandResolver.create()' decorated={false} /> method instantiates your custom resolver, not the default one.
+bot.getCommandManager().setResolver(MyCommandResolver.create());
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='djs' name='DefaultCommandResolver.create()' decorated={false} /> method instantiates your custom resolver, not the default one.
 
 </Step>
 </Steps>

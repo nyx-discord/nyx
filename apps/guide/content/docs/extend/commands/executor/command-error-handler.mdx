@@ -3,6 +3,7 @@ title: Error Handler
 icon: Ambulance
 ---
 
+
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 The `CommandErrorHandler` is responsible for handling errors thrown by middlewares and commands.
@@ -26,11 +27,22 @@ Create a custom error handler by either:
 * Extending `BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs>` (recommended, less work).
 * Implementing `CommandErrorHandler`.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { BasicErrorHandler, type AnyExecutableCommand, type CommandExecutionArgs } from '@nyx-discord/framework';
+import { BasicErrorHandler, type AnyExecutableCommand, type CommandExecutionArgs } from '@nyx-discord/djs';
 
 class MyErrorHandler extends BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs> {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BasicErrorHandler, type AnyExecutableCommand, type CommandExecutionArgs } from '@nyx-discord/djs-core';
+
+class MyErrorHandler extends BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs> {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -38,12 +50,14 @@ class MyErrorHandler extends BasicErrorHandler<AnyExecutableCommand, CommandExec
 
 Create it and set it to the [`CommandExecutor`](/extend/commands/executor), then set the executor on the [`CommandManager`](/extend/commands/command-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { BasicErrorHandler, type AnyExecutableCommand, type CommandExecutionArgs } from '@nyx-discord/framework';
-import type { NyxBot } from '@nyx-discord/framework';
-declare const bot: NyxBot;
+import { BasicErrorHandler, type AnyExecutableCommand, type CommandExecutionArgs } from '@nyx-discord/djs';
+import type { Bot } from '@nyx-discord/djs';
+declare const bot: Bot;
 // ---cut---
-import { DefaultCommandExecutor } from '@nyx-discord/framework';
+import { DefaultCommandExecutor } from '@nyx-discord/djs';
 
 class MyErrorHandler extends BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs> {}
 
@@ -55,19 +69,42 @@ const executor = DefaultCommandExecutor.create({
 
 bot.getCommandManager().setExecutor(executor);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BasicErrorHandler, type AnyExecutableCommand, type CommandExecutionArgs } from '@nyx-discord/djs-core';
+import type { Bot } from '@nyx-discord/djs-core';
+declare const bot: Bot;
+// ---cut---
+import { DefaultCommandExecutor } from '@nyx-discord/djs-core';
+
+class MyErrorHandler extends BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs> {}
+
+const executor = DefaultCommandExecutor.create({
+  injections: {
+    errorHandler: MyErrorHandler.create(),
+  },
+});
+
+bot.getCommandManager().setExecutor(executor);
+```
+  </Tab>
+</Tabs>
 
 The `create()` method instantiates your custom error handler, not the default one.
 
 <Callout type="warn" title="Using the Bot's logger">
 The default error handler will use `console.error` as a fallback consumer. If you want to change it to the bot's logger, instantiate it this way:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { BasicErrorHandler } from '@nyx-discord/framework';
+import { BasicErrorHandler } from '@nyx-discord/djs';
 
 class MyErrorHandler extends BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs> {}
 // ---cut---
-import { TypedFields } from '@nyx-discord/framework';
-import type { AnyExecutableCommand, CommandExecutionArgs } from '@nyx-discord/framework';
+import { TypedFields } from '@nyx-discord/djs';
+import type { AnyExecutableCommand, CommandExecutionArgs } from '@nyx-discord/djs';
 
 const myHandler = MyErrorHandler.createWithFallbackLogger<AnyExecutableCommand, CommandExecutionArgs>(
   (_error, _command, [_interaction, metadata]) => {
@@ -76,6 +113,25 @@ const myHandler = MyErrorHandler.createWithFallbackLogger<AnyExecutableCommand, 
   }
 );
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BasicErrorHandler } from '@nyx-discord/djs-core';
+
+class MyErrorHandler extends BasicErrorHandler<AnyExecutableCommand, CommandExecutionArgs> {}
+// ---cut---
+import { TypedFields } from '@nyx-discord/djs-core';
+import type { AnyExecutableCommand, CommandExecutionArgs } from '@nyx-discord/djs-core';
+
+const myHandler = MyErrorHandler.createWithFallbackLogger<AnyExecutableCommand, CommandExecutionArgs>(
+  (_error, _command, [_interaction, metadata]) => {
+    const bot = TypedFields.Bot.get(metadata, true);
+    return bot.getLogger();
+  }
+);
+```
+  </Tab>
+</Tabs>
 
 </Callout>
 

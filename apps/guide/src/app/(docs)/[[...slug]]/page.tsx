@@ -28,11 +28,18 @@ export default async function Page(props: {
   const pageData = await page.data.load();
   const { body: MDXContent, toc, structuredData } = pageData;
 
-  const lastUpdated = await getGithubLastEdit({
-    owner: 'nyx-discord',
-    repo: 'nyx',
-    path: `apps/guide/content/docs/${page.path}`,
-  });
+  let lastUpdated: Date | undefined;
+  try {
+    const raw = await getGithubLastEdit({
+      owner: 'nyx-discord',
+      repo: 'nyx',
+      path: `apps/guide/content/docs/${page.path}`,
+      token: process.env.GITHUB_TOKEN,
+    });
+    if (raw) lastUpdated = new Date(raw);
+  } catch {
+    // Gracefully handle GitHub rate limiting or network issues
+  }
 
   const { icon } = page.data;
   const iconElement =
@@ -64,7 +71,7 @@ export default async function Page(props: {
         path: `apps/guide/content/docs/${page.path}`,
       }}
       tableOfContent={{ single: false, style: 'clerk' }}
-      lastUpdate={lastUpdated ? new Date(lastUpdated) : undefined}
+      lastUpdate={lastUpdated}
     >
       <div className="flex items-center gap-2">
         <span className="text-fd-primary">{iconElement}</span>

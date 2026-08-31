@@ -1,8 +1,9 @@
 ---
 title: Bus
 icon: Bus
-definedIn: ['framework/DefaultCommandManager.eventBus']
+definedIn: ['djs/DefaultCommandManager.eventBus']
 ---
+
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { GithubLink } from '@/../components/links/GithubLink';
@@ -18,13 +19,15 @@ The `CommandBus` is the [`EventBus`](/use/events/busses) used for emitting comma
 
 Create your own bus [in any way](/use/events/buses) and set it to the [`CommandManager`](/extend/commands/command-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { type CommandEventArgs, type NyxBot } from '@nyx-discord/framework';
+import { type CommandEventArgs, type NyxBot } from '@nyx-discord/djs';
 import { Client, type ClientEvents } from 'discord.js';
 declare const client: Client;
 declare const bot: NyxBot;
 // ---cut---
-import { BasicEventBus } from '@nyx-discord/framework';
+import { BasicEventBus } from '@nyx-discord/djs';
 
 class MyCommandBus extends BasicEventBus<CommandEventArgs> {
   /** Your overrides */
@@ -34,9 +37,29 @@ const commandBus = MyCommandBus.createAsync();
 
 await bot.getCommandManager().setEventBus(commandBus);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { type CommandEventArgs, type NyxBot } from '@nyx-discord/djs-core';
+import { Client, type ClientEvents } from 'discord.js';
+declare const client: Client;
+declare const bot: NyxBot;
+// ---cut---
+import { BasicEventBus } from '@nyx-discord/djs-core';
 
-The <DocsLink pkg='framework' name='BasicEventBus.createSync()' decorated={false} /> (or
-<DocsLink pkg='framework' name='BasicEventBus.createAsync()' decorated={false} />) method instantiates your custom bus,
+class MyCommandBus extends BasicEventBus<CommandEventArgs> {
+  /** Your overrides */
+}
+
+const commandBus = MyCommandBus.createAsync();
+
+await bot.getCommandManager().setEventBus(commandBus);
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='base' name='BasicEventBus.createSync()' decorated={false} /> (or
+<DocsLink pkg='base' name='BasicEventBus.createAsync()' decorated={false} />) method instantiates your custom bus,
 not the default one.
 
 </Step>

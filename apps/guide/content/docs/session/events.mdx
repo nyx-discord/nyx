@@ -15,13 +15,26 @@ This is useful for monitoring, logging, or any other custom logic you want to ex
 
 The following events are available:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SessionEventEnum } from '@nyx-discord/plugin-sessions';
+import { SessionEventEnum } from '@nyx-discord/plugin-sessions/djs';
 
 // @noErrors
 SessionEventEnum.
 //               ^|
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { SessionEventEnum } from '@nyx-discord/plugin-sessions/djs-core';
+
+// @noErrors
+SessionEventEnum.
+//               ^|
+```
+  </Tab>
+</Tabs>
 
 ## Usage
 
@@ -37,17 +50,34 @@ Create a subscriber that will listen to a given event, use the `SessionEventArgs
 
 Subscribe to the event using the `SessionManager`'s `subscribe()` method.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut-start---
-import { EventSubscriber } from '@nyx-discord/framework';
-import type { SessionEventArgs, SessionPlugin } from '@nyx-discord/plugin-sessions';
+import { EventSubscriber } from '@nyx-discord/djs';
+import type { SessionEventArgs, DjsSessionPlugin } from '@nyx-discord/plugin-sessions/djs';
 declare const subscriber: EventSubscriber<SessionEventArgs, keyof SessionEventArgs>;
-import type { NyxBot } from '@nyx-discord/framework';
+import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
-declare const sessionPlugin: SessionPlugin;
+declare const sessionPlugin: DjsSessionPlugin;
 // ---cut-end---
 await sessionPlugin.subscribe(subscriber);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { EventSubscriber } from '@nyx-discord/djs-core';
+import type { SessionEventArgs, CoreSessionPlugin } from '@nyx-discord/plugin-sessions/djs-core';
+declare const subscriber: EventSubscriber<SessionEventArgs, keyof SessionEventArgs>;
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+declare const sessionPlugin: CoreSessionPlugin;
+// ---cut-end---
+await sessionPlugin.subscribe(subscriber);
+```
+  </Tab>
+</Tabs>
 </Step>
 </Steps>
 

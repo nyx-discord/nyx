@@ -1,5 +1,5 @@
 import { pnpmWorkspaceRootSync } from '@node-kit/pnpm-workspace-root';
-import { Schema } from '@repo/typedoc-plugin-entities';
+import { Schema } from '@repo/typedoc-plugin-entities/schema';
 import { execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
@@ -93,34 +93,47 @@ export async function fetchDocsMap(): Promise<typeof docsMapCache> {
   const localExists = existsSync(ENTITIES_LOCAL_PATH);
 
   if (shouldReadRemoteEntities(localExists)) {
-    const url = await getEntitiesUrl();
-    const res = await fetch(url, { next: { revalidate: false } });
-    if (!res.ok) {
-      throw new Error(`Failed to fetch docs map from ${url}`);
+    try {
+      const url = await getEntitiesUrl();
+      const res = await fetch(url, { next: { revalidate: false } });
+      if (res.ok) {
+        const result = await res.json();
+        docsMapCache = Schema.parse(result);
+        return docsMapCache;
+      }
+    } catch {
+      // Fallback to local if remote fetch fails
     }
-
-    const result = await res.json();
-    docsMapCache = Schema.parse(result);
-    return docsMapCache;
   }
 
-  const file = readFileSync(ENTITIES_LOCAL_PATH, 'utf-8');
-  const result = JSON.parse(file);
+  if (localExists) {
+    try {
+      const file = readFileSync(ENTITIES_LOCAL_PATH, 'utf-8');
+      const result = JSON.parse(file);
+      docsMapCache = Schema.parse(result);
+      return docsMapCache;
+    } catch {
+      // Fallback if local file read fails
+    }
+  }
 
-  docsMapCache = Schema.parse(result);
-  return docsMapCache;
+  return null;
 }
 
 export async function getLinks(pkg: string, name: string) {
-  const map = await fetchDocsMap();
-  const key = `@nyx-discord/${pkg}.${name}`;
-  const value = map?.[key];
+  try {
+    const map = await fetchDocsMap();
+    const key = `@nyx-discord/${pkg}.${name}`;
+    const value = map?.[key];
 
-  if (!value) return null;
-  if (value.docResolved) return value;
+    if (!value) return null;
+    if (value.docResolved) return value;
 
-  value.typedoc = new URL(value.typedoc, await getBaseUrl()).href;
-  value.docResolved = true;
+    value.typedoc = new URL(value.typedoc, await getBaseUrl()).href;
+    value.docResolved = true;
 
-  return value;
+    return value;
+  } catch {
+    return null;
+  }
 }

@@ -1,12 +1,13 @@
 ---
 title: Execution Scheduler
 icon: Calendar
-definedIn: ['framework/DefaultScheduleExecutionScheduler']
+definedIn: ['base/DefaultScheduleExecutionScheduler']
 ---
+
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
-The <DocsLink pkg='framework' name='DefaultScheduleExecutionScheduler' decorated={false} /> is responsible for interpreting the schedule's interval (usually a cron string) and creating/managing the <DocsLink pkg='core' name='ScheduleJobAdapter' decorated={false} /> that will trigger execution.
+The <DocsLink pkg='base' name='DefaultScheduleExecutionScheduler' decorated={false} /> is responsible for interpreting the schedule's interval (usually a cron string) and creating/managing the <DocsLink pkg='types' name='ScheduleJobAdapter' decorated={false} /> that will trigger execution.
 
 It relies on the [`ScheduleJobAdapter`](/extend/schedules/schedule-job-adapter) to interface with the actual timing mechanism (e.g. `cron`), and the adapter is the one that waits for the scheduled time and invokes the execution.
 
@@ -24,15 +25,28 @@ It relies on the [`ScheduleJobAdapter`](/extend/schedules/schedule-job-adapter) 
 <Step>
 ### Creation
 
-Create a custom scheduler extending <DocsLink pkg='framework' name='DefaultScheduleExecutionScheduler' decorated={false} />.
+Create a custom scheduler extending <DocsLink pkg='base' name='DefaultScheduleExecutionScheduler' decorated={false} />.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultScheduleExecutionScheduler } from '@nyx-discord/framework';
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/djs';
 
 class MyScheduler extends DefaultScheduleExecutionScheduler {
   // Override internal methods
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/djs-core';
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  // Override internal methods
+}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -40,11 +54,13 @@ class MyScheduler extends DefaultScheduleExecutionScheduler {
 
 Create it and set it to the [`ScheduleManager`](/extend/schedules/schedule-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import type { NyxBot } from '@nyx-discord/framework';
+import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut---
-import { DefaultScheduleExecutionScheduler } from '@nyx-discord/framework';
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/djs';
 
 class MyScheduler extends DefaultScheduleExecutionScheduler {
   /** Your overrides */
@@ -53,8 +69,25 @@ class MyScheduler extends DefaultScheduleExecutionScheduler {
 // @noErrors
 bot.getScheduleManager().setScheduler(MyScheduler.create());
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/djs-core';
 
-The <DocsLink pkg='framework' name='DefaultScheduleExecutionScheduler.create()' decorated={false} /> method instantiates your custom scheduler, not the default one.
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  /** Your overrides */
+}
+
+// @noErrors
+bot.getScheduleManager().setScheduler(MyScheduler.create());
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='base' name='DefaultScheduleExecutionScheduler.create()' decorated={false} /> method instantiates your custom scheduler, not the default one.
 
 </Step>
 </Steps>

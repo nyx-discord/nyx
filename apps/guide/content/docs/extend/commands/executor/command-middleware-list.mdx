@@ -27,11 +27,22 @@ Create a custom middleware list by either:
 * Extending `CommandMiddlewareList` (recommended, less work).
 * Implementing `MiddlewareList<CommandMiddlewareResolvable>`.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { CommandMiddlewareList } from '@nyx-discord/framework';
+import { CommandMiddlewareList } from '@nyx-discord/djs';
 
 class MyMiddlewareList extends CommandMiddlewareList {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CommandMiddlewareList } from '@nyx-discord/djs-core';
+
+class MyMiddlewareList extends CommandMiddlewareList {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -39,12 +50,14 @@ class MyMiddlewareList extends CommandMiddlewareList {}
 
 Create it and set it to the [`CommandExecutor`](/extend/commands/executor), then set the executor on the [`CommandManager`](/extend/commands/command-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { CommandMiddlewareList } from '@nyx-discord/framework';
-import type { NyxBot } from '@nyx-discord/framework';
-declare const bot: NyxBot;
+import { CommandMiddlewareList } from '@nyx-discord/djs';
+import type { Bot } from '@nyx-discord/djs';
+declare const bot: Bot;
 // ---cut---
-import { DefaultCommandExecutor } from '@nyx-discord/framework';
+import { DefaultCommandExecutor } from '@nyx-discord/djs';
 
 class MyMiddlewareList extends CommandMiddlewareList {}
 
@@ -55,6 +68,26 @@ const executor = DefaultCommandExecutor.create({
 });
 bot.getCommandManager().setExecutor(executor);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CommandMiddlewareList } from '@nyx-discord/djs-core';
+import type { Bot } from '@nyx-discord/djs-core';
+declare const bot: Bot;
+// ---cut---
+import { DefaultCommandExecutor } from '@nyx-discord/djs-core';
+
+class MyMiddlewareList extends CommandMiddlewareList {}
+
+const executor = DefaultCommandExecutor.create({
+  injections: {
+    middleware: MyMiddlewareList.create(),
+  },
+});
+bot.getCommandManager().setExecutor(executor);
+```
+  </Tab>
+</Tabs>
 
 The `create()` method instantiates your custom middleware list, not the default one.
 

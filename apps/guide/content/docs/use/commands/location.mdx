@@ -3,11 +3,14 @@ title: Location
 icon: MapPin
 ---
 
+
 Sometimes you may need a reference to a currently registered command. You can do so using the `CommandRepository` of your command manager.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut-start---
-import { NyxBot } from '@nyx-discord/framework';
+import { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut-end---
 const repository = bot.getCommandManager().getRepository();
@@ -17,14 +20,32 @@ const repository = bot.getCommandManager().getRepository();
 repository.locateBy
 //                 ^|
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut-end---
+const repository = bot.getCommandManager().getRepository();
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+repository.locateBy
+//                 ^|
+```
+  </Tab>
+</Tabs>
 
 ### Location by name
 
 Use the `locateByNameTree()` method to find a command by its name tree, which is a string representation of the command's hierarchy, e.g. `parent sub-command`.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut-start---
-import { CommandRepository } from '@nyx-discord/framework';
+import { CommandRepository } from '@nyx-discord/djs';
 declare const repository: CommandRepository;
 // ---cut-end---
 const topLevel = repository.locateByNameTree('top-level-command');
@@ -36,6 +57,24 @@ const subCommandOrGroup = repository.locateByNameTree('parent', 'sub-command-or-
 const subCommand = repository.locateByNameTree('parent', 'sub-command-group', 'sub-command');
 //    ^?
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { CommandRepository } from '@nyx-discord/djs-core';
+declare const repository: CommandRepository;
+// ---cut-end---
+const topLevel = repository.locateByNameTree('top-level-command');
+//    ^?
+
+const subCommandOrGroup = repository.locateByNameTree('parent', 'sub-command-or-group');
+//    ^?
+
+const subCommand = repository.locateByNameTree('parent', 'sub-command-group', 'sub-command');
+//    ^?
+```
+  </Tab>
+</Tabs>
 
 This however only returns the generic base types, not a specific class instance. If you need a specific type, use the following method.
 
@@ -43,9 +82,11 @@ This however only returns the generic base types, not a specific class instance.
 
 The `locateByClassTree()` method allows you to find a command by its class hierarchy, which is useful if you want to get a specific command type.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut-start---
-import { AbstractStandaloneCommand, AbstractSubCommand, AbstractParentCommand, AbstractSubCommandGroup, CommandRepository } from '@nyx-discord/framework';
+import { AbstractStandaloneCommand, AbstractSubCommand, AbstractParentCommand, AbstractSubCommandGroup, CommandRepository } from '@nyx-discord/djs';
 // @ts-expect-error Incomplete example
 class MyStandaloneCommand extends AbstractStandaloneCommand {}
 // @ts-expect-error Incomplete example
@@ -65,6 +106,32 @@ const subCommand = repository.locateByClassTree(MyParentCommand, MySubCommand);
 const subCommandGroup = repository.locateByClassTree(MyParentCommand, MySubCommandGroup);
 //    ^?
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { AbstractStandaloneCommand, AbstractSubCommand, AbstractParentCommand, AbstractSubCommandGroup, CommandRepository } from '@nyx-discord/djs-core';
+// @ts-expect-error Incomplete example
+class MyStandaloneCommand extends AbstractStandaloneCommand {}
+// @ts-expect-error Incomplete example
+class MySubCommand extends AbstractSubCommand {}
+// @ts-expect-error Incomplete example
+class MyParentCommand extends AbstractParentCommand {}
+// @ts-expect-error Incomplete example
+class MySubCommandGroup extends AbstractSubCommandGroup {}
+declare const repository: CommandRepository;
+// ---cut-end---
+const standalone = repository.locateByClassTree(MyStandaloneCommand);
+//    ^?
+
+const subCommand = repository.locateByClassTree(MyParentCommand, MySubCommand);
+//    ^?
+
+const subCommandGroup = repository.locateByClassTree(MyParentCommand, MySubCommandGroup);
+//    ^?
+```
+  </Tab>
+</Tabs>
 
 Notice how the return type of each call is the respective instance (or `null`), not the generic types.
 
@@ -74,11 +141,25 @@ Alternatively, you can get all top level commands with the `getCommands()` metho
 
 <Callout type="warn">This returns the local store, not a copy of it. Hence why it's typed as readonly. However, you may type assert and manipulate it, but it's not safe to do so.</Callout>
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 // ---cut-start---
-import { CommandRepository } from '@nyx-discord/framework';
+import { CommandRepository } from '@nyx-discord/djs';
 declare const repository: CommandRepository;
 // ---cut-end---
 const topLevels = repository.getCommands();
 //    ^?
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { CommandRepository } from '@nyx-discord/djs-core';
+declare const repository: CommandRepository;
+// ---cut-end---
+const topLevels = repository.getCommands();
+//    ^?
+```
+  </Tab>
+</Tabs>

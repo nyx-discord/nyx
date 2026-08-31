@@ -1,8 +1,9 @@
 ---
 title: Repository
 icon: Package
-definedIn: ['framework/DefaultCommandRepository', 'core/CommandRepository']
+definedIn: ['base/DefaultCommandRepository', 'types/CommandRepository']
 ---
+
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
@@ -26,11 +27,22 @@ Create a custom command repository by either:
 * Extending `DefaultCommandRepository` (recommended, less work).
 * Implementing `CommandRepository`.
 
-```ts twoslash
-import { DefaultCommandRepository } from '@nyx-discord/framework';
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```  ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/djs';
 
 class MyCommandRepository extends DefaultCommandRepository {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/djs-core';
+
+class MyCommandRepository extends DefaultCommandRepository {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -38,9 +50,11 @@ class MyCommandRepository extends DefaultCommandRepository {}
 
 Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultCommandRepository } from '@nyx-discord/framework';
-import type { NyxBot } from '@nyx-discord/framework';
+import { DefaultCommandRepository } from '@nyx-discord/djs';
+import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut---
 class MyCommandRepository extends DefaultCommandRepository {
@@ -49,8 +63,23 @@ class MyCommandRepository extends DefaultCommandRepository {
 
 bot.getCommandManager().setRepository(MyCommandRepository.create());
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/djs-core';
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+class MyCommandRepository extends DefaultCommandRepository {
+  /** Your overrides */
+}
 
-The <DocsLink pkg='framework' name='DefaultCommandRepository.create()' decorated={false} /> method instantiates your custom repository, not the default one.
+bot.getCommandManager().setRepository(MyCommandRepository.create());
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='base' name='DefaultCommandRepository.create()' decorated={false} /> method instantiates your custom repository, not the default one.
 
 </Step>
 </Steps>

@@ -4,7 +4,6 @@ icon: Laptop
 ---
 
 import { BabyIcon, CommandIcon, FolderIcon, FoldersIcon, PictureInPicture } from 'lucide-react';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 Commands are how your bot responds to user interactions.
 
@@ -20,7 +19,7 @@ Let's create a simple ping command:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { type NyxBot } from '@nyx-discord/djs';
     declare const bot: NyxBot;
     // ---cut---
@@ -40,14 +39,14 @@ Let's create a simple ping command:
 
     // Register the command
     await bot.getCommandManager().addCommands(new PingCommand());
-    ```
+```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { type NyxBot } from '@nyx-discord/djs-core';
-    import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
     declare const bot: NyxBot;
     // ---cut---
+    import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
     import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
     class PingCommand extends AbstractStandaloneCommand {
@@ -67,7 +66,7 @@ Let's create a simple ping command:
 
     // Register the command
     await bot.getCommandManager().addCommands(new PingCommand());
-    ```
+```
   </Tab>
 </Tabs>
 
@@ -81,23 +80,23 @@ For commands to be deployed at Discord, you must either pass `deployCommands: tr
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { Client } from 'discord.js';
     declare const client: Client<boolean>;
     // ---cut---
-    import { Bot, DjsNyxClient } from '@nyx-discord/djs';
+    import { Bot } from '@nyx-discord/djs';
 
     const myBot = Bot.create((bot) => ({
       // ---cut-start---
-      token: 'TOKEN', client: new DjsNyxClient(client, 'TOKEN'), logger: console,
+      token: 'TOKEN', client: client, logger: console,
       // ---cut-end---
       // ... other options
       deployCommands: true,
     }));
-    ```
+```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { Client, GatewayIntentBits } from '@discordjs/core';
     import { REST } from '@discordjs/rest';
     import { WebSocketManager } from '@discordjs/ws';
@@ -114,7 +113,7 @@ For commands to be deployed at Discord, you must either pass `deployCommands: tr
       // ... other options
       deployCommands: true,
     }));
-    ```
+```
   </Tab>
 </Tabs>
 
@@ -126,20 +125,20 @@ You can also deploy manually:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { Bot } from '@nyx-discord/djs';
     declare const bot: Bot;
     // ---cut---
     await bot.getCommandManager().deploy();
-    ```
+```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { Bot } from '@nyx-discord/djs-core';
     declare const bot: Bot;
     // ---cut---
     await bot.getCommandManager().deploy();
-    ```
+```
   </Tab>
 </Tabs>
 

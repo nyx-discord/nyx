@@ -5,7 +5,6 @@ definedIn: ['plugin-sessions/DefaultSessionLimitManager']
 ---
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 Session limits cap how many concurrent sessions a user, guild, or channel can have for a given session type.
 They are enforced **before** a session starts, and they are registered externally via `plugin.getSessionLimits().register(...)`.
@@ -21,14 +20,17 @@ Register limits through `plugin.getSessionLimits().register()` before starting t
 <Tabs items={['Plain Object', 'Builder']}>
 <Tab>
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
-import type { SessionLimit } from '@nyx-discord/plugin-sessions';
+import { DjsSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsSessionLimit } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
-const limit: SessionLimit = {
+const limit: DjsSessionLimit = {
   session: MySession,
   rules: [
     {
@@ -41,21 +43,50 @@ const limit: SessionLimit = {
 
 plugin.getSessionLimits().register(limit);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CoreSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreSessionLimit } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+// ---cut---
+const limit: CoreSessionLimit = {
+  session: MySession,
+  rules: [
+    {
+      max: 1,
+      scope: SessionLimitScope.User,
+      onExceed: SessionExceedAction.Error,
+    },
+  ],
+};
+
+plugin.getSessionLimits().register(limit);
+```
+  </Tab>
+</Tabs>
 
 </Tab>
 <Tab>
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 import {
-  SessionPlugin,
+  DjsSessionPlugin,
   SessionLimitBuilder,
   SessionLimitScope,
   SessionExceedAction,
+  AbstractSession,
   Session,
-} from '@nyx-discord/plugin-sessions';
+} from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
 const limit = new SessionLimitBuilder()
   .setSession(MySession)
@@ -69,6 +100,36 @@ const limit = new SessionLimitBuilder()
 
 plugin.getSessionLimits().register(limit);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import {
+  CoreSessionPlugin,
+  SessionLimitBuilder,
+  SessionLimitScope,
+  SessionExceedAction,
+  AbstractSession,
+  Session,
+} from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+// ---cut---
+const limit = new SessionLimitBuilder()
+  .setSession(MySession)
+  .addRule((rule) =>
+    rule
+      .setMax(1)
+      .setScope(SessionLimitScope.User)
+      .setOnExceed(SessionExceedAction.Error),
+  )
+  .toSessionLimit();
+
+plugin.getSessionLimits().register(limit);
+```
+  </Tab>
+</Tabs>
 
 </Tab>
 </Tabs>
@@ -85,11 +146,14 @@ A scope determines which sessions count toward the limit. Each scope computes a 
 
 One session per user. Multiple users can each have their own session.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+import { DjsSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
 plugin.getSessionLimits().register({
   session: MySession,
@@ -100,6 +164,26 @@ plugin.getSessionLimits().register({
   }],
 });
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CoreSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [{
+    max: 1,
+    scope: SessionLimitScope.User, // [!code highlight]
+    onExceed: SessionExceedAction.displace()
+  }],
+});
+```
+  </Tab>
+</Tabs>
 
 <Callout>
   **Example:** An interactive `/counter` command. A user opens a session with increment/decrement buttons.
@@ -110,11 +194,14 @@ plugin.getSessionLimits().register({
 
 One session per guild. DMs are grouped under the key `'dm'`.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+import { DjsSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
 plugin.getSessionLimits().register({
   session: MySession,
@@ -125,6 +212,26 @@ plugin.getSessionLimits().register({
   }],
 });
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CoreSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [{
+    max: 3,
+    scope: SessionLimitScope.Guild, // [!code highlight]
+    onExceed: SessionExceedAction.Error
+  }],
+});
+```
+  </Tab>
+</Tabs>
 
 <Callout>
   **Example:** A ticket wizard. The wizard walks the user through category, priority, and description steps. Limit of 3 per guild prevents a noisy server from spawning dozens of incomplete wizards.
@@ -135,11 +242,14 @@ plugin.getSessionLimits().register({
 One session per channel. Sessions without a `channelId` get the key `'unknown'` (at the time of writing, never the case,
 but it's still covered for future-proofing).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+import { DjsSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
 plugin.getSessionLimits().register({
   session: MySession,
@@ -150,6 +260,26 @@ plugin.getSessionLimits().register({
   }],
 });
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CoreSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [{
+    max: 1,
+    scope: SessionLimitScope.Channel, // [!code highlight]
+    onExceed: SessionExceedAction.Error
+  }],
+});
+```
+  </Tab>
+</Tabs>
 
 <Callout>
   **Example:** A live poll session with reaction buttons. Limit of 1 per channel ensures only one active poll runs in a channel at a time.
@@ -159,11 +289,14 @@ plugin.getSessionLimits().register({
 
 Combine multiple scopes. For example, one session per user per guild:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+import { DjsSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
 plugin.getSessionLimits().register({
   session: MySession,
@@ -176,6 +309,28 @@ plugin.getSessionLimits().register({
   ],
 });
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CoreSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [
+    {
+      max: 1,
+      scope: SessionLimitScope.composite(SessionLimitScope.User, SessionLimitScope.Guild), // [!code highlight]
+      onExceed: SessionExceedAction.displace(),
+    },
+  ],
+});
+```
+  </Tab>
+</Tabs>
 
 <Callout>
   **Example:** An embedded game like tic-tac-toe. Limit of 1 per user per guild. A user can play one game in each server they're in, but not two games in the same server.
@@ -185,23 +340,48 @@ plugin.getSessionLimits().register({
 
 Provide an arbitrary function that returns a string key:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+import { DjsSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => AbstractSession<unknown>;
 // ---cut---
 plugin.getSessionLimits().register({
   session: MySession,
   rules: [
     {
       max: 1,
-      scope: SessionLimitScope.custom((s: Session<unknown>) => s.getStartInteraction().locale), // [!code highlight]
+      scope: SessionLimitScope.custom((s: Session<unknown, DjsInteractionTypes>) => s.getStartInteraction().locale), // [!code highlight]
       onExceed: SessionExceedAction.Error,
     },
   ],
 });
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CoreSessionPlugin, SessionLimitScope, SessionExceedAction, AbstractSession, Session } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => AbstractSession<unknown>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [
+    {
+      max: 1,
+      scope: SessionLimitScope.custom((s: Session<unknown, CoreInteractionTypes>) => s.getStartInteraction().data.locale), // [!code highlight]
+      onExceed: SessionExceedAction.Error,
+    },
+  ],
+});
+```
+  </Tab>
+</Tabs>
 
 <Callout>
   **Example:** A translation-review session. Users with the same Discord locale share one review session across the
@@ -216,13 +396,16 @@ An action defines what happens when the limit is exceeded.
 
 Throws `SessionLimitExceededError`, which you can catch and reply to the user:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SessionPlugin, SessionLimitScope, SessionExceedAction, SessionLimitExceededError, Session } from '@nyx-discord/plugin-sessions';
+import { DjsSessionPlugin, SessionLimitScope, SessionExceedAction, SessionLimitExceededError, Session } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 import type { ChatInputCommandInteraction } from 'discord.js';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
-declare const session: Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
+declare const session: Session<unknown, DjsInteractionTypes>;
 declare const interaction: ChatInputCommandInteraction;
 // ---cut---
 plugin.getSessionLimits().register({
@@ -243,6 +426,38 @@ try {
   }
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CoreSessionPlugin, SessionLimitScope, SessionExceedAction, SessionLimitExceededError, Session } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+import type { ChatInputCommandInteraction } from 'discord.js';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+declare const session: Session<unknown, CoreInteractionTypes>;
+declare const interaction: ChatInputCommandInteraction;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [{
+    max: 1,
+    scope: SessionLimitScope.User,
+    onExceed: SessionExceedAction.Error // [!code highlight]
+  }],
+});
+
+// In your command handler:
+try {
+  await session.start();
+} catch (error) {
+  if (error instanceof SessionLimitExceededError) {
+    await interaction.reply({ content: 'You already have an active session.', ephemeral: true });
+  }
+}
+```
+  </Tab>
+</Tabs>
 
 <Callout>
   **Example:** A profile setup wizard with max 1 per user. The second attempt throws, and the handler catches to reply with a friendly ephemeral message.
@@ -252,11 +467,15 @@ try {
 
 Evicts an existing session to make room. The displaced session receives `SessionEndCodes.Displaced`.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
+import { DjsSessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
+declare const session: Session<unknown, DjsInteractionTypes>;
 // ---cut---
 // Default: replaces the first existing session
 plugin.getSessionLimits().register({
@@ -275,7 +494,7 @@ plugin.getSessionLimits().register({
     {
       max: 1,
       scope: SessionLimitScope.User,
-      onExceed: SessionExceedAction.displace((existing: Session<unknown>[]) => // [!code highlight]
+      onExceed: SessionExceedAction.displace((existing: Session<unknown, DjsInteractionTypes>[]) => // [!code highlight]
         existing.reduce((a, b) => ( // [!code highlight]
           a.getStartInteraction().createdAt < b.getStartInteraction().createdAt ? a : b // [!code highlight]
         )), // [!code highlight]
@@ -284,6 +503,44 @@ plugin.getSessionLimits().register({
   ],
 });
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CoreSessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+declare const session: Session<unknown, CoreInteractionTypes>;
+// ---cut---
+// Default: replaces the first existing session
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [{
+    max: 1,
+    scope: SessionLimitScope.User,
+    onExceed: SessionExceedAction.displace() // [!code highlight]
+  }],
+});
+
+// With a custom pick function, e.g. oldest first:
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [
+    {
+      max: 1,
+      scope: SessionLimitScope.User,
+      onExceed: SessionExceedAction.displace((existing: Session<unknown, CoreInteractionTypes>[]) => // [!code highlight]
+        existing.reduce((a, b) => ( // [!code highlight]
+          a.getStartInteraction().data.id < b.getStartInteraction().data.id ? a : b // [!code highlight]
+        )), // [!code highlight]
+      ), // [!code highlight]
+    },
+  ],
+});
+```
+  </Tab>
+</Tabs>
 
 <Callout>
   **Example:** An interactive counter. The user runs `/counter`, and if one already exists, it's silently replaced.
@@ -294,20 +551,23 @@ plugin.getSessionLimits().register({
 
 Full control via `ExceedDecision`:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions';
-import type { SessionExceedContext } from '@nyx-discord/plugin-sessions';
+import { DjsSessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions/djs';
+import type { SessionExceedContext, DjsSessionLimit } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
-plugin.getSessionLimits().register({
+const limit: DjsSessionLimit = {
   session: MySession,
   rules: [
     {
       max: 3,
       scope: SessionLimitScope.Guild,
-      onExceed: SessionExceedAction.custom(async (ctx: SessionExceedContext) => { // [!code highlight]
+      onExceed: SessionExceedAction.custom(async (ctx: SessionExceedContext<DjsInteractionTypes>) => { // [!code highlight]
         await ctx.attempted.getStartInteraction().reply({ // [!code highlight]
           content: `Queue full (${ctx.existing.length} dashboards active). Try later.`, // [!code highlight]
           ephemeral: true, // [!code highlight]
@@ -316,8 +576,40 @@ plugin.getSessionLimits().register({
       }), // [!code highlight]
     },
   ],
-});
+};
+plugin.getSessionLimits().register(limit);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CoreSessionPlugin, SessionLimitScope, SessionExceedAction, Session } from '@nyx-discord/plugin-sessions/djs-core';
+import type { SessionExceedContext, CoreSessionLimit } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+// ---cut---
+const limit: CoreSessionLimit = {
+  session: MySession,
+  rules: [
+    {
+      max: 3,
+      scope: SessionLimitScope.Guild,
+      onExceed: SessionExceedAction.custom(async (ctx: SessionExceedContext<CoreInteractionTypes>) => { // [!code highlight]
+        await ctx.attempted.getStartInteraction().api.interactions.reply( // [!code highlight]
+          ctx.attempted.getStartInteraction().data.id, // [!code highlight]
+          ctx.attempted.getStartInteraction().data.token, // [!code highlight]
+          { content: `Queue full (${ctx.existing.length} dashboards active). Try later.` } // [!code highlight]
+        ); // [!code highlight]
+        return { proceed: false }; // [!code highlight]
+      }), // [!code highlight]
+    },
+  ],
+};
+plugin.getSessionLimits().register(limit);
+```
+  </Tab>
+</Tabs>
 
 - `{ proceed: false }`: throws `SessionLimitExceededError`
 - `{ proceed: true, displace: null }`: allows the session without eviction (bypassing the limit)
@@ -332,33 +624,68 @@ plugin.getSessionLimits().register({
 
 When you need different limits for the same session type (e.g. premium vs free users), use predicates.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { TypedFields } from '@nyx-discord/framework';
+import { TypedFields, type DjsInteractionTypes } from '@nyx-discord/djs';
 import {
-  SessionPlugin,
+  DjsSessionPlugin,
   SessionLimitScope,
   SessionExceedAction,
-  Session
-} from '@nyx-discord/plugin-sessions';
+  AbstractSession,
+  Session,
+} from '@nyx-discord/plugin-sessions/djs';
 
 const Tier = TypedFields.create<'premium' | 'free'>('Tier');
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
 plugin.getSessionLimits().register(
   {
     session: MySession,
-    predicate: (_, meta) => Tier.get(meta) === 'premium', // [!code highlight]
+    predicate: (session: Session<unknown, DjsInteractionTypes>, meta) => Tier.get(meta) === 'premium', // [!code highlight]
     rules: [{ max: 5, scope: SessionLimitScope.User, onExceed: SessionExceedAction.Error }],
   },
   {
     session: MySession,
-    predicate: (_, meta) => Tier.get(meta) !== 'premium', // [!code highlight]
+    predicate: (session: Session<unknown, DjsInteractionTypes>, meta) => Tier.get(meta) !== 'premium', // [!code highlight]
     rules: [{ max: 1, scope: SessionLimitScope.User, onExceed: SessionExceedAction.Error }],
   },
 );
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { TypedFields, type CoreInteractionTypes } from '@nyx-discord/djs-core';
+import {
+  CoreSessionPlugin,
+  SessionLimitScope,
+  SessionExceedAction,
+  AbstractSession,
+  Session,
+} from '@nyx-discord/plugin-sessions/djs-core';
+
+const Tier = TypedFields.create<'premium' | 'free'>('Tier');
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+// ---cut---
+plugin.getSessionLimits().register(
+  {
+    session: MySession,
+    predicate: (session: Session<unknown, CoreInteractionTypes>, meta) => Tier.get(meta) === 'premium', // [!code highlight]
+    rules: [{ max: 5, scope: SessionLimitScope.User, onExceed: SessionExceedAction.Error }],
+  },
+  {
+    session: MySession,
+    predicate: (session: Session<unknown, CoreInteractionTypes>, meta) => Tier.get(meta) !== 'premium', // [!code highlight]
+    rules: [{ max: 1, scope: SessionLimitScope.User, onExceed: SessionExceedAction.Error }],
+  },
+);
+```
+  </Tab>
+</Tabs>
 
 <Callout type="warn">
 If two or more policies for the same constructor match (or all lack a predicate), an `AmbiguousSessionLimitError` is thrown. Make sure predicates are mutually exclusive.
@@ -368,22 +695,21 @@ If two or more policies for the same constructor match (or all lack a predicate)
 
 Limits are inherited through the prototype chain. When you start a child session, both the parent's and the child's policies are checked (AND semantics).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 import {
-  SessionPlugin,
+  DjsSessionPlugin,
   SessionLimitScope,
   SessionExceedAction,
   Session
-} from '@nyx-discord/plugin-sessions';
-import { AbstractSession } from '@nyx-discord/plugin-sessions';
+} from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
+declare const plugin: DjsSessionPlugin;
+declare const ParentSession: new () => Session<unknown, DjsInteractionTypes>;
+declare const ChildSession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
-// @noErrors
-class ParentSession extends AbstractSession {}
-// @noErrors
-class ChildSession extends ParentSession {}
-
 plugin.getSessionLimits().register({
   session: ParentSession,
   rules: [{ max: 2, scope: SessionLimitScope.Guild, onExceed: SessionExceedAction.Error }],
@@ -398,21 +724,56 @@ plugin.getSessionLimits().register({
 //   1. At most 2 sessions in the guild (from ParentSession)
 //   2. At most 1 session per user (from ChildSession)
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import {
+  CoreSessionPlugin,
+  SessionLimitScope,
+  SessionExceedAction,
+  Session
+} from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const ParentSession: new () => Session<unknown, CoreInteractionTypes>;
+declare const ChildSession: new () => Session<unknown, CoreInteractionTypes>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: ParentSession,
+  rules: [{ max: 2, scope: SessionLimitScope.Guild, onExceed: SessionExceedAction.Error }],
+});
+
+plugin.getSessionLimits().register({
+  session: ChildSession,
+  rules: [{ max: 1, scope: SessionLimitScope.User, onExceed: SessionExceedAction.Error }],
+});
+
+// Starting a ChildSession checks both policies:
+//   1. At most 2 sessions in the guild (from ParentSession)
+//   2. At most 1 session per user (from ChildSession)
+```
+  </Tab>
+</Tabs>
 
 ## Multiple Rules
 
 A single policy can define multiple rules. All rules must pass for the session to start.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 import {
-  SessionPlugin,
+  DjsSessionPlugin,
   SessionLimitScope,
   SessionExceedAction,
-  Session
-} from '@nyx-discord/plugin-sessions';
+  AbstractSession,
+  Session,
+} from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 
-declare const plugin: SessionPlugin;
-declare const MySession: new () => Session<unknown>;
+declare const plugin: DjsSessionPlugin;
+declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
 plugin.getSessionLimits().register({
   session: MySession,
@@ -426,3 +787,32 @@ plugin.getSessionLimits().register({
 //   - At most 3 per user => Error
 //   - At most 10 per guild => Displace
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import {
+  CoreSessionPlugin,
+  SessionLimitScope,
+  SessionExceedAction,
+  AbstractSession,
+  Session,
+} from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+
+declare const plugin: CoreSessionPlugin;
+declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
+// ---cut---
+plugin.getSessionLimits().register({
+  session: MySession,
+  rules: [
+    { max: 3, scope: SessionLimitScope.User, onExceed: SessionExceedAction.Error },
+    { max: 10, scope: SessionLimitScope.Guild, onExceed: SessionExceedAction.displace() },
+  ],
+});
+
+// Both rules are checked:
+//   - At most 3 per user => Error
+//   - At most 10 per guild => Displace
+```
+  </Tab>
+</Tabs>

@@ -5,7 +5,6 @@ icon: Baby
 
 import { LayersIcon, LockIcon, MousePointerClickIcon } from 'lucide-react';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 <Callout type="warn">It's recommended to read the [Commands Overview](../../index) and [Parent Commands](./) pages first.</Callout>
 
@@ -22,7 +21,7 @@ Extend the `AbstractSubCommand` class:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractSubCommand } from '@nyx-discord/djs';
 // ---cut-start---
 // @ts-expect-error Incomplete example
@@ -31,7 +30,7 @@ class MySubCommand extends AbstractSubCommand {}
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractSubCommand } from '@nyx-discord/djs-core';
 // ---cut-start---
 // @ts-expect-error Incomplete example
@@ -48,7 +47,7 @@ Implement `data` that stores the command's data, and `execute()` that executes t
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { SlashCommandSubcommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
     import { AbstractSubCommand } from '@nyx-discord/djs';
 
@@ -62,10 +61,10 @@ Implement `data` that stores the command's data, and `execute()` that executes t
         await interaction.reply('Hello!');
       }
     }
-    ```
+```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { type APIChatInputApplicationCommandInteraction, ApplicationCommandOptionType, type ToEventProps } from '@discordjs/core';
     import { AbstractSubCommand } from '@nyx-discord/djs-core';
 
@@ -84,7 +83,7 @@ Implement `data` that stores the command's data, and `execute()` that executes t
         );
       }
     }
-    ```
+```
   </Tab>
 </Tabs>
 
@@ -94,7 +93,7 @@ Implement `data` that stores the command's data, and `execute()` that executes t
 Instantiate and add it to a parent command or a subcommand group.
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 // ---cut-start---
 import type { ParentCommand, SubCommandGroup, SubCommand, NyxBot } from '@nyx-discord/djs';
 declare const MySubCommand: new (parent: ParentCommand | SubCommandGroup) => SubCommand;
@@ -106,7 +105,7 @@ parent.addChildren(subCommand);
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 // ---cut-start---
 import type { ParentCommand, SubCommandGroup, SubCommand, NyxBot } from '@nyx-discord/djs-core';
 declare const MySubCommand: new (parent: ParentCommand | SubCommandGroup) => SubCommand;
@@ -121,7 +120,7 @@ parent.addChildren(subCommand);
 Or do it in the parent or group's class:
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractParentCommand, AbstractSubCommandGroup } from '@nyx-discord/djs';
 import { SlashCommandBuilder } from 'discord.js';
 
@@ -151,7 +150,7 @@ class MyGroup extends AbstractSubCommandGroup {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractParentCommand, AbstractSubCommandGroup } from '@nyx-discord/djs-core';
 import { SlashCommandBuilder } from 'discord.js';
 
@@ -205,7 +204,7 @@ If your subcommand has autocompletable options, you can implement the `autocompl
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractSubCommand } from '@nyx-discord/djs';
 import type { AutocompleteInteraction } from 'discord.js';
 
@@ -223,7 +222,7 @@ class MySubCommand extends AbstractSubCommand {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractSubCommand } from '@nyx-discord/djs-core';
 import type { APIApplicationCommandAutocompleteInteraction, ToEventProps } from '@discordjs/core';
 
@@ -259,7 +258,7 @@ meaning that external objects can read the object, but not modify it.
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractSubCommand } from '@nyx-discord/djs';
 
 // ---cut-start---
@@ -279,7 +278,7 @@ const value = meta['someKey']; // 'someValue'
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractSubCommand } from '@nyx-discord/djs-core';
 
 // ---cut-start---

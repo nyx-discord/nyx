@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "clean": "rimraf .next",
     "build": "next build",
     "dev": "next dev --turbo",
     "start": "next start",
@@ -35,10 +36,16 @@
     "zod": "4.1.5"
   },
   "devDependencies": {
+    "@discordjs/builders": "^1.11.2",
+    "@discordjs/core": "^2.6.0",
+    "@discordjs/rest": "^2.6.3",
+    "@discordjs/ws": "^2.0.4",
     "@node-kit/pnpm-workspace-root": "3.3.1",
-    "@nyx-discord/core": "workspace:*",
-    "@nyx-discord/framework": "workspace:*",
+    "@nyx-discord/base": "workspace:*",
+    "@nyx-discord/djs": "workspace:*",
+    "@nyx-discord/djs-core": "workspace:*",
     "@nyx-discord/plugin-sessions": "workspace:*",
+    "@nyx-discord/types": "workspace:*",
     "@repo/typedoc-plugin-entities": "workspace:*",
     "@sapphire/string-store": "3.0.0",
     "@tailwindcss/postcss": "^4.1.12",

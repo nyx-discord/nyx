@@ -18,9 +18,11 @@ For general information about middlewares, you must first read the general [Midd
 
 Either:
 - Create a class that extends `AbstractScheduleMiddleware` and implements the `check()` method.
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { AbstractScheduleMiddleware } from '@nyx-discord/framework';
-import type { Schedule, Metadata, MiddlewareResponse } from '@nyx-discord/framework';
+import { AbstractScheduleMiddleware } from '@nyx-discord/djs';
+import type { Schedule, Metadata, MiddlewareResponse } from '@nyx-discord/djs';
 
 class MyMiddleware extends AbstractScheduleMiddleware {
   public async check(
@@ -32,10 +34,30 @@ class MyMiddleware extends AbstractScheduleMiddleware {
   }
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractScheduleMiddleware } from '@nyx-discord/djs-core';
+import type { Schedule, Metadata, MiddlewareResponse } from '@nyx-discord/djs-core';
+
+class MyMiddleware extends AbstractScheduleMiddleware {
+  public async check(
+    schedule: Schedule,
+    meta: Metadata
+  ): Promise<MiddlewareResponse> {
+    // Do some pre-processing logic
+    return this.true();
+  }
+}
+```
+  </Tab>
+</Tabs>
 
 - Create a function that returns a `MiddlewareResponse`.
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { type ScheduleMiddlewareResolvable } from '@nyx-discord/framework';
+import { type ScheduleMiddlewareResolvable } from '@nyx-discord/djs';
 
 const myCallbackMiddleware: ScheduleMiddlewareResolvable = async (schedule, meta) => {
   // Do some pre-processing logic
@@ -45,6 +67,21 @@ const myCallbackMiddleware: ScheduleMiddlewareResolvable = async (schedule, meta
   };
 };
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { type ScheduleMiddlewareResolvable } from '@nyx-discord/djs-core';
+
+const myCallbackMiddleware: ScheduleMiddlewareResolvable = async (schedule, meta) => {
+  // Do some pre-processing logic
+  return {
+    allowed: true,
+    checkNext: true,
+  };
+};
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -53,14 +90,28 @@ const myCallbackMiddleware: ScheduleMiddlewareResolvable = async (schedule, meta
 
 Register it to the executor's `MiddlewareList`:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import type { AbstractScheduleMiddleware, ScheduleMiddlewareResolvable, NyxBot } from '@nyx-discord/framework';
+import type { AbstractScheduleMiddleware, ScheduleMiddlewareResolvable, NyxBot } from '@nyx-discord/djs';
 declare const MyMiddleware: new () => AbstractScheduleMiddleware;
 declare const myCallbackMiddleware: ScheduleMiddlewareResolvable;
 declare const bot: NyxBot;
 // ---cut---
 bot.getScheduleManager().getExecutor().getMiddleware().add(new MyMiddleware(), myCallbackMiddleware);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { AbstractScheduleMiddleware, ScheduleMiddlewareResolvable, NyxBot } from '@nyx-discord/djs-core';
+declare const MyMiddleware: new () => AbstractScheduleMiddleware;
+declare const myCallbackMiddleware: ScheduleMiddlewareResolvable;
+declare const bot: NyxBot;
+// ---cut---
+bot.getScheduleManager().getExecutor().getMiddleware().add(new MyMiddleware(), myCallbackMiddleware);
+```
+  </Tab>
+</Tabs>
 
 </Step>
 </Steps>

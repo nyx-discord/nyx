@@ -1,8 +1,9 @@
 ---
 title: Middleware List
 icon: Layers
-definedIn: ['framework/SubscriberMiddlewareList', 'core/MiddlewareList']
+definedIn: ['base/SubscriberMiddlewareList', 'types/MiddlewareList']
 ---
+
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
@@ -29,11 +30,22 @@ Create a custom middleware list by either:
 * Extending `SubscriberMiddlewareList` (recommended, less work).
 * Implementing `MiddlewareList<EventSubscriberMiddlewareResolvable>`.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { SubscriberMiddlewareList } from '@nyx-discord/framework';
+import { SubscriberMiddlewareList } from '@nyx-discord/djs';
 
 class MyMiddlewareList extends SubscriberMiddlewareList {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { SubscriberMiddlewareList } from '@nyx-discord/djs-core';
+
+class MyMiddlewareList extends SubscriberMiddlewareList {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -41,17 +53,19 @@ class MyMiddlewareList extends SubscriberMiddlewareList {}
 
 Inject it directly when creating the dispatcher:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
 import {
   SubscriberMiddlewareList,
   type EventBus,
-} from '@nyx-discord/framework';
+} from '@nyx-discord/djs';
 
 declare const bus: EventBus<{ someEvent: [string] }>;
 
 class MyMiddlewareList extends SubscriberMiddlewareList {}
 // ---cut---
-import { BasicSyncEventDispatcher } from '@nyx-discord/framework';
+import { BasicSyncEventDispatcher } from '@nyx-discord/djs';
 
 // Works the same with the async dispatcher
 const dispatcher = BasicSyncEventDispatcher.create({
@@ -62,6 +76,31 @@ const dispatcher = BasicSyncEventDispatcher.create({
 
 bus.setDispatcher(dispatcher);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import {
+  SubscriberMiddlewareList,
+  type EventBus,
+} from '@nyx-discord/djs-core';
+
+declare const bus: EventBus<{ someEvent: [string] }>;
+
+class MyMiddlewareList extends SubscriberMiddlewareList {}
+// ---cut---
+import { BasicSyncEventDispatcher } from '@nyx-discord/djs-core';
+
+// Works the same with the async dispatcher
+const dispatcher = BasicSyncEventDispatcher.create({
+  injections: {
+    middleware: MyMiddlewareList.create(),
+  },
+});
+
+bus.setDispatcher(dispatcher);
+```
+  </Tab>
+</Tabs>
 
 If you prefer, you can still wrap this in a custom dispatcher class and call `super.create(...)`.
 

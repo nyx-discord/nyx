@@ -6,11 +6,11 @@ icon: Clock
 import { File, Folder, Files } from 'fumadocs-ui/components/files';
 import { DocsLink } from '@/../components/links/DocsLink';
 
-The <DocsLink pkg="loaders" name="ScheduleLoader" decorated={false} /> is the simplest loader. It scans a directory recursively for any class extending <DocsLink pkg="framework" name="AbstractSchedule" decorated={false} />, instantiates them, and returns a flat <DocsLink pkg="core" name="Schedule" decorated={false} />[].
+The <DocsLink pkg="loaders" name="ScheduleLoader" decorated={false} /> is the simplest loader. It scans a directory recursively for any class extending <DocsLink pkg="base" name="AbstractSchedule" decorated={false} />, instantiates them, and returns a flat <DocsLink pkg="types" name="Schedule" decorated={false} />[].
 
 ## Folder structure
 
-Any `.js` or `.mjs` file at any depth that exports a class extending <DocsLink pkg="framework" name="AbstractSchedule" decorated={false} /> will be picked up:
+Any `.js` or `.mjs` file at any depth that exports a class extending <DocsLink pkg="base" name="AbstractSchedule" decorated={false} /> will be picked up:
 
 <Files>
   <Folder name="dist/schedules" defaultOpen>
@@ -27,19 +27,35 @@ Any `.js` or `.mjs` file at any depth that exports a class extending <DocsLink p
 
 By default, schedules are automatically registered via `scheduleManager.addSchedule()`:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import type { NyxBot } from '@nyx-discord/framework';
+import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut---
 import { ScheduleLoader } from '@nyx-discord/loaders';
 
 await ScheduleLoader.load({ bot, path: './dist/schedules' });
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { ScheduleLoader } from '@nyx-discord/loaders';
+
+await ScheduleLoader.load({ bot, path: './dist/schedules' });
+```
+  </Tab>
+</Tabs>
 
 Pass `register: false` to handle registration yourself:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import type { NyxBot } from '@nyx-discord/framework';
+import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 // ---cut---
 import { ScheduleLoader } from '@nyx-discord/loaders';
@@ -54,12 +70,34 @@ for (const schedule of schedules) {
   await bot.getScheduleManager().addSchedule(schedule);
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { ScheduleLoader } from '@nyx-discord/loaders';
+
+const schedules = await ScheduleLoader.load({
+  bot,
+  path: './dist/schedules',
+  register: false,
+});
+
+for (const schedule of schedules) {
+  await bot.getScheduleManager().addSchedule(schedule);
+}
+```
+  </Tab>
+</Tabs>
 
 ## Writing schedules for the loader
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { AbstractSchedule } from '@nyx-discord/framework';
-import type { Metadata } from '@nyx-discord/framework';
+import { AbstractSchedule } from '@nyx-discord/djs';
+import type { Metadata } from '@nyx-discord/djs';
 
 export class DailyReport extends AbstractSchedule {
   protected readonly interval = '0 0 * * *'; // Every day at midnight
@@ -69,6 +107,22 @@ export class DailyReport extends AbstractSchedule {
   }
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/djs-core';
+import type { Metadata } from '@nyx-discord/djs-core';
+
+export class DailyReport extends AbstractSchedule {
+  protected readonly interval = '0 0 * * *'; // Every day at midnight
+
+  public async tick(meta: Metadata) {
+    // Send daily report...
+  }
+}
+```
+  </Tab>
+</Tabs>
 
 <Callout>
 Schedules are instantiated with <code>new Class()</code> (no arguments). They don't receive a parent instance.
@@ -76,9 +130,11 @@ Schedules are instantiated with <code>new Class()</code> (no arguments). They do
 
 Alternatively, you can specify a `static create(bot)` factory:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { AbstractSchedule } from '@nyx-discord/framework';
-import type { Metadata, NyxBot } from '@nyx-discord/framework';
+import { AbstractSchedule } from '@nyx-discord/djs';
+import type { Metadata, NyxBot } from '@nyx-discord/djs';
 
 export class DailyReport extends AbstractSchedule {
   protected readonly interval = '0 0 * * *';
@@ -93,6 +149,27 @@ export class DailyReport extends AbstractSchedule {
   // ---cut-end---
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/djs-core';
+import type { Metadata, NyxBot } from '@nyx-discord/djs-core';
+
+export class DailyReport extends AbstractSchedule {
+  protected readonly interval = '0 0 * * *';
+
+  public static create(bot: NyxBot) {
+    return new DailyReport();
+  }
+
+  // ...
+  // ---cut-start---
+  async tick(meta: Metadata) {}
+  // ---cut-end---
+}
+```
+  </Tab>
+</Tabs>
 
 The loader will call this method instead of the constructor if it exists. This allows you to access the bot instance,
 or add logic, for example to inject services or other dependencies with a DI container.

@@ -1,8 +1,9 @@
 ---
 title: Buses
 icon: Bus
-definedIn: ['framework/BasicEventBus', 'core/EventBus']
+definedIn: ['base/BasicEventBus', 'types/EventBus']
 ---
+
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
@@ -27,11 +28,22 @@ Create a custom event bus by either:
 * Extending `BasicEventEmitterBus` (recommended if wrapping a Node.js `EventEmitter`).
 * Implementing `EventBus` from scratch.
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { BasicEventBus } from '@nyx-discord/framework';
+import { BasicEventBus } from '@nyx-discord/djs';
 
 class MyEventBus extends BasicEventBus<{ myEvent: [string] }> {}
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BasicEventBus } from '@nyx-discord/djs-core';
+
+class MyEventBus extends BasicEventBus<{ myEvent: [string] }> {}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -39,9 +51,11 @@ class MyEventBus extends BasicEventBus<{ myEvent: [string] }> {}
 
 If you are wrapping an external source, you can listen to it and call `emit()`:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { BasicEventBus, BasicSyncEventDispatcher, DefaultMetadataFactory } from '@nyx-discord/framework';
-import type { Identifier, MetadataFactory } from '@nyx-discord/framework';
+import { BasicEventBus, BasicSyncEventDispatcher, DefaultMetadataFactory } from '@nyx-discord/djs';
+import type { Identifier, MetadataFactory } from '@nyx-discord/djs';
 
 // Mock external source
 declare const socket: { on: (event: string, cb: (data: string) => void) => void };
@@ -63,6 +77,34 @@ class MySocketBus extends BasicEventBus<{ message: [string] }> {
   }
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BasicEventBus, BasicSyncEventDispatcher, DefaultMetadataFactory } from '@nyx-discord/djs-core';
+import type { Identifier, MetadataFactory } from '@nyx-discord/djs-core';
+
+// Mock external source
+declare const socket: { on: (event: string, cb: (data: string) => void) => void };
+
+class MySocketBus extends BasicEventBus<{ message: [string] }> {
+  constructor(
+    metaFactory: MetadataFactory = new DefaultMetadataFactory(),
+  ) {
+    super(
+        (a, b) => a.getPriority() - b.getPriority(),
+        BasicSyncEventDispatcher.create(),
+        metaFactory
+    );
+
+    // Listen to external source and emit internally
+    socket.on('message', (data) => {
+      this.emit('message', [data]);
+    });
+  }
+}
+```
+  </Tab>
+</Tabs>
 
 </Step>
 </Steps>

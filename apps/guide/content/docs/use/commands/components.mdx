@@ -4,7 +4,6 @@ icon: MousePointerClick
 ---
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 You can make your components sent by your commands trigger a callback in the command itself, instead of having to listen to `interactionCreate` separately.
 
@@ -30,7 +29,7 @@ You can either instantiate your command with it, or get it from the execution me
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
 import type { ChatInputCommandInteraction } from 'discord.js';
 
@@ -46,7 +45,7 @@ class MyCommand extends AbstractStandaloneCommand {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
 import { AbstractStandaloneCommand, TypedFields } from '@nyx-discord/djs-core';
 import type { Metadata } from '@nyx-discord/djs-core';
@@ -75,7 +74,7 @@ Create your component the same way you'd normally do, but use the `bot` instance
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { ButtonBuilder, ActionRowBuilder } from 'discord.js';
     import type { ChatInputCommandInteraction } from 'discord.js';
     import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
@@ -95,11 +94,12 @@ Create your component the same way you'd normally do, but use the `bot` instance
         await interaction.reply({ components: [row] });
       }
     }
-    ```
+```
   </Tab>
   <Tab>
-    ```ts twoslash
-    import type { APIChatInputApplicationCommandInteraction, ToEventProps, ComponentType, ButtonStyle } from '@discordjs/core';
+```ts twoslash
+    import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+    import { ComponentType, ButtonStyle } from '@discordjs/core';
     import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs-core';
 
     // ---cut-start---
@@ -122,7 +122,7 @@ Create your component the same way you'd normally do, but use the `bot` instance
         );
       }
     }
-    ```
+```
   </Tab>
 </Tabs>
 
@@ -139,7 +139,7 @@ When the component is clicked, the respective callback will be executed:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import { AbstractStandaloneCommand } from '@nyx-discord/djs';
     import type { ButtonInteraction } from 'discord.js';
 
@@ -151,10 +151,10 @@ When the component is clicked, the respective callback will be executed:
         await interaction.reply('You clicked the button!');
       }
     }
-    ```
+```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
     import type { APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
     import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
@@ -170,7 +170,7 @@ When the component is clicked, the respective callback will be executed:
         );
       }
     }
-    ```
+```
   </Tab>
 </Tabs>
 
@@ -185,7 +185,7 @@ When the component is clicked, the metadata will contain the data you passed in 
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
 import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js';
 
@@ -206,7 +206,7 @@ class MyCommand extends AbstractStandaloneCommand {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { APIChatInputApplicationCommandInteraction, APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
 import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs-core';
 
@@ -239,7 +239,7 @@ the framework already uses for serialization to short strings:
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
 import { Schema, SchemaStore } from '@sapphire/string-store';
 import { ButtonBuilder, ActionRowBuilder, type ButtonInteraction, type ChatInputCommandInteraction } from 'discord.js';
@@ -274,7 +274,7 @@ class MyCommand extends AbstractStandaloneCommand {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 import type { APIChatInputApplicationCommandInteraction, APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
 import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs-core';
 import { Schema, SchemaStore } from '@sapphire/string-store';
@@ -329,7 +329,7 @@ In order to do so, you'll need the command instance first. You can read how to o
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 // ---cut-start---
 import { StandaloneCommand } from '@nyx-discord/djs';
 declare const commandInstance: StandaloneCommand;
@@ -355,7 +355,7 @@ class MyCommand extends AbstractStandaloneCommand {
 ```
   </Tab>
   <Tab>
-    ```ts twoslash
+```ts twoslash
 // ---cut-start---
 import { StandaloneCommand } from '@nyx-discord/djs-core';
 declare const commandInstance: StandaloneCommand;

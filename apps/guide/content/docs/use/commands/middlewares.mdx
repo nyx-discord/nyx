@@ -17,15 +17,17 @@ For general information about middlewares, you must first read the general [Midd
 ### Creation
 
 Either:
-- Create a class that extends `AbstractCommandMiddleware` and implements the `check()` method.
+- Create a class that extends `BaseCommandMiddleware` and implements the `check()` method.
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { AbstractCommandMiddleware } from '@nyx-discord/framework';
-import type { AnyExecutableCommand, CommandResolvableInteraction, Metadata, MiddlewareResponse } from '@nyx-discord/framework';
+import { BaseCommandMiddleware } from '@nyx-discord/djs';
+import type { AnyExecutableCommand, CommandResolvableInteraction, DjsInteractionTypes, Metadata, MiddlewareResponse } from '@nyx-discord/djs';
 
-class MyMiddleware extends AbstractCommandMiddleware {
+class MyMiddleware extends BaseCommandMiddleware {
   public async check(
     command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction,
+    interaction: CommandResolvableInteraction<DjsInteractionTypes>,
     meta: Metadata
   ): Promise<MiddlewareResponse> {
     // Do some pre-processing logic
@@ -33,10 +35,31 @@ class MyMiddleware extends AbstractCommandMiddleware {
   }
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BaseCommandMiddleware } from '@nyx-discord/djs-core';
+import type { AnyExecutableCommand, CommandResolvableInteraction, CoreInteractionTypes, Metadata, MiddlewareResponse } from '@nyx-discord/djs-core';
+
+class MyMiddleware extends BaseCommandMiddleware {
+  public async check(
+    command: AnyExecutableCommand,
+    interaction: CommandResolvableInteraction<CoreInteractionTypes>,
+    meta: Metadata
+  ): Promise<MiddlewareResponse> {
+    // Do some pre-processing logic
+    return this.true();
+  }
+}
+```
+  </Tab>
+</Tabs>
 
 - Create a function that returns a `MiddlewareResponse`.
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { type CommandMiddlewareResolvable, MiddlewareResponse } from '@nyx-discord/framework';
+import { type CommandMiddlewareResolvable, MiddlewareResponse } from '@nyx-discord/djs';
 
 const myCallbackMiddleware: CommandMiddlewareResolvable = async (command, interaction, meta) => {
   // Do some pre-processing logic
@@ -46,6 +69,21 @@ const myCallbackMiddleware: CommandMiddlewareResolvable = async (command, intera
   };
 };
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { type CommandMiddlewareResolvable, MiddlewareResponse } from '@nyx-discord/djs-core';
+
+const myCallbackMiddleware: CommandMiddlewareResolvable = async (command, interaction, meta) => {
+  // Do some pre-processing logic
+  return {
+    allowed: true,
+    checkNext: true,
+  };
+};
+```
+  </Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -54,14 +92,28 @@ const myCallbackMiddleware: CommandMiddlewareResolvable = async (command, intera
 
 Register it to the executor's `MiddlewareList`:
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import type { NyxBot, AbstractCommandMiddleware, CommandMiddlewareResolvable } from '@nyx-discord/framework';
-declare const MyMiddleware: new () => AbstractCommandMiddleware;
+import type { NyxBot, BaseCommandMiddleware, CommandMiddlewareResolvable } from '@nyx-discord/djs';
+declare const MyMiddleware: new () => BaseCommandMiddleware;
 declare const myCallbackMiddleware: CommandMiddlewareResolvable;
 declare const bot: NyxBot;
 // ---cut---
 bot.getCommandManager().getExecutor().getMiddleware().add(new MyMiddleware(), myCallbackMiddleware);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot, BaseCommandMiddleware, CommandMiddlewareResolvable } from '@nyx-discord/djs-core';
+declare const MyMiddleware: new () => BaseCommandMiddleware;
+declare const myCallbackMiddleware: CommandMiddlewareResolvable;
+declare const bot: NyxBot;
+// ---cut---
+bot.getCommandManager().getExecutor().getMiddleware().add(new MyMiddleware(), myCallbackMiddleware);
+```
+  </Tab>
+</Tabs>
 
 </Step>
 </Steps>
@@ -70,14 +122,16 @@ bot.getCommandManager().getExecutor().getMiddleware().add(new MyMiddleware(), my
 
 ### Logging middleware
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { AbstractCommandMiddleware } from '@nyx-discord/framework';
-import type { AnyExecutableCommand, CommandResolvableInteraction, Metadata } from '@nyx-discord/framework';
+import { BaseCommandMiddleware } from '@nyx-discord/djs';
+import type { AnyExecutableCommand, CommandResolvableInteraction, DjsInteractionTypes, Metadata } from '@nyx-discord/djs';
 
-class LoggingMiddleware extends AbstractCommandMiddleware {
+class LoggingMiddleware extends BaseCommandMiddleware {
   public async check(
     command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction,
+    interaction: CommandResolvableInteraction<DjsInteractionTypes>,
     meta: Metadata
   ) {
     console.log(`User ${interaction.user.tag} is executing command ${command.getData().name}`);
@@ -85,3 +139,23 @@ class LoggingMiddleware extends AbstractCommandMiddleware {
   }
 }
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BaseCommandMiddleware } from '@nyx-discord/djs-core';
+import type { AnyExecutableCommand, CommandResolvableInteraction, CoreInteractionTypes, Metadata } from '@nyx-discord/djs-core';
+
+class LoggingMiddleware extends BaseCommandMiddleware {
+  public async check(
+    command: AnyExecutableCommand,
+    interaction: CommandResolvableInteraction<CoreInteractionTypes>,
+    meta: Metadata
+  ) {
+    const user = interaction.data.user ?? interaction.data.member?.user;
+    console.log(`User ${user?.username} is executing command ${command.getData().name}`);
+    return this.true();
+  }
+}
+```
+  </Tab>
+</Tabs>

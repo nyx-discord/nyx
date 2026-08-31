@@ -1,7 +1,7 @@
 ---
 title: Subscriptions Container
 icon: Ear
-definedIn: ['framework/DefaultCommandSubscriptionsContainer', 'core/CommandSubscriptionsContainer']
+definedIn: ['djs/DefaultCommandSubscriptionsContainer', 'types/CommandSubscriptionsContainer']
 ---
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
@@ -18,12 +18,14 @@ The `CommandSubscriptionsContainer` is responsible for storing the subscribers t
 
 Create your own container by extending `DefaultCommandSubscriptionsContainer` and set it to the [`CommandManager`](/extend/commands/command-manager).
 
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
 ```ts twoslash
-import { DefaultCommandSubscriptionsContainer } from '@nyx-discord/framework';
-import type { NyxBot } from '@nyx-discord/framework';
-declare const bot: NyxBot;
+import { DefaultCommandSubscriptionsContainer } from '@nyx-discord/djs';
+import type { Bot } from '@nyx-discord/djs';
+declare const bot: Bot;
 // ---cut---
-import { DefaultCommandInteractionSubscriber, DefaultCommandAutocompleteSubscriber } from '@nyx-discord/framework';
+import { DefaultCommandInteractionSubscriber, DefaultCommandAutocompleteSubscriber } from '@nyx-discord/djs';
 
 class MySubscriptionsContainer extends DefaultCommandSubscriptionsContainer {
   /** Your overrides */
@@ -38,8 +40,32 @@ const container = MySubscriptionsContainer.create(
 
 bot.getCommandManager().setSubscriptions(container);
 ```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandSubscriptionsContainer } from '@nyx-discord/djs-core';
+import type { Bot } from '@nyx-discord/djs-core';
+declare const bot: Bot;
+// ---cut---
+import { DefaultCommandInteractionSubscriber, DefaultCommandAutocompleteSubscriber } from '@nyx-discord/djs-core';
 
-The <DocsLink pkg='framework' name='DefaultCommandSubscriptionsContainer.create()' decorated={false} /> method instantiates your custom container, not the default one.
+class MySubscriptionsContainer extends DefaultCommandSubscriptionsContainer {
+  /** Your overrides */
+}
+
+
+const container = MySubscriptionsContainer.create(
+  bot.getClientEventBus(),
+  new DefaultCommandInteractionSubscriber(),
+  new DefaultCommandAutocompleteSubscriber(),
+);
+
+bot.getCommandManager().setSubscriptions(container);
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='djs' name='DefaultCommandSubscriptionsContainer.create()' decorated={false} /> method instantiates your custom container, not the default one.
 
 </Step>
 </Steps>
