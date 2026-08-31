@@ -1,6 +1,6 @@
 // @ts-check
 import { execSync } from 'node:child_process';
-import { appendFileSync, existsSync, readFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 
 // simple wrapper around barrelsby to allow appending exports after generation
@@ -19,30 +19,35 @@ if (appendIndex !== -1) {
   }
 }
 
+let directory = '.';
+let name = 'index';
+
+const dirIdx = args.indexOf('--directory');
+const dIdx = args.indexOf('-d');
+const dirIndex = dirIdx !== -1 ? dirIdx : dIdx;
+
+if (dirIndex !== -1 && dirIndex + 1 < args.length) {
+  directory = args[dirIndex + 1];
+}
+
+const nameIdx = args.indexOf('--name');
+const nIdx = args.indexOf('-n');
+const nameIndex = nameIdx !== -1 ? nameIdx : nIdx;
+
+if (nameIndex !== -1 && nameIndex + 1 < args.length) {
+  name = args[nameIndex + 1];
+}
+
+const indexPath = join(process.cwd(), directory, `${name}.ts`);
+if (existsSync(indexPath)) {
+  unlinkSync(indexPath);
+}
+
 try {
   execSync(`barrelsby ${args.join(' ')}`, { stdio: 'inherit' });
 
   if (appendContent) {
-    let directory = '.';
-    let name = 'index';
 
-    const dirIdx = args.indexOf('--directory');
-    const dIdx = args.indexOf('-d');
-    const dirIndex = dirIdx !== -1 ? dirIdx : dIdx;
-
-    if (dirIndex !== -1 && dirIndex + 1 < args.length) {
-      directory = args[dirIndex + 1];
-    }
-
-    const nameIdx = args.indexOf('--name');
-    const nIdx = args.indexOf('-n');
-    const nameIndex = nameIdx !== -1 ? nameIdx : nIdx;
-
-    if (nameIndex !== -1 && nameIndex + 1 < args.length) {
-      name = args[nameIndex + 1];
-    }
-
-    const indexPath = join(process.cwd(), directory, `${name}.ts`);
 
     if (existsSync(indexPath)) {
       const currentContent = readFileSync(indexPath, 'utf8');

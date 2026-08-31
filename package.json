@@ -5,8 +5,10 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "build:core": "turbo run build --filter=@nyx-discord/core",
-    "build:framework": "turbo run build --filter=@nyx-discord/framework",
+    "build:djs": "turbo run build --filter=@nyx-discord/djs",
+    "build:guide": "turbo run build --filter=@nyx-discord/guide",
+    "build:djs-core": "turbo run build --filter=@nyx-discord/djs-core",
+    "build:loaders": "turbo run build --filter=@nyx-discord/loaders",
     "build:plugin-sessions": "turbo run build --filter=@nyx-discord/plugin-sessions",
     "pack": "pnpm build:framework && pnpm -C packages/core pack && pnpm -C packages/framework pack",
     "pack:plugin-sessions": "pnpm build:plugin-sessions && pnpm -C packages/plugin-sessions pack",

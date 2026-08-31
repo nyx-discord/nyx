@@ -1,15 +1,9 @@
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { DeclarationReflection, ReflectionKind, Renderer } from 'typedoc';
-import { object, record, string, url } from 'zod';
+import { Schema } from './schema.js';
 
-export const Schema = record(
-  string(),
-  object({
-    typedoc: string(),
-    github: url(),
-  }),
-);
+export { Schema };
 
 const supportedTopLevelKinds = new Set([
   ReflectionKind.Class,
