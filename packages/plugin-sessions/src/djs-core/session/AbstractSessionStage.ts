@@ -7,8 +7,8 @@ import type {
   APIModalSubmitInteraction,
 } from 'discord-api-types/v10';
 import { ComponentType, InteractionType } from 'discord-api-types/v10';
-import type { SessionUpdateInteraction } from '../../shared/interaction/SessionUpdateInteraction';
-import { BaseSessionStage } from '../../shared/session/stage/BaseSessionStage.js';
+import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
+import { BaseSessionStage } from '../../shared/base/session/stage/BaseSessionStage.js';
 
 export abstract class AbstractSessionStage<
   Result = void,

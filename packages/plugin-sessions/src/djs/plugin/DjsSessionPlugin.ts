@@ -5,15 +5,15 @@ import {
 } from '@nyx-discord/base';
 import type { DjsInteractionTypes } from '@nyx-discord/djs';
 import type { AnyEventSubscriber } from '@nyx-discord/types';
-import { DefaultSessionCustomIdCodec } from '../../shared/customId/DefaultSessionCustomIdCodec.js';
-import type { SessionEventArgs } from '../../shared/events/SessionEvent.js';
-import type { AnySessionInteraction } from '../../shared/interaction/AnySessionInteraction.js';
-import type { SessionInteractionMeta } from '../../shared/interaction/SessionInteractionMeta.js';
-import type { SessionUpdateInteraction } from '../../shared/interaction/SessionUpdateInteraction.js';
-import { BaseSessionPlugin } from '../../shared/plugin/BaseSessionPlugin.js';
-import type { SessionPluginCreateOptions } from '../../shared/plugin/BaseSessionPlugin.js';
-import { DefaultSessionPromiseRepository } from '../../shared/promise/DefaultSessionPromiseRepository.js';
-import { DefaultSessionRepository } from '../../shared/repository/DefaultSessionRepository.js';
+import { DefaultSessionCustomIdCodec } from '../../shared/base/customId/DefaultSessionCustomIdCodec.js';
+import type { SessionEventArgs } from '../../shared/types/events/SessionEvent.js';
+import type { AnySessionInteraction } from '../../shared/types/interaction/AnySessionInteraction.js';
+import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction.js';
+import type { SessionInteractionMeta } from '../../shared/types/interaction/SessionInteractionMeta.js';
+import type { SessionPluginCreateOptions } from '../../shared/base/plugin/BaseSessionPlugin.js';
+import { BaseSessionPlugin } from '../../shared/base/plugin/BaseSessionPlugin.js';
+import { DefaultSessionPromiseRepository } from '../../shared/base/promise/DefaultSessionPromiseRepository.js';
+import { DefaultSessionRepository } from '../../shared/base/repository/DefaultSessionRepository.js';
 import { DefaultSessionUpdateSubscriber } from '../event/DefaultSessionUpdateSubscriber.js';
 import { DefaultSessionExecutor } from '../executor/DefaultSessionExecutor.js';
 

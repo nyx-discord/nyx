@@ -1,12 +1,12 @@
-import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
-import type { APIInteraction } from 'discord-api-types/v10';
-import { InteractionType } from 'discord-api-types/v10';
 import type { ToEventProps } from '@discordjs/core';
 import { GatewayDispatchEvents } from '@discordjs/core';
-import { TypedFields } from '@nyx-discord/types';
-import type { Metadata } from '@nyx-discord/types';
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
 import { AbstractCoreClientSubscriber } from '@nyx-discord/djs-core';
-import type { SessionUpdateInteraction } from '../../shared/interaction/SessionUpdateInteraction.js';
+import type { Metadata } from '@nyx-discord/types';
+import { TypedFields } from '@nyx-discord/types';
+import type { APIInteraction } from 'discord-api-types/v10';
+import { InteractionType } from 'discord-api-types/v10';
+import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 import { CoreSessionPlugin } from '../plugin/CoreSessionPlugin.js';
 
 // eslint-disable-next-line max-len

@@ -1,13 +1,13 @@
 import type { DjsInteractionTypes } from '@nyx-discord/djs';
+import type { Metadata } from '@nyx-discord/types';
 import type {
   AnySelectMenuInteraction,
   ButtonInteraction,
   ModalMessageModalSubmitInteraction,
 } from 'discord.js';
-import type { Metadata } from '@nyx-discord/types';
-import type { SessionInteractionInfo } from '../../shared/interaction/SessionInteractionInfo.js';
-import type { SessionUpdateInteraction } from '../../shared/interaction/SessionUpdateInteraction.js';
-import { BasePaginationSession } from '../../shared/session/BasePaginationSession.js';
+import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
+import type { SessionInteractionInfo } from '../../shared/types/interaction/SessionInteractionInfo.js';
+import { BasePaginationSession } from '../../shared/base/session/BasePaginationSession.js';
 
 export abstract class AbstractPaginationSession<
   Result = void,

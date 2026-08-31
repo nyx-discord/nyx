@@ -1,7 +1,7 @@
 import type { DjsInteractionTypes } from '@nyx-discord/djs';
 import type { Awaitable, Metadata } from '@nyx-discord/types';
-import type { SessionStartInteraction } from '../../shared/interaction/SessionStartInteraction.js';
-import type { SessionStartStage } from '../../shared/session/stage/SessionStartStage.js';
+import type { SessionStartInteraction } from '../../shared/types/interaction/SessionStartInteraction';
+import type { SessionStartStage } from '../../shared/types/session/stage/SessionStartStage.js';
 import { AbstractSessionStage } from './AbstractSessionStage.js';
 
 export abstract class AbstractSessionStartStage<Result = void>

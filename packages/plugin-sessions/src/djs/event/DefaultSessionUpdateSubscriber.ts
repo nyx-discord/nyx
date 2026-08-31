@@ -1,10 +1,10 @@
 import type { DjsInteractionTypes } from '@nyx-discord/djs';
+import { AbstractDJSClientSubscriber } from '@nyx-discord/djs';
+import type { Metadata } from '@nyx-discord/types';
+import { TypedFields } from '@nyx-discord/types';
 import type { Interaction } from 'discord.js';
 import { Events } from 'discord.js';
-import { TypedFields } from '@nyx-discord/types';
-import type { Metadata } from '@nyx-discord/types';
-import { AbstractDJSClientSubscriber } from '@nyx-discord/djs';
-import type { SessionUpdateInteraction } from '../../shared/interaction/SessionUpdateInteraction.js';
+import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 import { DjsSessionPlugin } from '../plugin/DjsSessionPlugin.js';
 
 // eslint-disable-next-line max-len
