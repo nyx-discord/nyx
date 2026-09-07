@@ -113,18 +113,13 @@ export class BasicAsyncEventDispatcher
     return Promise.resolve()
       .then(() => this.middleware.check(subscriber, ...args))
       .catch(async (error) => {
-        const [meta] = args;
-
         const wrappedError = this.wrapMiddlewareError(
           error as Error,
           subscriber,
           args,
         );
 
-        await this.errorHandler.handle(wrappedError, subscriber, [
-          meta,
-          ...args,
-        ]);
+        await this.errorHandler.handle(wrappedError, subscriber, args);
         return false;
       });
   }
