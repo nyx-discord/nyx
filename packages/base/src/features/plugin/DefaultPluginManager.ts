@@ -1,3 +1,5 @@
+import type { ReadonlyCollection } from '@discordjs/collection';
+import { Collection } from '@discordjs/collection';
 import type {
   ClassImplements,
   EventBus,
@@ -15,8 +17,6 @@ import {
   PluginEventEnum,
   TypedFields,
 } from '@nyx-discord/types';
-import type { ReadonlyCollection } from '@discordjs/collection';
-import { Collection } from '@discordjs/collection';
 import { DefaultMetadataFactory } from '../../meta/DefaultMetadataFactory';
 import { ensureKey } from '../../util/ensureKey';
 import { BasicEventBus } from '../event/bus/BasicEventBus.js';
@@ -82,7 +82,12 @@ export class DefaultPluginManager implements PluginManager {
         );
       }
       this.plugins.set(id, plugin);
-      await plugin.onRegister(this.bot);
+      try {
+        await plugin.onRegister(this.bot);
+      } catch (error) {
+        this.plugins.delete(id);
+        throw error;
+      }
 
       Promise.resolve(this.bus.emit(PluginEventEnum.PluginAdd, [plugin])).catch(
         (error) => {
