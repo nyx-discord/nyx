@@ -15,7 +15,7 @@ import { AbstractEventDispatcher } from './AbstractEventDispatcher.js';
 type SyncEventDispatcherOptions = {
   errorHandler: EventSubscriberErrorHandler;
   middleware: MiddlewareList<EventSubscriberMiddleware>;
-  syncTimeout?: number;
+  syncTimeout?: number | null;
 };
 
 export class BasicSyncEventDispatcher
