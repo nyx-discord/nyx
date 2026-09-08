@@ -1,3 +1,11 @@
+import type { MappedEvents, ToEventProps } from '@discordjs/core';
+import {
+  BasicEventBus,
+  DefaultCommandCustomIdCodec,
+  DefaultCommandRepository,
+  DefaultMetadataFactory,
+  ensureKey,
+} from '@nyx-discord/base';
 import type {
   AnyExecutableCommand,
   ApplicationCommandInteraction,
@@ -24,12 +32,6 @@ import {
   IllegalStateError,
   TypedFields,
 } from '@nyx-discord/types';
-import { BasicEventBus } from '@nyx-discord/base';
-import { DefaultCommandCustomIdCodec } from '@nyx-discord/base';
-import { DefaultCommandRepository } from '@nyx-discord/base';
-import { DefaultMetadataFactory } from '@nyx-discord/base';
-import { ensureKey } from '@nyx-discord/base';
-import type { MappedEvents, ToEventProps } from '@discordjs/core';
 import type {
   APIApplicationCommand,
   APIApplicationCommandAutocompleteInteraction,
@@ -50,15 +52,14 @@ type CommandManagerOptions = {
   repository: CommandRepository<CoreInteractionTypes>;
   executor: CommandExecutor<CoreInteractionTypes>;
   customIdCodec: CommandCustomIdCodec;
-  deployer: CommandDeployer<CoreInteractionTypes, APIApplicationCommand>;
+  deployer: CommandDeployer<CoreInteractionTypes>;
   eventBus: EventBus<CommandEventArgs<CoreInteractionTypes>>;
   metaFactory: MetadataFactory;
 };
 
 export class DefaultCommandManager implements CommandManager<
   CoreInteractionTypes,
-  MappedEvents,
-  APIApplicationCommand
+  MappedEvents
 > {
   protected subscriptionsContainer: CommandSubscriptionsContainer<MappedEvents>;
 
@@ -70,10 +71,7 @@ export class DefaultCommandManager implements CommandManager<
 
   protected customIdCodec: CommandCustomIdCodec;
 
-  protected deployer: CommandDeployer<
-    CoreInteractionTypes,
-    APIApplicationCommand
-  >;
+  protected deployer: CommandDeployer<CoreInteractionTypes>;
 
   protected eventBus: EventBus<CommandEventArgs<CoreInteractionTypes>>;
 
@@ -95,11 +93,7 @@ export class DefaultCommandManager implements CommandManager<
     client: CoreNyxClient;
     clientBus: EventBus<MappedEvents>;
     injections?: Partial<CommandManagerOptions>;
-  }): CommandManager<
-    CoreInteractionTypes,
-    MappedEvents,
-    APIApplicationCommand
-  > {
+  }): CommandManager<CoreInteractionTypes, MappedEvents> {
     const constructorOptions: Partial<CommandManagerOptions> =
       options.injections ?? {};
     const metaFactory = DefaultMetadataFactory.createWith([
@@ -212,12 +206,26 @@ export class DefaultCommandManager implements CommandManager<
   public async editCommands(
     ...commands: TopLevelCommand<CoreInteractionTypes>[]
   ): Promise<this> {
+    const oldCommands: TopLevelCommand<CoreInteractionTypes>[] = [];
     for (const command of commands) {
+      const old = this.repository.getCommands().get(command.getId());
+      if (old) oldCommands.push(old);
+
       this.repository.removeCommand(command);
       this.repository.addCommand(command);
     }
 
-    await this.deployer.editCommands(...commands);
+    try {
+      await this.deployer.editCommands(...commands);
+    } catch (error) {
+      for (const command of commands) {
+        this.repository.removeCommand(command);
+      }
+      for (const old of oldCommands) {
+        this.repository.addCommand(old);
+      }
+      throw error;
+    }
 
     return this;
   }
@@ -225,21 +233,40 @@ export class DefaultCommandManager implements CommandManager<
   public async setCommands(
     ...commands: TopLevelCommand<CoreInteractionTypes>[]
   ): Promise<this> {
-    for (const repoCommand of this.repository.values()) {
+    const oldCommands = Array.from(this.repository.values());
+
+    for (const repoCommand of oldCommands) {
       this.repository.removeCommand(repoCommand);
+    }
+
+    for (const setCommand of commands) {
+      this.repository.addCommand(setCommand);
+    }
+
+    try {
+      await this.deployer.setCommands(...commands);
+    } catch (error) {
+      for (const setCommand of commands) {
+        this.repository.removeCommand(setCommand);
+      }
+      for (const repoCommand of oldCommands) {
+        this.repository.addCommand(repoCommand);
+      }
+      throw error;
+    }
+
+    for (const repoCommand of oldCommands) {
       Promise.resolve(
         this.eventBus.emit(CommandEventEnum.CommandRemove, [repoCommand]),
       ).catch((_error) => {});
     }
 
     for (const setCommand of commands) {
-      this.repository.addCommand(setCommand);
       Promise.resolve(
         this.eventBus.emit(CommandEventEnum.CommandAdd, [setCommand]),
       ).catch((_error) => {});
     }
 
-    await this.deployer.setCommands(...commands);
     return this;
   }
 
@@ -253,14 +280,28 @@ export class DefaultCommandManager implements CommandManager<
     );
     if (!command) return false;
 
-    const focused = interaction.data.data.options?.find(
-      (option) => 'focused' in option && option.focused,
-    );
+    let focused: any = undefined;
+    const searchOptions = (options: any[]) => {
+      for (const option of options) {
+        if ('focused' in option && option.focused) {
+          focused = option;
+          return;
+        }
+        if ('options' in option && Array.isArray(option.options)) {
+          searchOptions(option.options);
+        }
+      }
+    };
+
+    if (interaction.data.data.options) {
+      searchOptions(interaction.data.data.options);
+    }
+
     const extraData: { name: string; value: string }[] = [];
     if (focused) {
       extraData.push({ name: 'Option', value: focused.name });
       if ('value' in focused) {
-        extraData.push({ name: 'Value', value: `${focused.value}` });
+        extraData.push({ name: 'Value', value: String(focused.value) });
       }
     }
 
@@ -448,10 +489,7 @@ export class DefaultCommandManager implements CommandManager<
     return this;
   }
 
-  public getDeployer(): ReadonlyCommandDeployer<
-    CoreInteractionTypes,
-    APIApplicationCommand
-  > {
+  public getDeployer(): ReadonlyCommandDeployer<CoreInteractionTypes> {
     return this.deployer;
   }
 

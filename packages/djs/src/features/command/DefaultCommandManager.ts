@@ -1,3 +1,10 @@
+import {
+  BasicEventBus,
+  DefaultCommandCustomIdCodec,
+  DefaultCommandRepository,
+  DefaultMetadataFactory,
+  ensureKey,
+} from '@nyx-discord/base';
 import type {
   AnyExecutableCommand,
   CommandCustomIdCodec,
@@ -23,11 +30,6 @@ import {
   IllegalStateError,
   TypedFields,
 } from '@nyx-discord/types';
-import { BasicEventBus } from '@nyx-discord/base';
-import { DefaultCommandCustomIdCodec } from '@nyx-discord/base';
-import { DefaultCommandRepository } from '@nyx-discord/base';
-import { DefaultMetadataFactory } from '@nyx-discord/base';
-import { ensureKey } from '@nyx-discord/base';
 import type {
   ApplicationCommand,
   AutocompleteInteraction,
@@ -201,12 +203,26 @@ export class DefaultCommandManager implements CommandManager<
   public async editCommands(
     ...commands: TopLevelCommand<DjsInteractionTypes>[]
   ): Promise<this> {
+    const oldCommands: TopLevelCommand<DjsInteractionTypes>[] = [];
     for (const command of commands) {
+      const old = this.repository.getCommands().get(command.getId());
+      if (old) oldCommands.push(old);
+
       this.repository.removeCommand(command);
       this.repository.addCommand(command);
     }
 
-    await this.deployer.editCommands(...commands);
+    try {
+      await this.deployer.editCommands(...commands);
+    } catch (error) {
+      for (const command of commands) {
+        this.repository.removeCommand(command);
+      }
+      for (const old of oldCommands) {
+        this.repository.addCommand(old);
+      }
+      throw error;
+    }
 
     return this;
   }
@@ -214,21 +230,40 @@ export class DefaultCommandManager implements CommandManager<
   public async setCommands(
     ...commands: TopLevelCommand<DjsInteractionTypes>[]
   ): Promise<this> {
-    for (const repoCommand of this.repository.values()) {
+    const oldCommands = Array.from(this.repository.values());
+
+    for (const repoCommand of oldCommands) {
       this.repository.removeCommand(repoCommand);
+    }
+
+    for (const setCommand of commands) {
+      this.repository.addCommand(setCommand);
+    }
+
+    try {
+      await this.deployer.setCommands(...commands);
+    } catch (error) {
+      for (const setCommand of commands) {
+        this.repository.removeCommand(setCommand);
+      }
+      for (const repoCommand of oldCommands) {
+        this.repository.addCommand(repoCommand);
+      }
+      throw error;
+    }
+
+    for (const repoCommand of oldCommands) {
       Promise.resolve(
         this.eventBus.emit(CommandEventEnum.CommandRemove, [repoCommand]),
       ).catch((_error) => {});
     }
 
     for (const setCommand of commands) {
-      this.repository.addCommand(setCommand);
       Promise.resolve(
         this.eventBus.emit(CommandEventEnum.CommandAdd, [setCommand]),
       ).catch((_error) => {});
     }
 
-    await this.deployer.setCommands(...commands);
     return this;
   }
 
@@ -242,24 +277,40 @@ export class DefaultCommandManager implements CommandManager<
     );
     if (!command) return false;
 
-    const option = interaction.options.getFocused(true);
-    const { metadata, executionId } = this.createOrPopulateMeta({
-      meta,
-      command,
-      customIdExtra: null,
-      interaction,
-      extraData: [
-        { name: 'Option', value: option.name },
-        { name: 'Value', value: option.value },
-      ],
-    });
-
+    let metadata: Metadata | undefined;
+    let executionId: Identifier | undefined;
     try {
+      const option = interaction.options.getFocused(true);
+      const metaResult = this.createOrPopulateMeta({
+        meta,
+        command,
+        customIdExtra: null,
+        interaction,
+        extraData: [
+          { name: 'Option', value: option.name },
+          { name: 'Value', value: String(option.value) },
+        ],
+      });
+      metadata = metaResult.metadata;
+      executionId = metaResult.executionId;
+
       if (!command.isSubCommand() && !command.isStandalone()) return false;
       await this.executor.autocomplete(command, interaction, metadata);
     } catch (error) {
+      if (!metadata || !executionId) {
+        const metaResult = this.createOrPopulateMeta({
+          meta,
+          command,
+          customIdExtra: null,
+          interaction,
+          extraData: [],
+        });
+        metadata = metaResult.metadata;
+        executionId = metaResult.executionId;
+      }
+
       const wrapped = new Error(
-        `Uncaught executor error while autocompleting command '${String(executionId)}'.`,
+        `Uncaught error while autocompleting command '${String(executionId)}'.`,
         { cause: error },
       );
       await this.executor
