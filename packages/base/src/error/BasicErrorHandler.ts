@@ -90,8 +90,13 @@ export class BasicErrorHandler<
     );
   }
 
-  public hasConsumer(error: AnyClass): boolean {
-    return this.consumers.has(error.constructor as Constructor);
+  public hasConsumer(error: AnyClass | object): boolean {
+    const errorClass =
+      typeof error === 'function'
+        ? (error as Constructor)
+        : (error.constructor as Constructor);
+
+    return this.consumers.has(errorClass);
   }
 
   public getFallbackConsumer(): ErrorConsumer<object, ErroredObject, Args> {

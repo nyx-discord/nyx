@@ -19,7 +19,7 @@ export interface ErrorHandler<
   removeConsumerOf(error: AnyClass): void;
 
   /** Returns whether the handler has an error consumer for the given error. */
-  hasConsumer(error: AnyClass): boolean;
+  hasConsumer(error: AnyClass | object): boolean;
 
   /** Returns a collection of all registered error consumers. */
   getConsumers(): ReadonlyCollectionFrom<
