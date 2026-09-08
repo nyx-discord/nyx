@@ -81,9 +81,9 @@ export class DefaultBotService implements BotService {
 
     try {
       await Promise.all([
-        await this.bot.getCommandManager().onStart(),
-        await this.bot.getScheduleManager().onStart(),
-        await this.bot.getPluginManager().onStart(),
+        this.bot.getCommandManager().onStart(),
+        this.bot.getScheduleManager().onStart(),
+        this.bot.getPluginManager().onStart(),
       ]);
 
       Promise.resolve(this.bus.emit(BotServiceEventEnum.Start, [])).catch(
@@ -103,8 +103,17 @@ export class DefaultBotService implements BotService {
     }
 
     this.status = BotStatusEnum.Running;
-    await this.bot.getClient().login();
-    await this.bot.getCommandManager().onStart();
+    try {
+      await this.bot.getClient().login();
+    } catch (error) {
+      this.status = BotStatusEnum.Waiting;
+      try {
+        this.bot.getLogger().error('Error while logging in bot:', error);
+      } finally {
+        this.startPromise.reject(error);
+      }
+      throw error;
+    }
 
     this.startPromise.resolve(this.bot);
 
@@ -116,11 +125,17 @@ export class DefaultBotService implements BotService {
       throw new IllegalStateError(`Bot is not running: ${this.status}`);
     }
 
-    await Promise.all([
-      await this.bot.getCommandManager().onStop(),
-      await this.bot.getScheduleManager().onStop(),
-      await this.bot.getPluginManager().onStop(),
-    ]);
+    let stopError: unknown = null;
+
+    try {
+      await Promise.all([
+        this.bot.getCommandManager().onStop(),
+        this.bot.getScheduleManager().onStop(),
+        this.bot.getPluginManager().onStop(),
+      ]);
+    } catch (error) {
+      stopError = error;
+    }
 
     Promise.resolve(
       this.bus.emit(BotServiceEventEnum.Stop, reason ? [reason] : []),
@@ -130,7 +145,19 @@ export class DefaultBotService implements BotService {
         .error('Uncaught bus error while emitting stop event.', error);
     });
 
-    await this.bot.getClient().destroy();
+    try {
+      await this.bot.getClient().destroy();
+    } catch (error) {
+      if (!stopError) {
+        stopError = error;
+      }
+    } finally {
+      this.status = BotStatusEnum.Waiting;
+    }
+
+    if (stopError) {
+      throw stopError;
+    }
 
     return this;
   }
