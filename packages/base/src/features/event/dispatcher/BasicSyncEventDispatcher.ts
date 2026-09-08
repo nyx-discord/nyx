@@ -80,6 +80,7 @@ export class BasicSyncEventDispatcher
         );
 
         await this.errorHandler.handle(wrappedError, subscriber, args);
+        continue;
       }
 
       try {
