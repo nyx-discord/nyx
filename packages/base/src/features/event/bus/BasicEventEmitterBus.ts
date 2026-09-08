@@ -117,15 +117,7 @@ export class BasicEventEmitterBus<
 
   /** Unlistents a specific event in the emitter. */
   protected unlistenFromEmitter(event: string): this {
-    const currentSubscribers = this.subscribers.get(event);
-
-    if (
-      !this.listenedEvents.has(event)
-      || !currentSubscribers
-      || !currentSubscribers.size
-    ) {
-      return this;
-    }
+    if (this.subscribers.has(event)) return this;
 
     this.emitter.removeAllListeners(event);
     this.listenedEvents.delete(event);
