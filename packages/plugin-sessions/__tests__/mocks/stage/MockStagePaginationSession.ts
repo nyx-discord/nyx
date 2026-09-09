@@ -1,4 +1,5 @@
 import type { NyxBot } from '@nyx-discord/types';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 import type { SessionStartInteraction } from '#src';
 import { randomUUID } from 'crypto';
 import { vi } from 'vitest';
@@ -18,7 +19,7 @@ export class MockStagePaginationSession extends AbstractStagePaginationSession<v
     return new this({
       bot: existingBot ?? await getTestBot(),
       id: randomUUID(),
-      startInteraction: {} as SessionStartInteraction,
+      startInteraction: {} as SessionStartInteraction<DjsInteractionTypes>,
     });
   }
 }

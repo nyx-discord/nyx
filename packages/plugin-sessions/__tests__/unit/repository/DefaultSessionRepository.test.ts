@@ -1,7 +1,7 @@
 import { MockPaginationSession } from '#mocks/MockPaginationSession';
 import { MockSession } from '#mocks/MockSession';
 import { DefaultSessionRepository } from '#src';
-import { describe, expect, it, test } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 
 async function createSession(): Promise<MockSession> {
   return MockSession.createMock();
@@ -123,6 +123,51 @@ describe('DefaultSessionRepository', () => {
 
       const result = repo.getByConstructor(MockSession);
       expect(result.size).toBe(0);
+    });
+  });
+
+  describe('TTL and expiration', () => {
+    test('GIVEN a session with TTL WHEN it expires THEN it is deindexed and expirationCallback is called', async () => {
+      const callback = vi.fn();
+      const repo = DefaultSessionRepository.create(callback);
+      const session = await createSession();
+      vi.spyOn(session, 'getTTL').mockReturnValue(100);
+
+      repo.save(session);
+      expect(repo.getByConstructor(MockSession).size).toBe(1);
+
+      await new Promise(r => setTimeout(r, 150));
+      repo.get(session.getId()); // Trigger stale check if lazy
+
+      expect(repo.getByConstructor(MockSession).size).toBe(0);
+      expect(callback).toHaveBeenCalledWith(session, session.getId(), 'stale');
+    });
+
+    test('GIVEN a session WHEN it is explicitly deleted THEN it is deindexed but expirationCallback is NOT called', async () => {
+      const callback = vi.fn();
+      const repo = DefaultSessionRepository.create(callback);
+      const session = await createSession();
+
+      repo.save(session);
+      repo.delete(session.getId());
+
+      expect(repo.getByConstructor(MockSession).size).toBe(0);
+      expect(callback).not.toHaveBeenCalled();
+    });
+
+    test('GIVEN a callback is set via setExpirationCallback WHEN session expires THEN callback is called', async () => {
+      const repo = DefaultSessionRepository.create();
+      const callback = vi.fn();
+      repo.setExpirationCallback(callback);
+
+      const session = await createSession();
+      vi.spyOn(session, 'getTTL').mockReturnValue(100);
+
+      repo.save(session);
+      await new Promise(r => setTimeout(r, 150));
+      repo.get(session.getId()); // Trigger stale check if lazy
+
+      expect(callback).toHaveBeenCalledWith(session, session.getId(), 'stale');
     });
   });
 

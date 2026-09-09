@@ -6,7 +6,7 @@ function makeSession(
   userId: string,
   guildId: string | null,
   channelId: string | null,
-): Session<unknown> {
+): Session<unknown, never> {
   return {
     getUserId: () => userId,
     getGuildId: () => guildId,
@@ -17,7 +17,7 @@ function makeSession(
         guildId,
         channelId,
       }) as unknown as SessionStartInteraction,
-  } as unknown as Session<unknown>;
+  } as unknown as Session<unknown, never>;
 }
 
 describe('SessionLimitScope', () => {
@@ -91,8 +91,8 @@ describe('SessionLimitScope', () => {
 
   describe('custom', () => {
     it('uses the provided key function', () => {
-      const scope = SessionLimitScope.custom(
-        (session) => `custom-${session.getStartInteraction().user.id}`,
+      const scope = SessionLimitScope.custom<never>(
+        (session) => `custom-${(session.getStartInteraction() as any).user.id}`,
       );
       const s = makeSession('user-99', 'guild-1', 'channel-1');
       expect(scope.computeKey(s)).toBe('custom-user-99');

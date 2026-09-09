@@ -1,11 +1,11 @@
-import { createStubBot } from '#mocks/stubBot';
+import { StubBot } from '#mocks/StubBot';
 import { resolve } from 'path';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { LoaderError } from '../../src/error/LoaderError';
 import { CommandLoader } from '../../src/loaders/command/CommandLoader';
 
 const fixturesDir = resolve(__dirname, '..', 'fixtures', 'commands');
-const bot = createStubBot();
+const bot = StubBot.create();
 
 describe('CommandLoader', () => {
   describe('valid directories', () => {
@@ -78,6 +78,34 @@ describe('CommandLoader', () => {
       const parent = commands.find((c) => c.getData().name === 'multi-parent');
       expect(standalone).toBeDefined();
       expect(parent).toBeDefined();
+    });
+  });
+
+  describe('registration', () => {
+    test('GIVEN register is true WHEN loaded THEN commands are added to the bot command manager', async () => {
+      const commandManager = bot.getCommandManager();
+      vi.spyOn(commandManager, 'addCommands').mockResolvedValue(commandManager as any);
+
+      const commands = await CommandLoader.load({
+        bot,
+        register: true,
+        path: resolve(fixturesDir, 'standalone'),
+      });
+
+      expect(commandManager.addCommands).toHaveBeenCalledWith(...commands);
+    });
+
+    test('GIVEN register is false WHEN loaded THEN commands are not added to the bot command manager', async () => {
+      const commandManager = bot.getCommandManager();
+      vi.spyOn(commandManager, 'addCommands').mockResolvedValue(commandManager as any);
+
+      await CommandLoader.load({
+        bot,
+        register: false,
+        path: resolve(fixturesDir, 'standalone'),
+      });
+
+      expect(commandManager.addCommands).not.toHaveBeenCalled();
     });
   });
 

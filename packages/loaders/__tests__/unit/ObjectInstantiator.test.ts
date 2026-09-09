@@ -1,4 +1,4 @@
-import { createStubBot } from '#mocks/stubBot';
+import { StubBot } from '#mocks/StubBot';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { LoaderError } from '../../src';
 import { ObjectInstantiator } from '../../src/util/ObjectInstantiator';
@@ -53,7 +53,7 @@ class ThrowingConstructorClass {
 }
 
 describe('ObjectInstantiator.instantiateModule', () => {
-  const bot = createStubBot();
+  const bot = StubBot.create();
 
   beforeEach(() => {
     ClassWithCreate.reset();

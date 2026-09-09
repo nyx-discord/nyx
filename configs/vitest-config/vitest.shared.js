@@ -4,6 +4,7 @@ module.exports = defineConfig({
   test: {
     typecheck: {
       enabled: true,
+      include: ['**/*.{test,spec}.?(c|m)[jt]s?(x)'],
     },
     globals: true,
     environment: 'node',

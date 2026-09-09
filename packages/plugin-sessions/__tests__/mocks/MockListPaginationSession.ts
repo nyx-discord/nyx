@@ -1,4 +1,5 @@
 import type { SessionStartInteraction } from '#src';
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
 import { randomUUID } from 'crypto';
 import { vi } from 'vitest';
 import { getTestBot } from '../testBot';
@@ -16,7 +17,7 @@ export class MockListPaginationSession<T> extends AbstractListPaginationSession<
     return new this<T>({
       bot: await getTestBot(),
       id: randomUUID(),
-      startInteraction: {} as SessionStartInteraction,
+      startInteraction: {} as SessionStartInteraction<DjsInteractionTypes>,
       items,
     });
   }
