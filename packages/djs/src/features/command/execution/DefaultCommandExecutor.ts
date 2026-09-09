@@ -116,8 +116,10 @@ export class DefaultCommandExecutor implements CommandExecutor<DjsInteractionTyp
     try {
       await command.autocomplete(interaction, metadata);
     } catch (error) {
+      const resolvedError =
+        error instanceof Error ? error : new Error(String(error));
       const wrappedError = this.wrapAutocompleteError(
-        error as Error,
+        resolvedError,
         command,
         interaction,
         metadata,
@@ -211,7 +213,9 @@ export class DefaultCommandExecutor implements CommandExecutor<DjsInteractionTyp
       const boundMethod = method.bind(command);
       await boundMethod(interaction, metadata);
     } catch (error) {
-      await this.errorHandler.handle(error as object, command, [
+      const resolvedError =
+        error instanceof Error ? error : new Error(String(error));
+      await this.errorHandler.handle(resolvedError, command, [
         interaction,
         metadata,
       ]);
@@ -227,8 +231,10 @@ export class DefaultCommandExecutor implements CommandExecutor<DjsInteractionTyp
     try {
       result = await this.middleware.check(command, interaction, meta);
     } catch (error) {
+      const resolvedError =
+        error instanceof Error ? error : new Error(String(error));
       const wrappedError = this.wrapMiddlewareError(
-        error as Error,
+        resolvedError,
         command,
         interaction,
         meta,
