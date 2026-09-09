@@ -1,12 +1,12 @@
-import type { ToEventProps } from '@discordjs/core';
-import { BaseExecutableCommand } from '@nyx-discord/base';
-import type { Awaitable, Metadata, Nameable } from '@nyx-discord/types';
 import type {
   APIMessageComponentButtonInteraction,
   APIMessageComponentSelectMenuInteraction,
   APIModalSubmitInteraction,
-} from 'discord-api-types/v10';
-import { ComponentType, InteractionType } from 'discord-api-types/v10';
+  ToEventProps,
+} from '@discordjs/core';
+import { ComponentType, InteractionType } from '@discordjs/core';
+import { BaseExecutableCommand } from '@nyx-discord/base';
+import type { Awaitable, Metadata, Nameable } from '@nyx-discord/types';
 import type { CoreComponentInteraction } from '../../../../types/CoreComponentInteraction.js';
 import type { CoreInteractionTypes } from '../../../../types/CoreInteractionTypes.js';
 

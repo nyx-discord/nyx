@@ -1,9 +1,9 @@
+import { ApplicationCommandType } from '@discordjs/core';
 import { DefaultCommandRepository } from '@nyx-discord/base';
 import type { CommandCustomIdData } from '@nyx-discord/types';
-import { ApplicationCommandType } from 'discord-api-types/v10';
 import { describe, expect, it, test } from 'vitest';
+import type { CoreInteractionTypes } from '../../../../src';
 import { DefaultCommandResolver } from '../../../../src';
-import type { CoreInteractionTypes } from '../../../../src/types/CoreInteractionTypes.js';
 import { MockContextMenuCommand } from '../../mocks/MockContextMenuCommand';
 import { MockParentCommand } from '../../mocks/MockParentCommand';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
@@ -64,7 +64,9 @@ describe('DefaultCommandResolver (@discordjs/core)', () => {
       const parent = new MockParentCommand();
       repo.addCommand(parent);
 
-      const interaction = StubInteraction.createChatInput(parent.getData().name);
+      const interaction = StubInteraction.createChatInput(
+        parent.getData().name,
+      );
 
       const result = resolver.resolveFromCommandInteraction(interaction, repo);
 

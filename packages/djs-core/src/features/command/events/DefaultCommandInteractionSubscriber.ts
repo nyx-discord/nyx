@@ -1,14 +1,12 @@
+import type { APIInteraction, ToEventProps } from '@discordjs/core';
+import { GatewayDispatchEvents, InteractionType } from '@discordjs/core';
 import type {
   CommandExecutableInteraction,
   Metadata,
 } from '@nyx-discord/types';
 import { TypedFields } from '@nyx-discord/types';
-import { GatewayDispatchEvents } from '@discordjs/core';
-import type { ToEventProps } from '@discordjs/core';
-import type { APIInteraction } from 'discord-api-types/v10';
-import { InteractionType } from 'discord-api-types/v10';
-import { AbstractCoreClientSubscriber } from '../../event/subscriber/AbstractCoreClientSubscriber.js';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
+import { AbstractCoreClientSubscriber } from '../../event/subscriber/AbstractCoreClientSubscriber.js';
 
 export class DefaultCommandInteractionSubscriber extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
   protected override readonly event = GatewayDispatchEvents.InteractionCreate;

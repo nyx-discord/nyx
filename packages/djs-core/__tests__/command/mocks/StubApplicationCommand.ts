@@ -1,10 +1,10 @@
-import type { APIApplicationCommand } from 'discord-api-types/v10';
-import { ApplicationCommandType } from 'discord-api-types/v10';
+import type { APIApplicationCommand } from '@discordjs/core';
+import { ApplicationCommandType } from '@discordjs/core';
 
 export class StubApplicationCommand {
   public static create(
     name: string,
-    type: number = ApplicationCommandType.ChatInput,
+    type: ApplicationCommandType = ApplicationCommandType.ChatInput,
     id = 'cmd-id',
     guild_id?: string,
     applicationId = 'test-app-id',
@@ -16,7 +16,8 @@ export class StubApplicationCommand {
       description: 'Mock description',
       type,
       version: '1',
+      default_member_permissions: '',
       ...(guild_id ? { guild_id } : {}),
-    } as APIApplicationCommand;
+    };
   }
 }

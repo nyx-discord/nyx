@@ -1,5 +1,5 @@
-import type { RESTPostAPIContextMenuApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandType } from 'discord-api-types/v10';
+import type { RESTPostAPIContextMenuApplicationCommandsJSONBody } from '@discordjs/core';
+import { ApplicationCommandType } from '@discordjs/core';
 import { vi } from 'vitest';
 import { AbstractContextMenuCommand } from '../../../src';
 
@@ -22,6 +22,6 @@ export class MockContextMenuCommand extends AbstractContextMenuCommand {
     this.data = {
       name,
       type,
-    } as RESTPostAPIContextMenuApplicationCommandsJSONBody;
+    };
   }
 }

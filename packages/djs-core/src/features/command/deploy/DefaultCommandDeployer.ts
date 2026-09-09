@@ -1,14 +1,13 @@
+import type { ReadonlyCollection } from '@discordjs/collection';
+import { Collection } from '@discordjs/collection';
+import type { API, APIApplicationCommand, Snowflake } from '@discordjs/core';
+import { ApplicationCommandType } from '@discordjs/core';
 import type { CommandDeployer, TopLevelCommand } from '@nyx-discord/types';
 import {
   AssertionError,
   IllegalStateError,
   ObjectNotFoundError,
 } from '@nyx-discord/types';
-import type { ReadonlyCollection } from '@discordjs/collection';
-import { Collection } from '@discordjs/collection';
-import type { API } from '@discordjs/core';
-import type { APIApplicationCommand, Snowflake } from 'discord-api-types/v10';
-import { ApplicationCommandType } from 'discord-api-types/v10';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 
 export class DefaultCommandDeployer implements CommandDeployer<
@@ -33,7 +32,7 @@ export class DefaultCommandDeployer implements CommandDeployer<
   public static create(
     api: API,
     applicationId: Snowflake,
-  ): CommandDeployer<CoreInteractionTypes, APIApplicationCommand> {
+  ): CommandDeployer<CoreInteractionTypes> {
     return new this(api, applicationId);
   }
 

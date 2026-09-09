@@ -1,7 +1,13 @@
-import { EventEmitter } from 'events';
-import { describe, expect, expectTypeOf, test, vi } from 'vitest';
-import type { Client, MappedEvents } from '@discordjs/core';
-import type { APIApplicationCommand } from 'discord-api-types/v10';
+import type {
+  APIApplicationCommand,
+  Client,
+  MappedEvents,
+} from '@discordjs/core';
+import {
+  DefaultBotService,
+  DefaultPluginManager,
+  DefaultScheduleManager,
+} from '@nyx-discord/base';
 import type {
   BotService,
   CommandManager,
@@ -10,16 +16,13 @@ import type {
   PluginManager,
   ScheduleManager,
 } from '@nyx-discord/types';
-import {
-  DefaultBotService,
-  DefaultPluginManager,
-  DefaultScheduleManager,
-} from '@nyx-discord/base';
+import { EventEmitter } from 'events';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import {
   CoreBot,
-  DefaultCommandManager,
   type CoreInteractionTypes,
   type CoreNyxClient,
+  DefaultCommandManager,
 } from '../../src';
 
 function createMockCoreClient() {
@@ -55,17 +58,22 @@ describe('CoreBot', () => {
       expectTypeOf(bot).toExtend<NyxBot<any>>();
       expectTypeOf(bot.getClient()).toEqualTypeOf<CoreNyxClient>();
       expectTypeOf(bot.getCommandManager()).toEqualTypeOf<
-        CommandManager<CoreInteractionTypes, MappedEvents, APIApplicationCommand>
+        CommandManager<CoreInteractionTypes, MappedEvents>
       >();
       expectTypeOf(bot.getScheduleManager()).toEqualTypeOf<ScheduleManager>();
       expectTypeOf(bot.getService()).toEqualTypeOf<BotService>();
       expectTypeOf(bot.getPluginManager()).toEqualTypeOf<PluginManager>();
-      expectTypeOf(bot.getClientEventBus()).toEqualTypeOf<EventBus<MappedEvents>>();
+      expectTypeOf(bot.getClientEventBus()).toEqualTypeOf<
+        EventBus<MappedEvents>
+      >();
     });
 
     test('GIVEN custom injected dependencies WHEN create is called THEN bot uses the injected instances', () => {
       const client = createMockCoreClient();
-      interface CustomCommandManager extends CommandManager<CoreInteractionTypes, MappedEvents, APIApplicationCommand> {
+      interface CustomCommandManager extends CommandManager<
+        CoreInteractionTypes,
+        MappedEvents
+      > {
         customCommandMethod(): void;
       }
       interface CustomScheduleManager extends ScheduleManager {

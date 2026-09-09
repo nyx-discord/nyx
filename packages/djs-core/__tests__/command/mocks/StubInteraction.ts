@@ -1,21 +1,21 @@
-import type { ToEventProps } from '@discordjs/core';
-import type {
-  ApplicationCommandInteraction,
-  ComponentCommandInteraction,
-} from '@nyx-discord/types';
 import type {
   APIApplicationCommandAutocompleteInteraction,
   APIApplicationCommandInteractionDataOption,
   APIMessageApplicationCommandInteraction,
   APIUserApplicationCommandInteraction,
-} from 'discord-api-types/v10';
+  ToEventProps,
+} from '@discordjs/core';
 import {
   ApplicationCommandOptionType,
   ApplicationCommandType,
   ComponentType,
   InteractionType,
-} from 'discord-api-types/v10';
-import type { CoreInteractionTypes } from '../../../src/types/CoreInteractionTypes.js';
+} from '@discordjs/core';
+import type {
+  ApplicationCommandInteraction,
+  ComponentCommandInteraction,
+} from '@nyx-discord/types';
+import type { CoreInteractionTypes } from '../../../src';
 
 export class StubInteraction {
   public static createChatInput(

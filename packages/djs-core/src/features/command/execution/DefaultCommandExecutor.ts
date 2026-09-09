@@ -1,6 +1,16 @@
-import { BasicErrorHandler } from '@nyx-discord/base';
-import { CommandMiddlewareList } from '@nyx-discord/base';
-import { ensureKey } from '@nyx-discord/base';
+import type {
+  APIApplicationCommandAutocompleteInteraction,
+  APIChatInputApplicationCommandInteraction,
+  APIMessageApplicationCommandInteraction,
+  APIUserApplicationCommandInteraction,
+  ToEventProps,
+} from '@discordjs/core';
+import { ApplicationCommandType, InteractionType } from '@discordjs/core';
+import {
+  BasicErrorHandler,
+  CommandMiddlewareList,
+  ensureKey,
+} from '@nyx-discord/base';
 import type {
   AnyExecutableCommand,
   Awaitable,
@@ -23,14 +33,6 @@ import {
   TypedFields,
   UncaughtCommandMiddlewareError,
 } from '@nyx-discord/types';
-import type {
-  APIApplicationCommandAutocompleteInteraction,
-  APIChatInputApplicationCommandInteraction,
-  APIMessageApplicationCommandInteraction,
-  APIUserApplicationCommandInteraction,
-} from 'discord-api-types/v10';
-import { ApplicationCommandType, InteractionType } from 'discord-api-types/v10';
-import type { ToEventProps } from '@discordjs/core';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 
 type CommandExecutorOptions = {

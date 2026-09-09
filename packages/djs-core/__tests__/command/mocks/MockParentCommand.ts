@@ -1,4 +1,4 @@
-import type { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import type { RESTPostAPIChatInputApplicationCommandsJSONBody } from '@discordjs/core';
 import { AbstractParentCommand } from '../../../src';
 
 export class MockParentCommand extends AbstractParentCommand {
@@ -9,6 +9,6 @@ export class MockParentCommand extends AbstractParentCommand {
     this.data = {
       name,
       description: 'Mock parent command',
-    } as RESTPostAPIChatInputApplicationCommandsJSONBody;
+    };
   }
 }

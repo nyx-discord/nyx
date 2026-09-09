@@ -1,5 +1,3 @@
-import type { ToEventProps } from '@discordjs/core';
-import type { InteractionTypes } from '@nyx-discord/types';
 import type {
   APIApplicationCommandAutocompleteInteraction,
   APIChatInputApplicationCommandInteraction,
@@ -9,7 +7,9 @@ import type {
   APIMessageComponentSelectMenuInteraction,
   APIModalSubmitInteraction,
   APIUserApplicationCommandInteraction,
-} from 'discord-api-types/v10';
+  ToEventProps,
+} from '@discordjs/core';
+import type { InteractionTypes } from '@nyx-discord/types';
 
 /** The @discordjs/core implementation of {@link InteractionTypes}. */
 export interface CoreInteractionTypes extends InteractionTypes {

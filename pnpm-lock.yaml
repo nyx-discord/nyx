@@ -383,9 +383,6 @@ importers:
       '@nyx-discord/types':
         specifier: workspace:*
         version: link:../types
-      discord-api-types:
-        specifier: ^0.38.50
-        version: 0.38.53
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*

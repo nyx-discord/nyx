@@ -1,8 +1,12 @@
-import type { ParentCommand, SubCommandGroup } from '@nyx-discord/types';
-import type { APIApplicationCommandSubcommandOption } from 'discord-api-types/v10';
+import type { APIApplicationCommandSubcommandOption } from '@discordjs/core';
+import { ApplicationCommandOptionType } from '@discordjs/core';
 import { vi } from 'vitest';
+import type {
+  CoreInteractionTypes,
+  ParentCommand,
+  SubCommandGroup,
+} from '../../../src';
 import { AbstractSubCommand } from '../../../src';
-import type { CoreInteractionTypes } from '../../../src/types/CoreInteractionTypes.js';
 
 export class MockSubCommand extends AbstractSubCommand {
   public execute = vi.fn();
@@ -19,6 +23,7 @@ export class MockSubCommand extends AbstractSubCommand {
     this.data = {
       name,
       description: 'Mock subcommand',
-    } as APIApplicationCommandSubcommandOption;
+      type: ApplicationCommandOptionType.Subcommand,
+    };
   }
 }

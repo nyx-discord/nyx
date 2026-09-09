@@ -1,12 +1,11 @@
-import type { Metadata } from '@nyx-discord/types';
-import { TypedFields } from '@nyx-discord/types';
-import { GatewayDispatchEvents } from '@discordjs/core';
-import type { ToEventProps } from '@discordjs/core';
 import type {
   APIApplicationCommandAutocompleteInteraction,
   APIInteraction,
-} from 'discord-api-types/v10';
-import { InteractionType } from 'discord-api-types/v10';
+  ToEventProps,
+} from '@discordjs/core';
+import { GatewayDispatchEvents, InteractionType } from '@discordjs/core';
+import type { Metadata } from '@nyx-discord/types';
+import { TypedFields } from '@nyx-discord/types';
 import { AbstractCoreClientSubscriber } from '../../event/subscriber/AbstractCoreClientSubscriber.js';
 
 export class DefaultCommandAutocompleteSubscriber extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {

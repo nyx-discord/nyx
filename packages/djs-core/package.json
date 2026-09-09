@@ -62,7 +62,6 @@
     "@discordjs/rest": "^2.6.3",
     "@discordjs/ws": "^2.0.4",
     "@nyx-discord/base": "workspace:*",
-    "@nyx-discord/types": "workspace:*",
-    "discord-api-types": "^0.38.50"
+    "@nyx-discord/types": "workspace:*"
   }
 }

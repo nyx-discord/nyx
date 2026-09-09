@@ -1,6 +1,3 @@
-import type { ToEventProps } from '@discordjs/core';
-import { BaseContextMenuCommand } from '@nyx-discord/base';
-import type { Awaitable, Metadata } from '@nyx-discord/types';
 import type {
   APIContextMenuInteraction,
   APIMessageApplicationCommandInteraction,
@@ -8,12 +5,15 @@ import type {
   APIMessageComponentSelectMenuInteraction,
   APIModalSubmitInteraction,
   APIUserApplicationCommandInteraction,
-} from 'discord-api-types/v10';
+  ToEventProps,
+} from '@discordjs/core';
 import {
   ApplicationCommandType,
   ComponentType,
   InteractionType,
-} from 'discord-api-types/v10';
+} from '@discordjs/core';
+import { BaseContextMenuCommand } from '@nyx-discord/base';
+import type { Awaitable, Metadata } from '@nyx-discord/types';
 import type { CoreComponentInteraction } from '../../../types/CoreComponentInteraction.js';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 

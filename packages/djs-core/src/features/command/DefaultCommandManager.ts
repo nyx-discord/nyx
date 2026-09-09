@@ -1,4 +1,9 @@
-import type { MappedEvents, ToEventProps } from '@discordjs/core';
+import type {
+  APIApplicationCommandAutocompleteInteraction,
+  MappedEvents,
+  ToEventProps,
+} from '@discordjs/core';
+import { InteractionType } from '@discordjs/core';
 import {
   BasicEventBus,
   DefaultCommandCustomIdCodec,
@@ -32,11 +37,6 @@ import {
   IllegalStateError,
   TypedFields,
 } from '@nyx-discord/types';
-import type {
-  APIApplicationCommand,
-  APIApplicationCommandAutocompleteInteraction,
-} from 'discord-api-types/v10';
-import { InteractionType } from 'discord-api-types/v10';
 import type { CoreNyxClient } from '../../client/CoreNyxClient.js';
 import type { CoreInteractionTypes } from '../../types/CoreInteractionTypes.js';
 import { DefaultCommandDeployer } from './deploy/DefaultCommandDeployer.js';
@@ -493,9 +493,7 @@ export class DefaultCommandManager implements CommandManager<
     return this.deployer;
   }
 
-  public setDeployer(
-    deployer: CommandDeployer<CoreInteractionTypes, APIApplicationCommand>,
-  ): this {
+  public setDeployer(deployer: CommandDeployer<CoreInteractionTypes>): this {
     if (this.deployer.getMappings().size) {
       throw new IllegalStateError(
         'Cannot set deployer after commands are deployed.',

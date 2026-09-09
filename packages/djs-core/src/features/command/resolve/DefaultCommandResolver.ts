@@ -1,4 +1,13 @@
-import type { ToEventProps } from '@discordjs/core';
+import type {
+  APIApplicationCommandAutocompleteInteraction,
+  APIApplicationCommandInteractionDataOption,
+  ToEventProps,
+} from '@discordjs/core';
+import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+  InteractionType,
+} from '@discordjs/core';
 import type {
   AnyExecutableCommand,
   ApplicationCommandInteraction,
@@ -7,15 +16,6 @@ import type {
   CommandResolver,
   ContextMenuCommand,
 } from '@nyx-discord/types';
-import type {
-  APIApplicationCommandAutocompleteInteraction,
-  APIApplicationCommandInteractionDataOption,
-} from 'discord-api-types/v10';
-import {
-  ApplicationCommandOptionType,
-  ApplicationCommandType,
-  InteractionType,
-} from 'discord-api-types/v10';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 
 export class DefaultCommandResolver implements CommandResolver<CoreInteractionTypes> {

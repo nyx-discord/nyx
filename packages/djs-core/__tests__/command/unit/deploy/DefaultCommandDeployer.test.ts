@@ -1,11 +1,12 @@
+import { ApplicationCommandType } from '@discordjs/core';
 import {
   AssertionError,
   IllegalStateError,
   ObjectNotFoundError,
 } from '@nyx-discord/types';
-import { ApplicationCommandType } from 'discord-api-types/v10';
 import { describe, expect, test, vi } from 'vitest';
 import { DefaultCommandDeployer } from '../../../../src';
+import { MockContextMenuCommand } from '../../mocks/MockContextMenuCommand';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
 import { StubApi } from '../../mocks/StubApi';
 import { StubApplicationCommand } from '../../mocks/StubApplicationCommand';
@@ -400,16 +401,11 @@ describe('DefaultCommandDeployer (@discordjs/core)', () => {
       });
 
       const deployer = new DefaultCommandDeployer(api, APP_ID);
-      const chatCmd = new MockStandaloneCommand(
-        'shared-name',
-        null,
-        ApplicationCommandType.ChatInput,
-      );
+      const chatCmd = new MockStandaloneCommand('shared-name', null);
       vi.spyOn(chatCmd, 'getId').mockReturnValue('cmd-chat');
 
-      const userCmd = new MockStandaloneCommand(
+      const userCmd = new MockContextMenuCommand(
         'shared-name',
-        null,
         ApplicationCommandType.User,
       );
       vi.spyOn(userCmd, 'getId').mockReturnValue('cmd-user');
