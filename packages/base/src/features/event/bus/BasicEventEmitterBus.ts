@@ -8,7 +8,6 @@ import type {
   Identifier,
   MetadataFactory,
 } from '@nyx-discord/types';
-import { EventEmitter } from 'events';
 import { DefaultMetadataFactory } from '../../../meta/DefaultMetadataFactory';
 import { BasicAsyncEventDispatcher } from '../dispatcher/BasicAsyncEventDispatcher.js';
 import { BasicSyncEventDispatcher } from '../dispatcher/BasicSyncEventDispatcher.js';
@@ -52,10 +51,8 @@ export class BasicEventEmitterBus<
     EventArgsObject extends Record<keyof EventArgsObject & string, unknown[]>,
     Emitter extends EventEmitterLike,
   >(emitter: Emitter, metaFactory?: MetadataFactory) {
-    const newEmitter = (emitter ?? new EventEmitter()) as Emitter;
-
     return new BasicEventEmitterBus<EventArgsObject, Emitter>(
-      newEmitter,
+      emitter,
       (firstValue, secondValue) =>
         firstValue.getPriority() - secondValue.getPriority(),
       BasicAsyncEventDispatcher.create(),
