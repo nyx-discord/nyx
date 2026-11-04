@@ -1,7 +1,7 @@
 ---
 title: Job Adapter
 icon: Plug
-definedIn: ['types/ScheduleJobAdapter', 'base/CronJobAdapter']
+definedIn: ['types/ScheduleJobAdapter', 'base/CronJobAdapter', 'base/TimerJobAdapter']
 ---
 
 
@@ -9,13 +9,13 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 The <DocsLink pkg='types' name='ScheduleJobAdapter' decorated={false} /> wraps a specific scheduled job implementation so the schedule system can interact with jobs (pause, resume, destroy) without knowing the underlying library.
 
-The default implementation (<DocsLink pkg='base' name='CronJobAdapter' decorated={false} />) wraps jobs created by the `cron` library and delegates lifecycle operations through this adapter.
+There are two default implementations: <DocsLink pkg='base' name='CronJobAdapter' decorated={false} /> wraps jobs created by the `croner` library for cron strings and `Date`s, and <DocsLink pkg='base' name='TimerJobAdapter' decorated={false} /> runs millisecond intervals with its own timer.
 
 ## When to override
 
 | ✅ Override if you want to... | ❌ Don't override if you want to... |
 |---|---|
-| Use a different timing/job backend (not `cron`) through a custom [`ScheduleExecutionScheduler`](/extend/schedules/schedule-execution-scheduler). | Change only schedule storage or execution behavior. Those are responsibilities of `ScheduleRepository` and `ScheduleExecutor`. |
+| Use a different timing/job backend (not `croner`) through a custom [`ScheduleExecutionScheduler`](/extend/schedules/schedule-execution-scheduler). | Change only schedule storage or execution behavior. Those are responsibilities of `ScheduleRepository` and `ScheduleExecutor`. |
 | Adapt a third-party scheduler/queue API to Nyx's `pause`/`resume`/`destroy` contract. | Only change interval parsing or next-run calculation. That belongs to `ScheduleExecutionScheduler`. |
 | Wrap platform-specific timer handles (e.g., `setTimeout`-based jobs) behind a uniform adapter API. | Add pre-execution checks. That belongs to `ScheduleMiddlewareList`. |
 

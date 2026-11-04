@@ -1,14 +1,19 @@
-import type { Awaitable, Metadata, ScheduleFilterResolvable } from '@nyx-discord/types';
+import type {
+  Awaitable,
+  Metadata,
+  ScheduleFilterResolvable,
+  ScheduleInterval,
+} from '@nyx-discord/types';
 import { vi } from 'vitest';
 import { AbstractSchedule } from '../../../src';
 
 export class MockSchedule extends AbstractSchedule {
   public tick = vi.fn<(meta: Metadata) => Awaitable<void>>();
 
-  protected override readonly interval: string | Date;
+  protected override readonly interval: ScheduleInterval;
 
   constructor(
-    interval: string | Date = '*/5 * * * * *',
+    interval: ScheduleInterval = '*/5 * * * * *',
     filter: ScheduleFilterResolvable | null = null,
   ) {
     super();

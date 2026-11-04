@@ -79,10 +79,11 @@ Given it uses the provided metadata, it'll work even if the same instance is use
 ## Schedule Job
 
 When a schedule is added, a job will be created for it, which is responsible for notifying the framework when it is time to run it.
-It's a wrapper over a more "lower-level" component that will actually do the ticking, like a cron object, a Node interval, etc.
+It's a wrapper over a more "lower-level" component that will actually do the ticking, like a cron job, a timer, etc.
 
 <Callout>
-  How the job is created is entirely customizable, but by default, the [cron npm package](https://www.npmjs.com/package/cron) is used.
+  How the job is created is entirely customizable.
+  By default, cron strings and `Date`s use the [croner npm package](https://www.npmjs.com/package/croner), and millisecond intervals use a timer with millisecond precision.
 </Callout>
 
 There are multiple ways to get it, but given a schedule itself does not depend on a bot, you'll always need the bot:
@@ -123,7 +124,8 @@ declare const job: UndestroyableScheduleJobAdapter<unknown>;
 await job.pause();
 await job.resume();
 
-// Currently would be `CronJob` from the cron package
+// A croner `Cron` for cron strings and Dates, or the current timeout for ms intervals
+// Depending on this is fragile and not intended, but it doesn't change for the same major version
 const rawTicker = job.getRaw();
 ```
   </Tab>
@@ -135,7 +137,8 @@ declare const job: UndestroyableScheduleJobAdapter<unknown>;
 await job.pause();
 await job.resume();
 
-// Currently would be `CronJob` from the cron package
+// A croner `Cron` for cron strings and Dates, or the current timeout for ms intervals
+// Depending on this is fragile and not intended, but it doesn't change for the same major version
 const rawTicker = job.getRaw();
 ```
   </Tab>

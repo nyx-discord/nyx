@@ -1,32 +1,33 @@
 import type { ScheduleInterval, ScheduleJobAdapter } from '@nyx-discord/types';
-import type { CronJob } from 'cron';
+import type { Cron } from 'croner';
 
-export class CronJobAdapter implements ScheduleJobAdapter<CronJob> {
-  protected readonly cronjob: CronJob;
+/** A {@link ScheduleJobAdapter} for a `croner` {@link Cron} job. */
+export class CronJobAdapter implements ScheduleJobAdapter<Cron> {
+  protected readonly cronjob: Cron;
 
   protected readonly interval: ScheduleInterval;
 
-  constructor(job: CronJob, interval: ScheduleInterval) {
+  constructor(job: Cron, interval: ScheduleInterval) {
     this.cronjob = job;
     this.interval = interval;
   }
 
   public isRunning(): boolean {
-    return this.cronjob.isActive;
+    return this.cronjob.isRunning();
   }
 
-  public async pause(): Promise<this> {
-    await this.cronjob.stop();
+  public pause(): this {
+    this.cronjob.pause();
     return this;
   }
 
   public resume(): this {
-    this.cronjob.start();
+    this.cronjob.resume();
     return this;
   }
 
-  public async destroy(): Promise<this> {
-    await this.cronjob.stop();
+  public destroy(): this {
+    this.cronjob.stop();
     return this;
   }
 
@@ -34,7 +35,7 @@ export class CronJobAdapter implements ScheduleJobAdapter<CronJob> {
     return this.interval;
   }
 
-  public getRaw(): CronJob {
+  public getRaw(): Cron {
     return this.cronjob;
   }
 }

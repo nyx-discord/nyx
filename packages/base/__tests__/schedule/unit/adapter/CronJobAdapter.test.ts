@@ -2,10 +2,11 @@ import type { ScheduleInterval } from '@nyx-discord/types';
 import { describe, expect, it, test, vi } from 'vitest';
 import { CronJobAdapter } from '../../../../src';
 
-const createMockCronJob = (isActive = true) => ({
-  stop: vi.fn().mockResolvedValue(undefined),
-  start: vi.fn(),
-  isActive,
+const createMockCronJob = (running = true) => ({
+  pause: vi.fn().mockReturnValue(true),
+  resume: vi.fn().mockReturnValue(true),
+  stop: vi.fn(),
+  isRunning: vi.fn().mockReturnValue(running),
 });
 
 describe('CronJobAdapter', () => {
@@ -35,35 +36,36 @@ describe('CronJobAdapter', () => {
   });
 
   describe('pause', () => {
-    test('GIVEN a running cron job THEN pause stops it', async () => {
+    test('GIVEN a running cron job THEN pause pauses it', () => {
       const job = createMockCronJob(true);
       const adapter = new CronJobAdapter(job as never, '*/5 * * * * *');
 
-      const result = await adapter.pause();
+      const result = adapter.pause();
 
-      expect(job.stop).toHaveBeenCalled();
+      expect(job.pause).toHaveBeenCalled();
+      expect(job.stop).not.toHaveBeenCalled();
       expect(result).toBe(adapter);
     });
   });
 
   describe('resume', () => {
-    test('GIVEN a paused cron job THEN resume starts it', () => {
+    test('GIVEN a paused cron job THEN resume resumes it', () => {
       const job = createMockCronJob(false);
       const adapter = new CronJobAdapter(job as never, '*/5 * * * * *');
 
       const result = adapter.resume();
 
-      expect(job.start).toHaveBeenCalled();
+      expect(job.resume).toHaveBeenCalled();
       expect(result).toBe(adapter);
     });
   });
 
   describe('destroy', () => {
-    test('GIVEN a cron job THEN destroy stops it', async () => {
+    test('GIVEN a cron job THEN destroy stops it', () => {
       const job = createMockCronJob(true);
       const adapter = new CronJobAdapter(job as never, '*/5 * * * * *');
 
-      const result = await adapter.destroy();
+      const result = adapter.destroy();
 
       expect(job.stop).toHaveBeenCalled();
       expect(result).toBe(adapter);
@@ -73,7 +75,10 @@ describe('CronJobAdapter', () => {
   describe('getInterval', () => {
     test('GIVEN an adapter with a cron interval THEN getInterval returns it', () => {
       const interval: ScheduleInterval = '*/10 * * * * *';
-      const adapter = new CronJobAdapter(createMockCronJob() as never, interval);
+      const adapter = new CronJobAdapter(
+        createMockCronJob() as never,
+        interval,
+      );
 
       expect(adapter.getInterval()).toBe(interval);
     });

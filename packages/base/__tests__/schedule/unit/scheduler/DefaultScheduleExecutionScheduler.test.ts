@@ -1,22 +1,36 @@
 import { IllegalStateError, ObjectNotFoundError } from '@nyx-discord/types';
 import { describe, expect, it, test, vi } from 'vitest';
-import { DefaultScheduleExecutionScheduler } from '../../../../src';
+import {
+  CronJobAdapter,
+  DefaultScheduleExecutionScheduler,
+  TimerJobAdapter,
+} from '../../../../src';
 import { MockSchedule } from '../../mocks/MockSchedule';
 import { StubScheduleExecutor } from '../../mocks/StubScheduleExecutor';
 import { StubScheduleMetadata } from '../../mocks/StubScheduleMetadata';
 
-vi.mock('cron', () => {
-  const mockCronJob = {
-    start: vi.fn().mockReturnThis(),
-    stop: vi.fn().mockResolvedValue(undefined),
-    isActive: true,
-  };
-  return {
-    CronJob: {
-      from: vi.fn().mockReturnValue(mockCronJob),
-    },
-  };
-});
+vi.mock('croner', () => ({
+  // eslint-disable-next-line prefer-arrow-callback
+  Cron: vi.fn(function MockCron() {
+    return {
+      pause: vi.fn().mockReturnValue(true),
+      resume: vi.fn().mockReturnValue(true),
+      stop: vi.fn(),
+      isRunning: vi.fn().mockReturnValue(true),
+    };
+  }),
+}));
+
+type CronCall = [
+  pattern: string | Date,
+  options: { paused?: boolean },
+  callback: () => Promise<void>,
+];
+
+const lastCronCall = async (): Promise<CronCall> => {
+  const { Cron } = await import('croner');
+  return vi.mocked(Cron).mock.calls.at(-1) as unknown as CronCall;
+};
 
 const createScheduler = () =>
   DefaultScheduleExecutionScheduler.create(
@@ -64,29 +78,58 @@ describe('DefaultScheduleExecutionScheduler', () => {
       );
     });
 
-    test('GIVEN a schedule with a numeric millisecond interval THEN converts interval to cron and onTick invokes executor', async () => {
+    test('GIVEN a numeric millisecond interval THEN creates a running TimerJobAdapter without croner', async () => {
+      const { Cron } = await import('croner');
+      vi.mocked(Cron).mockClear();
+      const scheduler = createScheduler();
+      const schedule = new MockSchedule(1500);
+
+      const job = await scheduler.start(schedule);
+
+      expect(job).toBeInstanceOf(TimerJobAdapter);
+      expect(job.getInterval()).toBe(1500);
+      expect(job.isRunning()).toBe(true);
+      expect(Cron).not.toHaveBeenCalled();
+
+      await scheduler.destroy(schedule);
+    });
+
+    test('GIVEN an invalid numeric interval THEN start rejects with a RangeError', async () => {
+      const scheduler = createScheduler();
+
+      await expect(scheduler.start(new MockSchedule(0))).rejects.toThrow(
+        RangeError,
+      );
+      expect(scheduler.getJobs().size).toBe(0);
+    });
+
+    test('GIVEN a cron pattern interval THEN creates a paused croner job whose callback invokes the executor', async () => {
       const executor = StubScheduleExecutor.create();
-      const metaFactory = StubScheduleMetadata.create();
       const scheduler = DefaultScheduleExecutionScheduler.create(
         executor,
-        metaFactory,
+        StubScheduleMetadata.create(),
       );
-      const schedule = new MockSchedule();
-      vi.spyOn(schedule, 'getInterval').mockReturnValue(15000 as never);
+      const schedule = new MockSchedule('0 */5 * * * *');
 
-      await scheduler.start(schedule);
+      const job = await scheduler.start(schedule);
 
-      const { CronJob } = await import('cron');
-      expect(CronJob.from).toHaveBeenCalledWith(
-        expect.objectContaining({
-          cronTime: '*/15 * * * * *',
-        }),
-      );
+      const [pattern, options, callback] = await lastCronCall();
+      expect(job).toBeInstanceOf(CronJobAdapter);
+      expect(pattern).toBe('0 */5 * * * *');
+      expect(options).toEqual({ paused: true });
 
-      const lastCall = vi.mocked(CronJob.from).mock.calls.at(-1);
-      const params = lastCall?.[0] as unknown as { onTick?: () => Promise<void> };
-      await params?.onTick?.();
+      await callback();
       expect(executor.tick).toHaveBeenCalledWith(schedule, expect.anything());
+    });
+
+    test('GIVEN a started schedule THEN its job is resumed', async () => {
+      const scheduler = createScheduler();
+      const schedule = new MockSchedule();
+
+      const job = await scheduler.start(schedule);
+
+      const raw = job.getRaw() as { resume: () => boolean };
+      expect(raw.resume).toHaveBeenCalled();
     });
   });
 

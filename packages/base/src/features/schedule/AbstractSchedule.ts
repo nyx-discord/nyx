@@ -5,6 +5,7 @@ import type {
   ReadonlyMetadata,
   Schedule,
   ScheduleFilterResolvable,
+  ScheduleInterval,
   UndestroyableScheduleJobAdapter,
 } from '@nyx-discord/types';
 import { ObjectNotFoundError } from '@nyx-discord/types';
@@ -17,7 +18,7 @@ export abstract class AbstractSchedule implements Schedule {
 
   protected readonly meta: Metadata = Object.create(null);
 
-  protected abstract readonly interval: string | Date;
+  protected abstract readonly interval: ScheduleInterval;
 
   public getJob(
     bot: NyxBot,
@@ -50,7 +51,7 @@ export abstract class AbstractSchedule implements Schedule {
     return this.filter;
   }
 
-  public getInterval(): string | Date {
+  public getInterval(): ScheduleInterval {
     return this.interval;
   }
 

@@ -12,23 +12,36 @@ import {
   IllegalStateError,
   ObjectNotFoundError,
 } from '@nyx-discord/types';
-import type { CronJobParams } from 'cron';
-import { CronJob } from 'cron';
+import type { CronOptions } from 'croner';
+import { Cron } from 'croner';
 import type { Awaitable } from '@nyx-discord/types';
 import type { ReadonlyCollection } from '@discordjs/collection';
 import { Collection } from '@discordjs/collection';
 import { CronJobAdapter } from '../../adapter/CronJobAdapter.js';
+import type { TimerJobHandle } from '../../adapter/TimerJobAdapter.js';
+import { TimerJobAdapter } from '../../adapter/TimerJobAdapter.js';
 
-type ScheduleJobParams = Omit<CronJobParams, 'cronTime' | 'onTick'>;
+/**
+ * Options passed to every `croner` job this scheduler creates, for cron string and Date intervals.
+ *
+ * `paused` is managed by the scheduler: jobs are always created paused, and start on
+ * {@link DefaultScheduleExecutionScheduler#start}.
+ */
+export type ScheduleJobParams = Omit<CronOptions, 'paused'>;
 
-export class DefaultScheduleExecutionScheduler implements ScheduleExecutionScheduler<CronJob> {
-  protected static readonly DefaultJobParameters: ScheduleJobParams = {
-    runOnInit: false,
-    start: false,
-  };
+/** The raw job behind each adapter: a croner {@link Cron}, or a {@link TimerJobAdapter}'s current timeout. */
+export type DefaultScheduleJob = Cron | TimerJobHandle | null;
 
-  protected readonly jobs: Collection<Identifier, ScheduleJobAdapter<CronJob>> =
-    new Collection<Identifier, ScheduleJobAdapter<CronJob>>();
+/**
+ * Schedules cron string and Date intervals with `croner`, and millisecond intervals with a {@link TimerJobAdapter}.
+ */
+export class DefaultScheduleExecutionScheduler implements ScheduleExecutionScheduler<DefaultScheduleJob> {
+  protected static readonly DefaultJobParameters: ScheduleJobParams = {};
+
+  protected readonly jobs: Collection<
+    Identifier,
+    ScheduleJobAdapter<DefaultScheduleJob>
+  > = new Collection<Identifier, ScheduleJobAdapter<DefaultScheduleJob>>();
 
   protected readonly executor: ScheduleExecutor;
 
@@ -64,7 +77,9 @@ export class DefaultScheduleExecutionScheduler implements ScheduleExecutionSched
     /** Do nothing by default. */
   }
 
-  public async start(schedule: Schedule): Promise<ScheduleJobAdapter<CronJob>> {
+  public async start(
+    schedule: Schedule,
+  ): Promise<ScheduleJobAdapter<DefaultScheduleJob>> {
     const id = schedule.getId();
     const presentSchedule = this.jobs.get(id);
 
@@ -81,7 +96,9 @@ export class DefaultScheduleExecutionScheduler implements ScheduleExecutionSched
     return adapter;
   }
 
-  public async pause(schedule: Schedule): Promise<ScheduleJobAdapter<CronJob>> {
+  public async pause(
+    schedule: Schedule,
+  ): Promise<ScheduleJobAdapter<DefaultScheduleJob>> {
     const id = schedule.getId();
     const job = this.jobs.get(id);
 
@@ -110,52 +127,63 @@ export class DefaultScheduleExecutionScheduler implements ScheduleExecutionSched
 
   public getJobs(): ReadonlyCollection<
     Identifier,
-    ScheduleJobAdapter<CronJob>
+    ScheduleJobAdapter<DefaultScheduleJob>
   > {
     return this.jobs;
   }
 
   public getJobForSchedule(
     scheduleOrId: Schedule | Identifier,
-  ): ScheduleJobAdapter<CronJob> | null {
+  ): ScheduleJobAdapter<DefaultScheduleJob> | null {
     const id = canBeIdentifier(scheduleOrId)
       ? scheduleOrId
       : scheduleOrId.getId();
     return this.jobs.get(id) ?? null;
   }
 
-  /** Creates a job for the passed schedule. */
-  protected createJob(schedule: Schedule): ScheduleJobAdapter<CronJob> {
-    const parameters = this.createJobParameters(schedule);
-
+  /** Creates a paused job for the passed schedule. */
+  protected createJob(
+    schedule: Schedule,
+  ): ScheduleJobAdapter<DefaultScheduleJob> {
     const interval = schedule.getInterval();
-    const job = CronJob.from(parameters);
+    const run = async () => {
+      const meta = this.createMetadata(schedule);
+      await this.executor.tick(schedule, meta);
+    };
 
+    if (typeof interval === 'number') {
+      return new TimerJobAdapter(interval, run);
+    }
+
+    if (interval instanceof Date) {
+      this.assertSchedulableDate(interval);
+    }
+
+    const job = new Cron(interval, this.createJobOptions(), run);
     return new CronJobAdapter(job, interval);
   }
 
-  /** Creates the job parameters for the passed schedule. */
-  protected createJobParameters(schedule: Schedule): CronJobParams {
-    let interval = schedule.getInterval();
-    if (typeof interval === 'number') {
-      interval = this.millisecondsToCron(interval);
-    }
-
-    const parameters: CronJobParams = {
-      cronTime: interval,
-      onTick: async () => {
-        const meta = this.createMetadata(schedule);
-        await this.executor.tick(schedule, meta);
-      },
-    };
-
-    return { ...this.jobParameters, ...parameters } as CronJobParams;
+  /** Creates the croner options for a cron string or Date interval. */
+  protected createJobOptions(): CronOptions {
+    return { ...this.jobParameters, paused: true };
   }
 
-  /** Parses a number of milliseconds into a cron string. */
-  protected millisecondsToCron(intervalMs: number): string {
-    const interval = Math.round(intervalMs / 1000);
-    return `*/${interval} * * * * *`;
+  /**
+   * Asserts that a one-off Date interval can still run.
+   *
+   * @throws {RangeError} If the date is invalid or is not in the future.
+   */
+  protected assertSchedulableDate(date: Date): void {
+    const time = date.getTime();
+    if (Number.isNaN(time)) {
+      throw new RangeError('Schedule interval is an invalid Date.');
+    }
+
+    if (time <= Date.now()) {
+      throw new RangeError(
+        `Schedule interval Date ${date.toISOString()} is not in the future.`,
+      );
+    }
   }
 
   protected createMetadata(schedule: Schedule): Metadata {

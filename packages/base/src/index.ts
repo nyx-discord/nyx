@@ -39,6 +39,7 @@ export * from './features/event/subscriber/SubscriberCallbackWrapper';
 export * from './features/plugin/DefaultPluginManager';
 export * from './features/schedule/AbstractSchedule';
 export * from './features/schedule/adapter/CronJobAdapter';
+export * from './features/schedule/adapter/TimerJobAdapter';
 export * from './features/schedule/DefaultScheduleManager';
 export * from './features/schedule/execution/executor/DefaultScheduleExecutor';
 export * from './features/schedule/execution/scheduler/DefaultScheduleExecutionScheduler';

@@ -16,7 +16,7 @@ Specifically, these components are:
 - [`ScheduleManager`](/extend/schedules/schedule-manager): The entry point for the schedule system, orchestrating the repository, executor, scheduler, and lifecycle events.
 - [`ScheduleRepository`](/extend/schedules/schedule-repository): Stores all the currently registered schedules.
 - [`ScheduleExecutionScheduler`](/extend/schedules/schedule-execution-scheduler): Determines *when* a schedule should run next and creates the job adapter.
-- [`ScheduleJobAdapter`](/extend/schedules/schedule-job-adapter): Wraps the underlying job instance (e.g. `CronJob` object).
+- [`ScheduleJobAdapter`](/extend/schedules/schedule-job-adapter): Wraps the underlying job instance (e.g. a croner `Cron` object, or a timeout).
 - [`ScheduleExecutor`](/extend/schedules/schedule-executor): Executes schedules, checking their middleware list and handling errors.
 - [`ScheduleMiddlewareList`](/extend/schedules/schedule-executor/schedule-middleware-list): Manages middlewares for schedule execution, including filters.
 - [`ScheduleErrorHandler`](/extend/schedules/schedule-executor/schedule-error-handler): Handles middleware and schedule execution errors.
