@@ -2,12 +2,12 @@ import type { ReadonlyCollection } from '@discordjs/collection';
 import { Collection } from '@discordjs/collection';
 import type { API, APIApplicationCommand, Snowflake } from '@discordjs/core';
 import { ApplicationCommandType } from '@discordjs/core';
-import type { CommandDeployer, TopLevelCommand } from '@nyx-discord/types';
+import type { CommandDeployer, TopLevelCommand } from '@nyx-discord/base';
 import {
   AssertionError,
   IllegalStateError,
   ObjectNotFoundError,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 
 export class DefaultCommandDeployer implements CommandDeployer<

@@ -1,7 +1,7 @@
-import type { Awaitable, InteractionTypes, Metadata } from '@nyx-discord/types';
+import type { Awaitable, InteractionTypes, Metadata } from '@nyx-discord/base';
 import type { SessionStartInteraction } from '../../../types/interaction/SessionStartInteraction';
-import { BaseSessionStage } from './BaseSessionStage.js';
 import type { SessionStartStage } from '../../../types/session/stage/SessionStartStage.js';
+import { BaseSessionStage } from './BaseSessionStage.js';
 
 export abstract class BaseSessionStartStage<
   Result,

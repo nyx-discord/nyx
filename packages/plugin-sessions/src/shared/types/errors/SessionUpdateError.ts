@@ -1,4 +1,4 @@
-import type { InteractionTypes } from '@nyx-discord/types';
+import type { InteractionTypes } from '@nyx-discord/base';
 import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction';
 import { BaseSessionError } from './BaseSessionError';
 

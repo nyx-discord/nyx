@@ -1,5 +1,5 @@
-import type { ScheduleInterval } from '@nyx-discord/types';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import type { ScheduleInterval } from '../../../src';
 import {
   DefaultScheduleExecutionScheduler,
   DefaultScheduleManager,

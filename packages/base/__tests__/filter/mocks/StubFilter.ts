@@ -1,4 +1,4 @@
-import type { Filter } from '@nyx-discord/types';
+import type { Filter } from '../../../src';
 import { vi } from 'vitest';
 
 export class StubFilter {

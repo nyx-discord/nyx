@@ -4,13 +4,6 @@ import type {
   ToEventProps,
 } from '@discordjs/core';
 import { InteractionType } from '@discordjs/core';
-import {
-  BasicEventBus,
-  DefaultCommandCustomIdCodec,
-  DefaultCommandRepository,
-  DefaultMetadataFactory,
-  ensureKey,
-} from '@nyx-discord/base';
 import type {
   AnyExecutableCommand,
   ApplicationCommandInteraction,
@@ -31,12 +24,17 @@ import type {
   NyxBot,
   ReadonlyCommandDeployer,
   TopLevelCommand,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import {
+  BasicEventBus,
   CommandEventEnum,
+  DefaultCommandCustomIdCodec,
+  DefaultCommandRepository,
+  DefaultMetadataFactory,
+  ensureKey,
   IllegalStateError,
   TypedFields,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { CoreNyxClient } from '../../client/CoreNyxClient.js';
 import type { CoreInteractionTypes } from '../../types/CoreInteractionTypes.js';
 import { DefaultCommandDeployer } from './deploy/DefaultCommandDeployer.js';

@@ -1,15 +1,15 @@
 import {
   BasicEventBus,
+  CommandEventEnum,
   DefaultCommandCustomIdCodec,
   DefaultCommandRepository,
   DefaultMetadataFactory,
+  IllegalStateError,
 } from '@nyx-discord/base';
-import { CommandEventEnum, IllegalStateError } from '@nyx-discord/types';
 import { InteractionType } from 'discord.js';
 import { describe, expect, test, vi } from 'vitest';
 import {
   DefaultCommandDeployer,
-  DefaultCommandExecutor,
   DefaultCommandManager,
   DefaultCommandResolver,
 } from '../../../src';
@@ -17,23 +17,28 @@ import { MockParentCommand } from '../mocks/MockParentCommand';
 import { MockStandaloneCommand } from '../mocks/MockStandaloneCommand';
 import { MockSubCommandGroup } from '../mocks/MockSubCommandGroup';
 
-function createManager(overrides: {
-  repository?: any;
-  executor?: any;
-  customIdCodec?: any;
-  resolver?: any;
-  subscriptionsContainer?: any;
-  deployer?: any;
-  eventBus?: any;
-  metaFactory?: any;
-} = {}) {
+function createManager(
+  overrides: {
+    repository?: any;
+    executor?: any;
+    customIdCodec?: any;
+    resolver?: any;
+    subscriptionsContainer?: any;
+    deployer?: any;
+    eventBus?: any;
+    metaFactory?: any;
+  } = {},
+) {
   const repository = overrides.repository ?? DefaultCommandRepository.create();
   const executor = overrides.executor ?? {
     execute: vi.fn().mockResolvedValue(true),
     autocomplete: vi.fn().mockResolvedValue(undefined),
-    getErrorHandler: vi.fn().mockReturnValue({ handle: vi.fn().mockResolvedValue(undefined) }),
+    getErrorHandler: vi
+      .fn()
+      .mockReturnValue({ handle: vi.fn().mockResolvedValue(undefined) }),
   };
-  const customIdCodec = overrides.customIdCodec ?? DefaultCommandCustomIdCodec.create();
+  const customIdCodec =
+    overrides.customIdCodec ?? DefaultCommandCustomIdCodec.create();
   const resolver = overrides.resolver ?? DefaultCommandResolver.create();
   const subscriptionsContainer = overrides.subscriptionsContainer ?? {
     subscribe: vi.fn().mockResolvedValue(undefined),
@@ -92,8 +97,12 @@ describe('DefaultCommandManager', () => {
       expect(repository.getCommands().get(cmdA.getId())).toBe(cmdA);
       expect(repository.getCommands().get(cmdB.getId())).toBe(cmdB);
       expect(deployer.deployCommands).toHaveBeenCalledWith(cmdA, cmdB);
-      expect(eventBus.emit).toHaveBeenCalledWith(CommandEventEnum.CommandAdd, [cmdA]);
-      expect(eventBus.emit).toHaveBeenCalledWith(CommandEventEnum.CommandAdd, [cmdB]);
+      expect(eventBus.emit).toHaveBeenCalledWith(CommandEventEnum.CommandAdd, [
+        cmdA,
+      ]);
+      expect(eventBus.emit).toHaveBeenCalledWith(CommandEventEnum.CommandAdd, [
+        cmdB,
+      ]);
     });
 
     test('GIVEN deployer.deployCommands throws error THEN removes commands from repository and re-throws', async () => {
@@ -122,7 +131,10 @@ describe('DefaultCommandManager', () => {
       expect(result).toBe(manager);
       expect(repository.getCommands().get(cmd.getId())).toBeUndefined();
       expect(deployer.removeCommands).toHaveBeenCalledWith(cmd);
-      expect(eventBus.emit).toHaveBeenCalledWith(CommandEventEnum.CommandRemove, [cmd]);
+      expect(eventBus.emit).toHaveBeenCalledWith(
+        CommandEventEnum.CommandRemove,
+        [cmd],
+      );
     });
 
     test('GIVEN deployer.removeCommands throws error THEN rolls back by re-adding command to repository and re-throws', async () => {
@@ -168,11 +180,15 @@ describe('DefaultCommandManager', () => {
       expect(repository.getCommands().get(oldCmd.getId())).toBeUndefined();
       expect(repository.getCommands().get(newCmd.getId())).toBe(newCmd);
       expect(deployer.setCommands).toHaveBeenCalledWith(newCmd);
-      expect(eventBus.emit).toHaveBeenCalledWith(CommandEventEnum.CommandRemove, [oldCmd]);
-      expect(eventBus.emit).toHaveBeenCalledWith(CommandEventEnum.CommandAdd, [newCmd]);
+      expect(eventBus.emit).toHaveBeenCalledWith(
+        CommandEventEnum.CommandRemove,
+        [oldCmd],
+      );
+      expect(eventBus.emit).toHaveBeenCalledWith(CommandEventEnum.CommandAdd, [
+        newCmd,
+      ]);
     });
   });
-
 
   describe('execute', () => {
     test('GIVEN a chat input interaction THEN resolves command and executes via executor, emitting CommandRun', async () => {
@@ -200,7 +216,11 @@ describe('DefaultCommandManager', () => {
       const result = await manager.execute(interaction);
 
       expect(result).toBe(true);
-      expect(executor.execute).toHaveBeenCalledWith(cmd, interaction, expect.anything());
+      expect(executor.execute).toHaveBeenCalledWith(
+        cmd,
+        interaction,
+        expect.anything(),
+      );
       expect(eventBus.emit).toHaveBeenCalledWith(
         CommandEventEnum.CommandRun,
         expect.arrayContaining([cmd, interaction]),
@@ -212,7 +232,9 @@ describe('DefaultCommandManager', () => {
       const cmd = new MockStandaloneCommand('button-cmd');
       repository.addCommand(cmd);
 
-      const serialized = customIdCodec.serialize(cmd.getCustomIdData('extra-val'));
+      const serialized = customIdCodec.serialize(
+        cmd.getCustomIdData('extra-val'),
+      );
       const interaction = {
         id: 'interaction-2',
         type: InteractionType.MessageComponent,
@@ -223,7 +245,11 @@ describe('DefaultCommandManager', () => {
       const result = await manager.execute(interaction);
 
       expect(result).toBe(true);
-      expect(executor.execute).toHaveBeenCalledWith(cmd, interaction, expect.anything());
+      expect(executor.execute).toHaveBeenCalledWith(
+        cmd,
+        interaction,
+        expect.anything(),
+      );
     });
 
     test('GIVEN a component interaction with invalid customId string THEN returns false without executing', async () => {
@@ -389,7 +415,11 @@ describe('DefaultCommandManager', () => {
       const result = await manager.autocomplete(interaction);
 
       expect(result).toBe(true);
-      expect(executor.autocomplete).toHaveBeenCalledWith(cmd, interaction, expect.anything());
+      expect(executor.autocomplete).toHaveBeenCalledWith(
+        cmd,
+        interaction,
+        expect.anything(),
+      );
       expect(eventBus.emit).toHaveBeenCalledWith(
         CommandEventEnum.CommandAutocomplete,
         expect.arrayContaining([cmd, interaction]),
@@ -490,11 +520,13 @@ describe('DefaultCommandManager', () => {
     test('GIVEN autocomplete interaction for SubCommand THEN resolves option, executes via executor, emits event, and returns true', async () => {
       const { manager, repository, executor, eventBus } = createManager();
       const parentCmd = new MockParentCommand('parent-auto-sub');
-      const subCmd = new MockStandaloneCommand('subcmd'); 
+      const subCmd = new MockStandaloneCommand('subcmd');
       vi.spyOn(subCmd, 'isSubCommand').mockReturnValue(true);
-      
+
       const resolver = manager.getResolver();
-      vi.spyOn(resolver, 'resolveFromAutocompleteInteraction').mockReturnValue(subCmd);
+      vi.spyOn(resolver, 'resolveFromAutocompleteInteraction').mockReturnValue(
+        subCmd,
+      );
       repository.addCommand(parentCmd);
 
       const interaction = {
@@ -506,7 +538,9 @@ describe('DefaultCommandManager', () => {
         options: {
           getSubcommandGroup: () => null,
           getSubcommand: () => 'subcmd',
-          getFocused: vi.fn().mockReturnValue({ name: 'sub-query', value: 'hi' }),
+          getFocused: vi
+            .fn()
+            .mockReturnValue({ name: 'sub-query', value: 'hi' }),
         },
         responded: true,
       } as any;
@@ -514,7 +548,11 @@ describe('DefaultCommandManager', () => {
       const result = await manager.autocomplete(interaction);
 
       expect(result).toBe(true);
-      expect(executor.autocomplete).toHaveBeenCalledWith(subCmd, interaction, expect.anything());
+      expect(executor.autocomplete).toHaveBeenCalledWith(
+        subCmd,
+        interaction,
+        expect.anything(),
+      );
       expect(eventBus.emit).toHaveBeenCalledWith(
         CommandEventEnum.CommandAutocomplete,
         expect.arrayContaining([subCmd, interaction]),
@@ -542,7 +580,9 @@ describe('DefaultCommandManager', () => {
         options: {
           getSubcommandGroup: () => null,
           getSubcommand: () => null,
-          getFocused: vi.fn().mockImplementation(() => { throw getFocusedError; }),
+          getFocused: vi.fn().mockImplementation(() => {
+            throw getFocusedError;
+          }),
         },
         responded: true,
       } as any;
@@ -612,7 +652,6 @@ describe('DefaultCommandManager', () => {
   });
 
   describe('event bus and subscription migration', () => {
-
     test('GIVEN setSubscriptions THEN unsubscribes old container and sets new one', async () => {
       const { manager, subscriptionsContainer } = createManager();
       const newSubscriptions = {

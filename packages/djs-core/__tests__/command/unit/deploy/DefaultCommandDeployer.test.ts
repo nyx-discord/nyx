@@ -3,7 +3,7 @@ import {
   AssertionError,
   IllegalStateError,
   ObjectNotFoundError,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import { describe, expect, test, vi } from 'vitest';
 import { DefaultCommandDeployer } from '../../../../src';
 import { MockContextMenuCommand } from '../../mocks/MockContextMenuCommand';

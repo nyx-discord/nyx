@@ -79,6 +79,7 @@ export const config = [
 
       '@typescript-eslint/consistent-type-imports': 'warn',
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
 
       'max-len': [
         'error',

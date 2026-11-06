@@ -1,7 +1,7 @@
-import type { InteractionTypes, Metadata } from '@nyx-discord/types';
+import type { InteractionTypes, Metadata } from '@nyx-discord/base';
 import type { SessionEndData } from '../end/SessionEndData.js';
-import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction.js';
 import type { SessionStartInteraction } from '../interaction/SessionStartInteraction.js';
+import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction.js';
 import type { Session } from '../session/Session.js';
 
 /** Enum of possible session events. */

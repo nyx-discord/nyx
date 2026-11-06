@@ -1,6 +1,5 @@
-import type { ErrorConsumer } from '@nyx-discord/types';
 import { describe, expect, test, vi } from 'vitest';
-import { BasicErrorHandler } from '../../src';
+import { BasicErrorHandler, ErrorConsumer } from '../../src';
 import { StubErrorHandler } from './mocks/StubErrorHandler';
 
 class TestError extends Error {}

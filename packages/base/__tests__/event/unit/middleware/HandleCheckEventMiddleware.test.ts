@@ -1,6 +1,10 @@
 import { describe, expect, test } from 'vitest';
-import { TypedFields, PriorityEnum } from '@nyx-discord/types';
-import { HandleCheckEventMiddleware } from '../../../../src';
+import {
+  HandleCheckEventMiddleware,
+  PriorityEnum,
+  TypedFields,
+} from '../../../../src';
+import { StubMetadata } from '../../../command/mocks/StubMetadata';
 import { MockEventSubscriber } from '../../mocks/MockEventSubscriber';
 
 describe('HandleCheckEventMiddleware', () => {
@@ -16,45 +20,45 @@ describe('HandleCheckEventMiddleware', () => {
     expect(middleware.isProtected()).toBe(true);
   });
 
-  test('GIVEN event is not handled THEN returns true', async () => {
+  test('GIVEN event is not handled THEN returns true', () => {
     const middleware = new HandleCheckEventMiddleware();
     const subscriber = new MockEventSubscriber();
-    const meta = {};
+    const meta = StubMetadata.create();
 
-    const result = await middleware.check(subscriber, meta);
+    const result = middleware.check(subscriber, meta);
 
     expect(result.allowed).toBe(true);
   });
 
-  test('GIVEN event is handled AND subscriber ignores handled events THEN returns false', async () => {
+  test('GIVEN event is handled AND subscriber ignores handled events THEN returns false', () => {
     const middleware = new HandleCheckEventMiddleware();
     const subscriber = new MockEventSubscriber();
-    const meta = {};
+    const meta = StubMetadata.create();
     TypedFields.EventHandled.set(meta, true);
 
-    const result = await middleware.check(subscriber, meta);
+    const result = middleware.check(subscriber, meta);
 
     expect(result.allowed).toBe(false);
   });
 
-  test('GIVEN event is handled BUT subscriber does not ignore handled events THEN returns true', async () => {
+  test('GIVEN event is handled BUT subscriber does not ignore handled events THEN returns true', () => {
     const middleware = new HandleCheckEventMiddleware();
     const subscriber = MockEventSubscriber.create({ ignoreHandled: false });
-    const meta = {};
+    const meta = StubMetadata.create();
     TypedFields.EventHandled.set(meta, true);
 
-    const result = await middleware.check(subscriber, meta);
+    const result = middleware.check(subscriber, meta);
 
     expect(result.allowed).toBe(true);
   });
 
-  test('GIVEN event handled field is false THEN returns true', async () => {
+  test('GIVEN event handled field is false THEN returns true', () => {
     const middleware = new HandleCheckEventMiddleware();
     const subscriber = new MockEventSubscriber();
-    const meta = {};
+    const meta = StubMetadata.create();
     TypedFields.EventHandled.set(meta, false);
 
-    const result = await middleware.check(subscriber, meta);
+    const result = middleware.check(subscriber, meta);
 
     expect(result.allowed).toBe(true);
   });

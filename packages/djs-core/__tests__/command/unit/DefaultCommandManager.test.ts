@@ -1,11 +1,5 @@
 import type { MappedEvents } from '@discordjs/core';
 import { ApplicationCommandOptionType, InteractionType } from '@discordjs/core';
-import {
-  BasicEventBus,
-  DefaultCommandCustomIdCodec,
-  DefaultCommandRepository,
-  DefaultMetadataFactory,
-} from '@nyx-discord/base';
 import type {
   CommandCustomIdCodec,
   CommandEventArgs,
@@ -17,8 +11,15 @@ import type {
   MetadataFactory,
   ReadonlyCommandDeployer,
   ReadonlyCommandRepository,
-} from '@nyx-discord/types';
-import { CommandEventEnum, IllegalStateError } from '@nyx-discord/types';
+} from '@nyx-discord/base';
+import {
+  BasicEventBus,
+  CommandEventEnum,
+  DefaultCommandCustomIdCodec,
+  DefaultCommandRepository,
+  DefaultMetadataFactory,
+  IllegalStateError,
+} from '@nyx-discord/base';
 import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import type { CoreInteractionTypes } from '../../../src';
 import {

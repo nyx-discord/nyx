@@ -1,6 +1,6 @@
-import type { NyxClient } from '@nyx-discord/types';
 import type { API, Client } from '@discordjs/core';
 import type { WebSocketManager } from '@discordjs/ws';
+import type { NyxClient } from '@nyx-discord/base';
 
 /** A {@link NyxClient} backed by a @discordjs/core {@link Client}. */
 export class CoreNyxClient implements NyxClient<Client> {

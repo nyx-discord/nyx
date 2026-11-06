@@ -1,7 +1,7 @@
 import type {
   MiddlewareList,
   ScheduleMiddlewareResolvable,
-} from '@nyx-discord/types';
+} from '../../../src';
 import { vi } from 'vitest';
 
 export class StubScheduleMiddlewareList {

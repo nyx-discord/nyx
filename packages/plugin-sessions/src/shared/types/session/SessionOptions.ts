@@ -1,4 +1,4 @@
-import type { InteractionTypes, NyxBot } from '@nyx-discord/types';
+import type { InteractionTypes, NyxBot } from '@nyx-discord/base';
 import type { SessionStartInteraction } from '../interaction/SessionStartInteraction';
 
 /** Options to construct a session. */

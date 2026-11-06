@@ -1,5 +1,5 @@
-import type { Metadata } from '@nyx-discord/types';
-import { PriorityEnum, ScheduleMiddlewareError } from '@nyx-discord/types';
+import type { Metadata } from '../../../../src';
+import { PriorityEnum, ScheduleMiddlewareError } from '../../../../src';
 import { describe, expect, it, test, vi } from 'vitest';
 import { ScheduleMiddlewareList } from '../../../../src';
 import { MockSchedule } from '../../mocks/MockSchedule';

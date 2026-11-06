@@ -1,11 +1,11 @@
-import type { CommandDeployer, TopLevelCommand } from '@nyx-discord/types';
+import type { CommandDeployer, TopLevelCommand } from '@nyx-discord/base';
 import {
   AssertionError,
   IllegalStateError,
   ObjectNotFoundError,
-} from '@nyx-discord/types';
-import { ApplicationCommandType } from 'discord-api-types/v10';
+} from '@nyx-discord/base';
 import type { Snowflake } from 'discord-api-types/v10';
+import { ApplicationCommandType } from 'discord-api-types/v10';
 import type {
   ApplicationCommand,
   Client,

@@ -1,4 +1,4 @@
-import type { Metadata } from '@nyx-discord/types';
+import type { Metadata } from '@nyx-discord/base';
 import type { SessionEndData } from '../../end/SessionEndData.js';
 
 /** Type of arguments used to call a {@link Session} end. */

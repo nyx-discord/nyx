@@ -1,7 +1,7 @@
 import type {
   ApplicationCommandInteraction,
   ComponentCommandInteraction,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type {
   AutocompleteInteraction,
   ButtonInteraction,
@@ -10,7 +10,7 @@ import type {
   UserContextMenuCommandInteraction,
 } from 'discord.js';
 import { vi } from 'vitest';
-import type { DjsInteractionTypes } from '../../../src/types/DjsInteractionTypes.js';
+import type { DjsInteractionTypes } from '../../../src';
 
 export class StubInteraction {
   public static createChatInput(
@@ -75,9 +75,7 @@ export class StubInteraction {
     } as unknown as MessageContextMenuCommandInteraction;
   }
 
-  public static createButton(
-    customId = 'btn-id',
-  ): ButtonInteraction {
+  public static createButton(customId = 'btn-id'): ButtonInteraction {
     return {
       customId,
       isChatInputCommand: vi.fn().mockReturnValue(false),

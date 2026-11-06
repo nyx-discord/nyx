@@ -1,4 +1,4 @@
-import { AssertionError } from '@nyx-discord/types';
+import { AssertionError } from '@nyx-discord/base';
 import { describe, expect, test } from 'vitest';
 import { DjsSessionPlugin } from '#src';
 import { MockSession } from '#mocks/MockSession';

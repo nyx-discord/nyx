@@ -1,5 +1,5 @@
-import type { InteractionTypes, Metadata } from '@nyx-discord/types';
-import { FeatureError } from '@nyx-discord/types';
+import type { InteractionTypes, Metadata } from '@nyx-discord/base';
+import { FeatureError } from '@nyx-discord/base';
 import type { Session } from '../session/Session.js';
 
 /** An Error that wraps errors that occur during the execution of a Session object. */

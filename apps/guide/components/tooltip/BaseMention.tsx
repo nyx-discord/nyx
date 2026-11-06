@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { TooltipText } from './TooltipText';
-import { TypesMention } from './TypesMention';
 
 export function BaseMention() {
   return TooltipText({
@@ -9,7 +8,8 @@ export function BaseMention() {
       <div>
         <p>
           Shorthand for the <code>@nyx-discord/base</code> package, which
-          provides the default implementations for <TypesMention />.
+          defines the framework&apos;s interfaces and provides their default
+          implementations.
         </p>
         <p>
           Check the <Link href="/use/packages">Packages</Link> page for more

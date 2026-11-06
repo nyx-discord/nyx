@@ -1,4 +1,4 @@
-import type { Identifier, ScheduleRepository } from '@nyx-discord/types';
+import type { Identifier, ScheduleRepository } from '../../../src';
 import { vi } from 'vitest';
 
 export class StubScheduleRepository {

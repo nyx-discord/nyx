@@ -1,4 +1,4 @@
-import type { InteractionTypes, Metadata } from '@nyx-discord/types';
+import type { InteractionTypes, Metadata } from '@nyx-discord/base';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction';
 
 /** Type of arguments used to call a {@link Session} update. */

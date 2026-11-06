@@ -1,4 +1,4 @@
-import type { Constructor } from '@nyx-discord/types';
+import type { Constructor } from '@nyx-discord/base';
 import { readdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';

@@ -104,7 +104,6 @@
     "@nyx-discord/base": "workspace:*",
     "@nyx-discord/djs": "workspace:*",
     "@nyx-discord/djs-core": "workspace:*",
-    "@nyx-discord/types": "workspace:*",
     "@sapphire/string-store": "3.0.0",
     "discord-api-types": "^0.38.50"
   }

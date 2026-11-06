@@ -2,7 +2,7 @@ import type {
   InteractionTypes,
   Metadata,
   MiddlewareList,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import { SessionUpdateError } from '../../errors/SessionUpdateError.js';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction.js';
 import type { Session } from '../../session/Session.js';

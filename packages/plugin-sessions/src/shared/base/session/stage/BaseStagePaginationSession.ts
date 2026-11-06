@@ -1,9 +1,9 @@
-import type { Awaitable, InteractionTypes, Metadata } from '@nyx-discord/types';
+import type { Awaitable, InteractionTypes, Metadata } from '@nyx-discord/base';
 import type { SessionUpdateInteraction } from '../../../types/interaction/SessionUpdateInteraction';
-import { BasePaginationSession } from '../BasePaginationSession.js';
 import type { SessionStage } from '../../../types/session/stage/SessionStage.js';
 import type { SessionStageArray } from '../../../types/session/stage/SessionStageArray.js';
 import type { StagePaginationSession } from '../../../types/session/stage/StagePaginationSession.js';
+import { BasePaginationSession } from '../BasePaginationSession.js';
 
 export abstract class BaseStagePaginationSession<
   Result,

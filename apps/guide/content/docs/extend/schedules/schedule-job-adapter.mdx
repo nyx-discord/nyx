@@ -1,13 +1,13 @@
 ---
 title: Job Adapter
 icon: Plug
-definedIn: ['types/ScheduleJobAdapter', 'base/CronJobAdapter', 'base/TimerJobAdapter']
+definedIn: ['base/ScheduleJobAdapter', 'base/CronJobAdapter', 'base/TimerJobAdapter']
 ---
 
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
-The <DocsLink pkg='types' name='ScheduleJobAdapter' decorated={false} /> wraps a specific scheduled job implementation so the schedule system can interact with jobs (pause, resume, destroy) without knowing the underlying library.
+The <DocsLink pkg='base' name='ScheduleJobAdapter' decorated={false} /> wraps a specific scheduled job implementation so the schedule system can interact with jobs (pause, resume, destroy) without knowing the underlying library.
 
 There are two default implementations: <DocsLink pkg='base' name='CronJobAdapter' decorated={false} /> wraps jobs created by the `croner` library for cron strings and `Date`s, and <DocsLink pkg='base' name='TimerJobAdapter' decorated={false} /> runs millisecond intervals with its own timer.
 

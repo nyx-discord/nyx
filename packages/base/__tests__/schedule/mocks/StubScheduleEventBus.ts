@@ -2,7 +2,7 @@ import type {
   EventBus,
   Identifier,
   ScheduleEventArgs,
-} from '@nyx-discord/types';
+} from '../../../src';
 import { vi } from 'vitest';
 
 export class StubScheduleEventBus {

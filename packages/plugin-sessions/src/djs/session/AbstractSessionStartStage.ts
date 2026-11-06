@@ -1,5 +1,5 @@
+import type { Awaitable, Metadata } from '@nyx-discord/base';
 import type { DjsInteractionTypes } from '@nyx-discord/djs';
-import type { Awaitable, Metadata } from '@nyx-discord/types';
 import type { SessionStartInteraction } from '../../shared/types/interaction/SessionStartInteraction';
 import type { SessionStartStage } from '../../shared/types/session/stage/SessionStartStage.js';
 import { AbstractSessionStage } from './AbstractSessionStage.js';

@@ -1,4 +1,4 @@
-import type { Schedule } from '@nyx-discord/types';
+import type { Schedule } from '@nyx-discord/base';
 import { AbstractSchedule } from '@nyx-discord/base';
 import { LoaderError } from '../../error/LoaderError';
 import { ModuleUtils } from '../../util/ModuleUtils';

@@ -1,7 +1,7 @@
-import type { Metadata } from '@nyx-discord/types';
+import type { Metadata } from '@nyx-discord/base';
 
 export class StubMetadata {
   public static create(): Metadata {
-    return {} as Metadata;
+    return Object.create(null) as Metadata;
   }
 }

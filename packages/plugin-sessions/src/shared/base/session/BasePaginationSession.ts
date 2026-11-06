@@ -1,13 +1,13 @@
-import type { InteractionTypes, Metadata } from '@nyx-discord/types';
+import type { InteractionTypes, Metadata } from '@nyx-discord/base';
 import type {
   APIActionRowComponent,
   APIButtonComponent,
 } from 'discord-api-types/v10';
 import { ButtonStyle, ComponentType } from 'discord-api-types/v10';
 import type { SessionUpdateInteraction } from '../../types/interaction/SessionUpdateInteraction';
-import { BaseSession } from './BaseSession.js';
 import type { PaginationSession } from '../../types/session/PaginationSession.js';
 import type { SessionOptions } from '../../types/session/SessionOptions.js';
+import { BaseSession } from './BaseSession.js';
 
 export abstract class BasePaginationSession<
   Result,

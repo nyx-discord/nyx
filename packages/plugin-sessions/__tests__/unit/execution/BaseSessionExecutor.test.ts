@@ -9,7 +9,7 @@ import {
   UncaughtSessionStartMiddlewareError,
   UncaughtSessionUpdateMiddlewareError,
 } from '#src';
-import { IllegalStateError } from '@nyx-discord/types';
+import { IllegalStateError } from '@nyx-discord/base';
 import {
   ComponentType,
   type APIMessageTopLevelComponent,

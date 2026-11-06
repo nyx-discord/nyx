@@ -7,7 +7,7 @@ definedIn: ['base/DefaultScheduleRepository', 'base/ScheduleRepository']
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
-The <DocsLink pkg='types' name='ScheduleRepository' decorated={false} /> is responsible for storing all the currently registered schedules.
+The <DocsLink pkg='base' name='ScheduleRepository' decorated={false} /> is responsible for storing all the currently registered schedules.
 
 ## When to override
 
@@ -26,7 +26,7 @@ The <DocsLink pkg='types' name='ScheduleRepository' decorated={false} /> is resp
 Create a custom schedule repository by either:
 
 * Extending <DocsLink pkg='base' name='DefaultScheduleRepository' decorated={false} /> (<BaseMention />'s implementation, recommended for less work).
-* Implementing <DocsLink pkg='types' name='ScheduleRepository' decorated={false} /> (<TypesMention />'s base definition).
+* Implementing <DocsLink pkg='base' name='ScheduleRepository' decorated={false} /> (<BaseMention />'s interface).
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>

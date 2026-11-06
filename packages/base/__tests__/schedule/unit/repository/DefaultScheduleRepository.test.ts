@@ -1,4 +1,4 @@
-import { IllegalDuplicateError, ObjectNotFoundError } from '@nyx-discord/types';
+import { IllegalDuplicateError, ObjectNotFoundError } from '../../../../src';
 import { describe, expect, it, test } from 'vitest';
 import { DefaultScheduleRepository } from '../../../../src';
 import { MockSchedule } from '../../mocks/MockSchedule';

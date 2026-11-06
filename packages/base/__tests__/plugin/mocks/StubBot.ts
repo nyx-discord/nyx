@@ -1,4 +1,4 @@
-import { NyxBot } from '@nyx-discord/types';
+import { NyxBot } from '../../../src';
 import { vi } from 'vitest';
 
 export class StubBot {

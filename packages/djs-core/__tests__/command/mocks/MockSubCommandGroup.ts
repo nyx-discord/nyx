@@ -1,5 +1,5 @@
 import type { APIApplicationCommandSubcommandGroupOption } from '@discordjs/core';
-import type { ParentCommand } from '@nyx-discord/types';
+import type { ParentCommand } from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '../../../src';
 import { AbstractSubCommandGroup } from '../../../src';
 

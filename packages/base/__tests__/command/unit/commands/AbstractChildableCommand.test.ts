@@ -1,8 +1,6 @@
-import {
-  AssertionError,
-  IllegalDuplicateError,
-  ObjectNotFoundError,
-} from '@nyx-discord/types';
+import { AssertionError } from '#types/errors/AssertionError';
+import { IllegalDuplicateError } from '#types/errors/IllegalDuplicateError';
+import { ObjectNotFoundError } from '#types/errors/ObjectNotFoundError';
 import { describe, expect, test } from 'vitest';
 import { MockParentCommand } from '../../mocks/MockParentCommand';
 import { MockSubCommand } from '../../mocks/MockSubCommand';
@@ -51,9 +49,9 @@ describe('AbstractChildableCommand', () => {
         parent.addChildren(subcommand);
       }
 
-      expect(() => parent.addChildren(new MockSubCommand(parent, 'overflow'))).toThrow(
-        RangeError,
-      );
+      expect(() =>
+        parent.addChildren(new MockSubCommand(parent, 'overflow')),
+      ).toThrow(RangeError);
     });
 
     test('GIVEN multiple children THEN they are all added', () => {

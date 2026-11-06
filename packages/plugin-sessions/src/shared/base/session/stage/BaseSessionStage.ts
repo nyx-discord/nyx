@@ -1,11 +1,10 @@
-import { NotImplementedError } from '@nyx-discord/base';
 import type {
   Awaitable,
   InteractionTypes,
   Metadata,
   NyxBot,
-} from '@nyx-discord/types';
-import { ObjectNotFoundError } from '@nyx-discord/types';
+} from '@nyx-discord/base';
+import { NotImplementedError, ObjectNotFoundError } from '@nyx-discord/base';
 import type {
   APIActionRowComponent,
   APIButtonComponent,
@@ -14,9 +13,9 @@ import { ButtonStyle, ComponentType } from 'discord-api-types/v10';
 import type { SessionCustomIdData } from '../../../types/customId/data/SessionCustomIdData.js';
 import type { SessionCustomIdCodec } from '../../../types/customId/SessionCustomIdCodec.js';
 import type { SessionUpdateInteraction } from '../../../types/interaction/SessionUpdateInteraction.js';
-import { BaseSessionPlugin } from '../../plugin/BaseSessionPlugin.js';
 import type { SessionStage } from '../../../types/session/stage/SessionStage.js';
 import type { StagePaginationSession } from '../../../types/session/stage/StagePaginationSession.js';
+import { BaseSessionPlugin } from '../../plugin/BaseSessionPlugin.js';
 
 export abstract class BaseSessionStage<
   Result,

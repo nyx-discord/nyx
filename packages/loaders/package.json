@@ -37,6 +37,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@nyx-discord/base": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typedoc-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
@@ -44,9 +45,5 @@
   },
   "peerDependencies": {
     "@nyx-discord/base": "workspace:*"
-  },
-  "dependencies": {
-    "@nyx-discord/base": "workspace:*",
-    "@nyx-discord/types": "workspace:*"
   }
 }

@@ -1,4 +1,4 @@
-import type { InteractionTypes } from '@nyx-discord/types';
+import type { InteractionTypes } from '@nyx-discord/base';
 import type { SessionUpdateArgs } from '../../execution/args/SessionUpdateArgs.js';
 import type { SessionMiddleware } from '../SessionMiddleware.js';
 

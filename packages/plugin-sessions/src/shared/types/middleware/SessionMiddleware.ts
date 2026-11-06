@@ -1,4 +1,4 @@
-import type { InteractionTypes, Middleware } from '@nyx-discord/types';
+import type { InteractionTypes, Middleware } from '@nyx-discord/base';
 import type { Session } from '../session/Session.js';
 
 export interface SessionMiddleware<

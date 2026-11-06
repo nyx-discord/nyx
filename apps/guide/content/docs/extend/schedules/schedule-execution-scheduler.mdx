@@ -7,7 +7,7 @@ definedIn: ['base/DefaultScheduleExecutionScheduler']
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
-The <DocsLink pkg='base' name='DefaultScheduleExecutionScheduler' decorated={false} /> is responsible for interpreting the schedule's interval (usually a cron string) and creating/managing the <DocsLink pkg='types' name='ScheduleJobAdapter' decorated={false} /> that will trigger execution.
+The <DocsLink pkg='base' name='DefaultScheduleExecutionScheduler' decorated={false} /> is responsible for interpreting the schedule's interval (usually a cron string) and creating/managing the <DocsLink pkg='base' name='ScheduleJobAdapter' decorated={false} /> that will trigger execution.
 
 It relies on the [`ScheduleJobAdapter`](/extend/schedules/schedule-job-adapter) to interface with the actual timing mechanism (e.g. `croner`), and the adapter is the one that waits for the scheduled time and invokes the execution.
 

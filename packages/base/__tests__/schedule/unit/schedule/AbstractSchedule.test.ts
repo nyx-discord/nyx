@@ -1,4 +1,4 @@
-import { ObjectNotFoundError } from '@nyx-discord/types';
+import { ObjectNotFoundError } from '../../../../src';
 import { describe, expect, test } from 'vitest';
 import { MockSchedule } from '../../mocks/MockSchedule';
 import { StubScheduleExecutionScheduler } from '../../mocks/StubScheduleExecutionScheduler';

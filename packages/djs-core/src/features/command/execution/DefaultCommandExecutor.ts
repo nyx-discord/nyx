@@ -6,11 +6,6 @@ import type {
   ToEventProps,
 } from '@discordjs/core';
 import { ApplicationCommandType, InteractionType } from '@discordjs/core';
-import {
-  BasicErrorHandler,
-  CommandMiddlewareList,
-  ensureKey,
-} from '@nyx-discord/base';
 import type {
   AnyExecutableCommand,
   Awaitable,
@@ -26,13 +21,16 @@ import type {
   Metadata,
   MiddlewareList,
   Nameable,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import {
+  BasicErrorHandler,
   CommandAutocompleteError,
   CommandMiddlewareError,
+  CommandMiddlewareList,
+  ensureKey,
   TypedFields,
   UncaughtCommandMiddlewareError,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 
 type CommandExecutorOptions = {

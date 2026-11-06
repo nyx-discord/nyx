@@ -1,14 +1,7 @@
-import type {
-  NyxBot,
-  SubCommandGroup
-} from '@nyx-discord/types';
+import type { NyxBot } from '#types/bot/NyxBot';
+import type { SubCommandGroup } from '#types/features/command/commands/SubCommandGroup';
 import { ApplicationCommandType } from 'discord-api-types/v10';
-import {
-  describe,
-  expect,
-  it,
-  test
-} from 'vitest';
+import { describe, expect, it, test } from 'vitest';
 import { MockBot } from '../../../bot/MockBot';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
 import { MockSubCommand } from '../../mocks/MockSubCommand';

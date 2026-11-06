@@ -1,5 +1,5 @@
+import type { InteractionTypes } from '@nyx-discord/base';
 import { AbstractMiddleware } from '@nyx-discord/base';
-import type { InteractionTypes } from '@nyx-discord/types';
 import type { SessionUpdateArgs } from '../../../types/execution/args/SessionUpdateArgs.js';
 import type { Session } from '../../../types/session/Session.js';
 

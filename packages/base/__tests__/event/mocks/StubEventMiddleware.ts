@@ -1,9 +1,7 @@
-import type {
-  EventSubscriberMiddleware,
-  MiddlewareResponse,
-  Priority,
-} from '@nyx-discord/types';
-import { PriorityEnum } from '@nyx-discord/types';
+import type { EventSubscriberMiddleware } from '#types/features/event/middleware/EventSubscriberMiddleware';
+import type { MiddlewareResponse } from '#types/middleware/response/MiddlewareResponse';
+import type { Priority } from '#types/priority/Priority';
+import { PriorityEnum } from '#types/priority/Priority';
 import { vi } from 'vitest';
 
 export class StubEventMiddleware {

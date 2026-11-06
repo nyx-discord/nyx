@@ -1,4 +1,4 @@
-import { IllegalStateError, ObjectNotFoundError } from '@nyx-discord/types';
+import { IllegalStateError, ObjectNotFoundError } from '../../../../src';
 import { describe, expect, it, test, vi } from 'vitest';
 import {
   CronJobAdapter,

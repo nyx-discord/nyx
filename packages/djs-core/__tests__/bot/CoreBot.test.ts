@@ -1,13 +1,4 @@
-import type {
-  APIApplicationCommand,
-  Client,
-  MappedEvents,
-} from '@discordjs/core';
-import {
-  DefaultBotService,
-  DefaultPluginManager,
-  DefaultScheduleManager,
-} from '@nyx-discord/base';
+import type { Client, MappedEvents } from '@discordjs/core';
 import type {
   BotService,
   CommandManager,
@@ -15,7 +6,12 @@ import type {
   NyxBot,
   PluginManager,
   ScheduleManager,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
+import {
+  DefaultBotService,
+  DefaultPluginManager,
+  DefaultScheduleManager,
+} from '@nyx-discord/base';
 import { EventEmitter } from 'events';
 import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import {

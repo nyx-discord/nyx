@@ -14,7 +14,7 @@ import {
 import type {
   ApplicationCommandInteraction,
   ComponentCommandInteraction,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '../../../src';
 
 export class StubInteraction {

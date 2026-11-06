@@ -1,5 +1,5 @@
-import type { Awaitable, EventBusEventArgs, Metadata } from '@nyx-discord/types';
 import { vi } from 'vitest';
+import type { Awaitable, EventBusEventArgs, Metadata } from '../../../src';
 import { AbstractEventSubscriber } from '../../../src';
 
 export type TestEvents = {
@@ -10,16 +10,14 @@ export type TestEvents = {
 
 export class MockEventSubscriber<
   EventArgsObject extends Record<string, unknown[]> = TestEvents,
-  Event extends keyof EventArgsObject & string = 'test' & (keyof EventArgsObject & string),
-> extends AbstractEventSubscriber<
-  EventArgsObject,
-  Event
-> {
+  Event extends keyof EventArgsObject & string = 'test'
+    & (keyof EventArgsObject & string),
+> extends AbstractEventSubscriber<EventArgsObject, Event> {
+  public override handleEvent =
+    vi.fn<
+      (meta: Metadata, ...args: EventArgsObject[Event]) => Awaitable<void>
+    >();
   protected override readonly event: Event = 'test' as Event;
-
-  public override handleEvent = vi.fn<
-    (meta: Metadata, ...args: EventArgsObject[Event]) => Awaitable<void>
-  >();
 
   public static create(
     overrides?: Partial<{

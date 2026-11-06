@@ -1,9 +1,11 @@
+import type { CommandMiddleware } from '@nyx-discord/base';
 import {
   CommandAutocompleteError,
   CommandMiddlewareError,
   UncaughtCommandMiddlewareError,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import { describe, expect, it, test, vi } from 'vitest';
+import type { DjsInteractionTypes } from '../../../../src';
 import { DefaultCommandExecutor } from '../../../../src';
 import { MockContextMenuCommand } from '../../mocks/MockContextMenuCommand';
 import { MockParentCommand } from '../../mocks/MockParentCommand';
@@ -13,8 +15,6 @@ import { StubErrorHandler } from '../../mocks/StubErrorHandler';
 import { StubInteraction } from '../../mocks/StubInteraction';
 import { StubMetadata } from '../../mocks/StubMetadata';
 import { StubMiddlewareList } from '../../mocks/StubMiddlewareList';
-import type { CommandMiddleware } from '@nyx-discord/types';
-import type { DjsInteractionTypes } from '../../../../src/types/DjsInteractionTypes.js';
 
 describe('DefaultCommandExecutor', () => {
   it('SHOULD create an instance of itself', () => {
@@ -95,7 +95,11 @@ describe('DefaultCommandExecutor', () => {
       const interaction = StubInteraction.createChatInput();
       const metadata = StubMetadata.create();
 
-      const result = await executor.execute(parent as never, interaction, metadata);
+      const result = await executor.execute(
+        parent as never,
+        interaction,
+        metadata,
+      );
 
       expect(result).toBe(false);
     });
@@ -386,7 +390,9 @@ describe('DefaultCommandExecutor', () => {
       });
 
       const command = new MockStandaloneCommand();
-      const spyAutocomplete = vi.spyOn(command, 'autocomplete').mockResolvedValue(undefined);
+      const spyAutocomplete = vi
+        .spyOn(command, 'autocomplete')
+        .mockResolvedValue(undefined);
       const interaction = StubInteraction.createAutocomplete();
       const metadata = StubMetadata.create();
 

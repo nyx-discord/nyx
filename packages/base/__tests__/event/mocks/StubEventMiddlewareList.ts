@@ -1,7 +1,5 @@
-import type {
-  EventSubscriberMiddleware,
-  MiddlewareList,
-} from '@nyx-discord/types';
+import type { EventSubscriberMiddleware } from '#types/features/event/middleware/EventSubscriberMiddleware';
+import type { MiddlewareList } from '#types/middleware/list/MiddlewareList';
 import { vi } from 'vitest';
 
 export class StubEventMiddlewareList {

@@ -3,7 +3,7 @@ import type {
   InteractionTypes,
   Metadata,
   MiddlewareList,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { SessionEndCode } from '../../end/SessionEndCode.js';
 import type { SessionEndData } from '../../end/SessionEndData.js';
 import type { SessionErrorHandler } from '../../error/SessionErrorHandler.js';

@@ -1,12 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
 import {
-  TypedFields,
-  PriorityEnum,
   EventSubscriberLifetimeEnum,
-} from '@nyx-discord/types';
-import { LifetimeCheckEventMiddleware } from '../../../../src';
-import { MockEventSubscriber } from '../../mocks/MockEventSubscriber';
+  LifetimeCheckEventMiddleware,
+  PriorityEnum,
+  TypedFields,
+} from '../../../../src';
 import { StubMetadata } from '../../../command/mocks/StubMetadata';
+import { MockEventSubscriber } from '../../mocks/MockEventSubscriber';
 
 describe('LifetimeCheckEventMiddleware', () => {
   test('GIVEN a new instance THEN priority is Lowest', () => {

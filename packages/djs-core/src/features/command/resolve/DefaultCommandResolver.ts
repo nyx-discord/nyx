@@ -15,7 +15,7 @@ import type {
   CommandRepository,
   CommandResolver,
   ContextMenuCommand,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 
 export class DefaultCommandResolver implements CommandResolver<CoreInteractionTypes> {

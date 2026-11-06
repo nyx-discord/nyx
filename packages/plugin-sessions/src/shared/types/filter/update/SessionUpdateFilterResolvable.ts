@@ -1,7 +1,4 @@
-import type {
-  FilterResolvableFrom,
-  InteractionTypes,
-} from '@nyx-discord/types';
+import type { FilterResolvableFrom, InteractionTypes } from '@nyx-discord/base';
 import type { SessionUpdateFilter } from './SessionUpdateFilter.js';
 
 export type SessionUpdateFilterResolvable<

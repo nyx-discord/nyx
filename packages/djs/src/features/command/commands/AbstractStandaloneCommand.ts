@@ -1,5 +1,5 @@
+import type { Awaitable, Metadata } from '@nyx-discord/base';
 import { BaseStandaloneCommand } from '@nyx-discord/base';
-import type { Awaitable, Metadata } from '@nyx-discord/types';
 import type { DjsComponentInteraction } from '../../../types/DjsComponentInteraction.js';
 import type { DjsInteractionTypes } from '../../../types/DjsInteractionTypes.js';
 

@@ -1,7 +1,7 @@
-import type { InteractionTypes } from '@nyx-discord/types';
-import type { Session } from '../../session/Session.js';
+import type { InteractionTypes } from '@nyx-discord/base';
 import type { SessionExceedAction } from '../../../base/limit/action/SessionExceedAction.js';
 import type { SessionLimitScope } from '../../../base/limit/scope/SessionLimitScope.js';
+import type { Session } from '../../session/Session.js';
 
 /** A single concurrency rule within a session limit policy. */
 export interface SessionLimitRule<

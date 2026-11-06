@@ -1,4 +1,4 @@
-import type { NyxBot } from '@nyx-discord/types';
+import type { NyxBot } from '@nyx-discord/base';
 import type { DjsInteractionTypes } from '@nyx-discord/djs';
 import type { SessionStartInteraction } from '#src';
 import { randomUUID } from 'crypto';

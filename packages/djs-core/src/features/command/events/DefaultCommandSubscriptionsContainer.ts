@@ -1,9 +1,9 @@
+import type { GatewayDispatchEvents, MappedEvents } from '@discordjs/core';
 import type {
   CommandSubscriptionsContainer,
   EventBus,
   EventSubscriber,
-} from '@nyx-discord/types';
-import type { GatewayDispatchEvents, MappedEvents } from '@discordjs/core';
+} from '@nyx-discord/base';
 
 export class DefaultCommandSubscriptionsContainer implements CommandSubscriptionsContainer<MappedEvents> {
   protected readonly eventBus: EventBus<MappedEvents>;

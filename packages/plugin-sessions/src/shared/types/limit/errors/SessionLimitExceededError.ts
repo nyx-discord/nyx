@@ -1,4 +1,4 @@
-import type { InteractionTypes } from '@nyx-discord/types';
+import type { InteractionTypes } from '@nyx-discord/base';
 import type { Session } from '../../session/Session.js';
 import type { SessionLimitRule } from '../rule/SessionLimitRule.js';
 

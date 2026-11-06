@@ -11,7 +11,11 @@ export default defineConfig({
   sourcemap: true,
   keepNames: true,
   cjsInterop: true,
-  dts: true,
+  dts: {
+    // Build declarations against other packages' published types (dist), not their
+    // source through the dev-only custom conditions in each tsconfig.
+    compilerOptions: { customConditions: [] },
+  },
   treeshake: false,
   clean: true,
 });

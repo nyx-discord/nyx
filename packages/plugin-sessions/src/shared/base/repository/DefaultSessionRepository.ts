@@ -1,11 +1,11 @@
+import type { ReadonlyCollection } from '@discordjs/collection';
+import { Collection } from '@discordjs/collection';
 import TTLCache from '@isaacs/ttlcache';
 import type {
   Awaitable,
   Constructor,
   InteractionTypes,
-} from '@nyx-discord/types';
-import type { ReadonlyCollection } from '@discordjs/collection';
-import { Collection } from '@discordjs/collection';
+} from '@nyx-discord/base';
 import type { SessionRepository } from '../../types/repository/SessionRepository.js';
 import type { Session } from '../../types/session/Session.js';
 

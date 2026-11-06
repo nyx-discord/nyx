@@ -1,4 +1,4 @@
-import type { InteractionTypes } from '@nyx-discord/types';
+import type { InteractionTypes } from '@nyx-discord/base';
 import type { SessionOptions } from './SessionOptions';
 
 /** Options to construct a list pagination session. */

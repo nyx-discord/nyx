@@ -1,7 +1,7 @@
+import type { Metadata } from '@nyx-discord/base';
 import type { DjsInteractionTypes } from '@nyx-discord/djs';
-import type { Metadata } from '@nyx-discord/types';
-import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 import { BaseSessionStage } from '../../shared/base/session/stage/BaseSessionStage.js';
+import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 
 export abstract class AbstractSessionStage<
   Result = void,

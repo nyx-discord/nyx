@@ -1,4 +1,4 @@
-import type { Metadata, MetadataFactory } from '@nyx-discord/types';
+import type { Metadata, MetadataFactory } from '../../../src';
 import { vi } from 'vitest';
 
 export class StubScheduleMetadata {

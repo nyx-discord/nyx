@@ -1,4 +1,4 @@
-import { TypedFields } from '@nyx-discord/types';
+import { TypedFields } from '../../src';
 import { describe, expect, it } from 'vitest';
 import { DefaultMetadataFactory } from '../../src';
 

@@ -1,4 +1,4 @@
-import type { ScheduleErrorHandler } from '@nyx-discord/types';
+import type { ScheduleErrorHandler } from '../../../src';
 import { vi } from 'vitest';
 
 export class StubScheduleErrorHandler {

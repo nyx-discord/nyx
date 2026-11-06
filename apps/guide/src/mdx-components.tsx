@@ -2,7 +2,6 @@ import { DocsLink } from 'components/links/DocsLink';
 import { GithubLink } from 'components/links/GithubLink';
 import { GithubInfo } from 'components/links/SafeGithubInfo';
 import { BaseMention } from 'components/tooltip/BaseMention';
-import { TypesMention } from 'components/tooltip/TypesMention';
 import * as Twoslash from 'fumadocs-twoslash/ui';
 import { Tabs as FumadocsTabs, Tab } from 'fumadocs-ui/components/tabs';
 import defaultComponents from 'fumadocs-ui/mdx';
@@ -30,7 +29,6 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ...Twoslash,
     Tabs,
     Tab,
-    TypesMention,
     BaseMention,
     DocsLink,
     GithubLink,

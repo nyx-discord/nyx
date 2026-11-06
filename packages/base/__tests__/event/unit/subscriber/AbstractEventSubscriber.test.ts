@@ -1,4 +1,4 @@
-import { EventSubscriberLifetimeEnum, PriorityEnum } from '@nyx-discord/types';
+import { EventSubscriberLifetimeEnum, PriorityEnum } from '../../../../src';
 import { describe, expect, it, test } from 'vitest';
 import { MockEventSubscriber } from '../../mocks/MockEventSubscriber';
 

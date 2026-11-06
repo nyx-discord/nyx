@@ -1,16 +1,18 @@
+import type { Comparator } from '@discordjs/collection';
+import { describe, expect, it, test, vi } from 'vitest';
+import type {
+  AnyEventSubscriberFrom,
+  EventDispatcher,
+  Identifier,
+  MetadataFactory,
+} from '../../../../src';
 import {
-  type AnyEventSubscriberFrom,
-  type Comparator,
-  type EventDispatcher,
-  type Identifier,
+  BasicEventBus,
   IllegalDuplicateError,
   IllegalStateError,
-  type MetadataFactory,
   ObjectNotFoundError,
   PriorityEnum,
-} from '@nyx-discord/types';
-import { describe, expect, it, test, vi } from 'vitest';
-import { BasicEventBus } from '../../../../src';
+} from '../../../../src';
 import { MockEventSubscriber } from '../../mocks/MockEventSubscriber';
 import { StubEventDispatcher } from '../../mocks/StubEventDispatcher';
 import { StubEventMetadata } from '../../mocks/StubEventMetadata';
@@ -348,7 +350,9 @@ describe('BasicEventBus', () => {
     test('GIVEN subscribers THEN re-sorts existing event collections with custom comparator', async () => {
       const bus = createBus();
       const subLow = MockEventSubscriber.create({ priority: PriorityEnum.Low });
-      const subHigh = MockEventSubscriber.create({ priority: PriorityEnum.High });
+      const subHigh = MockEventSubscriber.create({
+        priority: PriorityEnum.High,
+      });
 
       await bus.subscribe(subLow, subHigh);
 

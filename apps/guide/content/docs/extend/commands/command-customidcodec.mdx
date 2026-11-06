@@ -1,13 +1,13 @@
 ---
 title: CustomId Codec
 icon: ArrowRightLeft
-definedIn: ['base/DefaultCommandCustomIdCodec', 'types/CommandCustomIdCodec']
+definedIn: ['base/DefaultCommandCustomIdCodec', 'base/CommandCustomIdCodec']
 ---
 
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
-The <DocsLink pkg='types' name='CommandCustomIdCodec' decorated={false} /> is responsible for de/serializing commands to/from customId strings, for the [Command Components](/use/commands/components) feature.
+The <DocsLink pkg='base' name='CommandCustomIdCodec' decorated={false} /> is responsible for de/serializing commands to/from customId strings, for the [Command Components](/use/commands/components) feature.
 
 The default implementation (<DocsLink pkg='base' name='DefaultCommandCustomIdCodec' decorated={false} />) uses the [`@sapphire/string-store`](https://www.npmjs.com/package/@sapphire/string-store) package to efficiently de/serialize the data.
 
@@ -26,7 +26,7 @@ The default implementation (<DocsLink pkg='base' name='DefaultCommandCustomIdCod
 Create a custom codec by either:
 
 * Extending <DocsLink pkg='base' name='DefaultCommandCustomIdCodec' decorated={false} /> (<BaseMention />'s implementation, recommended for less work).
-* Implementing <DocsLink pkg='types' name='CommandCustomIdCodec' decorated={false} /> (<TypesMention />'s base definition).
+* Implementing <DocsLink pkg='base' name='CommandCustomIdCodec' decorated={false} /> (<BaseMention />'s interface).
 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>

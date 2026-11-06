@@ -1,4 +1,4 @@
-import type { Awaitable, InteractionTypes, Metadata } from '@nyx-discord/types';
+import type { Awaitable, InteractionTypes, Metadata } from '@nyx-discord/base';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction';
 import type { StagePaginationSession } from './StagePaginationSession.js';
 

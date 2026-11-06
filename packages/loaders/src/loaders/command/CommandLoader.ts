@@ -1,10 +1,3 @@
-import {
-  BaseContextMenuCommand,
-  BaseParentCommand,
-  BaseStandaloneCommand,
-  BaseSubCommand,
-  BaseSubCommandGroup,
-} from '@nyx-discord/base';
 import type {
   Constructor,
   InjectableBotDependencies,
@@ -14,7 +7,14 @@ import type {
   SubCommand,
   SubCommandGroup,
   TopLevelCommand,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
+import {
+  BaseContextMenuCommand,
+  BaseParentCommand,
+  BaseStandaloneCommand,
+  BaseSubCommand,
+  BaseSubCommandGroup,
+} from '@nyx-discord/base';
 import { readdir, stat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { LoaderError } from '../../error/LoaderError';

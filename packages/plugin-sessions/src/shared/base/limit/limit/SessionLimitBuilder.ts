@@ -2,12 +2,12 @@ import type {
   Awaitable,
   Constructor,
   InteractionTypes,
-} from '@nyx-discord/types';
-import type { Session } from '../../../types/session/Session.js';
-import type { SessionLimitRule } from '../../../types/limit/rule/SessionLimitRule.js';
-import { SessionLimitRuleBuilder } from '../rule/SessionLimitRuleBuilder.js';
-import type { SessionLimitRuleBuilderCallback } from '../rule/SessionLimitRuleBuilder.js';
+} from '@nyx-discord/base';
 import type { SessionLimit } from '../../../types/limit/limit/SessionLimit.js';
+import type { SessionLimitRule } from '../../../types/limit/rule/SessionLimitRule.js';
+import type { Session } from '../../../types/session/Session.js';
+import type { SessionLimitRuleBuilderCallback } from '../rule/SessionLimitRuleBuilder.js';
+import { SessionLimitRuleBuilder } from '../rule/SessionLimitRuleBuilder.js';
 
 /** Builder for constructing {@link SessionLimit} instances fluently. */
 export class SessionLimitBuilder<

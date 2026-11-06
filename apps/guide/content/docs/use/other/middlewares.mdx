@@ -11,7 +11,7 @@ We will review some concepts before going into the usage.
 
 ## Priorities
 
-The <DocsLink pkg="types" name="Priority" decorated={false} label="Priority" /> determines the order in which they are executed:
+The <DocsLink pkg="base" name="Priority" decorated={false} label="Priority" /> determines the order in which they are executed:
 
 - Higher priorities are executed first.
 - Monitors are specifically meant for monitoring (e.g. metrics), though that's not enforced.
@@ -43,7 +43,7 @@ The default priority is `Normal`, it's changed by overriding the `priority` prop
 
 ## Responses
 
-A middleware returns a <DocsLink pkg="types" name="MiddlewareResponse" decorated={false} label="MiddlewareResponse" /> that indicates whether it passes, forces to pass, or fails. If a middleware fails, the execution will stop.
+A middleware returns a <DocsLink pkg="base" name="MiddlewareResponse" decorated={false} label="MiddlewareResponse" /> that indicates whether it passes, forces to pass, or fails. If a middleware fails, the execution will stop.
 
 Use the utility methods from the abstract middleware class to create the response:
 - `true()` - The middleware passes, and the execution will continue.

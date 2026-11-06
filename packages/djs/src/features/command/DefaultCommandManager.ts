@@ -1,10 +1,3 @@
-import {
-  BasicEventBus,
-  DefaultCommandCustomIdCodec,
-  DefaultCommandRepository,
-  DefaultMetadataFactory,
-  ensureKey,
-} from '@nyx-discord/base';
 import type {
   AnyExecutableCommand,
   CommandCustomIdCodec,
@@ -24,12 +17,17 @@ import type {
   NyxBot,
   ReadonlyCommandDeployer,
   TopLevelCommand,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import {
+  BasicEventBus,
   CommandEventEnum,
+  DefaultCommandCustomIdCodec,
+  DefaultCommandRepository,
+  DefaultMetadataFactory,
+  ensureKey,
   IllegalStateError,
   TypedFields,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type {
   ApplicationCommand,
   AutocompleteInteraction,

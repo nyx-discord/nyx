@@ -219,12 +219,12 @@ importers:
       '@nyx-discord/djs-core':
         specifier: workspace:*
         version: link:../../packages/djs-core
+      '@nyx-discord/loaders':
+        specifier: workspace:*
+        version: link:../../packages/loaders
       '@nyx-discord/plugin-sessions':
         specifier: workspace:*
         version: link:../../packages/plugin-sessions
-      '@nyx-discord/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@repo/typedoc-plugin-entities':
         specifier: workspace:*
         version: link:../../packages/typedoc-plugin-entities
@@ -309,9 +309,6 @@ importers:
       '@discordjs/collection':
         specifier: 1.5.3
         version: 1.5.3
-      '@nyx-discord/types':
-        specifier: workspace:*
-        version: link:../types
       '@sapphire/string-store':
         specifier: 3.0.0
         version: 3.0.0
@@ -321,6 +318,9 @@ importers:
       discord-api-types:
         specifier: ^0.38.50
         version: 0.38.53
+      typed-field:
+        specifier: 1.3.0
+        version: 1.3.0
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -340,9 +340,6 @@ importers:
       '@nyx-discord/base':
         specifier: workspace:*
         version: link:../base
-      '@nyx-discord/types':
-        specifier: workspace:*
-        version: link:../types
       discord-api-types:
         specifier: ^0.38.50
         version: 0.38.53
@@ -380,9 +377,6 @@ importers:
       '@nyx-discord/base':
         specifier: workspace:*
         version: link:../base
-      '@nyx-discord/types':
-        specifier: workspace:*
-        version: link:../types
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -398,14 +392,10 @@ importers:
         version: link:../../configs/vitest-config
 
   packages/loaders:
-    dependencies:
+    devDependencies:
       '@nyx-discord/base':
         specifier: workspace:*
         version: link:../base
-      '@nyx-discord/types':
-        specifier: workspace:*
-        version: link:../types
-    devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint-config
@@ -436,9 +426,6 @@ importers:
       '@nyx-discord/djs-core':
         specifier: workspace:*
         version: link:../djs-core
-      '@nyx-discord/types':
-        specifier: workspace:*
-        version: link:../types
       '@sapphire/string-store':
         specifier: 3.0.0
         version: 3.0.0
@@ -466,31 +453,6 @@ importers:
         version: 14.22.1
 
   packages/typedoc-plugin-entities: {}
-
-  packages/types:
-    dependencies:
-      '@discordjs/collection':
-        specifier: 1.5.3
-        version: 1.5.3
-      discord-api-types:
-        specifier: ^0.38.50
-        version: 0.38.53
-      typed-field:
-        specifier: 1.3.0
-        version: 1.3.0
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../configs/eslint-config
-      '@repo/typedoc-config':
-        specifier: workspace:*
-        version: link:../../configs/typedoc-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../configs/typescript-config
-      '@repo/vitest-config':
-        specifier: workspace:*
-        version: link:../../configs/vitest-config
 
 packages:
 
@@ -11938,7 +11900,7 @@ snapshots:
       eslint: 9.39.5(jiti@2.5.1)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.5(jiti@2.5.1))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.57.1(eslint@9.39.5(jiti@2.5.1))(typescript@5.9.2))(eslint@9.39.5(jiti@2.5.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.57.1(eslint@9.39.5(jiti@2.5.1))(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5(jiti@2.5.1))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.5(jiti@2.5.1))
       eslint-plugin-react: 7.37.5(eslint@9.39.5(jiti@2.5.1))
       eslint-plugin-react-hooks: 7.0.1(eslint@9.39.5(jiti@2.5.1))
@@ -11979,7 +11941,7 @@ snapshots:
       tinyglobby: 0.2.14
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.57.1(eslint@9.39.5(jiti@2.5.1))(typescript@5.9.2))(eslint@9.39.5(jiti@2.5.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.57.1(eslint@9.39.5(jiti@2.5.1))(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5(jiti@2.5.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -12004,7 +11966,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.57.1(eslint@9.39.5(jiti@2.5.1))(typescript@5.9.2))(eslint@9.39.5(jiti@2.5.1)):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.57.1(eslint@9.39.5(jiti@2.5.1))(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5(jiti@2.5.1)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9

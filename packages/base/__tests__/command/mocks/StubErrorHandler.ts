@@ -1,4 +1,4 @@
-import type { CommandErrorHandler } from '@nyx-discord/types';
+import type { CommandErrorHandler } from '../../../src';
 import { vi } from 'vitest';
 
 export class StubErrorHandler {

@@ -1,4 +1,4 @@
-import type { NyxClient } from '@nyx-discord/types';
+import type { NyxClient } from '@nyx-discord/base';
 import type { Client } from 'discord.js';
 
 /** A {@link NyxClient} backed by a discord.js {@link Client}. */

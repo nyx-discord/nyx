@@ -1,6 +1,6 @@
-import type { InteractionTypes } from '@nyx-discord/types';
-import { SessionExceedAction } from '../action/SessionExceedAction.js';
+import type { InteractionTypes } from '@nyx-discord/base';
 import type { SessionLimitRule } from '../../../types/limit/rule/SessionLimitRule.js';
+import { SessionExceedAction } from '../action/SessionExceedAction.js';
 import { SessionLimitScope } from '../scope/SessionLimitScope.js';
 
 /** Builder for constructing {@link SessionLimitRule} instances fluently. */

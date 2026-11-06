@@ -1,8 +1,4 @@
-import type {
-  InteractionTypes,
-  MiddlewareList,
-  Tail,
-} from '@nyx-discord/types';
+import type { InteractionTypes, MiddlewareList, Tail } from '@nyx-discord/base';
 import { AbstractMiddlewareList } from '@nyx-discord/base';
 import { SessionStartMiddlewareError } from '../../types/middleware/errors/SessionStartMiddlewareError.js';
 import type { SessionStartMiddleware } from '../../types/middleware/start/SessionStartMiddleware.js';

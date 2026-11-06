@@ -1,4 +1,4 @@
-import { BotStatusEnum } from '@nyx-discord/types';
+import { BotStatusEnum } from '#types/service/BotStatus';
 import { describe, expect, test, vi } from 'vitest';
 import { MockBot } from './MockBot';
 
@@ -31,19 +31,28 @@ function createBot({
     ...clientEventBusOverrides,
   };
 
-  const bot = new MockBot(() => ({
-    client: mockClient,
-    token: 'token',
-    logger: console,
-    service: mockService,
-    commandManager: mockCommandManager,
-    scheduleManager: mockScheduleManager,
-    pluginManager: mockPluginManager,
-    clientEventBus: mockClientEventBus,
-    deployCommands,
-  } as any));
+  const bot = new MockBot(
+    () =>
+      ({
+        client: mockClient,
+        token: 'token',
+        logger: console,
+        service: mockService,
+        commandManager: mockCommandManager,
+        scheduleManager: mockScheduleManager,
+        pluginManager: mockPluginManager,
+        clientEventBus: mockClientEventBus,
+        deployCommands,
+      }) as any,
+  );
 
-  return { bot, mockClient, mockService, mockCommandManager, mockClientEventBus };
+  return {
+    bot,
+    mockClient,
+    mockService,
+    mockCommandManager,
+    mockClientEventBus,
+  };
 }
 
 describe('BaseBot', () => {
@@ -54,17 +63,20 @@ describe('BaseBot', () => {
     const mockScheduleManager = {} as any;
     const mockPluginManager = {} as any;
 
-    const bot = new MockBot(() => ({
-      client: mockClient,
-      token: 'token',
-      id: 'id',
-      logger: console,
-      service: mockService,
-      commandManager: mockCommandManager,
-      scheduleManager: mockScheduleManager,
-      pluginManager: mockPluginManager,
-      deployCommands: false,
-    } as any));
+    const bot = new MockBot(
+      () =>
+        ({
+          client: mockClient,
+          token: 'token',
+          id: 'id',
+          logger: console,
+          service: mockService,
+          commandManager: mockCommandManager,
+          scheduleManager: mockScheduleManager,
+          pluginManager: mockPluginManager,
+          deployCommands: false,
+        }) as any,
+    );
 
     expect(bot.getClient()).toBe(mockClient);
     expect(bot.getService()).toBe(mockService);
@@ -84,7 +96,9 @@ describe('BaseBot', () => {
 
   describe('start', () => {
     test('GIVEN deployCommands false THEN calls service.start() and does NOT deploy commands', async () => {
-      const { bot, mockService, mockCommandManager } = createBot({ deployCommands: false });
+      const { bot, mockService, mockCommandManager } = createBot({
+        deployCommands: false,
+      });
 
       await bot.start();
 
@@ -93,7 +107,9 @@ describe('BaseBot', () => {
     });
 
     test('GIVEN deployCommands true THEN calls service.start() AND deploys commands', async () => {
-      const { bot, mockService, mockCommandManager } = createBot({ deployCommands: true });
+      const { bot, mockService, mockCommandManager } = createBot({
+        deployCommands: true,
+      });
 
       await bot.start();
 
@@ -148,7 +164,9 @@ describe('BaseBot', () => {
   describe('getStatus', () => {
     test('GIVEN a service status THEN delegates to service.getStatus() and returns its value', () => {
       const { bot, mockService } = createBot({
-        serviceOverrides: { getStatus: vi.fn().mockReturnValue(BotStatusEnum.Running) },
+        serviceOverrides: {
+          getStatus: vi.fn().mockReturnValue(BotStatusEnum.Running),
+        },
       });
 
       const status = bot.getStatus();
@@ -191,17 +209,29 @@ describe('BaseBot', () => {
   describe('subscribeToClient', () => {
     test('GIVEN client subscribers THEN delegates to clientEventBus.subscribe()', async () => {
       const { bot, mockClientEventBus } = createBot();
-      const subscriberA = { handleEvent: vi.fn(), getEvent: () => 'ready' } as any;
-      const subscriberB = { handleEvent: vi.fn(), getEvent: () => 'messageCreate' } as any;
+      const subscriberA = {
+        handleEvent: vi.fn(),
+        getEvent: () => 'ready',
+      } as any;
+      const subscriberB = {
+        handleEvent: vi.fn(),
+        getEvent: () => 'messageCreate',
+      } as any;
 
       await bot.subscribeToClient(subscriberA, subscriberB);
 
-      expect(mockClientEventBus.subscribe).toHaveBeenCalledWith(subscriberA, subscriberB);
+      expect(mockClientEventBus.subscribe).toHaveBeenCalledWith(
+        subscriberA,
+        subscriberB,
+      );
     });
 
     test('GIVEN subscribeToClient called THEN returns this for chaining', async () => {
       const { bot } = createBot();
-      const subscriber = { handleEvent: vi.fn(), getEvent: () => 'ready' } as any;
+      const subscriber = {
+        handleEvent: vi.fn(),
+        getEvent: () => 'ready',
+      } as any;
 
       const result = await bot.subscribeToClient(subscriber);
 
@@ -209,4 +239,3 @@ describe('BaseBot', () => {
     });
   });
 });
-

@@ -1,12 +1,8 @@
+import type { InteractionTypes, MiddlewareList, Tail } from '@nyx-discord/base';
 import { AbstractMiddlewareList } from '@nyx-discord/base';
-import type {
-  InteractionTypes,
-  MiddlewareList,
-  Tail,
-} from '@nyx-discord/types';
 import { SessionUpdateMiddlewareError } from '../../types/middleware/errors/SessionUpdateMiddlewareError.js';
-import { SessionUpdateFilterCheckMiddleware } from './SessionUpdateFilterCheckMiddleware.js';
 import type { SessionUpdateMiddleware } from '../../types/middleware/update/SessionUpdateMiddleware.js';
+import { SessionUpdateFilterCheckMiddleware } from './SessionUpdateFilterCheckMiddleware.js';
 
 /** {@link MiddlewareList} of {@link SessionUpdateMiddleware}s. */
 export class SessionUpdateMiddlewareList<

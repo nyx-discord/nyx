@@ -1,8 +1,8 @@
-import type { InteractionTypes } from '@nyx-discord/types';
+import type { InteractionTypes } from '@nyx-discord/base';
 import type { SessionEndData } from '../../types/end/SessionEndData.js';
+import type { ExtractSessionResult } from '../../types/ExtractSessionResult.js';
 import type { SessionPromiseRepository } from '../../types/promise/SessionPromiseRepository.js';
 import type { Session } from '../../types/session/Session.js';
-import type { ExtractSessionResult } from '../../types/ExtractSessionResult.js';
 
 type SessionPromiseData = {
   promise: Promise<SessionEndData<unknown>>;

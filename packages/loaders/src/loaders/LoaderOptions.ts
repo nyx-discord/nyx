@@ -2,7 +2,7 @@ import type {
   InjectableBotDependencies,
   InteractionTypes,
   NyxBot,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 
 /** Options for a Loader. */
 export type LoaderOptions<Types extends InteractionTypes = InteractionTypes> = {

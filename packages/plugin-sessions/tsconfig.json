@@ -1,7 +1,6 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "outDir": "dist",
     "paths": {
       "#src": ["./src"],
       "#src/*": ["./src/*"],
@@ -11,8 +10,7 @@
     "customConditions": [
       "@nyx-discord/djs",
       "@nyx-discord/djs-core",
-      "@nyx-discord/base",
-      "@nyx-discord/types"
+      "@nyx-discord/base"
     ]
   },
   "include": [

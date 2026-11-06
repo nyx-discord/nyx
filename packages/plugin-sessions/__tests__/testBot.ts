@@ -1,4 +1,4 @@
-import type { NyxBot } from '@nyx-discord/types';
+import type { NyxBot } from '@nyx-discord/base';
 import { DjsSessionPlugin } from '#src';
 import { MockBot } from './MockBot';
 

@@ -1,8 +1,8 @@
+import type { Metadata } from '@nyx-discord/base';
 import type { DjsInteractionTypes } from '@nyx-discord/djs';
-import type { Metadata } from '@nyx-discord/types';
-import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
-import type { SessionInteractionInfo } from '../../shared/types/interaction/SessionInteractionInfo.js';
 import { BaseSession } from '../../shared/base/session/BaseSession.js';
+import type { SessionInteractionInfo } from '../../shared/types/interaction/SessionInteractionInfo.js';
+import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 
 export abstract class AbstractSession<Result = void> extends BaseSession<
   Result,

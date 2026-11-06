@@ -2,7 +2,7 @@ import type {
   Awaitable,
   Constructor,
   InteractionTypes,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { Session } from '../../session/Session.js';
 import type { SessionLimitRule } from '../rule/SessionLimitRule.js';
 

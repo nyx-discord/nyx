@@ -1,10 +1,10 @@
+import type { ReadonlyCollection } from '@discordjs/collection';
 import type {
   Awaitable,
   BotLifecycleObserver,
   Constructor,
   InteractionTypes,
-} from '@nyx-discord/types';
-import type { ReadonlyCollection } from '@discordjs/collection';
+} from '@nyx-discord/base';
 import type { Session } from '../session/Session.js';
 
 /** An object for temporal storage of {@link Session} instances. */

@@ -1,4 +1,4 @@
-import type { EventDispatcher } from '@nyx-discord/types';
+import type { EventDispatcher } from '#types/features/event/dispatch/dispatcher/EventDispatcher';
 import { vi } from 'vitest';
 
 export class StubEventDispatcher {

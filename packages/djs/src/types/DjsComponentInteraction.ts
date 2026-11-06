@@ -1,4 +1,4 @@
-import type { ComponentCommandInteraction } from '@nyx-discord/types';
+import type { ComponentCommandInteraction } from '@nyx-discord/base';
 import type { DjsInteractionTypes } from './DjsInteractionTypes.js';
 
 /** Type of component interactions for discord.js. */

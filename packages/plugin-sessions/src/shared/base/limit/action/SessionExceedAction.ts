@@ -1,6 +1,6 @@
-import type { Awaitable, InteractionTypes } from '@nyx-discord/types';
-import type { Session } from '../../../types/session/Session.js';
+import type { Awaitable, InteractionTypes } from '@nyx-discord/base';
 import type { SessionLimitRule } from '../../../types/limit/rule/SessionLimitRule.js';
+import type { Session } from '../../../types/session/Session.js';
 
 /** Context provided to exceed action handlers when a session limit is reached. */
 export interface SessionExceedContext<

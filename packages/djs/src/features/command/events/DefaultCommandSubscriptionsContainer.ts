@@ -2,7 +2,7 @@ import type {
   CommandSubscriptionsContainer,
   EventBus,
   EventSubscriber,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { ClientEvents, Events } from 'discord.js';
 
 export class DefaultCommandSubscriptionsContainer implements CommandSubscriptionsContainer<ClientEvents> {

@@ -1,8 +1,8 @@
+import type { Metadata } from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
-import type { Metadata } from '@nyx-discord/types';
-import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
-import type { SessionInteractionInfo } from '../../shared/types/interaction/SessionInteractionInfo.js';
 import { BaseStagePaginationSession } from '../../shared/base/session/stage/BaseStagePaginationSession.js';
+import type { SessionInteractionInfo } from '../../shared/types/interaction/SessionInteractionInfo.js';
+import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 
 export abstract class AbstractStagePaginationSession<
   Result,

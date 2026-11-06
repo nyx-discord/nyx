@@ -9,8 +9,8 @@ import type {
   ScheduleExecutor,
   ScheduleManager,
   ScheduleRepository,
-} from '@nyx-discord/types';
-import { IllegalDuplicateError, IllegalStateError, ObjectNotFoundError } from '@nyx-discord/types';
+} from '../../../../src';
+import { IllegalDuplicateError, IllegalStateError, ObjectNotFoundError } from '../../../../src';
 import { describe, expect, expectTypeOf, it, test, vi } from 'vitest';
 import { DefaultScheduleManager } from '../../../../src';
 import { MockSchedule } from '../../mocks/MockSchedule';

@@ -2,12 +2,12 @@ import type {
   BotService,
   BotServiceEventArgs,
   EventBus,
-} from '@nyx-discord/types';
+} from '../../src';
 import {
   BotServiceEventEnum,
   BotStatusEnum,
   IllegalStateError,
-} from '@nyx-discord/types';
+} from '../../src';
 import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import { DefaultBotService } from '../../src';
 import { StubEventBus } from '../event/mocks/StubEventBus';

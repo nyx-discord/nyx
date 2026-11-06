@@ -1,10 +1,10 @@
-import { BaseCommandSubscriber } from '@nyx-discord/base';
 import type {
   Awaitable,
-  CommandEventArgs,
   CommandEvent,
+  CommandEventArgs,
   Metadata,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
+import { BaseCommandSubscriber } from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 
 /** Utility to make a subscriber for the {@link CommandManager#getEventBus CommandManager event bus}. */

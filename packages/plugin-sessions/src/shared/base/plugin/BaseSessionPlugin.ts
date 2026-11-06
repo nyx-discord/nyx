@@ -10,13 +10,13 @@ import type {
   NyxBot,
   NyxPlugin,
   NyxPluginData,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import {
   AssertionError,
   BotStatusEnum,
   ObjectNotFoundError,
   TypedFields,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { SessionCustomIdCodec } from '../../types/customId/SessionCustomIdCodec.js';
 import type { SessionEndCode } from '../../types/end/SessionEndCode.js';
 import { SessionEndCodes } from '../../types/end/SessionEndCodes.js';
@@ -26,9 +26,8 @@ import {
 } from '../../types/events/SessionEvent.js';
 import type { SessionExecutor } from '../../types/execution/executor/SessionExecutor.js';
 import type { AnySessionInteraction } from '../../types/interaction/AnySessionInteraction.js';
-import type { SessionUpdateInteraction } from '../../types/interaction/SessionUpdateInteraction.js';
 import type { SessionInteractionMeta } from '../../types/interaction/SessionInteractionMeta.js';
-import { DefaultSessionLimitManager } from '../limit/DefaultSessionLimitManager.js';
+import type { SessionUpdateInteraction } from '../../types/interaction/SessionUpdateInteraction.js';
 import type { SessionLimitManager } from '../../types/limit/SessionLimitManager.js';
 import type { SessionPromiseRepository } from '../../types/promise/SessionPromiseRepository.js';
 import type { ReadonlySessionRepository } from '../../types/repository/ReadonlySessionRepository.js';
@@ -38,6 +37,7 @@ import {
   type SessionState,
   SessionStateEnum,
 } from '../../types/state/SessionState.js';
+import { DefaultSessionLimitManager } from '../limit/DefaultSessionLimitManager.js';
 
 export type SessionManagerOptions<
   Types extends InteractionTypes = InteractionTypes,

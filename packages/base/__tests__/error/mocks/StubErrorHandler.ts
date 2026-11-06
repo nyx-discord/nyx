@@ -1,4 +1,4 @@
-import type { ErrorConsumer } from '@nyx-discord/types';
+import type { ErrorConsumer } from '../../../src';
 import { vi } from 'vitest';
 import { BasicErrorHandler } from '../../../src';
 

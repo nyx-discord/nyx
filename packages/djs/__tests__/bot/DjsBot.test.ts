@@ -1,6 +1,3 @@
-import { EventEmitter } from 'events';
-import { describe, expect, expectTypeOf, test, vi } from 'vitest';
-import type { ApplicationCommand, Client, ClientEvents } from 'discord.js';
 import type {
   BotService,
   CommandManager,
@@ -8,17 +5,20 @@ import type {
   NyxBot,
   PluginManager,
   ScheduleManager,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import {
   DefaultBotService,
   DefaultPluginManager,
   DefaultScheduleManager,
 } from '@nyx-discord/base';
+import type { ApplicationCommand, Client, ClientEvents } from 'discord.js';
+import { EventEmitter } from 'events';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import {
-  DjsBot,
-  DjsNyxClient,
   DefaultCommandManager,
+  DjsBot,
   type DjsInteractionTypes,
+  DjsNyxClient,
 } from '../../src';
 
 function createMockClient() {
@@ -65,12 +65,18 @@ describe('DjsBot', () => {
       expectTypeOf(bot.getScheduleManager()).toEqualTypeOf<ScheduleManager>();
       expectTypeOf(bot.getService()).toEqualTypeOf<BotService>();
       expectTypeOf(bot.getPluginManager()).toEqualTypeOf<PluginManager>();
-      expectTypeOf(bot.getClientEventBus()).toEqualTypeOf<EventBus<ClientEvents>>();
+      expectTypeOf(bot.getClientEventBus()).toEqualTypeOf<
+        EventBus<ClientEvents>
+      >();
     });
 
     test('GIVEN custom injected dependencies WHEN create is called THEN bot uses the injected instances', () => {
       const client = createMockClient();
-      interface CustomCommandManager extends CommandManager<DjsInteractionTypes, ClientEvents, ApplicationCommand> {
+      interface CustomCommandManager extends CommandManager<
+        DjsInteractionTypes,
+        ClientEvents,
+        ApplicationCommand
+      > {
         customCommandMethod(): void;
       }
       interface CustomScheduleManager extends ScheduleManager {

@@ -2,9 +2,9 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
+    "rootDir": ".",
     "customConditions": [
-      "@nyx-discord/base",
-      "@nyx-discord/types"
+      "@nyx-discord/base"
     ]
   },
   "include": [

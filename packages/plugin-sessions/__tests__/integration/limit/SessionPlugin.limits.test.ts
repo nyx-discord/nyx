@@ -1,13 +1,13 @@
 import { MockSession } from '#mocks/MockSession';
 import {
+  DjsSessionPlugin,
   SessionEndCodes,
   SessionExceedAction,
   SessionLimitExceededError,
   SessionLimitScope,
-  DjsSessionPlugin,
 } from '#src';
-import type { Metadata, NyxBot } from '@nyx-discord/types';
-import { TypedFields } from '@nyx-discord/types';
+import type { Metadata, NyxBot } from '@nyx-discord/base';
+import { TypedFields } from '@nyx-discord/base';
 import { beforeAll, describe, expect, test } from 'vitest';
 import { getTestBot } from '../../testBot';
 
@@ -96,9 +96,9 @@ describe('SessionPlugin integration', () => {
       });
 
       await plugin.start(makeSess({ guildId: null }));
-      await expect(
-        plugin.start(makeSess({ guildId: null })),
-      ).rejects.toThrow(SessionLimitExceededError);
+      await expect(plugin.start(makeSess({ guildId: null }))).rejects.toThrow(
+        SessionLimitExceededError,
+      );
     });
   });
 
@@ -369,5 +369,3 @@ describe('SessionPlugin integration', () => {
     });
   });
 });
-
-

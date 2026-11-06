@@ -1,9 +1,9 @@
 import type { ToEventProps } from '@discordjs/core';
 import { GatewayDispatchEvents } from '@discordjs/core';
+import type { Metadata } from '@nyx-discord/base';
+import { TypedFields } from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
 import { AbstractCoreClientSubscriber } from '@nyx-discord/djs-core';
-import type { Metadata } from '@nyx-discord/types';
-import { TypedFields } from '@nyx-discord/types';
 import type { APIInteraction } from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
 import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';

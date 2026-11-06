@@ -1,14 +1,14 @@
 import type { ToEventProps } from '@discordjs/core';
+import type { Metadata } from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
-import type { Metadata } from '@nyx-discord/types';
 import type {
   APIMessageComponentButtonInteraction,
   APIMessageComponentSelectMenuInteraction,
   APIModalSubmitInteraction,
 } from 'discord-api-types/v10';
 import { ComponentType, InteractionType } from 'discord-api-types/v10';
-import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 import { BaseSessionStage } from '../../shared/base/session/stage/BaseSessionStage.js';
+import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 
 export abstract class AbstractSessionStage<
   Result = void,

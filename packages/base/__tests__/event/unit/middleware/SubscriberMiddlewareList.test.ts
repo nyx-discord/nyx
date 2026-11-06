@@ -1,15 +1,15 @@
-import { TypedFields, EventSubscriberMiddlewareError } from '@nyx-discord/types';
 import { describe, expect, it, test, vi } from 'vitest';
 import {
+  EventSubscriberMiddlewareError,
   HandleCheckEventMiddleware,
   LifetimeCheckEventMiddleware,
   SubscriberFilterCheckMiddleware,
   SubscriberMiddlewareList,
+  TypedFields,
 } from '../../../../src';
+import { StubMetadata } from '../../../command/mocks/StubMetadata';
 import { MockEventSubscriber } from '../../mocks/MockEventSubscriber';
 import { StubEventMiddleware } from '../../mocks/StubEventMiddleware';
-import { StubEventMetadata } from '../../mocks/StubEventMetadata';
-import { StubMetadata } from '../../../command/mocks/StubMetadata';
 
 describe('SubscriberMiddlewareList', () => {
   it('SHOULD create an instance of itself', () => {
@@ -94,7 +94,7 @@ describe('SubscriberMiddlewareList', () => {
 
     const subscriber = new MockEventSubscriber();
     await expect(
-      list.check(subscriber, StubMetadata.create())
+      list.check(subscriber, StubMetadata.create()),
     ).rejects.toThrowError(EventSubscriberMiddlewareError);
   });
 

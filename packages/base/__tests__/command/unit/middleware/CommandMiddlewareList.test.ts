@@ -1,4 +1,4 @@
-import { PriorityEnum, CommandMiddlewareError } from '@nyx-discord/types';
+import { PriorityEnum, CommandMiddlewareError } from '../../../../src';
 import {
   describe,
   expect,

@@ -1,4 +1,4 @@
-import type { Filter, InteractionTypes } from '@nyx-discord/types';
+import type { Filter, InteractionTypes } from '@nyx-discord/base';
 import type { Session } from '../session/Session.js';
 
 /** A {@link Filter} for filtering Session updates. */

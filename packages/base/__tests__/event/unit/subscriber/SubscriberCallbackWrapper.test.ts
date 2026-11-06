@@ -1,7 +1,10 @@
 import { describe, expect, it, test, vi } from 'vitest';
-import { SubscriberCallbackWrapper } from '../../../../src';
-import type { Metadata } from '@nyx-discord/types';
-import { EventSubscriberLifetimeEnum, PriorityEnum } from '@nyx-discord/types';
+import {
+  EventSubscriberLifetimeEnum,
+  PriorityEnum,
+  SubscriberCallbackWrapper,
+} from '../../../../src';
+import { StubMetadata } from '../../../command/mocks/StubMetadata';
 
 type TestEvents = {
   test: [data: string];
@@ -35,8 +38,7 @@ describe('SubscriberCallbackWrapper', () => {
       'test',
       callback,
     );
-    const meta: Metadata = {};
-
+    const meta = StubMetadata.create();
     await wrapper.handleEvent(meta, 'hello');
 
     expect(callback).toHaveBeenCalledWith(meta, 'hello');

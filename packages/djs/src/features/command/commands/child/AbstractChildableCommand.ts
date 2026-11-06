@@ -1,9 +1,9 @@
-import { BaseChildableCommand } from '@nyx-discord/base';
 import type {
   ChildCommand,
   InteractionTypes,
   Nameable,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
+import { BaseChildableCommand } from '@nyx-discord/base';
 import type { DjsInteractionTypes } from '../../../../types/DjsInteractionTypes.js';
 
 export abstract class AbstractChildableCommand<

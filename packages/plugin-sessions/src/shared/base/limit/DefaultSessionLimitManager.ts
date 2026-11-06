@@ -1,15 +1,15 @@
-import type { Constructor, InteractionTypes } from '@nyx-discord/types';
-import { IllegalStateError } from '@nyx-discord/types';
+import type { Constructor, InteractionTypes } from '@nyx-discord/base';
+import { IllegalStateError } from '@nyx-discord/base';
 import { SessionEndCodes } from '../../types/end/SessionEndCodes.js';
 import { AmbiguousSessionLimitError } from '../../types/limit/errors/AmbiguousSessionLimitError.js';
 import { SessionLimitExceededError } from '../../types/limit/errors/SessionLimitExceededError.js';
 import type { SessionLimit } from '../../types/limit/limit/SessionLimit.js';
-import { SessionLimitBuilder } from './limit/SessionLimitBuilder.js';
 import type { SessionLimitRule } from '../../types/limit/rule/SessionLimitRule.js';
-import { SessionLimitScope } from './scope/SessionLimitScope.js';
 import type { SessionLimitManager } from '../../types/limit/SessionLimitManager.js';
 import type { Session } from '../../types/session/Session.js';
 import type { BaseSessionPlugin } from '../plugin/BaseSessionPlugin.js';
+import { SessionLimitBuilder } from './limit/SessionLimitBuilder.js';
+import { SessionLimitScope } from './scope/SessionLimitScope.js';
 
 /** Default implementation of {@link SessionLimitManager}. */
 export class DefaultSessionLimitManager<

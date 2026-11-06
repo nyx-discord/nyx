@@ -4,7 +4,7 @@ import {
   ObjectNotFoundError,
   type AnyEventSubscriber,
   type NyxBot,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import {
   BasicEventBus,
   DefaultMetadataFactory,

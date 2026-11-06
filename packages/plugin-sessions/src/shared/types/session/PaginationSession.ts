@@ -1,4 +1,4 @@
-import type { InteractionTypes } from '@nyx-discord/types';
+import type { InteractionTypes } from '@nyx-discord/base';
 import type { Session } from './Session.js';
 
 /** A type of session that can be paginated. For example, {@link ListPaginationSession} or {@link StagePaginationSession}. */

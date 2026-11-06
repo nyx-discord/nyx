@@ -1,4 +1,4 @@
-import type { ErrorHandler, InteractionTypes } from '@nyx-discord/types';
+import type { ErrorHandler, InteractionTypes } from '@nyx-discord/base';
 import type { Session } from '../session/Session.js';
 
 export interface SessionErrorHandler<

@@ -1,8 +1,8 @@
-import type { Metadata } from '@nyx-discord/types';
+import type { Metadata } from '../../../../src';
 import {
   ScheduleMiddlewareError,
   UncaughtScheduleMiddlewareError,
-} from '@nyx-discord/types';
+} from '../../../../src';
 import { describe, expect, it, test, vi } from 'vitest';
 import { DefaultScheduleExecutor } from '../../../../src';
 import { MockSchedule } from '../../mocks/MockSchedule';

@@ -1,4 +1,4 @@
-import type { InteractionTypes, Metadata } from '@nyx-discord/types';
+import type { InteractionTypes, Metadata } from '@nyx-discord/base';
 import { SessionUpdateError } from '../../errors/SessionUpdateError.js';
 import type { SessionUpdateInteraction } from '../../interaction/SessionUpdateInteraction.js';
 import type { Session } from '../../session/Session.js';

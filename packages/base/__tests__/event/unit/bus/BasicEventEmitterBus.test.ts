@@ -1,9 +1,9 @@
-import {
-  type AnyEventSubscriberFrom,
-  type Comparator,
-  type Identifier,
-} from '@nyx-discord/types';
 import { describe, expect, it, test } from 'vitest';
+import type {
+  AnyEventSubscriberFrom,
+  Comparator,
+  Identifier,
+} from '../../../../src';
 import { BasicEventEmitterBus } from '../../../../src';
 import { MockEventSubscriber } from '../../mocks/MockEventSubscriber';
 import { StubEventDispatcher } from '../../mocks/StubEventDispatcher';

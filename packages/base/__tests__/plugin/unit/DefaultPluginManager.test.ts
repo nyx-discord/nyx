@@ -1,24 +1,18 @@
-import type {
-  EventBus,
-  PluginEventArgs,
-  PluginManager,
-} from '@nyx-discord/types';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
+import type { EventBus, PluginEventArgs, PluginManager } from '../../../src';
 import {
+  DefaultPluginManager,
   IllegalDuplicateError,
   ObjectNotFoundError,
   PluginEventEnum,
-} from '@nyx-discord/types';
-import { describe, expect, expectTypeOf, test, vi } from 'vitest';
-import { DefaultPluginManager } from '../../../src';
+} from '../../../src';
 import { StubEventBus } from '../../event/mocks/StubEventBus';
 import { StubEventSubscriber } from '../../event/mocks/StubEventSubscriber';
 import { StubBot } from '../mocks/StubBot';
 import { StubPlugin } from '../mocks/StubPlugin';
 
-const createManager = (
-  bot = StubBot.create(),
-  bus = StubEventBus.create(),
-) => new DefaultPluginManager({ bot: bot as never, bus: bus as never });
+const createManager = (bot = StubBot.create(), bus = StubEventBus.create()) =>
+  new DefaultPluginManager({ bot: bot as never, bus: bus as never });
 
 describe('DefaultPluginManager', () => {
   describe('create', () => {
@@ -30,7 +24,9 @@ describe('DefaultPluginManager', () => {
       expect(manager.getEventBus()).toBeDefined();
 
       expectTypeOf(manager).toEqualTypeOf<PluginManager>();
-      expectTypeOf(manager.getEventBus()).toEqualTypeOf<EventBus<PluginEventArgs>>();
+      expectTypeOf(manager.getEventBus()).toEqualTypeOf<
+        EventBus<PluginEventArgs>
+      >();
     });
 
     test('GIVEN injected custom bus WHEN create is called THEN uses the provided bus', () => {
@@ -244,8 +240,11 @@ describe('DefaultPluginManager', () => {
       const bot = StubBot.create();
       const bus = StubEventBus.create();
       bus.emit = vi.fn().mockRejectedValue(new Error('Emit test error'));
-      const manager = DefaultPluginManager.create({ bot: bot as never, injections: { bus: bus as never } });
-      
+      const manager = DefaultPluginManager.create({
+        bot: bot as never,
+        injections: { bus: bus as never },
+      });
+
       await manager.register(plugin);
       await new Promise((resolve) => setTimeout(resolve, 0)); // await tick for promise resolve
 
@@ -256,11 +255,14 @@ describe('DefaultPluginManager', () => {
       const plugin = new StubPlugin(Symbol('test-plugin'));
       const bot = StubBot.create();
       const bus = StubEventBus.create();
-      const manager = DefaultPluginManager.create({ bot: bot as never, injections: { bus: bus as never } });
-      
+      const manager = DefaultPluginManager.create({
+        bot: bot as never,
+        injections: { bus: bus as never },
+      });
+
       await manager.register(plugin);
       bus.emit = vi.fn().mockRejectedValue(new Error('Emit test error'));
-      
+
       await manager.unregister(plugin);
       await new Promise((resolve) => setTimeout(resolve, 0)); // await tick for promise resolve
 

@@ -3,7 +3,7 @@ import type {
   Metadata,
   ScheduleFilterResolvable,
   ScheduleInterval,
-} from '@nyx-discord/types';
+} from '../../../src';
 import { vi } from 'vitest';
 import { AbstractSchedule } from '../../../src';
 

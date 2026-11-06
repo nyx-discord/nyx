@@ -1,4 +1,4 @@
-import type { ScheduleInterval } from '@nyx-discord/types';
+import type { ScheduleInterval } from '../../../../src';
 import { describe, expect, it, test, vi } from 'vitest';
 import { CronJobAdapter } from '../../../../src';
 

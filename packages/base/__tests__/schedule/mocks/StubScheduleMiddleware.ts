@@ -2,8 +2,8 @@ import type {
   MiddlewareResponse,
   Priority,
   ScheduleMiddleware,
-} from '@nyx-discord/types';
-import { PriorityEnum } from '@nyx-discord/types';
+} from '../../../src';
+import { PriorityEnum } from '../../../src';
 import { vi } from 'vitest';
 
 export class StubScheduleMiddleware {

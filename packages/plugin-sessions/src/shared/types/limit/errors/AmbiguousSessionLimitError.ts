@@ -1,4 +1,4 @@
-import type { Constructor, InteractionTypes } from '@nyx-discord/types';
+import type { Constructor, InteractionTypes } from '@nyx-discord/base';
 import type { SessionLimit } from '../limit/SessionLimit.js';
 
 /** Thrown when multiple session limit policies match a session constructor without disambiguating predicates. */

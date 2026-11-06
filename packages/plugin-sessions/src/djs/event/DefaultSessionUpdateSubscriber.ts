@@ -1,7 +1,7 @@
+import type { Metadata } from '@nyx-discord/base';
+import { TypedFields } from '@nyx-discord/base';
 import type { DjsInteractionTypes } from '@nyx-discord/djs';
 import { AbstractDJSClientSubscriber } from '@nyx-discord/djs';
-import type { Metadata } from '@nyx-discord/types';
-import { TypedFields } from '@nyx-discord/types';
 import type { Interaction } from 'discord.js';
 import { Events } from 'discord.js';
 import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';

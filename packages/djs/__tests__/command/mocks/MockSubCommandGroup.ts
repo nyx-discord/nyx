@@ -1,7 +1,7 @@
-import type { ParentCommand } from '@nyx-discord/types';
+import type { ParentCommand } from '@nyx-discord/base';
 import type { APIApplicationCommandSubcommandGroupOption } from 'discord-api-types/v10';
+import type { DjsInteractionTypes } from '../../../src';
 import { AbstractSubCommandGroup } from '../../../src';
-import type { DjsInteractionTypes } from '../../../src/types/DjsInteractionTypes.js';
 
 export class MockSubCommandGroup extends AbstractSubCommandGroup {
   protected readonly data: APIApplicationCommandSubcommandGroupOption;

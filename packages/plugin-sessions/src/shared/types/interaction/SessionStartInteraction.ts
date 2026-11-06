@@ -1,7 +1,7 @@
 import type {
   ApplicationCommandInteraction,
   InteractionTypes,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 
 /** An interaction that triggers a {@link Session} start. */
 export type SessionStartInteraction<

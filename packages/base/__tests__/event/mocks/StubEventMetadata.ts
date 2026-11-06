@@ -1,4 +1,5 @@
-import type { Metadata, MetadataFactory } from '@nyx-discord/types';
+import type { Metadata } from '#types/meta/Metadata';
+import type { MetadataFactory } from '#types/meta/MetadataFactory';
 import { vi } from 'vitest';
 
 export class StubEventMetadata {

@@ -9,7 +9,7 @@ import type {
   APIUserApplicationCommandInteraction,
   ToEventProps,
 } from '@discordjs/core';
-import type { InteractionTypes } from '@nyx-discord/types';
+import type { InteractionTypes } from '@nyx-discord/base';
 
 /** The @discordjs/core implementation of {@link InteractionTypes}. */
 export interface CoreInteractionTypes extends InteractionTypes {

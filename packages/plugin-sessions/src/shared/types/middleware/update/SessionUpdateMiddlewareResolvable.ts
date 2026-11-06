@@ -1,7 +1,7 @@
 import type {
   InteractionTypes,
   MiddlewareResolvableFrom,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { SessionUpdateMiddleware } from './SessionUpdateMiddleware.js';
 
 export type SessionUpdateMiddlewareResolvable<

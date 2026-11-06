@@ -8,8 +8,8 @@ import {
 import type {
   Metadata,
   NyxBot
-} from '@nyx-discord/types';
-import { TypedFields } from '@nyx-discord/types';
+} from '@nyx-discord/base';
+import { TypedFields } from '@nyx-discord/base';
 import {
   beforeAll,
   describe,

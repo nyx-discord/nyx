@@ -1,4 +1,9 @@
 import type { Client, MappedEvents } from '@discordjs/core';
+import type {
+  BotOptions,
+  InjectableBotDependencies,
+  NyxBot,
+} from '@nyx-discord/base';
 import {
   BaseBot,
   BasicEventEmitterBus,
@@ -7,11 +12,6 @@ import {
   DefaultPluginManager,
   DefaultScheduleManager,
 } from '@nyx-discord/base';
-import type {
-  BotOptions,
-  InjectableBotDependencies,
-  NyxBot,
-} from '@nyx-discord/types';
 import type { CoreNyxClient } from '../client/CoreNyxClient.js';
 import { DefaultCommandManager } from '../features/command/DefaultCommandManager.js';
 import { TypedFields } from '../fields/TypedFields';

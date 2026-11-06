@@ -1,4 +1,4 @@
-import type { AnyEventBus } from '@nyx-discord/types';
+import type { AnyEventBus } from '#types/features/event/bus/AnyEventBus';
 import { vi } from 'vitest';
 
 export class StubEventBus {

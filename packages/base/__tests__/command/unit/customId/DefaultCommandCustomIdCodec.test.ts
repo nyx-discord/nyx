@@ -1,4 +1,4 @@
-import type { CommandCustomIdData } from '@nyx-discord/types';
+import type { CommandCustomIdData } from '../../../../src';
 import { ApplicationCommandType } from 'discord-api-types/v10';
 import { describe, expect, it, test } from 'vitest';
 import { DefaultCommandCustomIdCodec } from '../../../../src';

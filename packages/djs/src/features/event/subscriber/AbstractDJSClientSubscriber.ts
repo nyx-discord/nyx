@@ -1,5 +1,5 @@
+import type { Awaitable, Metadata } from '@nyx-discord/base';
 import { BaseClientSubscriber } from '@nyx-discord/base';
-import type { Awaitable, Metadata } from '@nyx-discord/types';
 import type { ClientEvents } from 'discord.js';
 
 /** Utility to make a subscriber for the {@link NyxBot#getClientEventBus client event bus}. */

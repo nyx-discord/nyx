@@ -1,9 +1,9 @@
 import type {
   CommandMiddlewareResolvable,
   MiddlewareList,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import { vi } from 'vitest';
-import type { DjsInteractionTypes } from '../../../src/types/DjsInteractionTypes.js';
+import type { DjsInteractionTypes } from '../../../src';
 
 export class StubMiddlewareList {
   public static create(): MiddlewareList<

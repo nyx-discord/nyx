@@ -1,4 +1,4 @@
-import type { InteractionTypes } from '@nyx-discord/types';
+import type { InteractionTypes } from '@nyx-discord/base';
 import type { SessionRepository } from './SessionRepository.js';
 
 /** Type of {@link SessionRepository} without the methods that mutate it. */

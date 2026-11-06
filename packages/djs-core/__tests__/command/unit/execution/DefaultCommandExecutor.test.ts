@@ -1,10 +1,12 @@
+import type { CommandMiddleware } from '@nyx-discord/base';
 import {
   CommandAutocompleteError,
   CommandMiddlewareError,
   UncaughtCommandMiddlewareError,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import { describe, expect, it, test, vi } from 'vitest';
 import { DefaultCommandExecutor } from '../../../../src';
+import type { CoreInteractionTypes } from '../../../../src/types/CoreInteractionTypes.js';
 import { MockContextMenuCommand } from '../../mocks/MockContextMenuCommand';
 import { MockParentCommand } from '../../mocks/MockParentCommand';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';
@@ -13,8 +15,6 @@ import { StubErrorHandler } from '../../mocks/StubErrorHandler';
 import { StubInteraction } from '../../mocks/StubInteraction';
 import { StubMetadata } from '../../mocks/StubMetadata';
 import { StubMiddlewareList } from '../../mocks/StubMiddlewareList';
-import type { CommandMiddleware } from '@nyx-discord/types';
-import type { CoreInteractionTypes } from '../../../../src/types/CoreInteractionTypes.js';
 
 describe('DefaultCommandExecutor (@discordjs/core)', () => {
   it('SHOULD create an instance of itself', () => {
@@ -95,7 +95,11 @@ describe('DefaultCommandExecutor (@discordjs/core)', () => {
       const interaction = StubInteraction.createChatInput();
       const metadata = StubMetadata.create();
 
-      const result = await executor.execute(parent as never, interaction, metadata);
+      const result = await executor.execute(
+        parent as never,
+        interaction,
+        metadata,
+      );
 
       expect(result).toBe(false);
     });
@@ -234,7 +238,10 @@ describe('DefaultCommandExecutor (@discordjs/core)', () => {
       });
 
       const command = new MockStandaloneCommand();
-      const interaction = StubInteraction.createContextMenu('unknown-cmd', 999 as never);
+      const interaction = StubInteraction.createContextMenu(
+        'unknown-cmd',
+        999 as never,
+      );
       const metadata = StubMetadata.create();
 
       const result = await executor.execute(command, interaction, metadata);
@@ -403,7 +410,9 @@ describe('DefaultCommandExecutor (@discordjs/core)', () => {
       });
 
       const command = new MockStandaloneCommand();
-      const spyAutocomplete = vi.spyOn(command, 'autocomplete').mockResolvedValue(undefined);
+      const spyAutocomplete = vi
+        .spyOn(command, 'autocomplete')
+        .mockResolvedValue(undefined);
       const interaction = StubInteraction.createAutocomplete();
       const metadata = StubMetadata.create();
 

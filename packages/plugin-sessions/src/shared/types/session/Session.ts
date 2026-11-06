@@ -5,14 +5,14 @@ import type {
   Metadata,
   Metadatable,
   NyxBot,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { SessionCustomIdData } from '../customId/data/SessionCustomIdData.js';
 import type { SessionEndCode } from '../end/SessionEndCode.js';
 import type { SessionEndData } from '../end/SessionEndData.js';
 import type { SessionStartFilterResolvable } from '../filter/start/SessionStartFilterResolvable.js';
 import type { SessionUpdateFilterResolvable } from '../filter/update/SessionUpdateFilterResolvable.js';
-import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction.js';
 import type { SessionStartInteraction } from '../interaction/SessionStartInteraction.js';
+import type { SessionUpdateInteraction } from '../interaction/SessionUpdateInteraction.js';
 import type { SessionState } from '../state/SessionState.js';
 
 /**

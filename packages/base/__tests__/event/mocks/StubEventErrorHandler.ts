@@ -1,4 +1,4 @@
-import type { EventSubscriberErrorHandler } from '@nyx-discord/types';
+import type { EventSubscriberErrorHandler } from '#types/features/event/subscriber/error/EventSubscriberErrorHandler';
 import { vi } from 'vitest';
 
 export class StubEventErrorHandler {

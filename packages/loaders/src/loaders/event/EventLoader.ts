@@ -2,7 +2,7 @@ import type {
   BotServiceEvent,
   PluginEvent,
   ScheduleEvent,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import {
   AbstractBusSubscriber,
   AbstractPluginSubscriber,

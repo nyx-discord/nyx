@@ -1,5 +1,5 @@
 import { Bot } from '@nyx-discord/djs';
-import type { NyxBot } from '@nyx-discord/types';
+import type { NyxBot } from '@nyx-discord/base';
 import { Client } from 'discord.js';
 
 export class MockBot extends Bot {

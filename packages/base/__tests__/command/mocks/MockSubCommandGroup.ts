@@ -1,4 +1,4 @@
-import type { ParentCommand } from '@nyx-discord/types';
+import type { ParentCommand } from '../../../src';
 import type { APIApplicationCommandSubcommandGroupOption } from 'discord-api-types/v10';
 import { BaseSubCommandGroup } from '../../../src';
 

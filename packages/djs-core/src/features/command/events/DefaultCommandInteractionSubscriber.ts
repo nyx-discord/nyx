@@ -1,10 +1,7 @@
 import type { APIInteraction, ToEventProps } from '@discordjs/core';
 import { GatewayDispatchEvents, InteractionType } from '@discordjs/core';
-import type {
-  CommandExecutableInteraction,
-  Metadata,
-} from '@nyx-discord/types';
-import { TypedFields } from '@nyx-discord/types';
+import type { CommandExecutableInteraction, Metadata } from '@nyx-discord/base';
+import { TypedFields } from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 import { AbstractCoreClientSubscriber } from '../../event/subscriber/AbstractCoreClientSubscriber.js';
 

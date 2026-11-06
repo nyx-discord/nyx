@@ -1,4 +1,4 @@
-import type { CommandErrorHandler } from '@nyx-discord/types';
+import type { CommandErrorHandler } from '@nyx-discord/base';
 import { vi } from 'vitest';
 import type { CoreInteractionTypes } from '../../../src/types/CoreInteractionTypes.js';
 

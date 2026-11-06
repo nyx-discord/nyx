@@ -2,7 +2,7 @@ import {
   AssertionError,
   IllegalStateError,
   ObjectNotFoundError,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import { ApplicationCommandType } from 'discord-api-types/v10';
 import { describe, expect, test, vi } from 'vitest';
 import { DefaultCommandDeployer } from '../../../../src';
@@ -123,7 +123,9 @@ describe('DefaultCommandDeployer', () => {
       const initialApp = StubApplicationCommand.create('mock-standalone');
       const editedApp = StubApplicationCommand.create('mock-standalone');
       const { client, cmdMgr } = StubClient.create({
-        set: vi.fn().mockResolvedValue(new Map([['mock-standalone', initialApp]])),
+        set: vi
+          .fn()
+          .mockResolvedValue(new Map([['mock-standalone', initialApp]])),
         edit: vi.fn().mockResolvedValue(editedApp),
       });
 
@@ -230,7 +232,8 @@ describe('DefaultCommandDeployer', () => {
       const newApp = StubApplicationCommand.create('new-cmd');
 
       const { client, cmdMgr } = StubClient.create({
-        set: vi.fn()
+        set: vi
+          .fn()
           .mockResolvedValueOnce(new Map([['old-cmd', oldApp]]))
           .mockResolvedValueOnce(new Map([['new-cmd', newApp]])),
       });
@@ -315,7 +318,9 @@ describe('DefaultCommandDeployer', () => {
       );
 
       const { client } = StubClient.create({
-        set: vi.fn().mockResolvedValue(new Map([['unassociated', unassociatedApp]])),
+        set: vi
+          .fn()
+          .mockResolvedValue(new Map([['unassociated', unassociatedApp]])),
       });
 
       const deployer = new DefaultCommandDeployer(client as never);
@@ -351,7 +356,9 @@ describe('DefaultCommandDeployer', () => {
 
       expect(Array.from(deployer.keys())).toEqual(['mock-standalone']);
       expect(Array.from(deployer.values())).toEqual([app]);
-      expect(Array.from(deployer.entries())).toEqual([['mock-standalone', app]]);
+      expect(Array.from(deployer.entries())).toEqual([
+        ['mock-standalone', app],
+      ]);
       expect(Array.from(deployer)).toEqual([app]);
       expect(deployer.next().value).toBe(app);
     });

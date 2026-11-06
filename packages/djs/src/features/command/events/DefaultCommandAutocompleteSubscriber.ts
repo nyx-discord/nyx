@@ -1,5 +1,5 @@
-import type { Metadata } from '@nyx-discord/types';
-import { TypedFields } from '@nyx-discord/types';
+import type { Metadata } from '@nyx-discord/base';
+import { TypedFields } from '@nyx-discord/base';
 import type { Interaction } from 'discord.js';
 import { Events } from 'discord.js';
 import { AbstractDJSClientSubscriber } from '../../event/subscriber/AbstractDJSClientSubscriber.js';

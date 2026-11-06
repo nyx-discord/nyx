@@ -1,4 +1,4 @@
-import type { InteractionTypes, MiddlewareResponse } from '@nyx-discord/types';
+import type { InteractionTypes, MiddlewareResponse } from '@nyx-discord/base';
 import { AbstractMiddleware } from '@nyx-discord/base';
 import type { SessionStartArgs } from '../../types/execution/args/SessionStartArgs.js';
 import type { SessionUpdateArgs } from '../../types/execution/args/SessionUpdateArgs.js';

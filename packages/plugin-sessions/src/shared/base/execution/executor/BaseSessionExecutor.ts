@@ -3,8 +3,8 @@ import type {
   InteractionTypes,
   Metadata,
   MiddlewareList,
-} from '@nyx-discord/types';
-import { IllegalStateError } from '@nyx-discord/types';
+} from '@nyx-discord/base';
+import { IllegalStateError } from '@nyx-discord/base';
 import type { APIMessageTopLevelComponent } from 'discord-api-types/v10';
 import type { SessionEndCode } from '../../../types/end/SessionEndCode.js';
 import type { SessionEndData } from '../../../types/end/SessionEndData.js';
@@ -13,6 +13,10 @@ import { BaseSessionError } from '../../../types/errors/BaseSessionError.js';
 import { SessionStartError } from '../../../types/errors/SessionStartError.js';
 import { SessionStopError } from '../../../types/errors/SessionStopError.js';
 import { SessionUpdateError } from '../../../types/errors/SessionUpdateError.js';
+import type { SessionEndArgs } from '../../../types/execution/args/SessionEndArgs.js';
+import type { SessionStartArgs } from '../../../types/execution/args/SessionStartArgs.js';
+import type { SessionUpdateArgs } from '../../../types/execution/args/SessionUpdateArgs.js';
+import type { SessionExecutor } from '../../../types/execution/executor/SessionExecutor.js';
 import type { SessionUpdateInteraction } from '../../../types/interaction/SessionUpdateInteraction.js';
 import { SessionStartMiddlewareError } from '../../../types/middleware/errors/SessionStartMiddlewareError.js';
 import { SessionUpdateMiddlewareError } from '../../../types/middleware/errors/SessionUpdateMiddlewareError.js';
@@ -23,10 +27,6 @@ import type { SessionUpdateMiddlewareResolvable } from '../../../types/middlewar
 import type { Session } from '../../../types/session/Session.js';
 import { SessionStateEnum } from '../../../types/state/SessionState.js';
 import { disableAllComponents } from '../../util/disableAllComponents.js';
-import type { SessionEndArgs } from '../../../types/execution/args/SessionEndArgs.js';
-import type { SessionStartArgs } from '../../../types/execution/args/SessionStartArgs.js';
-import type { SessionUpdateArgs } from '../../../types/execution/args/SessionUpdateArgs.js';
-import type { SessionExecutor } from '../../../types/execution/executor/SessionExecutor.js';
 
 export abstract class BaseSessionExecutor<
   Types extends InteractionTypes = InteractionTypes,

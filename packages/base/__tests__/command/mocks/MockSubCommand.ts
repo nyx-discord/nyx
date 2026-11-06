@@ -1,10 +1,6 @@
-import type {
-  Metadata,
-  ParentCommand,
-  SubCommandGroup,
-} from '@nyx-discord/types';
 import type { APIApplicationCommandSubcommandOption } from 'discord-api-types/v10';
 import { vi } from 'vitest';
+import type { Metadata, ParentCommand, SubCommandGroup } from '../../../src';
 import { BaseSubCommand } from '../../../src';
 import { MockParentCommand } from './MockParentCommand';
 import { MockSubCommandGroup } from './MockSubCommandGroup';
@@ -22,11 +18,6 @@ export class MockSubCommand extends BaseSubCommand {
     } as APIApplicationCommandSubcommandOption;
   }
 
-  public async handleInteraction(
-    _interaction: unknown,
-    _meta: Metadata,
-  ): Promise<void> {}
-
   public static createOnGroup() {
     const parent = new MockParentCommand();
     const group = new MockSubCommandGroup(parent);
@@ -37,4 +28,9 @@ export class MockSubCommand extends BaseSubCommand {
     const parent = new MockParentCommand();
     return new MockSubCommand(parent);
   }
+
+  public async handleInteraction(
+    _interaction: unknown,
+    _meta: Metadata,
+  ): Promise<void> {}
 }

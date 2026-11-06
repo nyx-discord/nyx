@@ -1,6 +1,3 @@
-import { BasicErrorHandler } from '@nyx-discord/base';
-import { CommandMiddlewareList } from '@nyx-discord/base';
-import { ensureKey } from '@nyx-discord/base';
 import type {
   AnyExecutableCommand,
   Awaitable,
@@ -16,13 +13,16 @@ import type {
   Metadata,
   MiddlewareList,
   Nameable,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import {
+  BasicErrorHandler,
   CommandAutocompleteError,
   CommandMiddlewareError,
+  CommandMiddlewareList,
+  ensureKey,
   TypedFields,
   UncaughtCommandMiddlewareError,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type {
   AutocompleteInteraction,
   ChatInputCommandInteraction,

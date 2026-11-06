@@ -5,8 +5,8 @@ import type {
   ToEventProps,
 } from '@discordjs/core';
 import { ComponentType, InteractionType } from '@discordjs/core';
+import type { Awaitable, Metadata } from '@nyx-discord/base';
 import { BaseStandaloneCommand } from '@nyx-discord/base';
-import type { Awaitable, Metadata } from '@nyx-discord/types';
 import type { CoreComponentInteraction } from '../../../types/CoreComponentInteraction.js';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';
 

@@ -1,7 +1,7 @@
 import {
   type TypedField,
   TypedFields as BaseTypedFields,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import type { CoreBot } from '../bot/CoreBot';
 
 export const TypedFields: typeof BaseTypedFields & {

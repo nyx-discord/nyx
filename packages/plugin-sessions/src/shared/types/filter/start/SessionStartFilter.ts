@@ -1,4 +1,4 @@
-import type { InteractionTypes } from '@nyx-discord/types';
+import type { InteractionTypes } from '@nyx-discord/base';
 import type { SessionStartArgs } from '../../execution/args/SessionStartArgs.js';
 import type { SessionFilter } from '../SessionFilter.js';
 

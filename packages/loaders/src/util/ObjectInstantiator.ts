@@ -3,7 +3,7 @@ import type {
   InjectableBotDependencies,
   InteractionTypes,
   NyxBot,
-} from '@nyx-discord/types';
+} from '@nyx-discord/base';
 import { LoaderError } from '../error/LoaderError.js';
 
 type AbstractCtor<T extends object> = abstract new (...args: any[]) => T;

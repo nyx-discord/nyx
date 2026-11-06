@@ -1,3 +1,8 @@
+import type {
+  BotOptions,
+  InjectableBotDependencies,
+  NyxBot,
+} from '@nyx-discord/base';
 import {
   BaseBot,
   BasicEventEmitterBus,
@@ -6,11 +11,6 @@ import {
   DefaultPluginManager,
   DefaultScheduleManager,
 } from '@nyx-discord/base';
-import type {
-  BotOptions,
-  InjectableBotDependencies,
-  NyxBot,
-} from '@nyx-discord/types';
 import type { ApplicationCommand, Client, ClientEvents } from 'discord.js';
 import { DjsNyxClient } from '../client/DjsNyxClient.js';
 import { DefaultCommandManager } from '../features/command/DefaultCommandManager.js';

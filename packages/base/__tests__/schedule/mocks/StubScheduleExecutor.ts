@@ -1,4 +1,4 @@
-import type { ScheduleExecutor } from '@nyx-discord/types';
+import type { ScheduleExecutor } from '../../../src';
 import { vi } from 'vitest';
 
 export class StubScheduleExecutor {
