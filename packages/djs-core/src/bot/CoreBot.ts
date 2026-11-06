@@ -17,8 +17,8 @@ import { DefaultCommandManager } from '../features/command/DefaultCommandManager
 import { TypedFields } from '../fields/TypedFields';
 import type { CoreInteractionTypes } from '../types/CoreInteractionTypes.js';
 
-// Base dependencies injected to the BaseBot for the getter return types
-type CoreBotDependencies = InjectableBotDependencies<
+/** Dependencies of an @discordjs/core bot, which type its getters (`getClient()`, `getCommandManager()`...). */
+export type CoreBotDependencies = InjectableBotDependencies<
   CoreInteractionTypes,
   CoreNyxClient,
   MappedEvents
@@ -33,6 +33,12 @@ type CoreBotOptionsWithDefaults<
     BotOptions<CoreBotDependencies>,
     'logger' | 'client' | 'token' | 'deployCommands'
   >;
+
+/**
+ * A {@link NyxBot} typed for @discordjs/core, like the one returned by `Bot.create()`.
+ * Use it to type functions and fields that receive a bot, so they keep the @discordjs/core types.
+ */
+export type CoreNyxBot = NyxBot<CoreBotDependencies>;
 
 /** The @discordjs/core Bot. */
 export class CoreBot<

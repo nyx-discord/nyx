@@ -17,8 +17,8 @@ import { DefaultCommandManager } from '../features/command/DefaultCommandManager
 import { TypedFields } from '../fields/TypedFields';
 import type { DjsInteractionTypes } from '../types/DjsInteractionTypes.js';
 
-// Base dependencies injected to the BaseBot for the getter return types
-type DjsBotDependencies = InjectableBotDependencies<
+/** Dependencies of a discord.js bot, which type its getters (`getClient()`, `getCommandManager()`...). */
+export type DjsBotDependencies = InjectableBotDependencies<
   DjsInteractionTypes,
   DjsNyxClient,
   ClientEvents,
@@ -41,6 +41,12 @@ type DjsBotOptionsWithDefaults<
     BotOptions<DjsBotDependenciesWithDjsClient>,
     'logger' | 'client' | 'token' | 'deployCommands'
   >;
+
+/**
+ * A {@link NyxBot} typed for discord.js, like the one returned by `Bot.create()`.
+ * Use it to type functions and fields that receive a bot, so they keep the discord.js types.
+ */
+export type DjsNyxBot = NyxBot<DjsBotDependencies>;
 
 /** The discord.js Bot. */
 export class DjsBot<

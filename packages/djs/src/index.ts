@@ -1,5 +1,6 @@
 export { DjsBot as Bot } from './bot/DjsBot';
 export { DjsBot } from './bot/DjsBot';
+export type { DjsBotDependencies, DjsNyxBot } from './bot/DjsBot';
 export * from './client/DjsNyxClient';
 export * from './features/command/commands/AbstractCommand';
 export * from './features/command/commands/AbstractContextMenuCommand';

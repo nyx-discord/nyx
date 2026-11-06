@@ -1,4 +1,5 @@
 export { CoreBot as Bot, CoreBot } from './bot/CoreBot';
+export type { CoreBotDependencies, CoreNyxBot } from './bot/CoreBot';
 export * from './client/CoreNyxClient';
 export * from './features/command/commands/AbstractCommand';
 export * from './features/command/commands/AbstractContextMenuCommand';
