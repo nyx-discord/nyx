@@ -1,6 +1,6 @@
 import { BasicErrorHandler } from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
-import type { APIMessageTopLevelComponent } from 'discord-api-types/v10';
+import type { APIMessageTopLevelComponent } from '@discordjs/core';
 import type { SessionEndArgs } from '../../shared/types/execution/args/SessionEndArgs.js';
 import type { SessionStartArgs } from '../../shared/types/execution/args/SessionStartArgs.js';
 import type { SessionUpdateArgs } from '../../shared/types/execution/args/SessionUpdateArgs.js';

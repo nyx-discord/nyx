@@ -3,7 +3,7 @@ import {
   IllegalStateError,
   ObjectNotFoundError,
 } from '@nyx-discord/base';
-import { ApplicationCommandType } from 'discord-api-types/v10';
+import { ApplicationCommandType } from 'discord.js';
 import { describe, expect, test, vi } from 'vitest';
 import { DefaultCommandDeployer } from '../../../../src';
 import { MockStandaloneCommand } from '../../mocks/MockStandaloneCommand';

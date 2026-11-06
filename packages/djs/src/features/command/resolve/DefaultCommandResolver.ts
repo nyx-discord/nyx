@@ -6,7 +6,7 @@ import type {
   CommandResolver,
   ContextMenuCommand,
 } from '@nyx-discord/base';
-import { ApplicationCommandType as ApplicationCommandTypeEnum } from 'discord-api-types/v10';
+import { ApplicationCommandType as ApplicationCommandTypeEnum } from 'discord.js';
 import type { AutocompleteInteraction } from 'discord.js';
 import type { DjsInteractionTypes } from '../../../types/DjsInteractionTypes.js';
 

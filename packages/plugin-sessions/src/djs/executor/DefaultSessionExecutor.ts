@@ -1,6 +1,6 @@
 import { BasicErrorHandler } from '@nyx-discord/base';
 import type { DjsInteractionTypes } from '@nyx-discord/djs';
-import type { APIMessageTopLevelComponent } from 'discord-api-types/v10';
+import type { APIMessageTopLevelComponent } from 'discord.js';
 import type {
   MessageComponentInteraction,
   ModalMessageModalSubmitInteraction,

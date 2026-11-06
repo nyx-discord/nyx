@@ -2,8 +2,8 @@ import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
 import type {
   APIActionRowComponent,
   APIButtonComponent,
-} from 'discord-api-types/v10';
-import { ButtonStyle, ComponentType } from 'discord-api-types/v10';
+} from '@discordjs/core';
+import { ButtonStyle, ComponentType } from '@discordjs/core';
 import type { ListPaginationSession } from '../../shared/types/session/ListPaginationSession.js';
 import type { ListPaginationSessionOptions } from '../../shared/types/session/ListPaginationSessionOptions.js';
 import { AbstractPaginationSession } from './AbstractPaginationSession.js';

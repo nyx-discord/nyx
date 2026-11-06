@@ -1,6 +1,6 @@
 import type { CommandCustomIdData } from '@nyx-discord/base';
 import { DefaultCommandRepository } from '@nyx-discord/base';
-import { ApplicationCommandType } from 'discord-api-types/v10';
+import { ApplicationCommandType } from 'discord.js';
 import { describe, expect, it, test } from 'vitest';
 import { DefaultCommandResolver } from '../../../../src';
 import type { DjsInteractionTypes } from '../../../../src/types/DjsInteractionTypes.js';

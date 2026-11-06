@@ -82,13 +82,16 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typedoc-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@repo/vitest-config": "workspace:*"
+    "@repo/vitest-config": "workspace:*",
+    "discord-api-types": "^0.38.50"
   },
   "dependencies": {
     "@discordjs/collection": "1.5.3",
     "@sapphire/string-store": "3.0.0",
     "croner": "11.0.0",
-    "discord-api-types": "^0.38.50",
     "typed-field": "1.3.0"
+  },
+  "peerDependencies": {
+    "discord-api-types": "^0.38.50"
   }
 }

@@ -5,8 +5,8 @@ import type {
   APIMessageComponentButtonInteraction,
   APIMessageComponentSelectMenuInteraction,
   APIModalSubmitInteraction,
-} from 'discord-api-types/v10';
-import { ComponentType, InteractionType } from 'discord-api-types/v10';
+} from '@discordjs/core';
+import { ComponentType, InteractionType } from '@discordjs/core';
 import { BaseSessionStage } from '../../shared/base/session/stage/BaseSessionStage.js';
 import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 

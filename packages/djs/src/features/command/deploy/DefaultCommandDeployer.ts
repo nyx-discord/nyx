@@ -4,8 +4,8 @@ import {
   IllegalStateError,
   ObjectNotFoundError,
 } from '@nyx-discord/base';
-import type { Snowflake } from 'discord-api-types/v10';
-import { ApplicationCommandType } from 'discord-api-types/v10';
+import type { Snowflake } from 'discord.js';
+import { ApplicationCommandType } from 'discord.js';
 import type {
   ApplicationCommand,
   Client,

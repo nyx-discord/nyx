@@ -1,5 +1,5 @@
-import type { Snowflake } from 'discord-api-types/v10';
-import { ApplicationCommandType } from 'discord-api-types/v10';
+import type { Snowflake } from 'discord.js';
+import { ApplicationCommandType } from 'discord.js';
 import type { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord.js';
 import { vi } from 'vitest';
 import { AbstractStandaloneCommand } from '../../../src';

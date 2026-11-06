@@ -4,8 +4,8 @@ import type { Metadata } from '@nyx-discord/base';
 import { TypedFields } from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
 import { AbstractCoreClientSubscriber } from '@nyx-discord/djs-core';
-import type { APIInteraction } from 'discord-api-types/v10';
-import { InteractionType } from 'discord-api-types/v10';
+import type { APIInteraction } from '@discordjs/core';
+import { InteractionType } from '@discordjs/core';
 import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 import { CoreSessionPlugin } from '../plugin/CoreSessionPlugin.js';
 

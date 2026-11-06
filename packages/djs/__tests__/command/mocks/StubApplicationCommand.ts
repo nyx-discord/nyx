@@ -1,4 +1,4 @@
-import { ApplicationCommandType } from 'discord-api-types/v10';
+import { ApplicationCommandType } from 'discord.js';
 import type { ApplicationCommand } from 'discord.js';
 
 export class StubApplicationCommand {

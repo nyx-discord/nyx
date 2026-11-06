@@ -84,10 +84,12 @@
     "@repo/typedoc-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/vitest-config": "workspace:*",
+    "discord-api-types": "^0.38.50",
     "discord.js": "14.22.1"
   },
   "peerDependencies": {
     "@discordjs/core": "^2.6.0",
+    "discord-api-types": "^0.38.50",
     "discord.js": "^14.22.1"
   },
   "peerDependenciesMeta": {
@@ -104,7 +106,6 @@
     "@nyx-discord/base": "workspace:*",
     "@nyx-discord/djs": "workspace:*",
     "@nyx-discord/djs-core": "workspace:*",
-    "@sapphire/string-store": "3.0.0",
-    "discord-api-types": "^0.38.50"
+    "@sapphire/string-store": "3.0.0"
   }
 }

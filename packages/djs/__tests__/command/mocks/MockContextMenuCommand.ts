@@ -1,5 +1,5 @@
 import type { RESTPostAPIContextMenuApplicationCommandsJSONBody } from 'discord.js';
-import { ApplicationCommandType } from 'discord-api-types/v10';
+import { ApplicationCommandType } from 'discord.js';
 import { vi } from 'vitest';
 import { AbstractContextMenuCommand } from '../../../src';
 
