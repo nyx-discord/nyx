@@ -13,16 +13,16 @@ export function TooltipText({
   className?: string;
 }) {
   return (
-    <Popup delay={delay}>
-      <PopupTrigger asChild>
-        <span
-          className={cn(
-            'underline border-b border-dotted border-current cursor-help decoration-dashed',
-            className,
-          )}
-        >
-          {text}
-        </span>
+    <Popup openDelay={delay}>
+      <PopupTrigger
+        render={<span />}
+        nativeButton={false}
+        className={cn(
+          'underline border-b border-dotted border-current cursor-help decoration-dashed',
+          className,
+        )}
+      >
+        {text}
       </PopupTrigger>
       <PopupContent>
         <div className="prose twoslash-popup-docs tooltip-popup-style">

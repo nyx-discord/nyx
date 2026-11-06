@@ -16,6 +16,9 @@ export const docs = defineDocs({
       definedIn: string().array().optional(),
     }),
     async: true,
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
   },
   meta: {
     schema: metaSchema,
