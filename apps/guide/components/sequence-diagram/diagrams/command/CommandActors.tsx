@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Actor } from 'components/sequence-diagram/src/actor/Actor';
 
 export const CommandActors = {
@@ -5,9 +6,9 @@ export const CommandActors = {
     label: (
       <p>
         {'💼 '}
-        <a href="/extend/commands/command-manager">
+        <Link href="/extend/commands/command-manager">
           <code>CommandManager</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#EF476F',
@@ -17,9 +18,9 @@ export const CommandActors = {
     label: (
       <p>
         {'🔑 '}
-        <a href="/extend/commands/command-customidcodec">
+        <Link href="/extend/commands/command-customidcodec">
           <code>CommandCustomIdCodec</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#0CB0A9',
@@ -29,9 +30,9 @@ export const CommandActors = {
     label: (
       <p>
         {'🔎 '}
-        <a href="/extend/commands/command-resolver">
+        <Link href="/extend/commands/command-resolver">
           <code>CommandResolver</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#0CB0A9',
@@ -41,9 +42,9 @@ export const CommandActors = {
     label: (
       <p>
         {'🗂️ '}
-        <a href="/extend/commands/command-repository">
+        <Link href="/extend/commands/command-repository">
           <code>CommandRepository</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#ff9f1c',
@@ -53,9 +54,9 @@ export const CommandActors = {
     label: (
       <p>
         {'⚡ '}
-        <a href="/extend/commands/executor">
+        <Link href="/extend/commands/executor">
           <code>CommandExecutor</code>
-        </a>
+        </Link>
       </p>
     ),
     color: { dark: '#FFD166', light: '#ffba1a' },
@@ -65,9 +66,9 @@ export const CommandActors = {
     label: (
       <p>
         {'🛡️ '}
-        <a href="/extend/commands/executor/command-middleware-list">
+        <Link href="/extend/commands/executor/command-middleware-list">
           <code>MiddlewareList</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#6a994e',
@@ -77,9 +78,9 @@ export const CommandActors = {
     label: (
       <p>
         {'💫 '}
-        <a href="/extend/commands/executor/command-error-handler">
+        <Link href="/extend/commands/executor/command-error-handler">
           <code>ErrorHandler</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#92162D',
@@ -89,9 +90,9 @@ export const CommandActors = {
     label: (
       <p>
         {'👂 '}
-        <a href="/extend/commands/command-subscriptions-container">
+        <Link href="/extend/commands/command-subscriptions-container">
           <code>CommandInteractionSubscriber</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#0f83a9',
@@ -101,9 +102,9 @@ export const CommandActors = {
     label: (
       <p>
         {'🚌 '}
-        <a href="/extend/commands/command-bus">
+        <Link href="/extend/commands/command-bus">
           Command <code>EventBus</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#F78C6B',

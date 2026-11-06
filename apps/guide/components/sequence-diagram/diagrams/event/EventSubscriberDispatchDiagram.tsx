@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Actor } from 'components/sequence-diagram/src/actor/Actor';
 import { SequenceDiagram } from 'components/sequence-diagram/src/SequenceDiagram';
 import type { Workflow } from 'components/sequence-diagram/src/workflow/Workflow';
@@ -10,9 +11,9 @@ export default function EventSubscriberDispatchDiagram() {
       label: (
         <p>
           {'⚡ '}
-          <a href="/extend/events/dispatcher">
+          <Link href="/extend/events/dispatcher">
             <code>EventDispatcher</code>
-          </a>
+          </Link>
         </p>
       ),
       color: '#ffca3a',
@@ -22,9 +23,9 @@ export default function EventSubscriberDispatchDiagram() {
       label: (
         <p>
           {'👂 '}
-          <a href="/use/events/subscribers">
+          <Link href="/use/events/subscribers">
             <code>EventSubscriber</code>
-          </a>
+          </Link>
         </p>
       ),
       color: {
@@ -37,9 +38,9 @@ export default function EventSubscriberDispatchDiagram() {
       label: (
         <p>
           {'💫 '}
-          <a href="/use/other/error-handling">
+          <Link href="/use/other/error-handling">
             <code>ErrorHandler</code>
-          </a>
+          </Link>
         </p>
       ),
       color: '#92162D',

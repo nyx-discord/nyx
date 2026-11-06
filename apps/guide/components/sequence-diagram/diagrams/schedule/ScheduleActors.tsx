@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Actor } from 'components/sequence-diagram/src/actor/Actor';
 
 export default {
@@ -5,9 +6,9 @@ export default {
     label: (
       <p>
         {'⏰ '}
-        <a href="/extend/schedules/schedule-manager">
+        <Link href="/extend/schedules/schedule-manager">
           <code>ScheduleManager</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#EF476F',
@@ -17,9 +18,9 @@ export default {
     label: (
       <p>
         {'🗂️ '}
-        <a href="/extend/schedules/schedule-repository">
+        <Link href="/extend/schedules/schedule-repository">
           <code>ScheduleRepository</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#ff9f1c',
@@ -29,9 +30,9 @@ export default {
     label: (
       <p>
         {'📅 '}
-        <a href="/extend/schedules/schedule-execution-scheduler">
+        <Link href="/extend/schedules/schedule-execution-scheduler">
           <code>ScheduleExecutionScheduler</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#118ab2',
@@ -41,9 +42,9 @@ export default {
     label: (
       <p>
         {'🧩 '}
-        <a href="/extend/schedules/schedule-job-adapter">
+        <Link href="/extend/schedules/schedule-job-adapter">
           <code>ScheduleJobAdapter</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#f7d7c4',
@@ -53,9 +54,9 @@ export default {
     label: (
       <p>
         {'⚡ '}
-        <a href="/extend/schedules/schedule-executor">
+        <Link href="/extend/schedules/schedule-executor">
           <code>ScheduleExecutor</code>
-        </a>
+        </Link>
       </p>
     ),
     color: { dark: '#FFD166', light: '#ffba1a' },
@@ -65,9 +66,9 @@ export default {
     label: (
       <p>
         {'🛡️ '}
-        <a href="/extend/schedules/schedule-executor/schedule-middleware-list">
+        <Link href="/extend/schedules/schedule-executor/schedule-middleware-list">
           <code>ScheduleMiddlewareList</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#6a994e',
@@ -77,9 +78,9 @@ export default {
     label: (
       <p>
         {'💫 '}
-        <a href="/extend/schedules/schedule-executor/schedule-error-handler">
+        <Link href="/extend/schedules/schedule-executor/schedule-error-handler">
           <code>ScheduleErrorHandler</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#92162D',
@@ -89,9 +90,9 @@ export default {
     label: (
       <p>
         {'🚌 '}
-        <a href="/extend/events/event-bus">
+        <Link href="/extend/events/event-bus">
           Schedule <code>EventBus</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#F78C6B',

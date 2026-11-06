@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Actor } from 'components/sequence-diagram/src/actor/Actor';
 import { SequenceDiagram } from 'components/sequence-diagram/src/SequenceDiagram';
 import type { Workflow } from 'components/sequence-diagram/src/workflow/Workflow';
@@ -10,9 +11,9 @@ export default function EventOverviewDiagram() {
       label: (
         <p>
           {'⚡ '}
-          <a href="/extend/events/dispatcher">
+          <Link href="/extend/events/dispatcher">
             <code>EventDispatcher</code>
-          </a>
+          </Link>
         </p>
       ),
       color: '#ffca3a',
@@ -22,9 +23,9 @@ export default function EventOverviewDiagram() {
       label: (
         <p>
           {'️🛡️  '}
-          <a href="/use/events/middlewares">
+          <Link href="/use/events/middlewares">
             <code>MiddlewareList</code>
-          </a>
+          </Link>
         </p>
       ),
       color: '#8ac926',

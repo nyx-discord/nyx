@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Actor } from 'components/sequence-diagram/src/actor/Actor';
 
 export const EventActors = {
@@ -10,9 +11,9 @@ export const EventActors = {
     label: (
       <p>
         {'🚌 '}
-        <a href="/use/events/buses">
+        <Link href="/use/events/buses">
           <code>EventBus</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#ff924c',
@@ -22,9 +23,9 @@ export const EventActors = {
     label: (
       <p>
         {'⚡ '}
-        <a href="/extend/events/dispatcher">
+        <Link href="/extend/events/dispatcher">
           <code>EventDispatcher</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#ffca3a',
@@ -34,9 +35,9 @@ export const EventActors = {
     label: (
       <p>
         {'️🛡️  '}
-        <a href="/use/events/middlewares">
+        <Link href="/use/events/middlewares">
           <code>MiddlewareList</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#8ac926',
@@ -46,9 +47,9 @@ export const EventActors = {
     label: (
       <p>
         {'👂 '}
-        <a href="/use/events/subscribers">
+        <Link href="/use/events/subscribers">
           <code>EventSubscriber</code>
-        </a>
+        </Link>
       </p>
     ),
     color: {
@@ -61,9 +62,9 @@ export const EventActors = {
     label: (
       <p>
         {'💫 '}
-        <a href="/use/other/error-handling">
+        <Link href="/use/other/error-handling">
           <code>ErrorHandler</code>
-        </a>
+        </Link>
       </p>
     ),
     color: '#92162D',

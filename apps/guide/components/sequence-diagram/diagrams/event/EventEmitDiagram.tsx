@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Actor } from 'components/sequence-diagram/src/actor/Actor';
 import { SequenceDiagram } from 'components/sequence-diagram/src/SequenceDiagram';
 import type { Workflow } from 'components/sequence-diagram/src/workflow/Workflow';
@@ -15,9 +16,9 @@ export default function EventEmitDiagram() {
       label: (
         <p>
           {'🚌 '}
-          <a href="/use/events/buses">
+          <Link href="/use/events/buses">
             <code>EventBus</code>
-          </a>
+          </Link>
         </p>
       ),
       color: '#ff924c',
@@ -27,9 +28,9 @@ export default function EventEmitDiagram() {
       label: (
         <p>
           {'⚡ '}
-          <a href="/extend/events/dispatcher">
+          <Link href="/extend/events/dispatcher">
             <code>EventDispatcher</code>
-          </a>
+          </Link>
         </p>
       ),
       color: '#ffca3a',
