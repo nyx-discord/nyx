@@ -112,5 +112,6 @@ console.log(endData.result); // the final count, typed as number
 
 ## 📖 Documentation
 
-- [Guide (Docusaurus)](https://nyx-discord.github.io/nyx/docs/session) — getting started, session types, filters, middlewares, events
+- [Guide](https://nyx-discord.github.io/nyx/guide/session) — getting started, session types, filters, middlewares, events
+- [Guide as Markdown for AI agents](https://nyx-discord.github.io/nyx/guide/session.md), or install the agent skill with `npx skills add nyx-discord/nyx`
 - [Typedoc](https://nyx-discord.github.io/nyx/typedoc) — full API reference for classes, types, and interfaces
