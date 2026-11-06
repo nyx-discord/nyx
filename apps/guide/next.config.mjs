@@ -12,6 +12,8 @@ export default function config(phase) {
     // Only export on build: in dev, Next checks `generateStaticParams()` against the original URL instead of the
     // rewritten one, so a cold `/use.md` request fails with "missing param". `next build` still validates the params.
     output: isDev ? undefined : 'export',
+    // Set by the deploy workflow (e.g. `/nyx/guide`), since GitHub Pages serves the guide under a subpath.
+    basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
     images: {
       unoptimized: true,
     },

@@ -32,10 +32,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm --filter guide install
-
-      - name: Build website
-        run: pnpm --filter guide build
+        run: pnpm install
 
       - name: Determine destination directory
         id: dest
@@ -46,6 +43,11 @@ jobs:
             echo "dir=guide@${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
           fi
 
+      - name: Build website
+        run: pnpm turbo run build --filter=@nyx-discord/guide
+        env:
+          NEXT_PUBLIC_BASE_PATH: /nyx/${{ steps.dest.outputs.dir }}
+
       # Popular action to deploy to GitHub Pages:
       # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
       - name: Deploy to GitHub Pages
@@ -53,7 +55,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           # Build output
-          publish_dir: ./build/guide
+          publish_dir: ./apps/guide/out
           publish_branch: gh-pages
           destination_dir: ${{ steps.dest.outputs.dir }}
           # The following lines assign commit authorship to the official

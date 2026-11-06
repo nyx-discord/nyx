@@ -6,8 +6,8 @@ import Redirect from '../../components/Redirect';
 
 <Redirect />
 
-If you're not redirected, <a href="/use">click here</a>.
+If you're not redirected, [click here](/use).
 
 <noscript>
-  <meta httpEquiv="refresh" content="0; url=/use" />
+  <meta httpEquiv="refresh" content={`0; url=${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/use`} />
 </noscript>

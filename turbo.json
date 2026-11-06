@@ -10,6 +10,10 @@
       "dependsOn": [
         "^build"
       ],
+      "env": [
+        "NEXT_PUBLIC_BASE_PATH",
+        "NEXT_PUBLIC_SITE_ORIGIN"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env*",

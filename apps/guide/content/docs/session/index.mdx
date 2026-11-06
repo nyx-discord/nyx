@@ -220,7 +220,7 @@ await startInteraction.api.interactions.editReply(
 After filling the modal and components with values, this will look like this:
 
 <video width="100%" controls muted>
-  <source src="/docs/session_showcase.mp4" type="video/mp4" />
+  <source src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/docs/session_showcase.mp4`} type="video/mp4" />
   Your browser does not support the video tag.
 </video>
 
