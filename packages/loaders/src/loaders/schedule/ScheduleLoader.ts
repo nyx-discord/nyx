@@ -6,7 +6,7 @@ import { ObjectInstantiator } from '../../util/ObjectInstantiator';
 import type { LoaderOptions } from '../LoaderOptions';
 
 export class ScheduleLoader {
-  public static async load(options: LoaderOptions): Promise<Schedule[]> {
+  public static async load(options: LoaderOptions<any>): Promise<Schedule[]> {
     const files = await ModuleUtils.recurseDir(options.path, options.filter);
     const errors: string[] = [];
     const schedules: Schedule[] = [];

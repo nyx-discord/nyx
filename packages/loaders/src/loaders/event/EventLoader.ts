@@ -53,8 +53,9 @@ export class EventLoader {
     },
   ] as const;
 
+  // Subscribers don't depend on interaction types, so any adapter's bot is accepted.
   public static async load(
-    options: LoaderOptions,
+    options: LoaderOptions<any>,
   ): Promise<EventSubscriberBuckets> {
     const files = await ModuleUtils.recurseDir(options.path, options.filter);
     const errors: string[] = [];
