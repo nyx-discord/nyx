@@ -1,0 +1,276 @@
+# Overview (https://nyx-discord.github.io/nyx/guide@v3/session)
+
+The [`@nyx-discord/plugin-sessions/djs`](https://www.npmjs.com/package/@nyx-discord/plugin-sessions/djs) package is an official [plugin](/use/plugins) that provides and manages user interaction sessions.
+
+These are objects that represent an open interaction "session" with a user. You can consider them as a more advanced, opinionated, OOP version of [DJS' Interaction Collectors](https://discordjs.guide/legacy/popular-topics/collectors).
+
+They can be used as an easy way to maintain a "conversation" with a user, and respond to interactions that the user makes to it.
+
+<Callout>
+Some examples of sessions are:
+
+* A paginated message that shows a user's moderations, allowing advanced options like filtering by type.
+* An interactive message that guides a user step by step to accomplish something, like creating a ticket category.
+* A detailed settings message that allows a user to change their server's settings with buttons, modals or select menus.
+* In essence, any kind of situation where continuous interaction with a user is needed.
+</Callout>
+
+## Quick example [#quick-example]
+
+This example features many components used in the same session. Some required component properties are omitted for brevity.
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { StringSelectMenuBuilder, ButtonBuilder, ActionRowBuilder, ModalBuilder } from 'discord.js';
+import type { ButtonInteraction, AnySelectMenuInteraction, ModalSubmitInteraction } from 'discord.js';
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+
+class MySession extends AbstractSession {
+  protected override readonly ttl = 5_000; // End 5 seconds after the last interaction
+
+  public async onStart() {
+    // A select menu that updates this session
+    const selectMenuId = this.buildCustomId('select');
+    const selectMenu = new StringSelectMenuBuilder().setCustomId(selectMenuId);
+    const selectRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
+
+    // A button that updates this session
+    const buttonId = this.buildCustomId('button');
+    const button = new ButtonBuilder().setCustomId(buttonId);
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    await this.startInteraction.reply({ components: [buttonRow, selectRow] });
+  }
+
+  public async onEnd() {
+    await this.startInteraction.editReply({
+      content: 'Bye from session!',
+      components: [],
+    });
+  }
+
+  protected async handleButton(interaction: ButtonInteraction) {
+    const modalId = this.buildCustomId('modal');
+    const myModal = new ModalBuilder().setCustomId(modalId);
+    await interaction.showModal(myModal);
+    return true;
+  }
+
+  protected async handleSelectMenu(interaction: AnySelectMenuInteraction) {
+    await interaction.reply('You selected: ' + interaction.values[0]);
+    return true;
+  }
+
+  protected async handleModal(interaction: ModalSubmitInteraction) {
+    const name = interaction.fields.getTextInputValue('name');
+    await interaction.reply(`Your name is ${name}`);
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { StringSelectMenuBuilder, ButtonBuilder, ActionRowBuilder, ModalBuilder } from '@discordjs/builders';
+import { ComponentType } from '@discordjs/core';
+import type {
+  APIMessageComponentButtonInteraction,
+  APIMessageComponentSelectMenuInteraction,
+  APIModalSubmitInteraction,
+  ModalSubmitActionRowComponent,
+  ToEventProps,
+} from '@discordjs/core';
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  protected override readonly ttl = 5_000; // End 5 seconds after the last interaction
+
+  public async onStart() {
+    // A select menu that updates this session
+    const selectMenuId = this.buildCustomId('select');
+    const selectMenu = new StringSelectMenuBuilder().setCustomId(selectMenuId);
+    const selectRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
+
+    // A button that updates this session
+    const buttonId = this.buildCustomId('button');
+    const button = new ButtonBuilder().setCustomId(buttonId);
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    await this.startInteraction.api.interactions.reply(
+      this.startInteraction.data.id,
+      this.startInteraction.data.token,
+      { components: [buttonRow.toJSON(), selectRow.toJSON()] },
+    );
+  }
+
+  public async onEnd() {
+    await this.startInteraction.api.interactions.editReply(
+      this.startInteraction.data.application_id,
+      this.startInteraction.data.token,
+      {
+        content: 'Bye from session!',
+        components: [],
+      },
+    );
+  }
+
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    const modalId = this.buildCustomId('modal');
+    const myModal = new ModalBuilder().setCustomId(modalId);
+    await interaction.api.interactions.createModal(
+      interaction.data.id,
+      interaction.data.token,
+      myModal.toJSON(),
+    );
+    return true;
+  }
+
+  protected async handleSelectMenu(interaction: ToEventProps<APIMessageComponentSelectMenuInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'You selected: ' + interaction.data.data.values[0] },
+    );
+    return true;
+  }
+
+  protected async handleModal(interaction: ToEventProps<APIModalSubmitInteraction>) {
+    const name = interaction.data.data.components
+      .filter((row): row is ModalSubmitActionRowComponent => row.type === ComponentType.ActionRow)
+      .flatMap(row => row.components)
+      .find(component => component.custom_id === 'name')?.value;
+
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: `Your name is ${name}` },
+    );
+    return true;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+Then somewhere in your code, like inside a command:
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs';
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+import { type ChatInputCommandInteraction } from 'discord.js';
+declare const bot: NyxBot;
+// @ts-expect-error Incomplete example
+class MySession extends AbstractSession {}
+// ---cut---
+// Can be a command, component or modal interaction
+declare const startInteraction: ChatInputCommandInteraction;
+
+const id = 'mySessionId'; // Should be short and randomly generated, nanoid is good for this
+const session = new MySession({ bot, id, startInteraction });
+await session.start();
+
+// Wait for the session to end
+await session.getEndPromise();
+
+// Wait 3 seconds
+await new Promise(resolve => setTimeout(resolve, 3000)); 
+
+await startInteraction.editReply('Bye from command!');
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs-core';
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+declare const bot: NyxBot;
+// @ts-expect-error Incomplete example
+class MySession extends AbstractSession {}
+// ---cut---
+// Can be a command, component or modal interaction
+declare const startInteraction: ToEventProps<APIChatInputApplicationCommandInteraction>;
+
+const id = 'mySessionId'; // Should be short and randomly generated, nanoid is good for this
+const session = new MySession({ bot, id, startInteraction });
+await session.start();
+
+// Wait for the session to end
+await session.getEndPromise();
+
+// Wait 3 seconds
+await new Promise(resolve => setTimeout(resolve, 3000));
+
+await startInteraction.api.interactions.editReply(
+  startInteraction.data.application_id,
+  startInteraction.data.token,
+  { content: 'Bye from command!' },
+);
+```
+  </Tab>
+</Tabs>
+
+After filling the modal and components with values, this will look like this:
+
+<video width="100%" controls muted>
+  <source src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/docs/session_showcase.mp4`} type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+Notice how:
+- The plugin routes interactions belonging to the session to the appropiate handler.
+- The session finishes automatically after the `ttl` has passed since the last interaction.
+- The session starter is able to wait for the session to end, and then do what it needs to, like reply further.
+
+We'll dive deeper on what each of the methods do later, but this should be enough to give you an idea of how sessions work.
+
+## Installation [#installation]
+
+<Steps>
+<Step>
+
+### Installing [#installing]
+
+```npm
+npm i @nyx-discord/plugin-sessions/djs
+```
+
+</Step>
+
+<Step>
+
+### Registering [#registering]
+
+Instantiate and register it to your bot's plugin manager:
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { type NyxBot } from '@nyx-discord/djs';
+
+declare const bot: NyxBot;
+// ---cut---
+import { DjsSessionPlugin } from '@nyx-discord/plugin-sessions/djs';
+
+await bot.getPluginManager().register(DjsSessionPlugin.create());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { type NyxBot } from '@nyx-discord/djs-core';
+
+declare const bot: NyxBot;
+// ---cut---
+import { CoreSessionPlugin } from '@nyx-discord/plugin-sessions/djs-core';
+
+await bot.getPluginManager().register(CoreSessionPlugin.create());
+```
+  </Tab>
+</Tabs>
+
+</Step>
+</Steps>
+
+And you're done! Check the session types guides to learn how to make your own Session.

@@ -1,0 +1,111 @@
+# nyx
+
+> nyx is an interface-first TypeScript framework for Discord bots. It handles application commands, events, schedules and plugins on top of discord.js (`@nyx-discord/djs`) or @discordjs/core (`@nyx-discord/djs-core`).
+
+- Import everything from the adapter the project uses (`@nyx-discord/djs` or `@nyx-discord/djs-core`); both re-export `@nyx-discord/base`.
+- Every page below is plain Markdown. Pages show both adapters in `<Tab>` blocks: use the one matching the project. Ignore twoslash lines in code blocks (`// ---cut---`, `// @ts-expect-error`, `// ^?`) and `declare const` stubs.
+- nyx only supports application commands, never replies to users on errors by itself, and doesn't ship storage: those are the bot's own code.
+- Agent skill with typechecked examples: `npx skills add nyx-discord/nyx` (source: https://github.com/nyx-discord/nyx/tree/main/skills/nyx).
+- All pages in one file: https://nyx-discord.github.io/nyx/guide@v3/llms-full.txt
+- API reference: https://nyx-discord.github.io/nyx/typedoc/
+
+## Docs
+
+- Use: How to use nyx and its features.
+  - [Introduction](https://nyx-discord.github.io/nyx/guide@v3/use.md)
+  - [Packages](https://nyx-discord.github.io/nyx/guide@v3/use/packages.md): Explore the packages that make up nyx
+  - [Start](https://nyx-discord.github.io/nyx/guide@v3/use/first-start.md): Getting started with nyx
+
+  - **Commands**
+  - [Commands Overview](https://nyx-discord.github.io/nyx/guide@v3/use/commands.md)
+  - Command Types
+    - [Standalone Commands](https://nyx-discord.github.io/nyx/guide@v3/use/commands/types/standalone.md)
+    - Parent Commands
+      - [Parent Commands](https://nyx-discord.github.io/nyx/guide@v3/use/commands/types/parent.md)
+      - [SubCommands](https://nyx-discord.github.io/nyx/guide@v3/use/commands/types/parent/subcommand.md)
+      - [SubCommand Groups](https://nyx-discord.github.io/nyx/guide@v3/use/commands/types/parent/subcommand-group.md)
+    - [Context Menu Commands](https://nyx-discord.github.io/nyx/guide@v3/use/commands/types/context-menu.md)
+  - [Components](https://nyx-discord.github.io/nyx/guide@v3/use/commands/components.md)
+  - [Location](https://nyx-discord.github.io/nyx/guide@v3/use/commands/location.md)
+  - [Filters](https://nyx-discord.github.io/nyx/guide@v3/use/commands/filters.md)
+  - [Middlewares](https://nyx-discord.github.io/nyx/guide@v3/use/commands/middlewares.md)
+  - [Events](https://nyx-discord.github.io/nyx/guide@v3/use/commands/events.md)
+
+  - **Events**
+  - [Events Overview](https://nyx-discord.github.io/nyx/guide@v3/use/events.md)
+  - [Buses](https://nyx-discord.github.io/nyx/guide@v3/use/events/buses.md)
+  - [Subscribers](https://nyx-discord.github.io/nyx/guide@v3/use/events/subscribers.md)
+  - [Filters](https://nyx-discord.github.io/nyx/guide@v3/use/events/filters.md)
+  - [Middlewares](https://nyx-discord.github.io/nyx/guide@v3/use/events/middlewares.md)
+
+  - **Schedules**
+  - [Schedules Overview](https://nyx-discord.github.io/nyx/guide@v3/use/schedules.md)
+  - [Filters](https://nyx-discord.github.io/nyx/guide@v3/use/schedules/filters.md)
+  - [Middlewares](https://nyx-discord.github.io/nyx/guide@v3/use/schedules/middlewares.md)
+  - [Events](https://nyx-discord.github.io/nyx/guide@v3/use/schedules/events.md)
+
+  - **Plugins**
+  - [Plugins Overview](https://nyx-discord.github.io/nyx/guide@v3/use/plugins.md)
+  - [Events](https://nyx-discord.github.io/nyx/guide@v3/use/plugins/events.md)
+
+  - **Other**
+  - [Filters](https://nyx-discord.github.io/nyx/guide@v3/use/other/filters.md)
+  - [Middlewares](https://nyx-discord.github.io/nyx/guide@v3/use/other/middlewares.md)
+  - [Error Handling](https://nyx-discord.github.io/nyx/guide@v3/use/other/error-handling.md)
+  - [Metadata](https://nyx-discord.github.io/nyx/guide@v3/use/other/metadata.md)
+- Extend: Learn and modify nyx internals.
+  - [Extend](https://nyx-discord.github.io/nyx/guide@v3/extend.md): Getting started with modifying nyx
+
+  - **Commands**
+  - [Command Internals](https://nyx-discord.github.io/nyx/guide@v3/extend/commands.md)
+  - [Manager](https://nyx-discord.github.io/nyx/guide@v3/extend/commands/command-manager.md)
+  - [Resolver](https://nyx-discord.github.io/nyx/guide@v3/extend/commands/command-resolver.md)
+  - Executor
+    - [Executor](https://nyx-discord.github.io/nyx/guide@v3/extend/commands/executor.md)
+    - [Error Handler](https://nyx-discord.github.io/nyx/guide@v3/extend/commands/executor/command-error-handler.md)
+    - [Middleware List](https://nyx-discord.github.io/nyx/guide@v3/extend/commands/executor/command-middleware-list.md)
+  - [Repository](https://nyx-discord.github.io/nyx/guide@v3/extend/commands/command-repository.md)
+  - [CustomId Codec](https://nyx-discord.github.io/nyx/guide@v3/extend/commands/command-customidcodec.md)
+  - [Deployer](https://nyx-discord.github.io/nyx/guide@v3/extend/commands/command-deployer.md): Deploys commands and stores the ApplicationCommand mappings
+  - [Subscriptions Container](https://nyx-discord.github.io/nyx/guide@v3/extend/commands/command-subscriptions-container.md)
+  - [Bus](https://nyx-discord.github.io/nyx/guide@v3/extend/commands/command-bus.md)
+
+  - **Events**
+  - [Events Internals](https://nyx-discord.github.io/nyx/guide@v3/extend/events.md): Learn how events work and how to edit their internal behavior.
+  - [Buses](https://nyx-discord.github.io/nyx/guide@v3/extend/events/event-bus.md)
+  - Dispatcher
+    - [Dispatcher](https://nyx-discord.github.io/nyx/guide@v3/extend/events/dispatcher.md)
+    - [Error Handler](https://nyx-discord.github.io/nyx/guide@v3/extend/events/dispatcher/event-error-handler.md)
+    - [Middleware List](https://nyx-discord.github.io/nyx/guide@v3/extend/events/dispatcher/event-middleware-list.md)
+
+  - **Schedules**
+  - [Schedule Internals](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules.md)
+  - [Manager](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules/schedule-manager.md)
+  - [Repository](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules/schedule-repository.md)
+  - Executor
+    - [Executor](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules/schedule-executor.md)
+    - [Error Handler](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules/schedule-executor/schedule-error-handler.md)
+    - [Middleware List](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules/schedule-executor/schedule-middleware-list.md)
+  - [Execution Scheduler](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules/schedule-execution-scheduler.md)
+  - [Job Adapter](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules/schedule-job-adapter.md)
+- Session Plugin: All about the sessions plugin.
+  - [Overview](https://nyx-discord.github.io/nyx/guide@v3/session.md)
+
+  - **Types**
+  - [Session](https://nyx-discord.github.io/nyx/guide@v3/session/types/session.md)
+  - [Pagination Session](https://nyx-discord.github.io/nyx/guide@v3/session/types/pagination-session.md)
+  - [List Pagination Session](https://nyx-discord.github.io/nyx/guide@v3/session/types/list-pagination-session.md)
+  - [Stage Pagination Session](https://nyx-discord.github.io/nyx/guide@v3/session/types/stage-pagination-session.md)
+
+  - **Other**
+  - [Middlewares](https://nyx-discord.github.io/nyx/guide@v3/session/middlewares.md)
+  - [Filters](https://nyx-discord.github.io/nyx/guide@v3/session/filters.md)
+  - [Events](https://nyx-discord.github.io/nyx/guide@v3/session/events.md)
+  - [Limits](https://nyx-discord.github.io/nyx/guide@v3/session/limits.md)
+- Loaders: Scan and load your components from your bot's folders.
+  - [Overview](https://nyx-discord.github.io/nyx/guide@v3/loaders.md)
+
+  - **Loaders**
+  - [Commands](https://nyx-discord.github.io/nyx/guide@v3/loaders/commands.md)
+  - [Events](https://nyx-discord.github.io/nyx/guide@v3/loaders/events.md)
+  - [Schedules](https://nyx-discord.github.io/nyx/guide@v3/loaders/schedules.md)

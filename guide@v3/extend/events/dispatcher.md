@@ -1,0 +1,127 @@
+# Dispatcher (https://nyx-discord.github.io/nyx/guide@v3/extend/events/dispatcher)
+
+The `EventDispatcher` is responsible for calling `EventSubscribers`, checking middlewares, and handling errors of each emitted event.
+
+It's used by every `EventBus` through `EventBus#emit()`, and can be replaced at runtime with `EventBus#setDispatcher()`.
+
+## When to override [#when-to-override]
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Change how subscribers are dispatched (batching, throttling, etc). | Add/remove event middlewares only. You can do that from the dispatcher's middleware list. |
+| Add custom logic that modify execution (instrumentation, retries, etc). | Add/change error consumers only. You can do that from the dispatcher's error handler. |
+| | Tune runtime behavior like sync timeout or async concurrency. The base dispatchers implementations [already allow that](/use/events/buses#subscriber-concurrency). |
+
+## Overriding [#overriding]
+
+<Steps>
+<Step>
+### Creation [#creation]
+
+Create a custom dispatcher by either:
+
+* Extending `BasicSyncEventDispatcher` or `BasicAsyncEventDispatcher` (recommended, less work).
+* Implementing `EventDispatcher`.
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { BasicSyncEventDispatcher } from '@nyx-discord/djs';
+
+class MyEventDispatcher extends BasicSyncEventDispatcher {}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BasicSyncEventDispatcher } from '@nyx-discord/djs-core';
+
+class MyEventDispatcher extends BasicSyncEventDispatcher {}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+### Registration [#registration]
+
+Set your dispatcher on any bus:
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { BasicSyncEventDispatcher, type EventBus } from '@nyx-discord/djs';
+
+declare const bus: EventBus<{ someEvent: [string] }>;
+
+class MyEventDispatcher extends BasicSyncEventDispatcher {}
+// ---cut---
+bus.setDispatcher(MyEventDispatcher.create());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { BasicSyncEventDispatcher, type EventBus } from '@nyx-discord/djs-core';
+
+declare const bus: EventBus<{ someEvent: [string] }>;
+
+class MyEventDispatcher extends BasicSyncEventDispatcher {}
+// ---cut---
+bus.setDispatcher(MyEventDispatcher.create());
+```
+  </Tab>
+</Tabs>
+
+You can do this for built-in buses too, for example the client bus:
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { Client } from 'discord.js';
+import { Bot, type NyxBot, BasicAsyncEventDispatcher } from '@nyx-discord/djs';
+
+declare const client: Client;
+
+class MyAsyncDispatcher extends BasicAsyncEventDispatcher {}
+// @ts-expect-error incomplete example
+// ---cut---
+const bot = Bot.create((bot: NyxBot) => { /** options */ });
+
+bot
+  .getClientEventBus()
+  .setDispatcher(MyAsyncDispatcher.create());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { Client } from 'discord.js';
+import { Bot, type NyxBot, BasicAsyncEventDispatcher } from '@nyx-discord/djs-core';
+
+declare const client: Client;
+
+class MyAsyncDispatcher extends BasicAsyncEventDispatcher {}
+// @ts-expect-error incomplete example
+// ---cut---
+const bot = Bot.create((bot: NyxBot) => { /** options */ });
+
+bot
+  .getClientEventBus()
+  .setDispatcher(MyAsyncDispatcher.create());
+```
+  </Tab>
+</Tabs>
+
+</Step>
+</Steps>
+
+## Dependencies [#dependencies]
+
+The dispatcher has two core dependencies you can customize:
+
+<Cards>
+<Card title="Middleware List" href="/extend/events/dispatcher/event-middleware-list" icon={<LayersIcon />} external={false}>
+  Holds and executes event subscriber middlewares.
+</Card>
+<Card title="Error Handler" href="/extend/events/dispatcher/event-error-handler" icon={<AmbulanceIcon />} external={false}>
+  Handles middleware and subscriber execution errors.
+</Card>
+</Cards>

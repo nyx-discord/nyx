@@ -1,0 +1,78 @@
+# Repository (https://nyx-discord.github.io/nyx/guide@v3/extend/commands/command-repository)
+
+The `CommandRepository` is responsible for storing all the currently registered commands.
+
+## When to override [#when-to-override]
+
+| ✅ Override if you want to...    | ❌ Don't override if you want to...                                                                                   |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| Change how commands are stored. | Do something when commands are added, including decorating them. Use [Command Events](/use/commands/events) instead. |
+|                                 | Change how commands are deployed. Override the [CommandDeployer](/extend/commands/command-deployer) instead.         |
+
+## Overriding [#overriding]
+
+<Steps>
+<Step>
+### Creation [#creation]
+
+Create a custom command repository by either:
+
+* Extending `DefaultCommandRepository` (recommended, less work).
+* Implementing `CommandRepository`.
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```  ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/djs';
+
+class MyCommandRepository extends DefaultCommandRepository {}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/djs-core';
+
+class MyCommandRepository extends DefaultCommandRepository {}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+### Registration [#registration]
+
+Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/djs';
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+class MyCommandRepository extends DefaultCommandRepository {
+  /** Your overrides */
+}
+
+bot.getCommandManager().setRepository(MyCommandRepository.create());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/djs-core';
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+class MyCommandRepository extends DefaultCommandRepository {
+  /** Your overrides */
+}
+
+bot.getCommandManager().setRepository(MyCommandRepository.create());
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='base' name='DefaultCommandRepository.create()' decorated={false} /> method instantiates your custom repository, not the default one.
+
+</Step>
+</Steps>

@@ -1,0 +1,54 @@
+# Packages (https://nyx-discord.github.io/nyx/guide@v3/use/packages)
+
+## Structure [#structure]
+
+The framework is split into three packages:
+
+| Package                       | Purpose                                                                                                                            |
+|-------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `@nyx-discord/base`           | Defines all the object templates (interfaces) and their relations, and provides default, minimal implementations of them.          |
+| `@nyx-discord/djs`            | The [discord.js](https://discord.js.org) adapter, connecting the framework to a discord.js `Client`.                                |
+| `@nyx-discord/djs-core`       | The [@discordjs/core](https://discord.js.org/docs/packages/core/main) adapter, connecting the framework to a raw `Client`.          |
+
+Every component depends on the interfaces rather than on the default implementations, so you can replace any of them with your own. The adapters only exist to plug the framework into a specific Discord library.
+
+## Which package to use? [#which-package-to-use]
+
+Most of the time, you'll want to use an adapter, depending on the library your bot uses:
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+    If your bot uses [discord.js](https://discord.js.org), install `@nyx-discord/djs`:
+
+```npm
+    npm i @nyx-discord/djs discord.js
+```
+  </Tab>
+  <Tab>
+    If your bot uses [@discordjs/core](https://discord.js.org/docs/packages/core/main), install `@nyx-discord/djs-core`:
+
+```npm
+    npm i @nyx-discord/djs-core @discordjs/core @discordjs/rest @discordjs/ws
+```
+  </Tab>
+</Tabs>
+
+Both adapters re-export `base`, so you can import everything from a single package.
+
+<Callout>
+  Throughout this guide, code examples use `@nyx-discord/djs` by default. If you use `@discordjs/core`, simply swap the import to `@nyx-discord/djs-core`: the library-agnostic APIs (filters, middlewares, schedules, plugins, events) are identical, and only the parts that touch Discord's client or interactions differ.
+</Callout>
+
+If you want to develop something for nyx, such as a plugin, you can use `@nyx-discord/base` and depend only on its interfaces (see [Object nomenclature](#object-nomenclature)), not on any actual implementation. This ensures your component will work across all adapters.
+
+## Object nomenclature [#object-nomenclature]
+
+`@nyx-discord/base` contains both interfaces and implementations, which you can tell apart by their names:
+
+- Implementations are prefixed by `Abstract`, `Default` or `Basic` (for example, <DocsLink pkg='base' name='AbstractSubCommand' decorated={false} label={<code>AbstractSubCommand</code>} /> and <DocsLink pkg='base' name='DefaultCommandManager' decorated={false} label={<code>DefaultCommandManager</code>} />). This means that they're base implementations of their respective interfaces. Specifically:
+  - `Abstract` is self explanatory. It needs to be extended to be used, often used by user-defined objects like commands or subscribers.
+  - `Basic` is a basic implementation of an interface, and can be directly extended, with nothing else needed to customize it.
+  - `Default` is a basic implementation but it's used somewhere internally, so to extend it [you'll also need to inject it](/extend).
+- Interfaces have no prefix (for example, <DocsLink pkg='base' name='SubCommand' decorated={false} label={<code>SubCommand</code>} /> and <DocsLink pkg='base' name='CommandManager' decorated={false} label={<code>CommandManager</code>} />). These are the base interfaces for any implementation.
+
+When you want to specify a type, prefer using the interfaces, eg. `consume(cmd: SubCommand)` instead of `consume(cmd: AbstractSubCommand)`, since it'll work across implementations and adapters, and aligns with [Dependency inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle): objects shouldn't depend on implementations, only on base interfaces.

@@ -1,0 +1,84 @@
+# Introduction (https://nyx-discord.github.io/nyx/guide@v3/use)
+
+![nyx](/nyx_guide.png)
+
+<GithubInfo owner="nyx-discord" repo="nyx" />
+
+Hello there 👋! Welcome to official guide for using nyx, a TypeScript bot framework for Discord.
+
+Here, you'll discover what nyx is, when it's useful, how to create your own bot and how to customize it.
+
+## What is nyx? [#what-is-nyx]
+
+Nyx is a framework to build Discord bots in TypeScript, with adapters for [discord.js](https://discord.js.org) and [@discordjs/core](https://discord.js.org/docs/packages/core/main). The main ideas behind it are:
+
+<Cards>
+  <Card icon={<BlocksIcon />} title="Fully extendable">
+    Every single internal component is documented and can be easily swapped by
+    your own.
+  </Card>
+  <Card icon={<CircleDotDashedIcon />} title="Bare-bones">
+    As little runtime dependencies as possible, which you can also replace.
+  </Card>
+  <Card icon={<SmileIcon />} title="Easy to understand and setup">
+    Hacky or unnecessarily messy internal code is avoided, like messing with
+    Discord.js internals or its typings.
+  </Card>
+  <Card icon={<SiDiscorddotjs />} title="Native objects">
+    Use the objects you already know from your Discord library without needing wrappers or
+    rewrites when updating.
+  </Card>
+  <Card icon={<TerminalIcon />} title="Developer friendly">
+    Type safety, predictability, error handling and extensibility are the
+    foundation of the framework.
+  </Card>
+  <Card icon={<LockOpenIcon />} title="Architecture freedom">
+    Nyx doesn't enforce any specific way to do things. Choose your own folder
+    structure, way to load commands/events, databases, etc.
+  </Card>
+</Cards>
+
+<Callout type="error" title="What nyx isn't">
+  - It isn't for programming beginners. We assume you have some level of understanding of TypeScript.
+  - It isn't a battery-included framework. It doesn't come with any commands, events or filters (like cooldowns).
+  It only has the things required for you to be able to build such features.
+</Callout>
+
+## Key Features [#key-features]
+
+1. **[Commands](/use/commands)**, for Discord application commands. Includes support for context menu commands, subcommands, and more.
+2. **[Events](/use/events)**, for subscribing to events, either from Discord.js or your own.
+3. **[Schedules](/use/schedules)**, for timed tasks.
+4. **[Plugins](/use/plugins)**, for pieces that extend nyx.
+
+Through optional packages, it also supports:
+1. **[Sessions](/session)**, for stateful interaction conversations, similar to collectors.
+2. **[Loaders](/loaders)**, for scanning directories to load commands, events, and schedules.
+
+All of these features are documented in detail in their respective sections, which we'll cover next.
+
+<Callout title="Codeblocks">
+The codeblocks in this guide are powered by [Twoslash](https://twoslash.netlify.app/guide/), meaning:
+
+- You can hover over variables, functions, etc. to see their documentation.
+- Every example (only often skipping trivial or already mentioned declarations) will work, otherwise this guide wouldn't compile!
+</Callout>
+
+## Community and Contribution [#community-and-contribution]
+
+<Callout>Click on each card to go to its page.</Callout>
+
+<Cards>
+  <Card icon={<SiDiscord />} href={discordInvite} title="Discord Community">
+    Join our Discord server to ask questions, share your creations, and get help
+    from the team or the community.
+  </Card>
+  <Card
+    icon={<SiGithub />}
+    href="https://github.com/nyx-discord/nyx"
+    title="Contribute"
+  >
+    If you want to contribute, you can do so by opening issues or pull requests
+    on our GitHub repository.
+  </Card>
+</Cards>

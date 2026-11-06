@@ -1,0 +1,86 @@
+# CustomId Codec (https://nyx-discord.github.io/nyx/guide@v3/extend/commands/command-customidcodec)
+
+The <DocsLink pkg='base' name='CommandCustomIdCodec' decorated={false} /> is responsible for de/serializing commands to/from customId strings, for the [Command Components](/use/commands/components) feature.
+
+The default implementation (<DocsLink pkg='base' name='DefaultCommandCustomIdCodec' decorated={false} />) uses the [`@sapphire/string-store`](https://www.npmjs.com/package/@sapphire/string-store) package to efficiently de/serialize the data.
+
+## When to override [#when-to-override]
+
+| ✅ Override if you want to...         | ❌ Don't override if you want to...                                                                             |
+|--------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| Use a custom de/serialization logic. | De/serialize your extra data. You should do that on sending/receiving instead, as it'll be easier to maintain. |
+
+## Overriding [#overriding]
+
+<Steps>
+<Step>
+### Creation [#creation]
+
+Create a custom codec by either:
+
+* Extending <DocsLink pkg='base' name='DefaultCommandCustomIdCodec' decorated={false} /> (<BaseMention />'s implementation, recommended for less work).
+* Implementing <DocsLink pkg='base' name='CommandCustomIdCodec' decorated={false} /> (<BaseMention />'s interface).
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs';
+
+class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs-core';
+
+class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {}
+```
+  </Tab>
+</Tabs>
+</Step>
+<Step>
+### Registration [#registration]
+
+Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+// ---cut---
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs';
+
+class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {
+  /** Your overrides */
+}
+
+const customIdCodec = MyCommandCustomIdCodec.create();
+
+bot.getCommandManager().setCustomIdCodec(customIdCodec);
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut---
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs-core';
+
+class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {
+  /** Your overrides */
+}
+
+const customIdCodec = MyCommandCustomIdCodec.create();
+
+bot.getCommandManager().setCustomIdCodec(customIdCodec);
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='base' name='DefaultCommandCustomIdCodec.create()' decorated={false} /> method instantiates your custom codec, not the default one.
+
+</Step>
+</Steps>

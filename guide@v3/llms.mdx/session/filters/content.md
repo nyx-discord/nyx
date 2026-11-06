@@ -1,0 +1,343 @@
+# Filters (https://nyx-discord.github.io/nyx/guide@v3/session/filters)
+
+Filters are objects or callbacks that can restrict the execution of a given session. For example:
+- A [user filter](#user-filter) that restricts the interaction to the user who started the session
+- A [permission filter](#permission-filter) that checks if the user has the required permissions to interact.
+
+Filters receive all the information about the session, the interaction and the execution metadata, and return a boolean indicating whether the session should be executed or not.
+
+Unlike other filterable objects, a session can have two filters: the `startFilter` and the `updateFilter`.
+
+For more general information about filters, you must first read the general [Filters](/use/other/filters) guide.
+
+## Usage [#usage]
+
+<Callout>In this guide we'll use a regular session, but the same applies to the rest.</Callout>
+
+<Steps>
+<Step>
+
+### Creation [#creation]
+
+Either:
+
+- Create a class that extends `AbstractSessionStartFilter` or `AbstractSessionUpdateFilter` and implements the `check()` method.
+```ts twoslash
+  import type { Metadata } from '@nyx-discord/djs';
+  import { AbstractSessionStartFilter, AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions/djs';
+  import type { Session, SessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs';
+
+  class MyStartFilter extends AbstractSessionStartFilter<unknown> {
+    public async check(session: Session<unknown>, meta: Metadata): Promise<boolean> {
+      // Do some checks
+      return true; // or false if the session should not be executed
+    }
+  }
+
+  class MyUpdateFilter extends AbstractSessionUpdateFilter<unknown> {
+    public async check(
+     session: Session<unknown>,
+     interaction: SessionUpdateInteraction,
+     meta: Metadata
+   ): Promise<boolean> {
+      // Do some checks
+      return true; // or false if the session should not be executed
+    }
+  }
+```
+  The type argument is the return type of your session.
+
+- Create a function that returns a boolean or a Promise that resolves to a boolean.
+
+```ts twoslash
+  import type {
+    SessionStartFilterResolvable,
+    DjsSessionUpdateFilterResolvable
+  } from '@nyx-discord/plugin-sessions/djs';
+
+  const myStartFilter: SessionStartFilterResolvable<unknown> = async (session, meta) => {
+    // Do some checks
+    return true; // or false if the session should not be executed
+  };
+
+  const myUpdateFilter: DjsSessionUpdateFilterResolvable<unknown> = async (
+    session,
+    interaction,
+    meta,
+  ) => {
+    // Do some checks
+    return true; // or false if the session should not be executed
+  };
+```
+
+</Step>
+<Step>
+
+### Filter usage [#filter-usage]
+
+Override the `startFilter` or `updateFilter` property in your session:
+
+- If you created a class, instantiate it:
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+
+// ---cut-start---
+import { AbstractSessionStartFilter, AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions/djs';
+class MyStartFilter extends AbstractSessionStartFilter<unknown> {
+  public async check() { return true; }
+}
+class MyUpdateFilter extends AbstractSessionUpdateFilter<unknown> {
+  public async check() { return true; }
+}
+// ---cut-end---
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected override readonly startFilter = new MyStartFilter();
+  
+  protected override readonly updateFilter = new MyUpdateFilter();
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+// ---cut-start---
+import { AbstractSessionStartFilter, AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions/djs-core';
+class MyStartFilter extends AbstractSessionStartFilter<unknown> {
+  public async check() { return true; }
+}
+class MyUpdateFilter extends AbstractSessionUpdateFilter<unknown> {
+  public async check() { return true; }
+}
+// ---cut-end---
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected override readonly startFilter = new MyStartFilter();
+  
+  protected override readonly updateFilter = new MyUpdateFilter();
+}
+```
+  </Tab>
+</Tabs>
+
+- If you created a function, assign it directly:
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+
+// ---cut-start---
+import type { SessionStartFilterResolvable, DjsSessionUpdateFilterResolvable } from '@nyx-discord/plugin-sessions/djs';
+declare const myStartFilter: SessionStartFilterResolvable<unknown>;
+declare const myUpdateFilter: DjsSessionUpdateFilterResolvable<unknown>;
+// ---cut-end---
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected override readonly startFilter = myStartFilter;
+  
+  protected override readonly updateFilter = myUpdateFilter;
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+// ---cut-start---
+import type { SessionStartFilterResolvable, CoreSessionUpdateFilterResolvable } from '@nyx-discord/plugin-sessions/djs-core';
+declare const myStartFilter: SessionStartFilterResolvable<unknown>;
+declare const myUpdateFilter: CoreSessionUpdateFilterResolvable<unknown>;
+// ---cut-end---
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected override readonly startFilter = myStartFilter;
+  
+  protected override readonly updateFilter = myUpdateFilter;
+}
+```
+  </Tab>
+</Tabs>
+
+Or use a simple arrow function directly:
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected override readonly startFilter = () => {
+    return true;
+  };
+
+  protected override readonly updateFilter = () => {
+    return true;
+  };
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected override readonly startFilter = () => {
+    return true;
+  };
+
+  protected override readonly updateFilter = () => {
+    return true;
+  };
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+</Steps>
+
+## Examples [#examples]
+
+### User Filter [#user-filter]
+
+A filter that restricts the interaction to the user who started the session. This is commonly used in `updateFilter` to prevent other users from interacting with the session.
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions/djs';
+import type { Session, DjsSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes, Metadata } from '@nyx-discord/djs';
+
+class UserFilter extends AbstractSessionUpdateFilter<unknown> {
+  public async check(
+    session: Session<unknown, DjsInteractionTypes>,
+    interaction: DjsSessionUpdateInteraction,
+    meta: Metadata
+  ): Promise<boolean> {
+    const startInteraction = session.getStartInteraction();
+    if (!startInteraction) return true;
+
+    // Check if the user who interacted is the same as the one who started the session
+    return interaction.user.id === startInteraction.user.id;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions/djs-core';
+import type { Session, CoreSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes, Metadata } from '@nyx-discord/djs-core';
+
+class UserFilter extends AbstractSessionUpdateFilter<unknown> {
+  public async check(
+    session: Session<unknown, CoreInteractionTypes>,
+    interaction: CoreSessionUpdateInteraction,
+    meta: Metadata
+  ): Promise<boolean> {
+    const startInteraction = session.getStartInteraction();
+    if (!startInteraction) return true;
+
+    const user = interaction.data.user ?? interaction.data.member?.user;
+    const startUser = startInteraction.data.user ?? startInteraction.data.member?.user;
+
+    // Check if the user who interacted is the same as the one who started the session
+    return user?.id === startUser?.id;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+### Permission Filter [#permission-filter]
+
+A permission filter that checks if the user has the required permissions to interact with the session.
+
+<Tabs items={['discord.js', '@discordjs/core']}>
+  <Tab>
+```ts twoslash
+import { AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions/djs';
+import type { Session, DjsSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes, Metadata } from '@nyx-discord/djs';
+import { PermissionFlagsBits } from 'discord.js';
+
+class PermissionFilter extends AbstractSessionUpdateFilter<unknown> {
+  protected readonly requiredPermissions: bigint;
+
+  constructor(requiredPermissions: bigint) {
+    super();
+    this.requiredPermissions = requiredPermissions;
+  }
+
+  public async check(
+    session: Session<unknown, DjsInteractionTypes>,
+    interaction: DjsSessionUpdateInteraction,
+    meta: Metadata
+  ): Promise<boolean> {
+    if (!interaction.member || !interaction.inCachedGuild()) {
+      return false;
+    }
+
+    return interaction.member.permissions.has(this.requiredPermissions);
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions/djs-core';
+import type { Session, CoreSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+import type { CoreInteractionTypes, Metadata } from '@nyx-discord/djs-core';
+import { PermissionFlagsBits } from 'discord.js';
+
+class PermissionFilter extends AbstractSessionUpdateFilter<unknown> {
+  protected readonly requiredPermissions: bigint;
+
+  constructor(requiredPermissions: bigint) {
+    super();
+    this.requiredPermissions = requiredPermissions;
+  }
+
+  public async check(
+    session: Session<unknown, CoreInteractionTypes>,
+    interaction: CoreSessionUpdateInteraction,
+    meta: Metadata
+  ): Promise<boolean> {
+    const member = interaction.data.member;
+    if (!member) {
+      return false;
+    }
+
+    const permissions = BigInt(member.permissions);
+    return (permissions & this.requiredPermissions) === this.requiredPermissions;
+  }
+}
+```
+  </Tab>
+</Tabs>

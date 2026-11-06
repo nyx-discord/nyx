@@ -1,0 +1,52 @@
+# Events Internals (https://nyx-discord.github.io/nyx/guide@v3/extend/events)
+
+The events system is made up of several components that work together to detect and dispatch events.
+
+## Event system components [#event-system-components]
+
+Specifically, these components are:
+
+- [`EventDispatcher`](/extend/events/dispatcher): Coordinates middleware checks and subscriber execution for each dispatch.
+- [`EventBus`](/extend/events/bus): Stores subscribers and emits events.
+- [`EventSubscriber`](/use/events/subscriber): Receives events and executes logic.
+
+## Execution Sequence [#execution-sequence]
+
+The following diagrams show the event flow in focused stages. You can check the guide of each component to see exactly how it works, or how to replace it.
+
+<Callout title="Diagram usage">
+- You can zoom and drag on the diagram.
+- A dashed step means it's executed through a non awaited (but caught) Promise, so the next one is inmediately executed if there's an I/O operation in the step.
+- You can hover over steps with `(?)` to see extra details.
+- If a step goes to a target, and that target doesn't continue the flow, then it's an immediate return, like a getter call.
+</Callout>
+
+<Steps>
+<Step>
+### Event emit [#event-emit]
+
+When an object emits an event through an [`EventBus`](/use/events/buses), the bus resolves subscribers and delegates execution to the dispatcher:
+
+<EventEmitDiagram />
+
+</Step>
+<Step>
+### Middleware gate [#middleware-gate]
+
+Before subscribers are executed, the [`EventDispatcher`](/extend/events/dispatcher) checks the event middleware list:
+
+<EventOverviewDiagram />
+
+</Step>
+<Step>
+### Subscriber dispatch [#subscriber-dispatch]
+
+If middleware allows the dispatch, each [`EventSubscriber`](/use/events/subscribers) is executed and thrown errors are forwarded to the error handler:
+
+<EventSubscriberDispatchDiagram />
+
+</Step>
+
+</Steps>
+
+Next, see the documentation of each component, where you'll find what it does and how to replace it.
