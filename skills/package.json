@@ -1,0 +1,25 @@
+{
+  "name": "@repo/skills",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Agent skills for nyx. Only the skill folders are installed by users; this package typechecks their examples.",
+  "type": "module",
+  "scripts": {
+    "check-types": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@discordjs/core": "^2.6.0",
+    "@discordjs/rest": "^2.6.3",
+    "@discordjs/ws": "^2.0.4",
+    "@nyx-discord/base": "workspace:*",
+    "@nyx-discord/djs": "workspace:*",
+    "@nyx-discord/djs-core": "workspace:*",
+    "@nyx-discord/loaders": "workspace:*",
+    "@nyx-discord/plugin-sessions": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "24.3.0",
+    "discord.js": "^14.22.1",
+    "typescript": "5.9.2"
+  }
+}

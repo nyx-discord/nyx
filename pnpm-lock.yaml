@@ -160,7 +160,7 @@ importers:
         version: 16.18.0(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(algoliasearch@5.36.0)(lucide-react@1.69.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.5(@babel/core@7.29.0)(@types/node@24.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)
       fumadocs-mdx:
         specifier: 15.5.0
-        version: 15.5.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.18.0(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(algoliasearch@5.36.0)(lucide-react@1.69.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.5(@babel/core@7.29.0)(@types/node@24.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.5(@babel/core@7.29.0)(@types/node@24.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)
+        version: 15.5.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.18.0(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(algoliasearch@5.36.0)(lucide-react@1.69.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.5(@babel/core@7.29.0)(@types/node@24.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.5(@babel/core@7.29.0)(@types/node@24.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)(vite@6.3.5(@types/node@18.19.130)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.43.1)(yaml@2.9.1))
       fumadocs-twoslash:
         specifier: 4.0.4
         version: 4.0.4(bxcy2ft32tqrpui4bopccyfmju)
@@ -450,6 +450,45 @@ importers:
         version: 14.22.1
 
   packages/typedoc-plugin-entities: {}
+
+  skills:
+    devDependencies:
+      '@discordjs/core':
+        specifier: ^2.6.0
+        version: 2.6.0
+      '@discordjs/rest':
+        specifier: ^2.6.3
+        version: 2.6.3
+      '@discordjs/ws':
+        specifier: ^2.0.4
+        version: 2.0.4
+      '@nyx-discord/base':
+        specifier: workspace:*
+        version: link:../packages/base
+      '@nyx-discord/djs':
+        specifier: workspace:*
+        version: link:../packages/djs
+      '@nyx-discord/djs-core':
+        specifier: workspace:*
+        version: link:../packages/djs-core
+      '@nyx-discord/loaders':
+        specifier: workspace:*
+        version: link:../packages/loaders
+      '@nyx-discord/plugin-sessions':
+        specifier: workspace:*
+        version: link:../packages/plugin-sessions
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../configs/typescript-config
+      '@types/node':
+        specifier: 24.3.0
+        version: 24.3.0
+      discord.js:
+        specifier: ^14.22.1
+        version: 14.22.1
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
 
 packages:
 
@@ -4309,9 +4348,6 @@ packages:
   dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
     engines: {node: '>=8'}
-
-  discord-api-types@0.38.53:
-    resolution: {integrity: sha512-HL1zz/UuZ+bbJjA/X8Kbxx9gk8v9rJAbTeWRNYKmIdjwJ7EovjlHgoJTxcLpATfNJ+AonOtMdy3Y5MVIJAAd/A==}
 
   discord-api-types@0.38.57:
     resolution: {integrity: sha512-R1CTSSt4RshqCq23j2Xq2ZscvzB4LzG9OB1CYQdKUGdw8Ti/oF/72EEtK2mNpagG/Vj9NcBT7dw9lKLf+Dacfg==}
@@ -8431,7 +8467,7 @@ snapshots:
       '@discordjs/formatters': 0.6.1
       '@discordjs/util': 1.2.0
       '@sapphire/shapeshift': 4.0.0
-      discord-api-types: 0.38.53
+      discord-api-types: 0.38.57
       fast-deep-equal: 3.1.3
       ts-mixer: 6.0.4
       tslib: 2.8.1
@@ -8447,7 +8483,7 @@ snapshots:
       '@discordjs/ws': 2.0.4
       '@sapphire/snowflake': 3.5.5
       '@vladfrangu/async_event_emitter': 2.4.6
-      discord-api-types: 0.38.53
+      discord-api-types: 0.38.57
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -8463,7 +8499,7 @@ snapshots:
       '@sapphire/async-queue': 1.5.5
       '@sapphire/snowflake': 3.5.5
       '@vladfrangu/async_event_emitter': 2.4.6
-      discord-api-types: 0.38.53
+      discord-api-types: 0.38.57
       magic-bytes.js: 1.13.1
       tslib: 2.8.1
       undici: 6.28.0
@@ -8495,7 +8531,7 @@ snapshots:
       '@sapphire/async-queue': 1.5.5
       '@types/ws': 8.18.1
       '@vladfrangu/async_event_emitter': 2.4.6
-      discord-api-types: 0.38.53
+      discord-api-types: 0.38.57
       tslib: 2.8.1
       ws: 8.18.3
     transitivePeerDependencies:
@@ -11844,8 +11880,6 @@ snapshots:
     dependencies:
       path-type: 4.0.0
 
-  discord-api-types@0.38.53: {}
-
   discord-api-types@0.38.57: {}
 
   discord.js@14.22.1:
@@ -11857,7 +11891,7 @@ snapshots:
       '@discordjs/util': 1.2.0
       '@discordjs/ws': 1.2.3
       '@sapphire/snowflake': 3.5.3
-      discord-api-types: 0.38.53
+      discord-api-types: 0.38.57
       fast-deep-equal: 3.1.3
       lodash.snakecase: 4.1.1
       magic-bytes.js: 1.13.1
@@ -12738,7 +12772,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-mdx@15.5.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.18.0(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(algoliasearch@5.36.0)(lucide-react@1.69.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.5(@babel/core@7.29.0)(@types/node@24.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.5(@babel/core@7.29.0)(@types/node@24.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1):
+  fumadocs-mdx@15.5.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.18.0(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(algoliasearch@5.36.0)(lucide-react@1.69.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.5(@babel/core@7.29.0)(@types/node@24.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.5(@babel/core@7.29.0)(@types/node@24.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)(vite@6.3.5(@types/node@18.19.130)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.43.1)(yaml@2.9.1)):
     dependencies:
       '@mdx-js/mdx': 3.1.1
       '@standard-schema/spec': 1.1.0
@@ -12765,6 +12799,7 @@ snapshots:
       '@types/react': 19.3.0
       next: 16.4.5(@babel/core@7.29.0)(@types/node@24.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       react: 19.3.1
+      vite: 6.3.5(@types/node@18.19.130)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.43.1)(yaml@2.9.1)
     transitivePeerDependencies:
       - supports-color
 
