@@ -21,7 +21,7 @@ We also recommend using a formatter like [Prettier](https://www.prettier.io/) an
 
 ### Installing
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```npm
     npm i @nyx-discord/djs discord.js
@@ -30,6 +30,11 @@ We also recommend using a formatter like [Prettier](https://www.prettier.io/) an
   <Tab>
 ```npm
     npm i @nyx-discord/djs-core @discordjs/core @discordjs/rest @discordjs/ws
+```
+  </Tab>
+  <Tab>
+```npm
+    npm i @nyx-discord/http @discordjs/core
 ```
   </Tab>
 </Tabs>
@@ -41,7 +46,7 @@ We also recommend using a formatter like [Prettier](https://www.prettier.io/) an
 
 You'll need a client, which will depend on the adapter you're using. It can be any client, as long as it's not logged in or destroyed.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
     import { Client, GatewayIntentBits } from 'discord.js';
@@ -64,6 +69,9 @@ You'll need a client, which will depend on the adapter you're using. It can be a
     const client = new Client({ rest, gateway });
 ```
   </Tab>
+  <Tab>
+    No client needed: `HttpBot` creates it for you in the next step, from your application's ID and public key.
+  </Tab>
 </Tabs>
 
 </Step>
@@ -79,7 +87,7 @@ of your bot, including loading commands, managing events, and more.
 Create one with `Bot.create()`, which takes a function that gets passed the currently constructing bot
 instance, and should return the options that you want for the bot.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
     import { Bot, type NyxBot } from '@nyx-discord/djs';
@@ -111,6 +119,19 @@ instance, and should return the options that you want for the bot.
     const myBot = Bot.create((bot: NyxBot) => ({
       token: 'TOKEN',
       client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'),
+      logger: console, // Can be your own logger, see the NyxLogger docs
+      deployCommands: true, // Whether to deploy commands to Discord on start
+    }));
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+    import { HttpBot, type NyxBot } from '@nyx-discord/http';
+
+    const myBot = HttpBot.create((bot: NyxBot) => ({
+      applicationId: 'APPLICATION_ID',
+      publicKey: 'PUBLIC_KEY', // From the Developer Portal, used to verify requests
+      token: 'TOKEN',
       logger: console, // Can be your own logger, see the NyxLogger docs
       deployCommands: true, // Whether to deploy commands to Discord on start
     }));
@@ -159,7 +180,7 @@ instance, and should return the options that you want for the bot.
 
 Finally, to start it, simply call `.start()`. This will log in the client, set up event listeners, and get everything ready:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { Bot } from '@nyx-discord/djs';
@@ -176,6 +197,21 @@ import { Bot } from '@nyx-discord/djs-core';
 declare const myBot: Bot;
 // ---cut-end---
 await myBot.start();
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { HttpBot } from '@nyx-discord/http';
+// ---cut-start---
+declare const myBot: ReturnType<typeof HttpBot.create>;
+// ---cut-end---
+import { createServer } from 'node:http';
+import { toNodeListener } from '@nyx-discord/http';
+
+await myBot.start();
+
+// then pass Discord's requests to the client, see the HTTP Mounting page for other servers
+createServer(toNodeListener(myBot.getClient())).listen(3000);
 ```
   </Tab>
 </Tabs>

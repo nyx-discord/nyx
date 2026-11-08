@@ -6,13 +6,14 @@ icon: Package
 
 ## Structure
 
-The framework is split into three packages:
+The framework is split into these packages:
 
 | Package                       | Purpose                                                                                                                            |
 |-------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | `@nyx-discord/base`           | Defines all the object templates (interfaces) and their relations, and provides default, minimal implementations of them.          |
 | `@nyx-discord/djs`            | The [discord.js](https://discord.js.org) adapter, connecting the framework to a discord.js `Client`.                                |
 | `@nyx-discord/djs-core`       | The [@discordjs/core](https://discord.js.org/docs/packages/core/main) adapter, connecting the framework to a raw `Client`.          |
+| `@nyx-discord/http`           | Runs the `@discordjs/core` adapter over HTTP, receiving interactions from your own server instead of the gateway.                  |
 
 Every component depends on the interfaces rather than on the default implementations, so you can replace any of them with your own. The adapters only exist to plug the framework into a specific Discord library.
 
@@ -20,7 +21,7 @@ Every component depends on the interfaces rather than on the default implementat
 
 Most of the time, you'll want to use an adapter, depending on the library your bot uses:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
     If your bot uses [discord.js](https://discord.js.org), install `@nyx-discord/djs`:
 
@@ -35,12 +36,23 @@ Most of the time, you'll want to use an adapter, depending on the library your b
     npm i @nyx-discord/djs-core @discordjs/core @discordjs/rest @discordjs/ws
 ```
   </Tab>
+  <Tab>
+    If your bot only needs interactions (commands, components, modals) and should receive them over HTTP, for example on a
+    serverless platform, install `@nyx-discord/http`. It runs the `@discordjs/core` adapter without a gateway connection,
+    see [HTTP](/use/http):
+
+```npm
+    npm i @nyx-discord/http @discordjs/core
+```
+  </Tab>
 </Tabs>
 
-Both adapters re-export `base`, so you can import everything from a single package.
+Both adapters re-export `base`, and `@nyx-discord/http` re-exports `@nyx-discord/djs-core`, so you can import everything from a single package.
 
 <Callout>
   Throughout this guide, code examples use `@nyx-discord/djs` by default. If you use `@discordjs/core`, simply swap the import to `@nyx-discord/djs-core`: the library-agnostic APIs (filters, middlewares, schedules, plugins, events) are identical, and only the parts that touch Discord's client or interactions differ.
+
+  If you use `@nyx-discord/http`, follow the `@discordjs/core` examples, importing from `@nyx-discord/http` instead. Examples include an HTTP tab wherever the two differ.
 </Callout>
 
 If you want to develop something for nyx, such as a plugin, you can use `@nyx-discord/base` and depend only on its interfaces (see [Object nomenclature](#object-nomenclature)), not on any actual implementation. This ensures your component will work across all adapters.

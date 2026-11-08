@@ -57,7 +57,7 @@ class MyScheduleManager extends DefaultScheduleManager {
 
 Then you can pass it to your bot:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { Client } from 'discord.js';
@@ -111,6 +111,36 @@ const myBot = Bot.create((bot: NyxBot) => ({
   // ---cut-start---
   token: 'TOKEN',
   client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'),
+  logger: console,
+  deployCommands: true,
+  // @ts-expect-error Incomplete example
+  // ---cut-end---
+  // ... other options
+  scheduleManager: new MyScheduleManager(/** ... */),
+}));
+
+const manager = myBot.getScheduleManager();
+const result = manager.myCustomPublicMethod();
+//     ^?
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleManager } from '@nyx-discord/http';
+
+class MyScheduleManager extends DefaultScheduleManager {
+  public myCustomPublicMethod() {
+    return 'I work!' as const;
+  }
+}
+// ---cut---
+import { HttpBot, type NyxBot } from '@nyx-discord/http';
+
+const myBot = HttpBot.create((bot: NyxBot) => ({
+  // ---cut-start---
+  applicationId: 'APPLICATION_ID',
+  publicKey: 'PUBLIC_KEY',
+  token: 'TOKEN',
   logger: console,
   deployCommands: true,
   // @ts-expect-error Incomplete example

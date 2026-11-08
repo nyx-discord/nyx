@@ -9,6 +9,11 @@ The event system in nyx is powered by [EventBuses](/use/events/buses). These are
 
 You can see them as a more batteries-included way of handling events than using the native Node.js `EventEmitter`.
 
+<Callout>
+  HTTP bots (`@nyx-discord/http`) have no gateway connection, so their client only emits `InteractionCreate`, plus
+  [webhook events](/use/http/webhook-events) if you set them up. Subscribers to other client events never fire.
+</Callout>
+
 ## Quick example
 
 <Tabs items={['discord.js', '@discordjs/core']}>

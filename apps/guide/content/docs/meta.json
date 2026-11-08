@@ -1,3 +1,3 @@
 {
-  "pages": ["use", "extend", "session", "loaders", "http"]
+  "pages": ["use", "extend", "session", "loaders"]
 }

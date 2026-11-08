@@ -16,9 +16,9 @@ Every request goes through the same checks before it reaches your bot:
 | Body that isn't valid JSON                        | `400`                  |
 | Interaction `PING` (Discord checking your URL)    | `200` with a `PONG`    |
 | Any other interaction                             | `202` with no body     |
-| [Webhook event](/http/webhook-events) or its `PING` | `204` with no body   |
+| [Webhook event](/use/http/webhook-events) or its `PING` | `204` with no body   |
 
-Rejecting old timestamps protects against replayed requests: someone who captured a valid request can't send it again later. The window is 5 minutes by default, see [Configuration](/http/configuration).
+Rejecting old timestamps protects against replayed requests: someone who captured a valid request can't send it again later. The window is 5 minutes by default, see [Configuration](/use/http/configuration).
 
 ## Replying to interactions
 

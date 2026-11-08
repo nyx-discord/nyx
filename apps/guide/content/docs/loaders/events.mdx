@@ -125,7 +125,7 @@ EventBus subscribers (`events.bus`) cannot be registered automatically, so you n
 
 Any class extending one of the six abstract subscriber base classes will be detected:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractDJSClientSubscriber, type Metadata } from '@nyx-discord/djs';
@@ -154,6 +154,21 @@ export class ReadySubscriber extends AbstractCoreClientSubscriber<typeof Gateway
 }
 ```
   </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/http';
+import { type APIInteraction, type ToEventProps, GatewayDispatchEvents } from '@discordjs/core';
+
+// gateway events like Ready never fire over HTTP, but interactions do
+export class InteractionLogSubscriber extends AbstractCoreClientSubscriber<typeof GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+  public handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {
+    console.log(`Received interaction ${payload.data.id}`);
+  }
+}
+```
+  </Tab>
 </Tabs>
 
 <Callout>
@@ -162,7 +177,7 @@ Top-level subscribers are instantiated with <code>new Class()</code> (no argumen
 
 Alternatively, you can specify a `static create(bot)` factory:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractDJSClientSubscriber } from '@nyx-discord/djs';
@@ -199,6 +214,26 @@ export class ReadySubscriber extends AbstractCoreClientSubscriber<typeof Gateway
   // ...
   // ---cut-start---
   public handleEvent(meta: Metadata, payload: ToEventProps<GatewayReadyDispatchData>) {}
+  // ---cut-end---
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractCoreClientSubscriber } from '@nyx-discord/http';
+import type { Bot, Metadata } from '@nyx-discord/http';
+import { type APIInteraction, type ToEventProps, GatewayDispatchEvents } from '@discordjs/core';
+
+export class InteractionLogSubscriber extends AbstractCoreClientSubscriber<typeof GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+  public static create(bot: Bot) {
+    return new InteractionLogSubscriber();
+  }
+
+  // ...
+  // ---cut-start---
+  public handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {}
   // ---cut-end---
 }
 ```
