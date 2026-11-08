@@ -385,6 +385,34 @@ importers:
         specifier: workspace:*
         version: link:../../configs/vitest-config
 
+  packages/http:
+    dependencies:
+      '@discordjs/core':
+        specifier: ^2.6.0
+        version: 2.6.0
+      '@discordjs/rest':
+        specifier: ^2.6.3
+        version: 2.6.3
+      '@nyx-discord/djs-core':
+        specifier: workspace:*
+        version: link:../djs-core
+      '@vladfrangu/async_event_emitter':
+        specifier: ^2.4.6
+        version: 2.4.6
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
+      '@repo/typedoc-config':
+        specifier: workspace:*
+        version: link:../../configs/typedoc-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript-config
+      '@repo/vitest-config':
+        specifier: workspace:*
+        version: link:../../configs/vitest-config
+
   packages/loaders:
     devDependencies:
       '@nyx-discord/base':

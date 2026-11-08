@@ -1,6 +1,7 @@
-import type { Client, MappedEvents } from '@discordjs/core';
+import type { MappedEvents } from '@discordjs/core';
 import type {
   BotOptions,
+  EventEmitterLike,
   InjectableBotDependencies,
   NyxBot,
 } from '@nyx-discord/base';
@@ -12,7 +13,7 @@ import {
   DefaultPluginManager,
   DefaultScheduleManager,
 } from '@nyx-discord/base';
-import type { CoreNyxClient } from '../client/CoreNyxClient.js';
+import type { CoreClient } from '../client/CoreClient.js';
 import { DefaultCommandManager } from '../features/command/DefaultCommandManager.js';
 import { TypedFields } from '../fields/TypedFields';
 import type { CoreInteractionTypes } from '../types/CoreInteractionTypes.js';
@@ -20,7 +21,7 @@ import type { CoreInteractionTypes } from '../types/CoreInteractionTypes.js';
 /** Dependencies of an @discordjs/core bot, which type its getters (`getClient()`, `getCommandManager()`...). */
 export type CoreBotDependencies = InjectableBotDependencies<
   CoreInteractionTypes,
-  CoreNyxClient,
+  CoreClient,
   MappedEvents
 >;
 
@@ -63,7 +64,7 @@ export class CoreBot<
 
   public static readonly DefaultOptionsGenerator = (
     bot: NyxBot,
-    client: CoreNyxClient,
+    client: CoreClient,
   ) => {
     const metaFactory = DefaultMetadataFactory.createWith(
       [TypedFields.Bot, bot],
@@ -71,7 +72,7 @@ export class CoreBot<
     );
     const clientBus = BasicEventEmitterBus.createSyncWithEmitter<
       MappedEvents,
-      Client
+      EventEmitterLike
     >(client.getEmitter(), metaFactory);
 
     return {

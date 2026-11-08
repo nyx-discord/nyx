@@ -1,9 +1,9 @@
 import type { API, Client } from '@discordjs/core';
 import type { WebSocketManager } from '@discordjs/ws';
-import type { NyxClient } from '@nyx-discord/base';
+import type { CoreClient } from './CoreClient.js';
 
-/** A {@link NyxClient} backed by a @discordjs/core {@link Client}. */
-export class CoreNyxClient implements NyxClient<Client> {
+/** A {@link CoreClient} backed by a @discordjs/core gateway {@link Client}. */
+export class CoreNyxClient implements CoreClient<Client> {
   protected readonly client: Client;
 
   protected readonly gateway: WebSocketManager;
@@ -20,10 +20,6 @@ export class CoreNyxClient implements NyxClient<Client> {
     this.applicationId = applicationId;
   }
 
-  public getEmitter(): Client {
-    return this.client;
-  }
-
   public login(): Promise<void> {
     return this.gateway.connect();
   }
@@ -32,12 +28,14 @@ export class CoreNyxClient implements NyxClient<Client> {
     return Promise.resolve(this.gateway.destroy());
   }
 
-  /** Returns the @discordjs/core REST API. */
+  public getEmitter(): Client {
+    return this.client;
+  }
+
   public getApi(): API {
     return this.client.api;
   }
 
-  /** Returns the bot's application ID. */
   public getApplicationId(): string {
     return this.applicationId;
   }

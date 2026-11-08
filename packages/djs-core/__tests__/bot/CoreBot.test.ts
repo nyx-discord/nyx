@@ -17,7 +17,7 @@ import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import {
   CoreBot,
   type CoreInteractionTypes,
-  type CoreNyxClient,
+  type CoreClient,
   DefaultCommandManager,
 } from '../../src';
 
@@ -27,7 +27,7 @@ function createMockCoreClient() {
     getEmitter: () => emitter,
     getApi: () => ({ applicationCommands: {} }),
     getApplicationId: () => '123',
-  } as unknown as CoreNyxClient;
+  } as unknown as CoreClient;
 }
 
 describe('CoreBot', () => {
@@ -52,7 +52,7 @@ describe('CoreBot', () => {
       expect(bot.getToken()).toBe('test-token');
 
       expectTypeOf(bot).toExtend<NyxBot<any>>();
-      expectTypeOf(bot.getClient()).toEqualTypeOf<CoreNyxClient>();
+      expectTypeOf(bot.getClient()).toEqualTypeOf<CoreClient>();
       expectTypeOf(bot.getCommandManager()).toEqualTypeOf<
         CommandManager<CoreInteractionTypes, MappedEvents>
       >();

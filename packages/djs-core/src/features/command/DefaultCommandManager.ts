@@ -35,7 +35,7 @@ import {
   IllegalStateError,
   TypedFields,
 } from '@nyx-discord/base';
-import type { CoreNyxClient } from '../../client/CoreNyxClient.js';
+import type { CoreClient } from '../../client/CoreClient.js';
 import type { CoreInteractionTypes } from '../../types/CoreInteractionTypes.js';
 import { DefaultCommandDeployer } from './deploy/DefaultCommandDeployer.js';
 import { DefaultCommandAutocompleteSubscriber } from './events/DefaultCommandAutocompleteSubscriber.js';
@@ -88,7 +88,7 @@ export class DefaultCommandManager implements CommandManager<
 
   public static create(options: {
     bot: NyxBot;
-    client: CoreNyxClient;
+    client: CoreClient;
     clientBus: EventBus<MappedEvents>;
     injections?: Partial<CommandManagerOptions>;
   }): CommandManager<CoreInteractionTypes, MappedEvents> {

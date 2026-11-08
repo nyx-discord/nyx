@@ -8,6 +8,7 @@
     "build:djs": "turbo run build --filter=@nyx-discord/djs",
     "build:guide": "turbo run build --filter=@nyx-discord/guide",
     "build:djs-core": "turbo run build --filter=@nyx-discord/djs-core",
+    "build:http": "turbo run build --filter=@nyx-discord/http",
     "build:loaders": "turbo run build --filter=@nyx-discord/loaders",
     "build:typed-options": "turbo run build --filter=@nyx-discord/typed-options",
     "build:plugin-sessions": "turbo run build --filter=@nyx-discord/plugin-sessions",
