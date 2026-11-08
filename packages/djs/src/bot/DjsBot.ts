@@ -76,10 +76,10 @@ export class DjsBot<
     bot: NyxBot,
     client: Client,
   ) => {
-    const metaFactory = DefaultMetadataFactory.createWith(
-      [TypedFields.Bot, bot],
-      [TypedFields.DjsBot, bot as unknown as DjsBot],
-    );
+    const metaFactory = DefaultMetadataFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]);
     const clientBus = BasicEventEmitterBus.createSyncWithEmitter<
       ClientEvents,
       Client

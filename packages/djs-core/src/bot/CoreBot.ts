@@ -66,10 +66,10 @@ export class CoreBot<
     bot: NyxBot,
     client: CoreClient,
   ) => {
-    const metaFactory = DefaultMetadataFactory.createWith(
-      [TypedFields.Bot, bot],
-      [TypedFields.CoreBot, bot as unknown as CoreBot],
-    );
+    const metaFactory = DefaultMetadataFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]);
     const clientBus = BasicEventEmitterBus.createSyncWithEmitter<
       MappedEvents,
       EventEmitterLike

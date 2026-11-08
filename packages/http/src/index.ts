@@ -10,8 +10,10 @@ export * from './client/HttpNyxClient';
 export * from './endpoint/HttpEndpointHandler';
 export * from './endpoint/HttpEndpointRequest';
 export * from './endpoint/HttpEndpointResult';
+export * from './fields/TypedFields';
 export * from './verify/DefaultSignatureVerifier';
 export * from './verify/SignatureVerifier';
 export * from './webhook/WebhookEventProps';
 
+export { TypedFields } from './fields/TypedFields';
 export * from '@nyx-discord/djs-core';

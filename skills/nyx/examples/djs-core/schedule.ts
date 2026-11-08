@@ -7,12 +7,15 @@ export class PresenceSchedule extends AbstractSchedule {
   protected readonly interval = '*/30 * * * *';
 
   public async tick(meta: Metadata) {
-    // TypedFields.CoreBot is typed for @discordjs/core; TypedFields.Bot is the adapter-agnostic NyxBot.
-    const bot = TypedFields.CoreBot.get(meta, true);
-    const guilds = await bot.getClient().getApi().users.getGuilds({ with_counts: true });
+    // TypedFields.GatewayCoreBot types the client as the gateway CoreNyxClient, which presences need.
+    // TypedFields.CoreBot types it as the CoreClient interface; TypedFields.Bot is the adapter-agnostic NyxBot.
+    const bot = TypedFields.GatewayCoreBot.get(meta, true);
+    const client = bot.getClient();
+
+    const guilds = await client.getApi().users.getGuilds({ with_counts: true });
     const members = guilds.reduce((total, guild) => total + (guild.approximate_member_count ?? 0), 0);
 
-    await bot.getClient().getEmitter().updatePresence(0, {
+    await client.getEmitter().updatePresence(0, {
       since: null,
       afk: false,
       status: PresenceUpdateStatus.Online,
