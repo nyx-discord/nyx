@@ -41,10 +41,7 @@ type ChannelTypesOf<Def> = Def extends {
   ? Types
   : ChannelType;
 
-/**
- * Getters checked against the option definitions `Options`, returning the values `Values` of a
- * library. Names are checked per option kind, and required options are non-null.
- */
+/** Getters checked against the option definitions `Options` by name and kind, returning the `Values` of a library. */
 export interface TypedOptions<
   Options extends OptionRecord,
   Values extends ValueMap,

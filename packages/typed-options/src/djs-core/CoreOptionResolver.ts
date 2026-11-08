@@ -37,12 +37,7 @@ function collect(
   return collected;
 }
 
-/**
- * Reads options out of a raw interaction payload, descending into subcommands and looking up
- * `resolved` by id. Missing options are `null`.
- *
- * Untyped on purpose: `typedOptions` narrows it by the command data.
- */
+/** Reads options out of a raw interaction payload, descending into subcommands and looking up `resolved` by id. */
 export class CoreOptionResolver {
   protected readonly options = new Map<string, BasicOption>();
 

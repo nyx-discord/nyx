@@ -4,10 +4,7 @@ import type { OptionRecord } from '../../definition/OptionRecord';
 import { toApiOptions } from '../toApiOptions';
 import type { SubcommandData } from './SubcommandData';
 
-/**
- * Creates a subcommand whose options are inferred by name. Pass the subcommand's own data to
- * `typedOptions` to read them.
- */
+/** Creates a subcommand whose options are inferred by name, which `typedOptions` reads when given this data. */
 export function subcommand<
   const Options extends OptionRecord = NoOptions,
 >(data: {
