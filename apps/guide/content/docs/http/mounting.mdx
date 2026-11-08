@@ -1,0 +1,132 @@
+---
+title: Mounting
+description: Connect the client to your server or runtime.
+icon: Plug
+---
+
+The client exposes one method, `handle()`, which takes a request and returns the response to send. The package also includes two adapters for the most common signatures:
+
+| Adapter          | Signature                                                         | Use it with                                       |
+|------------------|-------------------------------------------------------------------|---------------------------------------------------|
+| `toNodeListener` | `(req: IncomingMessage, res: ServerResponse) => Promise<void>`     | `node:http`, Express                              |
+| `toFetchHandler` | `(request: Request) => Promise<Response>`                          | Hono, Cloudflare Workers, Bun, Deno, Next.js      |
+
+Both answer non-`POST` requests with `405`.
+
+<Callout type="warn">
+  Discord's signature is checked against the **raw** request body. Make sure nothing parses the body before the client sees it, like `express.json()` or Fastify's default JSON parser.
+</Callout>
+
+## node:http
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+// ---cut---
+import { createServer } from 'node:http';
+import { toNodeListener } from '@nyx-discord/http';
+
+createServer(toNodeListener(client)).listen(3000);
+```
+
+## Express
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+import type { RequestListener } from 'node:http';
+declare const client: HttpNyxClient;
+declare const app: { post(path: string, handler: RequestListener): void };
+// ---cut---
+import { toNodeListener } from '@nyx-discord/http';
+
+// no express.json() on this route
+app.post('/interactions', toNodeListener(client));
+```
+
+## Fastify
+
+Fastify parses JSON by default, so register a parser that keeps the body as a `Buffer`, and call `handle()` directly:
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+type Request = { body: unknown; headers: Record<string, string | undefined> };
+type Reply = { code(status: number): Reply; headers(headers: Record<string, string>): Reply; send(body: string): Reply };
+declare const app: {
+  addContentTypeParser(type: string, options: { parseAs: 'buffer' }, parser: (req: Request, body: Buffer, done: (error: null, body: Buffer) => void) => void): void;
+  post(path: string, handler: (req: Request, reply: Reply) => Promise<Reply>): void;
+};
+// ---cut---
+app.addContentTypeParser('application/json', { parseAs: 'buffer' }, (_req, body, done) => done(null, body));
+
+app.post('/interactions', async (req, reply) => {
+  const result = await client.handle({
+    body: req.body as Buffer,
+    signature: req.headers['x-signature-ed25519'],
+    timestamp: req.headers['x-signature-timestamp'],
+  });
+
+  return reply.code(result.status).headers(result.headers).send(result.body);
+});
+```
+
+## Hono
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+declare const app: { post(path: string, handler: (c: { req: { raw: Request } }) => Promise<Response>): void };
+// ---cut---
+import { toFetchHandler } from '@nyx-discord/http';
+
+const interactions = toFetchHandler(client);
+
+app.post('/interactions', (c) => interactions(c.req.raw));
+```
+
+## Cloudflare Workers, Bun and Deno
+
+All three accept a default export with a `fetch` handler:
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+// ---cut---
+import { toFetchHandler } from '@nyx-discord/http';
+
+export default { fetch: toFetchHandler(client) };
+```
+
+## Next.js
+
+In a route handler, like `app/interactions/route.ts`:
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+// ---cut---
+import { toFetchHandler } from '@nyx-discord/http';
+
+export const POST = toFetchHandler(client);
+```
+
+## Anything else
+
+Call `handle()` with the raw body (a `string` or `Uint8Array`) and the two signature headers, then send back what it returns:
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+declare const rawBody: Uint8Array;
+declare const headers: Record<string, string | undefined>;
+// ---cut---
+const result = await client.handle({
+  body: rawBody,
+  signature: headers['x-signature-ed25519'],
+  timestamp: headers['x-signature-timestamp'],
+});
+
+result.status; // the status code
+result.headers; // the headers to set
+result.body; // the body, empty when there's none
+```

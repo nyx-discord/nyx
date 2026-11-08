@@ -1,0 +1,7 @@
+{
+  "title": "HTTP",
+  "description": "Receive interactions and webhook events over HTTP.",
+  "root": true,
+  "icon": "Globe",
+  "pages": ["index", "mounting", "requests", "webhook-events", "configuration"]
+}

@@ -48,7 +48,8 @@ class MemberCountSchedule extends AbstractSchedule {
   protected readonly interval = '*/30 * * * *';
 
   public async tick(meta: Metadata) {
-    const bot = TypedFields.CoreBot.get(meta, true);
+    // GatewayCoreBot types the client as a gateway CoreNyxClient, which presences need
+    const bot = TypedFields.GatewayCoreBot.get(meta, true);
     const client = bot.getClient().getEmitter();
     const api = bot.getClient().getApi();
 

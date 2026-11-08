@@ -23,7 +23,10 @@ export class HttpBot {
     Implementations extends Partial<Omit<CoreBotDependencies, 'client'>>,
   >(
     generator: (bot: NyxBot) => HttpBotOptions<Implementations>,
-  ): NyxBot<CoreBotDependencies & Implementations & { client: HttpNyxClient }> {
+  ): NyxBot<
+    Omit<CoreBotDependencies, 'client'>
+      & Implementations & { client: HttpNyxClient }
+  > {
     return CoreBot.create((bot) => {
       const { applicationId, publicKey, clientInjections, ...options } =
         generator(bot);

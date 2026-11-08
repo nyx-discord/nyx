@@ -216,6 +216,9 @@ importers:
       '@nyx-discord/djs-core':
         specifier: workspace:*
         version: link:../../packages/djs-core
+      '@nyx-discord/http':
+        specifier: workspace:*
+        version: link:../../packages/http
       '@nyx-discord/loaders':
         specifier: workspace:*
         version: link:../../packages/loaders

@@ -72,7 +72,7 @@ describe('HttpBot', () => {
     expect(bot).toBeInstanceOf(CoreBot);
     expect(bot.getClient()).toBeInstanceOf(HttpNyxClient);
     expect(bot.getClient().getApplicationId()).toBe('123');
-    expectTypeOf(bot.getClient()).toExtend<HttpNyxClient>();
+    expectTypeOf(bot.getClient()).toEqualTypeOf<HttpNyxClient>();
   });
 
   test('GIVEN a started bot WHEN a signed command arrives THEN the command replies through the callback before handle resolves', async () => {
