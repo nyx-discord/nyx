@@ -9,6 +9,7 @@
     "build:guide": "turbo run build --filter=@nyx-discord/guide",
     "build:djs-core": "turbo run build --filter=@nyx-discord/djs-core",
     "build:loaders": "turbo run build --filter=@nyx-discord/loaders",
+    "build:typed-options": "turbo run build --filter=@nyx-discord/typed-options",
     "build:plugin-sessions": "turbo run build --filter=@nyx-discord/plugin-sessions",
     "build:base": "turbo run build --filter=@nyx-discord/base",
     "pack:plugin-sessions": "pnpm build:plugin-sessions && pnpm -C packages/plugin-sessions pack",

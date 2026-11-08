@@ -1,0 +1,11 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "paths": {
+      "#mocks": ["./__tests__/mocks"],
+      "#mocks/*": ["./__tests__/mocks/*"]
+    }
+  },
+  "include": ["src", "__tests__"],
+  "exclude": ["node_modules", "dist"]
+}
