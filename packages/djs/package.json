@@ -60,6 +60,6 @@
     "discord.js": "^14.22.1"
   },
   "dependencies": {
-    "@nyx-discord/base": "workspace:*"
+    "@nyx-discord/base": "workspace:^"
   }
 }

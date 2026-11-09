@@ -44,6 +44,6 @@
     "@repo/vitest-config": "workspace:*"
   },
   "peerDependencies": {
-    "@nyx-discord/base": "workspace:*"
+    "@nyx-discord/base": "workspace:^"
   }
 }

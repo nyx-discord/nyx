@@ -103,9 +103,9 @@
   "dependencies": {
     "@discordjs/collection": "1.5.3",
     "@isaacs/ttlcache": "1.4.1",
-    "@nyx-discord/base": "workspace:*",
-    "@nyx-discord/djs": "workspace:*",
-    "@nyx-discord/djs-core": "workspace:*",
+    "@nyx-discord/base": "workspace:^",
+    "@nyx-discord/djs": "workspace:^",
+    "@nyx-discord/djs-core": "workspace:^",
     "@sapphire/string-store": "3.0.0"
   }
 }
