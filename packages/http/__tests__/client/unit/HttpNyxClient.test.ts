@@ -331,16 +331,15 @@ describe('HttpNyxClient (current request)', () => {
   });
 
   test('GIVEN concurrent requests WHEN their listeners are called THEN each sees its own request', async () => {
+    // verification is released by hand, so both requests are in flight and finish in a known order
+    const release = new Map<string, () => void>();
     const { client } = createClient({
       verifier: {
-        // resolves in different ticks, so the requests interleave
         verify: (body) =>
-          new Promise((resolve) =>
-            setTimeout(
-              () => resolve(true),
-              String(body).includes('"2"') ? 5 : 15,
-            ),
-          ),
+          new Promise((resolve) => {
+            const id = String(body).includes('"id":"2"') ? '2' : '1';
+            release.set(id, () => resolve(true));
+          }),
       },
     });
     await client.login();
@@ -353,7 +352,14 @@ describe('HttpNyxClient (current request)', () => {
     const first = request({ ...CommandInteraction, id: '1' });
     const second = request({ ...CommandInteraction, id: '2' });
 
-    await Promise.all([client.handle(first), client.handle(second)]);
+    const handlingFirst = client.handle(first);
+    const handlingSecond = client.handle(second);
+    await vi.waitFor(() => expect(release.size).toBe(2));
+
+    release.get('2')!();
+    await handlingSecond;
+    release.get('1')!();
+    await handlingFirst;
 
     expect(seen).toEqual([
       ['2', second],
