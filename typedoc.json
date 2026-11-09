@@ -8,7 +8,7 @@
   "customTitle": "nyx Typedoc",
   "customDescription": "Typedoc documentation of the nyx framework",
   "entryPointStrategy": "packages",
-  "hostedBaseUrl": "https://nyx-discord.github.io/nyx/typedoc",
+  "hostedBaseUrl": "https://nyx-discord.github.io/nyx/docs",
   "includeVersion": false,
   "out": "build/docs",
   "favicon": "assets/favicon.ico",

@@ -7,6 +7,9 @@ on:
       - 'v*'
     paths:
       - packages/**/src/**
+      - typedoc.json
+      - configs/typedoc-config/**
+      - .github/workflows/deploy-docs.yml
   workflow_dispatch:
 
 permissions:
@@ -20,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Use pnpm
         uses: pnpm/action-setup@v4
@@ -34,11 +37,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build base
-        run: pnpm exec lerna run build --scope=@nyx-discord/base
+      - name: Build packages
+        run: pnpm turbo run build --filter="./packages/*"
 
-      - name: Build docs
-        run: pnpm exec docs
+      - name: Build Typedoc
+        run: pnpm typedoc
 
       - name: Determine destination directory
         id: dest

@@ -21,7 +21,7 @@ The guide is published as Markdown for agents:
 - Index of every page: https://nyx-discord.github.io/nyx/guide/llms.txt
 - Any page as Markdown: `https://nyx-discord.github.io/nyx/guide/<path>.md`, e.g. `use/commands/components.md`
 - Everything in one file (large, prefer single pages): https://nyx-discord.github.io/nyx/guide/llms-full.txt
-- API reference (TypeDoc): https://nyx-discord.github.io/nyx/typedoc/
+- API reference (TypeDoc): https://nyx-discord.github.io/nyx/docs/
 
 Useful pages: `use/first-start`, `use/http` (HTTP bots), `use/http/mounting`, `use/http/requests`, `use/http/webhook-events`, `use/commands`, `use/commands/types/standalone`, `use/commands/types/parent`, `use/commands/types/parent/subcommand`, `use/commands/types/context-menu`, `use/commands/components`, `use/commands/filters`, `use/commands/middlewares`, `use/events`, `use/events/subscribers`, `use/events/buses`, `use/schedules`, `use/plugins`, `use/other/error-handling`, `use/other/metadata`, `loaders`, `loaders/commands`, `session`, `extend` (replacing internals).
 

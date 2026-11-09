@@ -17,7 +17,7 @@ export const logo = (
 
 export const discordInvite = 'https://discord.gg/PQZmwaBZd5';
 
-export const documentationUrl = 'https://nyx-discord.github.io/nyx/typedoc/';
+export const documentationUrl = 'https://nyx-discord.github.io/nyx/docs/';
 
 export const baseOptions: BaseLayoutProps = {
   nav: {

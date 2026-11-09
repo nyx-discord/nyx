@@ -15,7 +15,7 @@ const ENTITIES_LOCAL_PATH = join(
   'docs',
   'entities.json',
 );
-const DEFAULT_BASE_URL = 'https://nyx-discord.github.io/nyx/typedoc/';
+const DEFAULT_BASE_URL = 'https://nyx-discord.github.io/nyx/docs/';
 let docsMapCache: Record<
   string,
   zInfer<typeof Schema>[string] & { docResolved?: boolean }
@@ -59,7 +59,7 @@ function getGitBranch() {
 }
 
 function getUrlFromBranch(branch: string) {
-  return `https://nyx-discord.github.io/nyx/typedoc@${branch}/`;
+  return `https://nyx-discord.github.io/nyx/docs@${branch}/`;
 }
 
 async function getBaseUrl() {

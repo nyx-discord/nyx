@@ -64,7 +64,7 @@ await bot.start();
 ## 📖 Documentation
 
 - [Guide](https://nyx-discord.github.io/nyx/guide): how to use nyx, and how to replace its internals.
-- [API reference](https://nyx-discord.github.io/nyx/typedoc): every class, interface and type.
+- [API reference](https://nyx-discord.github.io/nyx/docs): every class, interface and type.
 
 ## 🤖 Using an AI agent
 

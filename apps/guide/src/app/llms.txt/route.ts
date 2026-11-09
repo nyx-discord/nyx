@@ -13,7 +13,7 @@ const preamble = `# nyx
 - nyx only supports application commands, never replies to users on errors by itself, and doesn't ship storage: those are the bot's own code.
 - Agent skill with typechecked examples: \`npx skills add nyx-discord/nyx\` (source: https://github.com/nyx-discord/nyx/tree/main/skills/nyx).
 - All pages in one file: ${absoluteUrl('/llms-full.txt')}
-- API reference: https://nyx-discord.github.io/nyx/typedoc/
+- API reference: https://nyx-discord.github.io/nyx/docs/
 `;
 
 export function GET() {
