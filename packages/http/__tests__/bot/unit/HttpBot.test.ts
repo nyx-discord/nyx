@@ -20,7 +20,7 @@ import type {
 } from '../../../src';
 import {
   AbstractStandaloneCommand,
-  BaseClientSubscriber,
+  AbstractWebhookEventSubscriber,
   BasicEventEmitterBus,
   CoreBot,
   HttpBot,
@@ -43,10 +43,7 @@ class PingCommand extends AbstractStandaloneCommand {
   }
 }
 
-class AuthorizedSubscriber extends BaseClientSubscriber<
-  HttpClientEvents,
-  ApplicationWebhookEventType.ApplicationAuthorized
-> {
+class AuthorizedSubscriber extends AbstractWebhookEventSubscriber<ApplicationWebhookEventType.ApplicationAuthorized> {
   protected readonly event = ApplicationWebhookEventType.ApplicationAuthorized;
 
   public readonly handled = vi.fn();

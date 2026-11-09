@@ -28,7 +28,7 @@ The handler verifies requests like the client does, and answers every event (and
 
 ## Subscribing
 
-Each event is emitted on the client's emitter under its type, one of the [`ApplicationWebhookEventType`](https://discord-api-types.dev/api/discord-api-types-v10/enum/ApplicationWebhookEventType) values. The bot's client event bus is typed for gateway events, so create a bus typed with `HttpClientEvents` over the same emitter, and subscribe to it:
+Each event is emitted on the client's emitter under its type, one of the [`ApplicationWebhookEventType`](https://discord-api-types.dev/api/discord-api-types-v10/enum/ApplicationWebhookEventType) values. The bot's client event bus is typed for gateway events, so create a bus typed with `HttpClientEvents` over the same emitter, and subscribe to it with an `AbstractWebhookEventSubscriber`:
 
 ```ts twoslash
 import type { HttpNyxClient } from '@nyx-discord/http';
@@ -37,7 +37,7 @@ declare const client: HttpNyxClient;
 import type { APIWebhookEventApplicationAuthorizedData } from '@discordjs/core';
 import { ApplicationWebhookEventType } from '@discordjs/core';
 import {
-  BaseClientSubscriber,
+  AbstractWebhookEventSubscriber,
   BasicEventEmitterBus,
   type EventEmitterLike,
   type HttpClientEvents,
@@ -45,10 +45,7 @@ import {
   type WebhookEventProps,
 } from '@nyx-discord/http';
 
-class AuthorizedSubscriber extends BaseClientSubscriber<
-  HttpClientEvents,
-  ApplicationWebhookEventType.ApplicationAuthorized
-> {
+class AuthorizedSubscriber extends AbstractWebhookEventSubscriber<ApplicationWebhookEventType.ApplicationAuthorized> {
   protected readonly event = ApplicationWebhookEventType.ApplicationAuthorized;
 
   public handleEvent(
