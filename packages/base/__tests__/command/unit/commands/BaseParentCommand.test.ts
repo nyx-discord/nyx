@@ -107,23 +107,6 @@ describe('BaseParentCommand (Discord Payload Assembly & Hierarchy)', () => {
     });
   });
 
-  describe('getNameTree() hierarchy resolution', () => {
-    test('GIVEN a command hierarchy WHEN getNameTree is called THEN returns the full name path for each level', () => {
-      const parent = new MockParentCommand('admin');
-      const directSub = new MockSubCommand(parent, 'status');
-      const roleGroup = new MockSubCommandGroup(parent, 'roles');
-      const assignSub = new MockSubCommand(roleGroup, 'assign');
-
-      roleGroup.addChildren(assignSub);
-      parent.addChildren(directSub, roleGroup);
-
-      expect(parent.getNameTree()).toEqual(['admin']);
-      expect(directSub.getNameTree()).toEqual(['admin', 'status']);
-      expect(roleGroup.getNameTree()).toEqual(['admin', 'roles']);
-      expect(assignSub.getNameTree()).toEqual(['admin', 'roles', 'assign']);
-    });
-  });
-
   describe('identity and metadata', () => {
     test('GIVEN a parent command THEN isParent returns true, getId returns command name, and getGuilds returns null', () => {
       const parent = new MockParentCommand('mod');

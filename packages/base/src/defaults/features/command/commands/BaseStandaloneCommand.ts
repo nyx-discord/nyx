@@ -37,8 +37,4 @@ export abstract class BaseStandaloneCommand<
   ): Awaitable<void> {
     throw new NotImplementedError();
   }
-
-  public getNameTree(): ReadonlyArray<string> {
-    return [this.data.name];
-  }
 }

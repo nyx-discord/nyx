@@ -36,10 +36,6 @@ export abstract class BaseContextMenuCommand<
     return true;
   }
 
-  public getNameTree(): ReadonlyArray<string> {
-    return [this.data.name];
-  }
-
   /** Executes a user context menu command. */
   protected executeUser(
     _interaction: Types['UserContextMenuInteraction'],

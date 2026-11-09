@@ -44,6 +44,4 @@ export abstract class BaseCommand<
   public getData(): Data {
     return this.data;
   }
-
-  public abstract getNameTree(): ReadonlyArray<string>;
 }

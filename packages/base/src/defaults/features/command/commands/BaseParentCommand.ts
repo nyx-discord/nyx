@@ -54,8 +54,4 @@ export abstract class BaseParentCommand<
   public getGuilds(): ReadonlyArray<Snowflake> | null {
     return null;
   }
-
-  public getNameTree(): ReadonlyArray<string> {
-    return [this.data.name];
-  }
 }

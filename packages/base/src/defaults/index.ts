@@ -21,6 +21,7 @@ export * from './features/command/filter/middleware/CommandFilterCheckMiddleware
 export * from './features/command/middleware/BaseCommandMiddleware';
 export * from './features/command/middleware/CommandMiddlewareList';
 export * from './features/command/repository/DefaultCommandRepository';
+export * from './features/command/util/getCommandNameTree';
 export * from './features/event/bus/BasicEventBus';
 export * from './features/event/bus/BasicEventEmitterBus';
 export * from './features/event/dispatcher/AbstractEventDispatcher';

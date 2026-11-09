@@ -44,10 +44,6 @@ export abstract class BaseSubCommand<
     throw new NotImplementedError();
   }
 
-  public getNameTree(): ReadonlyArray<string> {
-    return this.parent.getNameTree().concat(this.data.name);
-  }
-
   public override buildCustomId(bot: NyxBot, extra?: string): string {
     const data = this.getCustomIdData(extra);
     return bot.getCommandManager().getCustomIdCodec().serialize(data);

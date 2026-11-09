@@ -31,8 +31,4 @@ export abstract class BaseSubCommandGroup<
   public getParent(): ParentCommand<Types> {
     return this.parent;
   }
-
-  public getNameTree(): ReadonlyArray<string> {
-    return this.parent.getNameTree().concat(this.data.name);
-  }
 }

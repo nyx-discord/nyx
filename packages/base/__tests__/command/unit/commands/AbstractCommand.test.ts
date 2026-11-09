@@ -132,30 +132,6 @@ describe('AbstractCommand type guards', () => {
     });
   });
 
-  describe('getNameTree', () => {
-    test('GIVEN a standalone command THEN name tree is [name]', () => {
-      const command = new MockStandaloneCommand('my-command');
-      expect(command.getNameTree()).toEqual(['my-command']);
-    });
-
-    test('GIVEN a parent command THEN name tree is [name]', () => {
-      const command = new MockParentCommand('my-parent');
-      expect(command.getNameTree()).toEqual(['my-parent']);
-    });
-
-    test('GIVEN a subcommand under parent THEN name tree is [parent, sub]', () => {
-      const parent = new MockParentCommand('my-parent');
-      const command = new MockSubCommand(parent, 'my-sub');
-      expect(command.getNameTree()).toEqual(['my-parent', 'my-sub']);
-    });
-
-    test('GIVEN a subcommand group THEN name tree is [parent, group]', () => {
-      const parent = new MockParentCommand('my-parent');
-      const command = new MockSubCommandGroup(parent, 'my-group');
-      expect(command.getNameTree()).toEqual(['my-parent', 'my-group']);
-    });
-  });
-
   describe('Type Checkers', () => {
     test('GIVEN a base command THEN all type checkers return false', () => {
       const command = new MockStandaloneCommand();

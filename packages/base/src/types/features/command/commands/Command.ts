@@ -29,7 +29,4 @@ export interface Command<
 
   /** Returns whether this is a SubCommandGroup. */
   isSubCommandGroup(): this is SubCommandGroup<Types>;
-
-  /** Returns the names of the tree of this command. */
-  getNameTree(): ReadonlyArray<string>;
 }

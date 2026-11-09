@@ -30,6 +30,7 @@ import {
 } from '../../../src';
 import { MockParentCommand } from '../mocks/MockParentCommand';
 import { MockStandaloneCommand } from '../mocks/MockStandaloneCommand';
+import { MockSubCommand } from '../mocks/MockSubCommand';
 import { MockSubCommandGroup } from '../mocks/MockSubCommandGroup';
 import { StubInteraction } from '../mocks/StubInteraction';
 
@@ -616,8 +617,7 @@ describe('DefaultCommandManager', () => {
     test('GIVEN autocomplete interaction for SubCommand THEN resolves option deeply, executes via executor, emits event, and returns true', async () => {
       const { manager, repository, executor, eventBus } = createManager();
       const parentCmd = new MockParentCommand('parent-auto-sub');
-      const subCmd = new MockStandaloneCommand('subcmd');
-      vi.spyOn(subCmd, 'isSubCommand').mockReturnValue(true);
+      const subCmd = new MockSubCommand(parentCmd, 'subcmd');
 
       const resolver = manager.getResolver();
       vi.spyOn(resolver, 'resolveFromAutocompleteInteraction').mockReturnValue(

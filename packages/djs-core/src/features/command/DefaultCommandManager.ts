@@ -32,6 +32,7 @@ import {
   DefaultCommandRepository,
   DefaultMetadataFactory,
   ensureKey,
+  getCommandNameTree,
   IllegalStateError,
   TypedFields,
 } from '@nyx-discord/base';
@@ -518,7 +519,7 @@ export class DefaultCommandManager implements CommandManager<
     metadata: Metadata;
     executionId: Identifier;
   } {
-    const commandName = options.command.getNameTree().join(' ');
+    const commandName = getCommandNameTree(options.command).join(' ');
 
     const executionData = [
       { name: 'Command', value: commandName },
