@@ -63,11 +63,11 @@ export class DefaultCommandSubscriptionsContainer implements CommandSubscription
 
   public async unsubscribe(): Promise<void> {
     if (this.eventBus.isSubscribed(this.interactionSubscriber)) {
-      await this.eventBus.unsubscribe(this.interactionSubscriber);
+      await this.eventBus.unsubscribeProtected(this.interactionSubscriber);
     }
 
     if (this.eventBus.isSubscribed(this.autocompleteSubscriber)) {
-      await this.eventBus.unsubscribe(this.autocompleteSubscriber);
+      await this.eventBus.unsubscribeProtected(this.autocompleteSubscriber);
     }
   }
 
@@ -107,10 +107,17 @@ export class DefaultCommandSubscriptionsContainer implements CommandSubscription
     oldSubscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>,
     newSubscriber: EventSubscriber<ClientEvents, Events.InteractionCreate>,
   ): Promise<void> {
+    // only swap what's on the bus, so this also works before the bot subscribes them
+    const wasSubscribed = this.eventBus.isSubscribed(oldSubscriber);
+
     oldSubscriber.unprotect();
-    await this.eventBus.unsubscribe(oldSubscriber);
+    if (wasSubscribed) {
+      await this.eventBus.unsubscribe(oldSubscriber);
+    }
 
     newSubscriber.protect();
-    await this.eventBus.subscribe(newSubscriber);
+    if (wasSubscribed) {
+      await this.eventBus.subscribe(newSubscriber);
+    }
   }
 }

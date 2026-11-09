@@ -111,7 +111,7 @@ describe('HttpBot', () => {
     expect(url).toContain('/interactions/42/interaction-token/callback');
     expect(init).toMatchObject({ method: 'POST' });
 
-    await client.destroy();
+    await bot.stop();
   });
 
   test('GIVEN a started bot WHEN a signed webhook event arrives THEN subscribers on a bus over the client emitter receive it', async () => {
@@ -155,6 +155,6 @@ describe('HttpBot', () => {
       ),
     );
 
-    await client.destroy();
+    await bot.stop();
   });
 });
