@@ -2,9 +2,9 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "v*" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "v*" ]
   workflow_dispatch:
 
 jobs:
@@ -15,8 +15,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          # Fetch all history so Turborepo can compare against origin/main
-          fetch-depth: 0 
+          # Fetch all history so Turborepo can compare against the base ref
+          fetch-depth: 0
 
       - name: Use pnpm
         uses: pnpm/action-setup@v4
@@ -30,5 +30,25 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-${{ github.ref_name }}-
+            turbo-${{ runner.os }}-
+
+      - name: Determine changed packages base
+        id: base
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "filter=...[origin/${{ github.base_ref }}]" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "push" ]] && git cat-file -e "${{ github.event.before }}^{commit}" 2>/dev/null; then
+            echo "filter=...[${{ github.event.before }}]" >> $GITHUB_OUTPUT
+          else
+            echo "filter=*" >> $GITHUB_OUTPUT
+          fi
+
       - name: Run Build, Lint, and Test on changed packages
-        run: pnpm turbo run lint format:check build test --filter="...[origin/main]"
+        run: pnpm turbo run lint format:check build test --cache-dir=.turbo --filter="${{ steps.base.outputs.filter }}"

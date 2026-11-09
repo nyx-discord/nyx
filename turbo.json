@@ -33,7 +33,7 @@
     },
     "test": {
       "dependsOn": [
-        "^test"
+        "^build"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -44,9 +44,6 @@
       "outputs": []
     },
     "lint": {
-      "dependsOn": [
-        "^lint"
-      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "src/**",
@@ -102,9 +99,6 @@
       ]
     },
     "format": {
-      "dependsOn": [
-        "^format"
-      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "src/**",
@@ -118,9 +112,6 @@
       "outputs": []
     },
     "lint:fix": {
-      "dependsOn": [
-        "^lint:fix"
-      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "src/**",
@@ -134,9 +125,6 @@
       "outputs": []
     },
     "format:check": {
-      "dependsOn": [
-        "^format:check"
-      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "src/**",
