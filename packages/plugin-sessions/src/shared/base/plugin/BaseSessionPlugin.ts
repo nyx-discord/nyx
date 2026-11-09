@@ -166,6 +166,7 @@ export abstract class BaseSessionPlugin<
       session.setState(SessionStateEnum.Running);
       if (result !== true) {
         await this.repository.delete(session.getId());
+        this.limitManager.release(session);
         return false;
       }
 
@@ -182,7 +183,9 @@ export abstract class BaseSessionPlugin<
       this.bot
         ?.getLogger()
         .error(`Failed to start session with ID '${session.getId()}}`, error);
-      return session.hasReplied();
+      const replied = session.hasReplied();
+      if (!replied) this.limitManager.release(session);
+      return replied;
     }
   }
 
@@ -386,6 +389,7 @@ export abstract class BaseSessionPlugin<
       metadata,
     );
     session.setState(SessionStateEnum.Ended);
+    this.limitManager.release(session);
 
     if (!data) {
       return;

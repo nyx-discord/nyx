@@ -8,7 +8,7 @@ import {
 } from '#src';
 import type { Metadata, NyxBot } from '@nyx-discord/base';
 import { TypedFields } from '@nyx-discord/base';
-import { beforeAll, describe, expect, test } from 'vitest';
+import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { getTestBot } from '../../testBot';
 
 const Tier = TypedFields.create<'premium' | 'free'>('Tier');
@@ -24,6 +24,9 @@ const makeSess = (overrides?: {
 beforeAll(async () => {
   bot = await getTestBot();
 });
+
+const sleep = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 const AE = SessionExceedAction;
 const Scope = SessionLimitScope;
@@ -365,6 +368,90 @@ describe('SessionPlugin integration', () => {
 
       await expect(plugin.start(makeSess({ userId: 'u' }))).rejects.toThrow(
         SessionLimitExceededError,
+      );
+    });
+  });
+  describe('concurrent starts', () => {
+    test('GIVEN two sessions starting at once when max=1 THEN only one runs', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: MockSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.Error }],
+      });
+
+      const first = makeSess({ userId: 'u' });
+      const second = makeSess({ userId: 'u' });
+      const results = await Promise.allSettled([
+        plugin.start(first),
+        plugin.start(second),
+      ]);
+
+      expect(results[0]).toEqual({ status: 'fulfilled', value: true });
+      expect(results[1]!.status).toBe('rejected');
+      expect(second.getState()).toBe('uninitialized');
+    });
+
+    test('GIVEN a displacement with a slow onEnd WHEN another session starts meanwhile THEN it does not slip through', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: MockSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.displace() }],
+      });
+
+      const old = makeSess({ userId: 'u' });
+      old.onEnd = vi.fn(() => sleep(100));
+      await plugin.start(old);
+
+      const first = makeSess({ userId: 'u' });
+      const second = makeSess({ userId: 'u' });
+      const firstStart = plugin.start(first);
+      await sleep(10);
+      const secondStart = plugin.start(second);
+
+      await expect(firstStart).resolves.toBe(true);
+      await secondStart.catch(() => null);
+
+      const running = [old, first, second].filter(
+        (session) => session.getState() === 'running',
+      );
+      expect(running).toHaveLength(1);
+      expect(old.getState()).toBe('ended');
+    });
+
+    test('GIVEN a session still starting WHEN displace has no running session to end THEN blocks the new one', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: MockSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.displace() }],
+      });
+
+      const first = makeSess({ userId: 'u' });
+      first.onStart = vi.fn(() => sleep(50));
+      const firstStart = plugin.start(first);
+      await sleep(10);
+
+      await expect(plugin.start(makeSess({ userId: 'u' }))).rejects.toThrow(
+        SessionLimitExceededError,
+      );
+      await expect(firstStart).resolves.toBe(true);
+      expect(first.getState()).toBe('running');
+    });
+
+    test('GIVEN a session whose start fails THEN its reserved slot is freed', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: MockSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.Error }],
+      });
+
+      const failing = makeSess({ userId: 'u' });
+      failing.onStart = vi.fn(() => {
+        throw new Error('boom');
+      });
+      await expect(plugin.start(failing)).resolves.toBe(false);
+
+      await expect(plugin.start(makeSess({ userId: 'u' }))).resolves.toBe(
+        true,
       );
     });
   });

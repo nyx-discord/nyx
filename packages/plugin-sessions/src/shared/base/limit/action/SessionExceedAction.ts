@@ -1,6 +1,7 @@
 import type { Awaitable, InteractionTypes } from '@nyx-discord/base';
 import type { SessionLimitRule } from '../../../types/limit/rule/SessionLimitRule.js';
 import type { Session } from '../../../types/session/Session.js';
+import { SessionStateEnum } from '../../../types/state/SessionState.js';
 
 /** Context provided to exceed action handlers when a session limit is reached. */
 export interface SessionExceedContext<
@@ -38,15 +39,23 @@ export class SessionExceedAction<
   /**
    * Returns an action that displaces an existing session to make room for the new one.
    *
-   * @param pick Optional function to choose which session to displace. Defaults to the first existing session.
+   * @param pick Optional function to choose which session to displace. Defaults to the oldest running session, and blocks the new session if every existing one is still starting.
    */
   public static displace<Types extends InteractionTypes = InteractionTypes>(
     pick?: (existing: Session<unknown, Types>[]) => Session<unknown, Types>,
   ): SessionExceedAction<any> {
-    return new SessionExceedAction<any>((ctx) => ({
-      proceed: true as const,
-      displace: pick ? pick([...ctx.existing]) : ctx.existing[0]!,
-    }));
+    return new SessionExceedAction<any>((ctx) => {
+      if (pick) {
+        return { proceed: true as const, displace: pick([...ctx.existing]) };
+      }
+
+      const running = ctx.existing.find(
+        (session) => session.getState() === SessionStateEnum.Running,
+      );
+      if (!running) return { proceed: false as const };
+
+      return { proceed: true as const, displace: running };
+    });
   }
 
   /** Returns an action with a custom handler for limit exceed decisions. */

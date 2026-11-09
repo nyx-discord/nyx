@@ -21,7 +21,7 @@ export interface SessionLimitManager<
     meta: Record<string | symbol, unknown>,
   ): Awaitable<void>;
 
-  /** Releases a session's slot. Counters are derived from the repository, so this is typically a no-op. */
+  /** Releases a session's reserved slot. Called when the session ends, expires or fails to start. */
   release(session: Session<unknown, Types>): void;
 
   /**

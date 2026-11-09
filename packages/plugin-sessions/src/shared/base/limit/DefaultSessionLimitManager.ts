@@ -7,6 +7,7 @@ import type { SessionLimit } from '../../types/limit/limit/SessionLimit.js';
 import type { SessionLimitRule } from '../../types/limit/rule/SessionLimitRule.js';
 import type { SessionLimitManager } from '../../types/limit/SessionLimitManager.js';
 import type { Session } from '../../types/session/Session.js';
+import { SessionStateEnum } from '../../types/state/SessionState.js';
 import type { BaseSessionPlugin } from '../plugin/BaseSessionPlugin.js';
 import { SessionLimitBuilder } from './limit/SessionLimitBuilder.js';
 import { SessionLimitScope } from './scope/SessionLimitScope.js';
@@ -21,6 +22,12 @@ export class DefaultSessionLimitManager<
   >();
 
   private readonly plugin: BaseSessionPlugin<Types>;
+
+  /** Sessions that passed their limits and haven't ended yet, counted even before the repository saves them. */
+  protected readonly reserved = new Map<string, Session<unknown, Types>>();
+
+  /** Serializes limit checks, so a session can't pass while another one is displacing. */
+  protected lock: Promise<void> = Promise.resolve();
 
   constructor(plugin: BaseSessionPlugin<Types>) {
     this.plugin = plugin;
@@ -75,16 +82,38 @@ export class DefaultSessionLimitManager<
   ): Promise<void> {
     const ctor = session.constructor as Constructor<Session<unknown, Types>>;
     const policies = await this.resolvePolicies(ctor, session, meta);
+    if (policies.length === 0) return;
 
-    for (const policy of policies) {
-      for (const rule of policy.rules) {
-        await this.checkRule(session, meta, rule);
+    await this.withLock(async () => {
+      for (const policy of policies) {
+        for (const rule of policy.rules) {
+          await this.checkRule(session, meta, rule);
+        }
       }
-    }
+      this.reserved.set(session.getId(), session);
+    });
   }
 
   /** @inheritdoc */
-  public release(_session: Session<unknown, Types>): void {}
+  public release(session: Session<unknown, Types>): void {
+    this.reserved.delete(session.getId());
+  }
+
+  /** Runs the given function once every previous call has finished. */
+  protected async withLock<T>(fn: () => Promise<T>): Promise<T> {
+    const previous = this.lock;
+    let unlock!: () => void;
+    this.lock = new Promise((resolve) => {
+      unlock = resolve;
+    });
+
+    await previous;
+    try {
+      return await fn();
+    } finally {
+      unlock();
+    }
+  }
 
   /**
    * Resolves applicable policies for a session by walking the prototype chain.
@@ -159,6 +188,14 @@ export class DefaultSessionLimitManager<
       });
     }
     if (decision.displace) {
+      // a session that is still starting can't be ended yet
+      if (decision.displace.getState() !== SessionStateEnum.Running) {
+        throw new SessionLimitExceededError({
+          attempted: session,
+          existing: matching,
+          rule,
+        });
+      }
       await this.plugin.end(
         decision.displace,
         'Session replaced',
@@ -167,18 +204,23 @@ export class DefaultSessionLimitManager<
     }
   }
 
-  /** Finds existing sessions that share the same scope key as the given session. */
+  /** Finds existing and reserved sessions that share the same scope key as the given session. */
   private getMatchingSessions(
     session: Session<unknown, Types>,
     scope: SessionLimitRule<Types>['scope'],
   ): Session<unknown, Types>[] {
     const repo = this.plugin.getRepository();
-    const byCtor = repo.getByConstructor(
-      session.constructor as Constructor<Session<unknown, Types>>,
-    );
+    const ctor = session.constructor as Constructor<Session<unknown, Types>>;
+    const candidates = new Map(repo.getByConstructor(ctor));
+    for (const [id, reserved] of this.reserved) {
+      if (reserved.constructor === ctor && !candidates.has(id)) {
+        candidates.set(id, reserved);
+      }
+    }
+
     const targetKey = this.computeScopeKey(session, scope);
-    return [...byCtor.values()].filter(
-      (s) => this.computeScopeKey(s, scope) === targetKey,
+    return [...candidates.values()].filter(
+      (s) => s !== session && this.computeScopeKey(s, scope) === targetKey,
     );
   }
 
