@@ -1,0 +1,5 @@
+{
+  "title": "Command Types",
+  "defaultOpen": true,
+  "pages": ["standalone", "parent", "context-menu"]
+}

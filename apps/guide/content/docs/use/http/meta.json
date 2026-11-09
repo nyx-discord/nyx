@@ -1,0 +1,6 @@
+{
+  "title": "HTTP Bots",
+  "icon": "Globe",
+  "defaultOpen": false,
+  "pages": ["mounting", "requests", "webhook-events", "configuration"]
+}

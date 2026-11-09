@@ -1,0 +1,10 @@
+{
+  "title": "Session Types",
+  "defaultOpen": true,
+  "pages": [
+    "session",
+    "pagination-session",
+    "list-pagination-session",
+    "stage-pagination-session"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    // Like the guide: makes the examples and the adapters' sources resolve the same discord.js typings.
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["es2023", "dom"],
+    "types": ["node"],
+    // Resolve the workspace adapters to their sources, so no build is needed to typecheck.
+    "customConditions": ["@nyx-discord/base", "@nyx-discord/djs", "@nyx-discord/djs-core", "@nyx-discord/http"],
+    "paths": {
+      "@nyx-discord/loaders": ["../packages/loaders/src/index.ts"],
+      "@nyx-discord/plugin-sessions/djs": ["../packages/plugin-sessions/src/djs/index.ts"],
+      "@nyx-discord/plugin-sessions/djs-core": ["../packages/plugin-sessions/src/djs-core/index.ts"]
+    }
+  },
+  "include": ["*/examples/**/*.ts"]
+}

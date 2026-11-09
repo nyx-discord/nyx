@@ -1,0 +1,43 @@
+import type {
+  APIMessageComponentButtonInteraction,
+  APIMessageComponentSelectMenuInteraction,
+  APIModalSubmitInteraction,
+  ToEventProps,
+} from '@discordjs/core';
+import { ComponentType, InteractionType } from '@discordjs/core/http-only';
+import type { Awaitable, Metadata, Nameable } from '@nyx-discord/base';
+import { BaseExecutableCommand } from '@nyx-discord/base';
+import type { CoreComponentInteraction } from '../../../../types/CoreComponentInteraction.js';
+import type { CoreInteractionTypes } from '../../../../types/CoreInteractionTypes.js';
+
+export abstract class AbstractExecutableCommand<
+  Data extends Nameable,
+  CommandInteraction,
+> extends BaseExecutableCommand<
+  Data,
+  CommandInteraction,
+  CoreInteractionTypes
+> {
+  public handleInteraction(
+    ctx: CoreComponentInteraction,
+    metadata: Metadata,
+  ): Awaitable<void> {
+    const interaction = ctx.data;
+    if (interaction.type === InteractionType.ModalSubmit) {
+      return this.handleModal(
+        ctx as ToEventProps<APIModalSubmitInteraction>,
+        metadata,
+      );
+    }
+    if (interaction.data.component_type === ComponentType.Button) {
+      return this.handleButton(
+        ctx as ToEventProps<APIMessageComponentButtonInteraction>,
+        metadata,
+      );
+    }
+    return this.handleSelectMenu(
+      ctx as ToEventProps<APIMessageComponentSelectMenuInteraction>,
+      metadata,
+    );
+  }
+}

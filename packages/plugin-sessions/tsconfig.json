@@ -1,0 +1,24 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "paths": {
+      "#src": ["./src"],
+      "#src/*": ["./src/*"],
+      "#mocks": ["./__tests__/mocks"],
+      "#mocks/*": ["./__tests__/mocks/*"]
+    },
+    "customConditions": [
+      "@nyx-discord/djs",
+      "@nyx-discord/djs-core",
+      "@nyx-discord/base"
+    ]
+  },
+  "include": [
+    "src",
+    "__tests__"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

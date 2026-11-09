@@ -1,0 +1,8 @@
+{
+  "extends": [
+    "@repo/typedoc-config/typedoc.shared.json"
+  ],
+  "entryPoints": [
+    "src/index.ts"
+  ]
+}

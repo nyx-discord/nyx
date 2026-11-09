@@ -1,0 +1,19 @@
+import type { Awaitable, Metadata } from '@nyx-discord/base';
+import { BaseSubCommand } from '@nyx-discord/base';
+import type { DjsComponentInteraction } from '../../../types/DjsComponentInteraction.js';
+import type { DjsInteractionTypes } from '../../../types/DjsInteractionTypes.js';
+
+export abstract class AbstractSubCommand extends BaseSubCommand<DjsInteractionTypes> {
+  public handleInteraction(
+    interaction: DjsComponentInteraction,
+    metadata: Metadata,
+  ): Awaitable<void> {
+    if (interaction.isButton()) {
+      return this.handleButton(interaction, metadata);
+    }
+    if (interaction.isModalSubmit()) {
+      return this.handleModal(interaction, metadata);
+    }
+    return this.handleSelectMenu(interaction, metadata);
+  }
+}

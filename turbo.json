@@ -1,0 +1,141 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "NODE_ENV",
+    "NYX_DOCS_ENTITIES_SOURCE"
+  ],
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "env": [
+        "NEXT_PUBLIC_BASE_PATH",
+        "NEXT_PUBLIC_SITE_ORIGIN"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*",
+        "package.json",
+        "tsup.config.ts",
+        "next.config.mjs",
+        "source.config.ts"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "out/**",
+        "build/**",
+        ".docusaurus/**",
+        "coverage/**"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "__tests__/**",
+        "vitest.config.ts"
+      ],
+      "outputs": []
+    },
+    "lint": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "app/**",
+        "components/**",
+        "lib/**",
+        "content/**",
+        "**/.eslintrc*",
+        "**/eslint.config.*"
+      ],
+      "outputs": []
+    },
+    "check-types": {
+      "dependsOn": [
+        "^check-types"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "app/**",
+        "components/**",
+        "lib/**",
+        "tsconfig.json",
+        "next-env.d.ts"
+      ],
+      "outputs": []
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "cache": false,
+      "persistent": true
+    },
+    "coverage": {
+      "cache": false,
+      "persistent": false,
+      "outputs": [
+        "coverage/**"
+      ]
+    },
+    "//#typedoc": {
+      "cache": true,
+      "persistent": false,
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "typedoc.json"
+      ],
+      "outputs": [
+        "build/docs"
+      ]
+    },
+    "format": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "app/**",
+        "components/**",
+        "lib/**",
+        "content/**",
+        "**/.prettierrc*",
+        ".prettierrc.json"
+      ],
+      "outputs": []
+    },
+    "lint:fix": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "app/**",
+        "components/**",
+        "lib/**",
+        "content/**",
+        "**/.eslintrc*",
+        "**/eslint.config.*"
+      ],
+      "outputs": []
+    },
+    "format:check": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**",
+        "app/**",
+        "components/**",
+        "lib/**",
+        "content/**",
+        "**/.prettierrc*",
+        ".prettierrc.json"
+      ],
+      "outputs": []
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "name": "@nyx-discord/typed-options",
+  "version": "1.0.0-0",
+  "description": "Typed slash command options inferred from command data, with no codegen. Works with discord.js, @discordjs/core and raw API payloads.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "files": [
+    "dist/**"
+  ],
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyx-discord/nyx.git"
+  },
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./djs": {
+      "require": {
+        "types": "./dist/djs/index.d.ts",
+        "default": "./dist/djs/index.js"
+      },
+      "import": {
+        "types": "./dist/djs/index.d.mts",
+        "default": "./dist/djs/index.mjs"
+      }
+    },
+    "./djs-core": {
+      "require": {
+        "types": "./dist/djs-core/index.d.ts",
+        "default": "./dist/djs-core/index.js"
+      },
+      "import": {
+        "types": "./dist/djs-core/index.d.mts",
+        "default": "./dist/djs-core/index.mjs"
+      }
+    }
+  },
+  "scripts": {
+    "lint": "eslint ./src",
+    "lint:fix": "eslint --fix ./src",
+    "format:check": "prettier --check ./src",
+    "format": "prettier --write ./src",
+    "barrel": "node ../../scripts/barrel.mjs --directory ./src/base --delete --singleQuotes && node ../../scripts/barrel.mjs --directory ./src/djs --delete --singleQuotes --append \"export * from '../base/index.js';\" && node ../../scripts/barrel.mjs --directory ./src/djs-core --delete --singleQuotes --append \"export * from '../base/index.js';\"",
+    "build": "rimraf dist && tsup-node src/index.ts src/djs/index.ts src/djs-core/index.ts && prettier --write dist/**/*.d.ts dist/**/*.d.mts",
+    "prepublishOnly": "pnpm run build",
+    "test": "vitest --run",
+    "coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord.js",
+    "slash-commands",
+    "typescript"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typedoc-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/vitest-config": "workspace:*",
+    "discord-api-types": "^0.38.50",
+    "discord.js": "14.22.1"
+  },
+  "peerDependencies": {
+    "discord-api-types": "^0.38.50",
+    "discord.js": "^14.22.1"
+  },
+  "peerDependenciesMeta": {
+    "discord.js": {
+      "optional": true
+    }
+  }
+}

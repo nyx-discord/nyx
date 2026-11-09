@@ -1,0 +1,24 @@
+import type {
+  APIApplicationCommandAutocompleteInteraction,
+  APIChatInputApplicationCommandInteraction,
+  APIContextMenuInteraction,
+  APIMessageApplicationCommandInteraction,
+  APIMessageComponentButtonInteraction,
+  APIMessageComponentSelectMenuInteraction,
+  APIModalSubmitInteraction,
+  APIUserApplicationCommandInteraction,
+  ToEventProps,
+} from '@discordjs/core';
+import type { InteractionTypes } from '@nyx-discord/base';
+
+/** The @discordjs/core implementation of {@link InteractionTypes}. */
+export interface CoreInteractionTypes extends InteractionTypes {
+  readonly ChatInputInteraction: ToEventProps<APIChatInputApplicationCommandInteraction>;
+  readonly ContextMenuInteraction: ToEventProps<APIContextMenuInteraction>;
+  readonly MessageContextMenuInteraction: ToEventProps<APIMessageApplicationCommandInteraction>;
+  readonly UserContextMenuInteraction: ToEventProps<APIUserApplicationCommandInteraction>;
+  readonly AutocompleteInteraction: ToEventProps<APIApplicationCommandAutocompleteInteraction>;
+  readonly ButtonInteraction: ToEventProps<APIMessageComponentButtonInteraction>;
+  readonly SelectMenuInteraction: ToEventProps<APIMessageComponentSelectMenuInteraction>;
+  readonly ModalSubmitInteraction: ToEventProps<APIModalSubmitInteraction>;
+}

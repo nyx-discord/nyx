@@ -1,0 +1,7 @@
+{
+  "title": "Typed Options",
+  "description": "Type-safe slash command options, with no codegen.",
+  "root": true,
+  "icon": "ListChecks",
+  "pages": ["index", "---Options---", "options", "subcommands"]
+}

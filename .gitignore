@@ -1,5 +1,7 @@
-# Nx cache
+# Monorepo caches
 .nx
+.turbo
+.source
 
 # Websites output
 build/
@@ -7,8 +9,9 @@ build/
 # Typescript output
 dist/
 
-# Webstorm files
+# IDE files
 .idea/*
+.vscode/*
 
 # Logs
 logs

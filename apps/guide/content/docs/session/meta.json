@@ -1,0 +1,20 @@
+{
+  "title": "Session Plugin",
+  "description": "Create stateful interaction sessions with your users.",
+  "root": true,
+  "icon": "User",
+  "pages": [
+    "index",
+    "---Types---",
+    "types/session",
+    "types/pagination-session",
+    "types/list-pagination-session",
+    "types/stage-pagination-session",
+    "---Other---",
+    "subscribers",
+    "middlewares",
+    "filters",
+    "events",
+    "limits"
+  ]
+}
