@@ -1,0 +1,46 @@
+# Handling requests (https://nyx-discord.github.io/nyx/guide@v3/use/http/requests)
+
+## Responses [#responses]
+
+Every request goes through the same checks before it reaches your bot:
+
+| Request                                           | Response               |
+|---------------------------------------------------|------------------------|
+| Before `bot.start()` finishes                     | `503`                  |
+| Missing or invalid signature                      | `401`                  |
+| Timestamp older (or newer) than `maxTimestampAge` | `401`                  |
+| Body that isn't valid JSON                        | `400`                  |
+| Interaction `PING` (Discord checking your URL)    | `200` with a `PONG`    |
+| Any other interaction                             | `202` with no body     |
+| [Webhook event](/use/http/webhook-events) or its `PING` | `204` with no body   |
+
+Rejecting old timestamps protects against replayed requests: someone who captured a valid request can't send it again later. The window is 5 minutes by default, see [Configuration](/use/http/configuration).
+
+## Replying to interactions [#replying-to-interactions]
+
+Over the gateway, commands reply by calling Discord's REST API, like `api.interactions.reply()`. Over HTTP they do exactly the same: Discord accepts interaction responses through the REST callback endpoint, as long as the HTTP request itself is answered with a `202`.
+
+This means commands, components and autocompletes written for `@discordjs/core` work unchanged:
+
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, RESTPostAPIChatInputApplicationCommandsJSONBody, ToEventProps } from '@discordjs/core';
+// ---cut---
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+
+class PingCommand extends AbstractStandaloneCommand {
+  // ---cut-start---
+  protected readonly data = {} as RESTPostAPIChatInputApplicationCommandsJSONBody;
+  // ---cut-end---
+  public async execute({ data, api }: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+    await api.interactions.reply(data.id, data.token, { content: 'Pong!' });
+  }
+}
+```
+
+The client doesn't answer Discord's request right away. It waits until the interaction is acknowledged (any reply, defer, update, modal or autocomplete response), or until `acknowledgeTimeout` passes (3 seconds by default), and then returns the `202`. Discord requires the first response within 3 seconds, so slow commands should defer first, exactly like on the gateway.
+
+## Serverless platforms [#serverless-platforms]
+
+On serverless platforms, the runtime may stop once the response is sent. Anything your command does after its first reply (follow-ups, edits, other API calls) can then be cut off.
+
+Keep that work alive with your platform's tools, like [`ctx.waitUntil()`](https://developers.cloudflare.com/workers/runtime-apis/context/#waituntil) on Cloudflare Workers or [`after()`](https://nextjs.org/docs/app/api-reference/functions/after) on Next.js.

@@ -48,6 +48,13 @@
   - [Plugins Overview](https://nyx-discord.github.io/nyx/guide@v3/use/plugins.md)
   - [Events](https://nyx-discord.github.io/nyx/guide@v3/use/plugins/events.md)
 
+  - **HTTP Bots**
+  - [HTTP Overview](https://nyx-discord.github.io/nyx/guide@v3/use/http.md)
+  - [Mounting](https://nyx-discord.github.io/nyx/guide@v3/use/http/mounting.md): Connect the client to your server or runtime.
+  - [Handling requests](https://nyx-discord.github.io/nyx/guide@v3/use/http/requests.md): How the client answers Discord, and how commands reply.
+  - [Webhook events](https://nyx-discord.github.io/nyx/guide@v3/use/http/webhook-events.md): Receive app authorizations, entitlements and other webhook events.
+  - [Configuration](https://nyx-discord.github.io/nyx/guide@v3/use/http/configuration.md): Replace the parts of the HTTP client.
+
   - **Other**
   - [Filters](https://nyx-discord.github.io/nyx/guide@v3/use/other/filters.md)
   - [Middlewares](https://nyx-discord.github.io/nyx/guide@v3/use/other/middlewares.md)

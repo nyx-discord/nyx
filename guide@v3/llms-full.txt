@@ -283,7 +283,7 @@ class MyCommandManager extends DefaultCommandManager {
 
 Then you can pass it to your bot:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { Client } from 'discord.js';
@@ -337,6 +337,36 @@ const myBot = Bot.create((bot: NyxBot) => ({
   // ---cut-start---
   token: 'TOKEN',
   client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'),
+  logger: console,
+  deployCommands: true,
+  // @ts-expect-error Incomplete example
+  // ---cut-end---
+  // ... other options
+  commandManager: new MyCommandManager(/** ... */),
+}));
+
+const manager = myBot.getCommandManager();
+const result = manager.myCustomPublicMethod();
+//     ^?
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandManager } from '@nyx-discord/http';
+
+class MyCommandManager extends DefaultCommandManager {
+  public myCustomPublicMethod() {
+    return 'I work!' as const;
+  }
+}
+// ---cut---
+import { HttpBot, type NyxBot } from '@nyx-discord/http';
+
+const myBot = HttpBot.create((bot: NyxBot) => ({
+  // ---cut-start---
+  applicationId: 'APPLICATION_ID',
+  publicKey: 'PUBLIC_KEY',
+  token: 'TOKEN',
   logger: console,
   deployCommands: true,
   // @ts-expect-error Incomplete example
@@ -2374,7 +2404,7 @@ class MyScheduleManager extends DefaultScheduleManager {
 
 Then you can pass it to your bot:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { Client } from 'discord.js';
@@ -2428,6 +2458,36 @@ const myBot = Bot.create((bot: NyxBot) => ({
   // ---cut-start---
   token: 'TOKEN',
   client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'),
+  logger: console,
+  deployCommands: true,
+  // @ts-expect-error Incomplete example
+  // ---cut-end---
+  // ... other options
+  scheduleManager: new MyScheduleManager(/** ... */),
+}));
+
+const manager = myBot.getScheduleManager();
+const result = manager.myCustomPublicMethod();
+//     ^?
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleManager } from '@nyx-discord/http';
+
+class MyScheduleManager extends DefaultScheduleManager {
+  public myCustomPublicMethod() {
+    return 'I work!' as const;
+  }
+}
+// ---cut---
+import { HttpBot, type NyxBot } from '@nyx-discord/http';
+
+const myBot = HttpBot.create((bot: NyxBot) => ({
+  // ---cut-start---
+  applicationId: 'APPLICATION_ID',
+  publicKey: 'PUBLIC_KEY',
+  token: 'TOKEN',
   logger: console,
   deployCommands: true,
   // @ts-expect-error Incomplete example
@@ -3050,7 +3110,7 @@ EventBus subscribers (`events.bus`) cannot be registered automatically, so you n
 
 Any class extending one of the six abstract subscriber base classes will be detected:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractDJSClientSubscriber, type Metadata } from '@nyx-discord/djs';
@@ -3079,6 +3139,21 @@ export class ReadySubscriber extends AbstractCoreClientSubscriber<typeof Gateway
 }
 ```
   </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/http';
+import { type APIInteraction, type ToEventProps, GatewayDispatchEvents } from '@discordjs/core';
+
+// gateway events like Ready never fire over HTTP, but interactions do
+export class InteractionLogSubscriber extends AbstractCoreClientSubscriber<typeof GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+  public handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {
+    console.log(`Received interaction ${payload.data.id}`);
+  }
+}
+```
+  </Tab>
 </Tabs>
 
 <Callout>
@@ -3087,7 +3162,7 @@ Top-level subscribers are instantiated with <code>new Class()</code> (no argumen
 
 Alternatively, you can specify a `static create(bot)` factory:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractDJSClientSubscriber } from '@nyx-discord/djs';
@@ -3124,6 +3199,26 @@ export class ReadySubscriber extends AbstractCoreClientSubscriber<typeof Gateway
   // ...
   // ---cut-start---
   public handleEvent(meta: Metadata, payload: ToEventProps<GatewayReadyDispatchData>) {}
+  // ---cut-end---
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractCoreClientSubscriber } from '@nyx-discord/http';
+import type { Bot, Metadata } from '@nyx-discord/http';
+import { type APIInteraction, type ToEventProps, GatewayDispatchEvents } from '@discordjs/core';
+
+export class InteractionLogSubscriber extends AbstractCoreClientSubscriber<typeof GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+  public static create(bot: Bot) {
+    return new InteractionLogSubscriber();
+  }
+
+  // ...
+  // ---cut-start---
+  public handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {}
   // ---cut-end---
 }
 ```
@@ -7978,7 +8073,7 @@ The framework doesn't store any state in the instance, so you can reuse it acros
 
 For commands to be deployed at Discord, you must either pass `deployCommands: true` when creating the bot, or deploy them manually.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
     import { Client } from 'discord.js';
@@ -8009,6 +8104,19 @@ For commands to be deployed at Discord, you must either pass `deployCommands: tr
     const myBot = Bot.create((bot) => ({
       // ---cut-start---
       token: 'TOKEN', client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'), logger: console,
+      // ---cut-end---
+      // ... other options
+      deployCommands: true,
+    }));
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+    import { HttpBot } from '@nyx-discord/http';
+
+    const myBot = HttpBot.create((bot) => ({
+      // ---cut-start---
+      applicationId: 'APPLICATION_ID', publicKey: 'PUBLIC_KEY', token: 'TOKEN', logger: console,
       // ---cut-end---
       // ... other options
       deployCommands: true,
@@ -10652,6 +10760,11 @@ The event system in nyx is powered by [EventBuses](/use/events/buses). These are
 
 You can see them as a more batteries-included way of handling events than using the native Node.js `EventEmitter`.
 
+<Callout>
+  HTTP bots (`@nyx-discord/http`) have no gateway connection, so their client only emits `InteractionCreate`, plus
+  [webhook events](/use/http/webhook-events) if you set them up. Subscribers to other client events never fire.
+</Callout>
+
 ## Quick example [#quick-example]
 
 <Tabs items={['discord.js', '@discordjs/core']}>
@@ -11475,7 +11588,7 @@ We also recommend using a formatter like [Prettier](https://www.prettier.io/) an
 
 ### Installing [#installing]
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```npm
     npm i @nyx-discord/djs discord.js
@@ -11484,6 +11597,11 @@ We also recommend using a formatter like [Prettier](https://www.prettier.io/) an
   <Tab>
 ```npm
     npm i @nyx-discord/djs-core @discordjs/core @discordjs/rest @discordjs/ws
+```
+  </Tab>
+  <Tab>
+```npm
+    npm i @nyx-discord/http @discordjs/core
 ```
   </Tab>
 </Tabs>
@@ -11495,7 +11613,7 @@ We also recommend using a formatter like [Prettier](https://www.prettier.io/) an
 
 You'll need a client, which will depend on the adapter you're using. It can be any client, as long as it's not logged in or destroyed.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
     import { Client, GatewayIntentBits } from 'discord.js';
@@ -11518,6 +11636,9 @@ You'll need a client, which will depend on the adapter you're using. It can be a
     const client = new Client({ rest, gateway });
 ```
   </Tab>
+  <Tab>
+    No client needed: `HttpBot` creates it for you in the next step, from your application's ID and public key.
+  </Tab>
 </Tabs>
 
 </Step>
@@ -11533,7 +11654,7 @@ of your bot, including loading commands, managing events, and more.
 Create one with `Bot.create()`, which takes a function that gets passed the currently constructing bot
 instance, and should return the options that you want for the bot.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
     import { Bot, type NyxBot } from '@nyx-discord/djs';
@@ -11565,6 +11686,19 @@ instance, and should return the options that you want for the bot.
     const myBot = Bot.create((bot: NyxBot) => ({
       token: 'TOKEN',
       client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'),
+      logger: console, // Can be your own logger, see the NyxLogger docs
+      deployCommands: true, // Whether to deploy commands to Discord on start
+    }));
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+    import { HttpBot, type NyxBot } from '@nyx-discord/http';
+
+    const myBot = HttpBot.create((bot: NyxBot) => ({
+      applicationId: 'APPLICATION_ID',
+      publicKey: 'PUBLIC_KEY', // From the Developer Portal, used to verify requests
+      token: 'TOKEN',
       logger: console, // Can be your own logger, see the NyxLogger docs
       deployCommands: true, // Whether to deploy commands to Discord on start
     }));
@@ -11613,7 +11747,7 @@ instance, and should return the options that you want for the bot.
 
 Finally, to start it, simply call `.start()`. This will log in the client, set up event listeners, and get everything ready:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { Bot } from '@nyx-discord/djs';
@@ -11630,6 +11764,21 @@ import { Bot } from '@nyx-discord/djs-core';
 declare const myBot: Bot;
 // ---cut-end---
 await myBot.start();
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { HttpBot } from '@nyx-discord/http';
+// ---cut-start---
+declare const myBot: ReturnType<typeof HttpBot.create>;
+// ---cut-end---
+import { createServer } from 'node:http';
+import { toNodeListener } from '@nyx-discord/http';
+
+await myBot.start();
+
+// then pass Discord's requests to the client, see the HTTP Mounting page for other servers
+createServer(toNodeListener(myBot.getClient())).listen(3000);
 ```
   </Tab>
 </Tabs>
@@ -11662,6 +11811,468 @@ await myBot.start();
   Learn how to create and use plugins to extend your bot's functionality.
 </Card>
 </Cards>
+
+
+# Configuration (https://nyx-discord.github.io/nyx/guide@v3/use/http/configuration)
+
+Every part of the client can be replaced through `clientInjections` (or `injections`, when calling `HttpNyxClient.create()` yourself):
+
+| Injection            | Default                                                    | Description                                                                       |
+|----------------------|------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| `verifier`           | `DefaultSignatureVerifier`                                 | Verifies Discord's Ed25519 signatures.                                            |
+| `rest`               | A `REST` with the bot's token                              | The REST client used by `api`.                                                    |
+| `api`                | An `API` over `rest`                                       | The API passed to commands and subscribers.                                       |
+| `emitter`            | An `AsyncEventEmitter`                                     | The emitter interactions and webhook events are emitted on.                       |
+| `acknowledgeTimeout` | `3_000`                                                    | How long to wait for an interaction to be acknowledged, in milliseconds.          |
+| `maxTimestampAge`    | `300_000`                                                  | How old (or how far in the future) a request can be before it's rejected, in ms.  |
+
+```ts twoslash
+declare const env: Record<string, string>;
+// ---cut---
+import { HttpBot } from '@nyx-discord/http';
+
+const bot = HttpBot.create(() => ({
+  applicationId: env.APP_ID,
+  publicKey: env.DISCORD_PUBLIC_KEY,
+  token: env.TOKEN,
+  logger: console,
+  deployCommands: true,
+  clientInjections: {
+    acknowledgeTimeout: 2_500,
+    maxTimestampAge: 60_000,
+  },
+}));
+```
+
+## Signature verification [#signature-verification]
+
+The default verifier checks signatures with the [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API)
+(`crypto.subtle`), so it needs no dependencies and works on Node.js, Bun, Deno and Cloudflare Workers.
+
+On runtimes without a global `crypto.subtle`, like older Node.js versions, pass one yourself:
+
+```ts twoslash
+declare const env: Record<string, string>;
+// ---cut---
+import { webcrypto } from 'node:crypto';
+import { DefaultSignatureVerifier, HttpBot } from '@nyx-discord/http';
+
+const bot = HttpBot.create(() => ({
+  applicationId: env.APP_ID,
+  publicKey: env.DISCORD_PUBLIC_KEY,
+  token: env.TOKEN,
+  logger: console,
+  deployCommands: true,
+  clientInjections: {
+    verifier: DefaultSignatureVerifier.create({
+      publicKey: env.DISCORD_PUBLIC_KEY,
+      subtle: webcrypto.subtle as SubtleCrypto,
+    }),
+  },
+}));
+```
+
+Or implement <DocsLink pkg="http" name="SignatureVerifier" /> to use any other library. For example, with [tweetnacl](https://www.npmjs.com/package/tweetnacl):
+
+```ts twoslash
+declare const env: Record<string, string>;
+// ---cut---
+import nacl from 'tweetnacl';
+import { HttpBot, type SignatureVerifier } from '@nyx-discord/http';
+
+class NaclVerifier implements SignatureVerifier {
+  protected readonly publicKey: Uint8Array;
+
+  protected readonly encoder = new TextEncoder();
+
+  constructor(publicKey: string) {
+    this.publicKey = Buffer.from(publicKey, 'hex');
+  }
+
+  public async verify(body: string | Uint8Array, signature: string, timestamp: string) {
+    // Discord signs the timestamp followed by the raw body
+    const bodyBytes = typeof body === 'string' ? this.encoder.encode(body) : body;
+    const message = Buffer.concat([this.encoder.encode(timestamp), bodyBytes]);
+
+    try {
+      return nacl.sign.detached.verify(message, Buffer.from(signature, 'hex'), this.publicKey);
+    } catch {
+      // tweetnacl throws on malformed signatures, which are just invalid requests
+      return false;
+    }
+  }
+}
+
+const bot = HttpBot.create(() => ({
+  applicationId: env.APP_ID,
+  publicKey: env.DISCORD_PUBLIC_KEY,
+  token: env.TOKEN,
+  logger: console,
+  deployCommands: true,
+  clientInjections: {
+    verifier: new NaclVerifier(env.DISCORD_PUBLIC_KEY),
+  },
+}));
+```
+
+
+# HTTP Overview (https://nyx-discord.github.io/nyx/guide@v3/use/http)
+
+The [`@nyx-discord/http`](https://www.npmjs.com/package/@nyx-discord/http) package lets an `@discordjs/core` bot receive [interactions](https://discord.com/developers/docs/interactions/overview)
+and [webhook events](https://discord.com/developers/docs/events/webhook-events) over HTTP, instead of through a gateway connection.
+
+Discord sends each interaction as a `POST` request to your app's Interactions Endpoint URL, so a bot that only handles
+commands and components doesn't need a long-lived connection at all. It can run on a regular server, or on serverless
+platforms like Cloudflare Workers or Vercel.
+
+The framework doesn't ship a server and never opens a port. Our client takes a request and returns a response, and you pass
+requests to it from the server you already use: `node:http`, Express, Fastify, Hono, Next.js, Bun, Deno, Workers...
+
+## Installation [#installation]
+
+<Steps>
+<Step>
+
+### Installing [#installing]
+
+```npm
+npm i @nyx-discord/http @discordjs/core
+```
+
+The package re-exports `@nyx-discord/djs-core`, so commands, events, schedules and everything else are imported from `@nyx-discord/http`. Everything in this guide that applies to `@discordjs/core` applies here too.
+
+</Step>
+<Step>
+
+### Creating the bot [#creating-the-bot]
+
+`HttpBot.create()` works like `Bot.create()`, but takes your application's ID and public key (both on the [Developer Portal](https://discord.com/developers/applications)) instead of a client, and creates the client for you:
+
+```ts twoslash
+declare const env: Record<string, string>;
+// ---cut---
+import { HttpBot } from '@nyx-discord/http';
+
+const bot = HttpBot.create(() => ({
+  applicationId: env.APP_ID,
+  publicKey: env.DISCORD_PUBLIC_KEY,
+  token: env.TOKEN,
+  logger: console,
+  deployCommands: true,
+}));
+
+await bot.start();
+
+const client = bot.getClient();
+//    ^?
+```
+
+Requests are answered with `503` until `bot.start()` finishes, so nothing reaches your commands before they're registered.
+
+</Step>
+<Step>
+
+### Mounting the client [#mounting-the-client]
+
+Pass incoming requests to the client from your server. See [Mounting](/use/http/mounting) for each backend:
+
+```ts twoslash
+import { HttpBot } from '@nyx-discord/http';
+declare const bot: ReturnType<typeof HttpBot.create>;
+// ---cut---
+import { createServer } from 'node:http';
+import { toNodeListener } from '@nyx-discord/http';
+
+createServer(toNodeListener(bot.getClient())).listen(3000);
+```
+
+</Step>
+<Step>
+
+### Setting the endpoint [#setting-the-endpoint]
+
+On the Developer Portal, set your app's **Interactions Endpoint URL** to the public URL of that route. Discord sends a `PING` to check it, which the client answers by itself.
+
+</Step>
+</Steps>
+
+## What's different from the gateway [#whats-different-from-the-gateway]
+
+- Only interactions (`InteractionCreate`) and [webhook events](/use/http/webhook-events) are emitted. Subscribers to any other gateway event (messages, members, guilds...) never fire.
+- Commands work unchanged: they reply through `api.interactions.reply()` and friends, as they do on the gateway. See [Handling requests](/use/http/requests).
+- Schedules run while the process is alive. On serverless platforms, triggering them (e.g. with Workers cron triggers) is up to you.
+- Only the `@discordjs/core` adapter is supported, since discord.js structures need a gateway-backed `Client`.
+
+## Getting the bot [#getting-the-bot]
+
+Inside commands, subscribers and schedules, `TypedFields.HttpBot` gets the bot from the metadata, typed so its client is the `HttpNyxClient`:
+
+```ts twoslash
+import { AbstractSchedule, TypedFields, type Metadata } from '@nyx-discord/http';
+
+class CleanupSchedule extends AbstractSchedule {
+  protected readonly interval = '0 * * * *';
+
+  public async tick(meta: Metadata) {
+    const bot = TypedFields.HttpBot.get(meta, true);
+    const client = bot.getClient();
+    //    ^?
+  }
+}
+```
+
+`@nyx-discord/http` exports its own `TypedFields`, without `@nyx-discord/djs-core`'s `GatewayCoreBot`, since HTTP bots have no gateway client.
+
+
+# Mounting (https://nyx-discord.github.io/nyx/guide@v3/use/http/mounting)
+
+The client exposes one method, `handle()`, which takes a request and returns the response to send. The package also includes two adapters for the most common signatures:
+
+| Adapter          | Signature                                                         | Use it with                                       |
+|------------------|-------------------------------------------------------------------|---------------------------------------------------|
+| `toNodeListener` | `(req: IncomingMessage, res: ServerResponse) => Promise<void>`     | `node:http`, Express                              |
+| `toFetchHandler` | `(request: Request) => Promise<Response>`                          | Hono, Cloudflare Workers, Bun, Deno, Next.js      |
+
+Both answer non-`POST` requests with `405`.
+
+<Callout type="warn">
+  Discord's signature is checked against the **raw** request body. Make sure nothing parses the body before the client sees it, like `express.json()` or Fastify's default JSON parser.
+</Callout>
+
+## node:http [#nodehttp]
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+// ---cut---
+import { createServer } from 'node:http';
+import { toNodeListener } from '@nyx-discord/http';
+
+createServer(toNodeListener(client)).listen(3000);
+```
+
+## Express [#express]
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+import type { RequestListener } from 'node:http';
+declare const client: HttpNyxClient;
+declare const app: { post(path: string, handler: RequestListener): void };
+// ---cut---
+import { toNodeListener } from '@nyx-discord/http';
+
+// no express.json() on this route
+app.post('/interactions', toNodeListener(client));
+```
+
+## Fastify [#fastify]
+
+Fastify parses JSON by default, so register a parser that keeps the body as a `Buffer`, and call `handle()` directly:
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+type Request = { body: unknown; headers: Record<string, string | undefined> };
+type Reply = { code(status: number): Reply; headers(headers: Record<string, string>): Reply; send(body: string): Reply };
+declare const app: {
+  addContentTypeParser(type: string, options: { parseAs: 'buffer' }, parser: (req: Request, body: Buffer, done: (error: null, body: Buffer) => void) => void): void;
+  post(path: string, handler: (req: Request, reply: Reply) => Promise<Reply>): void;
+};
+// ---cut---
+app.addContentTypeParser('application/json', { parseAs: 'buffer' }, (_req, body, done) => done(null, body));
+
+app.post('/interactions', async (req, reply) => {
+  const result = await client.handle({
+    body: req.body as Buffer,
+    signature: req.headers['x-signature-ed25519'],
+    timestamp: req.headers['x-signature-timestamp'],
+  });
+
+  return reply.code(result.status).headers(result.headers).send(result.body);
+});
+```
+
+## Hono [#hono]
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+declare const app: { post(path: string, handler: (c: { req: { raw: Request } }) => Promise<Response>): void };
+// ---cut---
+import { toFetchHandler } from '@nyx-discord/http';
+
+const interactions = toFetchHandler(client);
+
+app.post('/interactions', (c) => interactions(c.req.raw));
+```
+
+## Cloudflare Workers, Bun and Deno [#cloudflare-workers-bun-and-deno]
+
+All three accept a default export with a `fetch` handler:
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+// ---cut---
+import { toFetchHandler } from '@nyx-discord/http';
+
+export default { fetch: toFetchHandler(client) };
+```
+
+## Next.js [#nextjs]
+
+In a route handler, like `app/interactions/route.ts`:
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+// ---cut---
+import { toFetchHandler } from '@nyx-discord/http';
+
+export const POST = toFetchHandler(client);
+```
+
+## Anything else [#anything-else]
+
+Call `handle()` with the raw body (a `string` or `Uint8Array`) and the two signature headers, then send back what it returns:
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+declare const rawBody: Uint8Array;
+declare const headers: Record<string, string | undefined>;
+// ---cut---
+const result = await client.handle({
+  body: rawBody,
+  signature: headers['x-signature-ed25519'],
+  timestamp: headers['x-signature-timestamp'],
+});
+
+result.status; // the status code
+result.headers; // the headers to set
+result.body; // the body, empty when there's none
+```
+
+
+# Handling requests (https://nyx-discord.github.io/nyx/guide@v3/use/http/requests)
+
+## Responses [#responses]
+
+Every request goes through the same checks before it reaches your bot:
+
+| Request                                           | Response               |
+|---------------------------------------------------|------------------------|
+| Before `bot.start()` finishes                     | `503`                  |
+| Missing or invalid signature                      | `401`                  |
+| Timestamp older (or newer) than `maxTimestampAge` | `401`                  |
+| Body that isn't valid JSON                        | `400`                  |
+| Interaction `PING` (Discord checking your URL)    | `200` with a `PONG`    |
+| Any other interaction                             | `202` with no body     |
+| [Webhook event](/use/http/webhook-events) or its `PING` | `204` with no body   |
+
+Rejecting old timestamps protects against replayed requests: someone who captured a valid request can't send it again later. The window is 5 minutes by default, see [Configuration](/use/http/configuration).
+
+## Replying to interactions [#replying-to-interactions]
+
+Over the gateway, commands reply by calling Discord's REST API, like `api.interactions.reply()`. Over HTTP they do exactly the same: Discord accepts interaction responses through the REST callback endpoint, as long as the HTTP request itself is answered with a `202`.
+
+This means commands, components and autocompletes written for `@discordjs/core` work unchanged:
+
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, RESTPostAPIChatInputApplicationCommandsJSONBody, ToEventProps } from '@discordjs/core';
+// ---cut---
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+
+class PingCommand extends AbstractStandaloneCommand {
+  // ---cut-start---
+  protected readonly data = {} as RESTPostAPIChatInputApplicationCommandsJSONBody;
+  // ---cut-end---
+  public async execute({ data, api }: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+    await api.interactions.reply(data.id, data.token, { content: 'Pong!' });
+  }
+}
+```
+
+The client doesn't answer Discord's request right away. It waits until the interaction is acknowledged (any reply, defer, update, modal or autocomplete response), or until `acknowledgeTimeout` passes (3 seconds by default), and then returns the `202`. Discord requires the first response within 3 seconds, so slow commands should defer first, exactly like on the gateway.
+
+## Serverless platforms [#serverless-platforms]
+
+On serverless platforms, the runtime may stop once the response is sent. Anything your command does after its first reply (follow-ups, edits, other API calls) can then be cut off.
+
+Keep that work alive with your platform's tools, like [`ctx.waitUntil()`](https://developers.cloudflare.com/workers/runtime-apis/context/#waituntil) on Cloudflare Workers or [`after()`](https://nextjs.org/docs/app/api-reference/functions/after) on Next.js.
+
+
+# Webhook events (https://nyx-discord.github.io/nyx/guide@v3/use/http/webhook-events)
+
+Besides interactions, Discord can send some events about your app over HTTP: [webhook events](https://discord.com/developers/docs/events/webhook-events). For example, when a user authorizes or deauthorizes your app, or when an entitlement is created.
+
+They're sent to a separate URL, the **Webhook Events URL**, which you set on the Developer Portal under **Webhooks**, along with the events you want to receive.
+
+## Mounting [#mounting]
+
+`client.getWebhookEventHandler()` returns a handler for that URL, which works with the same [adapters](/use/http/mounting) as the client:
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+import type { RequestListener } from 'node:http';
+declare const client: HttpNyxClient;
+declare const app: { post(path: string, handler: RequestListener): void };
+// ---cut---
+import { toNodeListener } from '@nyx-discord/http';
+
+app.post('/interactions', toNodeListener(client));
+app.post('/webhook-events', toNodeListener(client.getWebhookEventHandler()));
+```
+
+The handler verifies requests like the client does, and answers every event (and Discord's `PING`) with a `204`.
+
+## Subscribing [#subscribing]
+
+Each event is emitted on the client's emitter under its type, one of the [`ApplicationWebhookEventType`](https://discord-api-types.dev/api/discord-api-types-v10/enum/ApplicationWebhookEventType) values. The bot's client event bus is typed for gateway events, so create a bus typed with `HttpClientEvents` over the same emitter, and subscribe to it:
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+// ---cut---
+import type { APIWebhookEventApplicationAuthorizedData } from '@discordjs/core';
+import { ApplicationWebhookEventType } from '@discordjs/core';
+import {
+  BaseClientSubscriber,
+  BasicEventEmitterBus,
+  type EventEmitterLike,
+  type HttpClientEvents,
+  type Metadata,
+  type WebhookEventProps,
+} from '@nyx-discord/http';
+
+class AuthorizedSubscriber extends BaseClientSubscriber<
+  HttpClientEvents,
+  ApplicationWebhookEventType.ApplicationAuthorized
+> {
+  protected readonly event = ApplicationWebhookEventType.ApplicationAuthorized;
+
+  public handleEvent(
+    _meta: Metadata,
+    { data, timestamp }: WebhookEventProps<APIWebhookEventApplicationAuthorizedData>,
+  ) {
+    console.log(`${data.user.username} authorized the app at ${timestamp}`);
+    //                     ^?
+  }
+}
+
+const webhookBus = BasicEventEmitterBus.createSyncWithEmitter<
+  HttpClientEvents,
+  EventEmitterLike
+>(client.getEmitter());
+
+await webhookBus.subscribe(new AuthorizedSubscriber());
+```
+
+The payload is the usual `{ data, api, shardId }`, where `data` is the event's data (`APIWebhookEvent...Data` from `discord-api-types`), plus the event's `timestamp`. Webhook events aren't realtime and can arrive late or out of order, so use the timestamp when order matters.
+
+<Callout>
+  Discord retries an event for up to 10 minutes if your endpoint doesn't answer, and stops sending events if it fails too often. Since the handler answers as soon as the event is emitted, slow subscribers don't delay the response.
+</Callout>
 
 
 # Introduction (https://nyx-discord.github.io/nyx/guide@v3/use)
@@ -12284,13 +12895,14 @@ If you're using a callback-based middleware, you'll need to create your response
 
 ## Structure [#structure]
 
-The framework is split into three packages:
+The framework is split into these packages:
 
 | Package                       | Purpose                                                                                                                            |
 |-------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | `@nyx-discord/base`           | Defines all the object templates (interfaces) and their relations, and provides default, minimal implementations of them.          |
 | `@nyx-discord/djs`            | The [discord.js](https://discord.js.org) adapter, connecting the framework to a discord.js `Client`.                                |
 | `@nyx-discord/djs-core`       | The [@discordjs/core](https://discord.js.org/docs/packages/core/main) adapter, connecting the framework to a raw `Client`.          |
+| `@nyx-discord/http`           | Runs the `@discordjs/core` adapter over HTTP, receiving interactions from your own server instead of the gateway.                  |
 
 Every component depends on the interfaces rather than on the default implementations, so you can replace any of them with your own. The adapters only exist to plug the framework into a specific Discord library.
 
@@ -12298,7 +12910,7 @@ Every component depends on the interfaces rather than on the default implementat
 
 Most of the time, you'll want to use an adapter, depending on the library your bot uses:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
     If your bot uses [discord.js](https://discord.js.org), install `@nyx-discord/djs`:
 
@@ -12313,12 +12925,23 @@ Most of the time, you'll want to use an adapter, depending on the library your b
     npm i @nyx-discord/djs-core @discordjs/core @discordjs/rest @discordjs/ws
 ```
   </Tab>
+  <Tab>
+    If your bot only needs interactions (commands, components, modals) and should receive them over HTTP, for example on a
+    serverless platform, install `@nyx-discord/http`. It runs the `@discordjs/core` adapter without a gateway connection,
+    see [HTTP](/use/http):
+
+```npm
+    npm i @nyx-discord/http @discordjs/core
+```
+  </Tab>
 </Tabs>
 
-Both adapters re-export `base`, so you can import everything from a single package.
+Both adapters re-export `base`, and `@nyx-discord/http` re-exports `@nyx-discord/djs-core`, so you can import everything from a single package.
 
 <Callout>
   Throughout this guide, code examples use `@nyx-discord/djs` by default. If you use `@discordjs/core`, simply swap the import to `@nyx-discord/djs-core`: the library-agnostic APIs (filters, middlewares, schedules, plugins, events) are identical, and only the parts that touch Discord's client or interactions differ.
+
+  If you use `@nyx-discord/http`, follow the `@discordjs/core` examples, importing from `@nyx-discord/http` instead. Examples include an HTTP tab wherever the two differ.
 </Callout>
 
 If you want to develop something for nyx, such as a plugin, you can use `@nyx-discord/base` and depend only on its interfaces (see [Object nomenclature](#object-nomenclature)), not on any actual implementation. This ensures your component will work across all adapters.
@@ -12864,7 +13487,7 @@ In essence, a `Schedule` object contains its ticking logic and its interval of w
 
 Let's create a schedule that updates the activity with the member count every half hour:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { type DjsBot } from '@nyx-discord/djs';
@@ -12900,7 +13523,8 @@ class MemberCountSchedule extends AbstractSchedule {
   protected readonly interval = '*/30 * * * *';
 
   public async tick(meta: Metadata) {
-    const bot = TypedFields.CoreBot.get(meta, true);
+    // GatewayCoreBot types the client as a gateway CoreNyxClient, which presences need
+    const bot = TypedFields.GatewayCoreBot.get(meta, true);
     const client = bot.getClient().getEmitter();
     const api = bot.getClient().getApi();
 
@@ -12923,6 +13547,10 @@ class MemberCountSchedule extends AbstractSchedule {
 
 await bot.getScheduleManager().addSchedule(new MemberCountSchedule());
 ```
+  </Tab>
+  <Tab>
+Presences are set through the gateway connection, so HTTP bots can't set them. Schedules themselves work the same as
+with `@discordjs/core`, as long as the process stays alive.
   </Tab>
 </Tabs>
 

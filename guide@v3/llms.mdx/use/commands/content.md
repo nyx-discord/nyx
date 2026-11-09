@@ -73,7 +73,7 @@ The framework doesn't store any state in the instance, so you can reuse it acros
 
 For commands to be deployed at Discord, you must either pass `deployCommands: true` when creating the bot, or deploy them manually.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
     import { Client } from 'discord.js';
@@ -104,6 +104,19 @@ For commands to be deployed at Discord, you must either pass `deployCommands: tr
     const myBot = Bot.create((bot) => ({
       // ---cut-start---
       token: 'TOKEN', client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'), logger: console,
+      // ---cut-end---
+      // ... other options
+      deployCommands: true,
+    }));
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+    import { HttpBot } from '@nyx-discord/http';
+
+    const myBot = HttpBot.create((bot) => ({
+      // ---cut-start---
+      applicationId: 'APPLICATION_ID', publicKey: 'PUBLIC_KEY', token: 'TOKEN', logger: console,
       // ---cut-end---
       // ... other options
       deployCommands: true,

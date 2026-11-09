@@ -8,7 +8,7 @@ In essence, a `Schedule` object contains its ticking logic and its interval of w
 
 Let's create a schedule that updates the activity with the member count every half hour:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { type DjsBot } from '@nyx-discord/djs';
@@ -44,7 +44,8 @@ class MemberCountSchedule extends AbstractSchedule {
   protected readonly interval = '*/30 * * * *';
 
   public async tick(meta: Metadata) {
-    const bot = TypedFields.CoreBot.get(meta, true);
+    // GatewayCoreBot types the client as a gateway CoreNyxClient, which presences need
+    const bot = TypedFields.GatewayCoreBot.get(meta, true);
     const client = bot.getClient().getEmitter();
     const api = bot.getClient().getApi();
 
@@ -67,6 +68,10 @@ class MemberCountSchedule extends AbstractSchedule {
 
 await bot.getScheduleManager().addSchedule(new MemberCountSchedule());
 ```
+  </Tab>
+  <Tab>
+Presences are set through the gateway connection, so HTTP bots can't set them. Schedules themselves work the same as
+with `@discordjs/core`, as long as the process stays alive.
   </Tab>
 </Tabs>
 
