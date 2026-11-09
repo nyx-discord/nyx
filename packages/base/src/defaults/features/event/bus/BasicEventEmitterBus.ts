@@ -80,6 +80,14 @@ export class BasicEventEmitterBus<
     return this;
   }
 
+  public override async unsubscribeProtected(
+    subscriber: AnyEventSubscriberFrom<EventArgsObject>,
+  ): Promise<this> {
+    await super.unsubscribeProtected(subscriber);
+    this.unlistenFromEmitter(subscriber.getEvent());
+    return this;
+  }
+
   public override async clearSubscribers(
     eventName?: string,
     clearProtected = false,

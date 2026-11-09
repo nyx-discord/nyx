@@ -125,6 +125,20 @@ describe('BasicEventEmitterBus', () => {
     });
   });
 
+  describe('unsubscribeProtected', () => {
+    test('GIVEN a single protected subscriber WHEN unsubscribed THEN removes it and the listener from emitter', async () => {
+      const emitter = StubEventEmitter.create();
+      const bus = createBus({ emitter });
+      const subscriber = new MockEventSubscriber().protect();
+      await bus.subscribe(subscriber);
+
+      await bus.unsubscribeProtected(subscriber);
+
+      expect(bus.isSubscribed(subscriber)).toBe(false);
+      expect(emitter.removeAllListeners).toHaveBeenCalledWith('test');
+    });
+  });
+
   describe('clearSubscribers', () => {
     test('GIVEN subscribers THEN clears the bus', async () => {
       const bus = createBus();
