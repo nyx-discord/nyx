@@ -1,6 +1,6 @@
 {
   "name": "@nyx-discord/typed-options",
-  "version": "1.0.0-0",
+  "version": "1.0.0",
   "description": "Typed slash command options inferred from command data, with no codegen. Works with discord.js, @discordjs/core and raw API payloads.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
