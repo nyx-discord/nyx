@@ -1,6 +1,6 @@
 # Overview (https://nyx-discord.github.io/nyx/guide@v3/session)
 
-The [`@nyx-discord/plugin-sessions/djs`](https://www.npmjs.com/package/@nyx-discord/plugin-sessions/djs) package is an official [plugin](/use/plugins) that provides and manages user interaction sessions.
+The [`@nyx-discord/plugin-sessions`](https://www.npmjs.com/package/@nyx-discord/plugin-sessions) package is an official [plugin](/use/plugins) that provides and manages user interaction sessions.
 
 These are objects that represent an open interaction "session" with a user. You can consider them as a more advanced, opinionated, OOP version of [DJS' Interaction Collectors](https://discordjs.guide/legacy/popular-topics/collectors).
 
@@ -348,7 +348,7 @@ We'll dive deeper on what each of the methods do later, but this should be enoug
 ### Installing [#installing]
 
 ```npm
-npm i @nyx-discord/plugin-sessions/djs
+npm i @nyx-discord/plugin-sessions
 ```
 
 </Step>

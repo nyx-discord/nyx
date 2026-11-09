@@ -4,4 +4,4 @@
 3:[["children",{"s":"__PAGE__","h":160}]]
 2:[["children",{"s":{"n":"slug","t":"oc","k":"use/first-start","s":["api","llms-full.txt","llms.mdx","llms.txt"]},"h":64,"c":"$Q3"}]]
 1:[["children",{"s":"(docs)","h":32,"c":"$Q2"}]]
-0:{"b":"YfDmiSKvBBDmRu4APulqE","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"emGtGEWRk7BMY3VNDn_8f","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

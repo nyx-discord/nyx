@@ -94,7 +94,7 @@
     - [Middleware List](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules/schedule-executor/schedule-middleware-list.md)
   - [Execution Scheduler](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules/schedule-execution-scheduler.md)
   - [Job Adapter](https://nyx-discord.github.io/nyx/guide@v3/extend/schedules/schedule-job-adapter.md)
-- Session Plugin: All about the sessions plugin.
+- Session Plugin: Create stateful interaction sessions with your users.
   - [Overview](https://nyx-discord.github.io/nyx/guide@v3/session.md)
 
   - **Types**
