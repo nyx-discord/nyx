@@ -28,6 +28,22 @@ beforeAll(async () => {
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+class GameSession extends MockSession {}
+class TriviaSession extends GameSession {}
+class HangmanSession extends GameSession {}
+
+const makeGame = <T extends typeof MockSession>(
+  Ctor: T,
+  userId = 'u',
+): InstanceType<T> => {
+  const base = makeSess({ userId });
+  return new Ctor({
+    bot,
+    id: base.getId(),
+    startInteraction: base.getStartInteraction(),
+  }) as InstanceType<T>;
+};
+
 const AE = SessionExceedAction;
 const Scope = SessionLimitScope;
 
@@ -453,6 +469,61 @@ describe('SessionPlugin integration', () => {
       await expect(plugin.start(makeSess({ userId: 'u' }))).resolves.toBe(
         true,
       );
+    });
+  });
+  describe('inheritance', () => {
+    test('GIVEN a limit on a parent class THEN sibling subclasses count against each other', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: GameSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.Error }],
+      });
+
+      await expect(plugin.start(makeGame(TriviaSession))).resolves.toBe(true);
+      await expect(plugin.start(makeGame(HangmanSession))).rejects.toThrow(
+        SessionLimitExceededError,
+      );
+    });
+
+    test('GIVEN a limit only on a parent class THEN it applies to a child without its own policy', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: MockSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.Error }],
+      });
+
+      await expect(plugin.start(makeGame(TriviaSession))).resolves.toBe(true);
+      await expect(plugin.start(makeGame(TriviaSession))).rejects.toThrow(
+        SessionLimitExceededError,
+      );
+    });
+
+    test('GIVEN a limit on a child class THEN parent or sibling instances do not count against it', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: TriviaSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.Error }],
+      });
+
+      await plugin.start(makeGame(GameSession));
+      await plugin.start(makeGame(HangmanSession));
+      await expect(plugin.start(makeGame(TriviaSession))).resolves.toBe(true);
+    });
+
+    test('GIVEN a displace limit on a parent class THEN it displaces a sibling subclass', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: GameSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.displace() }],
+      });
+
+      const trivia = makeGame(TriviaSession);
+      await plugin.start(trivia);
+      const hangman = makeGame(HangmanSession);
+      await expect(plugin.start(hangman)).resolves.toBe(true);
+
+      expect(trivia.getState()).toBe('ended');
+      expect(hangman.getState()).toBe('running');
     });
   });
 });

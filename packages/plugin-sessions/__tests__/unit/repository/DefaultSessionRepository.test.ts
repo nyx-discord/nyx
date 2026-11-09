@@ -11,6 +11,8 @@ async function createPaginationSession(): Promise<MockPaginationSession> {
   return MockPaginationSession.createMock();
 }
 
+class SubSession extends MockSession {}
+
 describe('DefaultSessionRepository', () => {
   describe('getByConstructor', () => {
     it('returns empty collection when no sessions exist', () => {
@@ -70,6 +72,31 @@ describe('DefaultSessionRepository', () => {
 
       expect(sessions.size).toBe(1);
       expect(paginations.size).toBe(1);
+    });
+  });
+
+  describe('getByConstructor with subclasses', () => {
+    it('returns subclass sessions when querying the parent constructor', async () => {
+      const repo = DefaultSessionRepository.create();
+      const parent = await createSession();
+      const child = await SubSession.createMock();
+      repo.save(parent);
+      repo.save(child);
+
+      expect(repo.getByConstructor(MockSession).size).toBe(2);
+      expect(repo.getByConstructor(SubSession).size).toBe(1);
+      expect(repo.getByConstructor(SubSession).get(child.getId())).toBe(child);
+    });
+
+    it('removes a deleted subclass session from every parent index', async () => {
+      const repo = DefaultSessionRepository.create();
+      const child = await SubSession.createMock();
+      repo.save(child);
+
+      repo.delete(child.getId());
+
+      expect(repo.getByConstructor(MockSession).size).toBe(0);
+      expect(repo.getByConstructor(SubSession).size).toBe(0);
     });
   });
 

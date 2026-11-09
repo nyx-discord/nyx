@@ -87,7 +87,7 @@ export class DefaultSessionLimitManager<
     await this.withLock(async () => {
       for (const policy of policies) {
         for (const rule of policy.rules) {
-          await this.checkRule(session, meta, rule);
+          await this.checkRule(session, meta, policy, rule);
         }
       }
       this.reserved.set(session.getId(), session);
@@ -128,14 +128,10 @@ export class DefaultSessionLimitManager<
     const resolved: SessionLimit<Types>[] = [];
     let current: Constructor | undefined = ctor;
 
-    while (
-      current
-      && typeof current === 'function'
-      && this.policies.has(current as Constructor<Session<unknown, Types>>)
-    ) {
-      const candidates = this.policies.get(
-        current as Constructor<Session<unknown, Types>>,
-      )!;
+    while (current && current !== Object) {
+      const candidates =
+        this.policies.get(current as Constructor<Session<unknown, Types>>)
+        ?? [];
 
       const matching: SessionLimit<Types>[] = [];
       for (const candidate of candidates) {
@@ -168,9 +164,14 @@ export class DefaultSessionLimitManager<
   private async checkRule(
     session: Session<unknown, Types>,
     meta: Record<string | symbol, unknown>,
+    policy: SessionLimit<Types>,
     rule: SessionLimitRule<Types>,
   ): Promise<void> {
-    const matching = this.getMatchingSessions(session, rule.scope);
+    const matching = this.getMatchingSessions(
+      session,
+      policy.session,
+      rule.scope,
+    );
     if (matching.length < rule.max) return;
 
     const decision = await rule.onExceed.decide({
@@ -204,16 +205,18 @@ export class DefaultSessionLimitManager<
     }
   }
 
-  /** Finds existing and reserved sessions that share the same scope key as the given session. */
+  /** Finds existing and reserved sessions of the policy's constructor (or its subclasses) that share the same scope key as the given session. */
   private getMatchingSessions(
     session: Session<unknown, Types>,
+    policyCtor: Constructor<Session<unknown, any>>,
     scope: SessionLimitRule<Types>['scope'],
   ): Session<unknown, Types>[] {
     const repo = this.plugin.getRepository();
-    const ctor = session.constructor as Constructor<Session<unknown, Types>>;
-    const candidates = new Map(repo.getByConstructor(ctor));
+    const candidates = new Map(
+      repo.getByConstructor(policyCtor as Constructor<Session<unknown, Types>>),
+    );
     for (const [id, reserved] of this.reserved) {
-      if (reserved.constructor === ctor && !candidates.has(id)) {
+      if (reserved instanceof policyCtor && !candidates.has(id)) {
         candidates.set(id, reserved);
       }
     }

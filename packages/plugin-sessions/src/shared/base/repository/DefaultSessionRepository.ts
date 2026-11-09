@@ -103,22 +103,39 @@ export class DefaultSessionRepository<
     return this.entries();
   }
 
-  private indexByConstructor(session: Session<unknown, Types>): void {
-    const ctor = session.constructor as Constructor<Session<unknown, Types>>;
-    if (!this.byConstructor.has(ctor)) {
-      this.byConstructor.set(ctor, new Collection());
+  /** Returns the session's constructor and every parent constructor, so subclasses are found by their parents. */
+  protected getConstructorChain(
+    session: Session<unknown, Types>,
+  ): Constructor<Session<unknown, Types>>[] {
+    const chain: Constructor<Session<unknown, Types>>[] = [];
+    let proto: object | null = Object.getPrototypeOf(session);
+
+    while (proto && proto !== Object.prototype) {
+      chain.push(proto.constructor as Constructor<Session<unknown, Types>>);
+      proto = Object.getPrototypeOf(proto);
     }
-    this.byConstructor.get(ctor)!.set(session.getId(), session);
+
+    return chain;
+  }
+
+  private indexByConstructor(session: Session<unknown, Types>): void {
+    for (const ctor of this.getConstructorChain(session)) {
+      if (!this.byConstructor.has(ctor)) {
+        this.byConstructor.set(ctor, new Collection());
+      }
+      this.byConstructor.get(ctor)!.set(session.getId(), session);
+    }
   }
 
   private deindexByConstructor(session: Session<unknown, Types>): void {
-    const ctor = session.constructor as Constructor<Session<unknown, Types>>;
-    const collection = this.byConstructor.get(ctor);
-    if (!collection) return;
+    for (const ctor of this.getConstructorChain(session)) {
+      const collection = this.byConstructor.get(ctor);
+      if (!collection) continue;
 
-    collection.delete(session.getId());
-    if (collection.size === 0) {
-      this.byConstructor.delete(ctor);
+      collection.delete(session.getId());
+      if (collection.size === 0) {
+        this.byConstructor.delete(ctor);
+      }
     }
   }
 }
