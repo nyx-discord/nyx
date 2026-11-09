@@ -1,4 +1,4 @@
-![nyx/framework Logo](assets/nyx_framework.png)
+![@nyx-discord/plugin-sessions](https://raw.githubusercontent.com/nyx-discord/nyx/main/packages/plugin-sessions/assets/nyx_plugin-sessions.png)
 
 ---
 

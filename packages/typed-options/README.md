@@ -1,6 +1,8 @@
-# @nyx-discord/typed-options
+![@nyx-discord/typed-options](https://raw.githubusercontent.com/nyx-discord/nyx/main/packages/typed-options/assets/nyx_typed-options.png)
 
-Typed slash command options, inferred from the command data. No codegen, and no dependency on the rest of nyx: it works
+---
+
+`@nyx-discord/typed-options` gives you typed slash command options, inferred from the command data. No codegen, and no dependency on the rest of nyx: it works
 with discord.js, `@discordjs/core`, or raw API payloads.
 
 ```ts
@@ -49,3 +51,10 @@ const tag = chatInput({ name: 'tag', description: 'Tags', subcommands: [add] });
 
 typedOptions(add, interaction).getString('name'); // string
 ```
+
+## 📖 Documentation
+
+- [Guide](https://nyx-discord.github.io/nyx/guide/typed-options): options, subcommands and both adapters.
+- [Guide as Markdown for AI agents](https://nyx-discord.github.io/nyx/guide/typed-options.md), or install the agent skill with
+  `npx skills add nyx-discord/nyx`.
+- [API reference](https://nyx-discord.github.io/nyx/docs): every class, interface and type.

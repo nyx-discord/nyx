@@ -1,6 +1,8 @@
-# @nyx-discord/http
+![@nyx-discord/http](https://raw.githubusercontent.com/nyx-discord/nyx/main/packages/http/assets/nyx_http.png)
 
-Receive Discord interactions and webhook events over HTTP instead of the gateway, with any server or runtime.
+---
+
+`@nyx-discord/http` lets your [nyx](https://github.com/nyx-discord/nyx) bot receive Discord interactions and webhook events over HTTP instead of the gateway, with any server or runtime.
 See the [guide's HTTP section](https://nyx-discord.github.io/nyx/guide/use/http) for everything else.
 
 ```ts
@@ -151,3 +153,10 @@ const webhookEvents = toFetchHandler(client.getWebhookEventHandler());
 export const POST = (request: Request) =>
   webhookEvents(request, { waitUntil: after });
 ```
+
+## 📖 Documentation
+
+- [Guide](https://nyx-discord.github.io/nyx/guide/use/http): configuration, mounting, requests and webhook events.
+- [Guide as Markdown for AI agents](https://nyx-discord.github.io/nyx/guide/use/http.md), or install the agent skill with
+  `npx skills add nyx-discord/nyx`.
+- [API reference](https://nyx-discord.github.io/nyx/docs): every class, interface and type.
