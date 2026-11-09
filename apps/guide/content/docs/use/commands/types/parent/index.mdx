@@ -54,27 +54,27 @@ Implement `data` that stores the command's data.
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
-    import { SlashCommandBuilder } from 'discord.js';
-    import { AbstractParentCommand } from '@nyx-discord/djs';
+import { SlashCommandBuilder } from 'discord.js';
+import { AbstractParentCommand } from '@nyx-discord/djs';
 
-    class MyCommand extends AbstractParentCommand {
-      protected readonly data = new SlashCommandBuilder()
-        .setName('my-command')
-        .setDescription('My command')
-        .toJSON();
-    }
+class MyCommand extends AbstractParentCommand {
+  protected readonly data = new SlashCommandBuilder()
+    .setName('my-command')
+    .setDescription('My command')
+    .toJSON();
+}
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { AbstractParentCommand } from '@nyx-discord/djs-core';
+import { AbstractParentCommand } from '@nyx-discord/djs-core';
 
-    class MyCommand extends AbstractParentCommand {
-      protected readonly data = {
-        name: 'my-command',
-        description: 'My command',
-      };
-    }
+class MyCommand extends AbstractParentCommand {
+  protected readonly data = {
+    name: 'my-command',
+    description: 'My command',
+  };
+}
 ```
   </Tab>
 </Tabs>

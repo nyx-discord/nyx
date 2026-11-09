@@ -28,51 +28,51 @@ Either:
 
 - Create a class that extends `AbstractSessionStartFilter` or `AbstractSessionUpdateFilter` and implements the `check()` method.
 ```ts twoslash
-  import type { Metadata } from '@nyx-discord/djs';
-  import { AbstractSessionStartFilter, AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions/djs';
-  import type { Session, SessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs';
+import type { Metadata } from '@nyx-discord/djs';
+import { AbstractSessionStartFilter, AbstractSessionUpdateFilter } from '@nyx-discord/plugin-sessions/djs';
+import type { Session, SessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs';
 
-  class MyStartFilter extends AbstractSessionStartFilter<unknown> {
-    public async check(session: Session<unknown>, meta: Metadata): Promise<boolean> {
-      // Do some checks
-      return true; // or false if the session should not be executed
-    }
+class MyStartFilter extends AbstractSessionStartFilter<unknown> {
+  public async check(session: Session<unknown>, meta: Metadata): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the session should not be executed
   }
+}
 
-  class MyUpdateFilter extends AbstractSessionUpdateFilter<unknown> {
-    public async check(
-     session: Session<unknown>,
-     interaction: SessionUpdateInteraction,
-     meta: Metadata
-   ): Promise<boolean> {
-      // Do some checks
-      return true; // or false if the session should not be executed
-    }
+class MyUpdateFilter extends AbstractSessionUpdateFilter<unknown> {
+  public async check(
+   session: Session<unknown>,
+   interaction: SessionUpdateInteraction,
+   meta: Metadata
+ ): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the session should not be executed
   }
+}
 ```
   The type argument is the return type of your session.
 
 - Create a function that returns a boolean or a Promise that resolves to a boolean.
 
 ```ts twoslash
-  import type {
-    SessionStartFilterResolvable,
-    DjsSessionUpdateFilterResolvable
-  } from '@nyx-discord/plugin-sessions/djs';
+import type {
+  SessionStartFilterResolvable,
+  DjsSessionUpdateFilterResolvable
+} from '@nyx-discord/plugin-sessions/djs';
 
-  const myStartFilter: SessionStartFilterResolvable<unknown> = async (session, meta) => {
-    // Do some checks
-    return true; // or false if the session should not be executed
-  };
+const myStartFilter: SessionStartFilterResolvable<unknown> = async (session, meta) => {
+  // Do some checks
+  return true; // or false if the session should not be executed
+};
 
-  const myUpdateFilter: DjsSessionUpdateFilterResolvable<unknown> = async (
-    session,
-    interaction,
-    meta,
-  ) => {
-    // Do some checks
-    return true; // or false if the session should not be executed
-  };
+const myUpdateFilter: DjsSessionUpdateFilterResolvable<unknown> = async (
+  session,
+  interaction,
+  meta,
+) => {
+  // Do some checks
+  return true; // or false if the session should not be executed
+};
 ```
 
 </Step>

@@ -26,30 +26,30 @@ Either:
  <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
- // ---cut---
- import { AbstractScheduleFilter } from '@nyx-discord/djs';
- import type { Schedule, Metadata } from '@nyx-discord/djs';
+// ---cut---
+import { AbstractScheduleFilter } from '@nyx-discord/djs';
+import type { Schedule, Metadata } from '@nyx-discord/djs';
 
- class MyFilter extends AbstractScheduleFilter {
-   public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
-     // Do some checks
-     return true; // or false if the schedule should not be executed
-   }
- }
+class MyFilter extends AbstractScheduleFilter {
+  public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the schedule should not be executed
+  }
+}
  ```
   </Tab>
   <Tab>
 ```ts twoslash
- // ---cut---
- import { AbstractScheduleFilter } from '@nyx-discord/djs-core';
- import type { Schedule, Metadata } from '@nyx-discord/djs-core';
+// ---cut---
+import { AbstractScheduleFilter } from '@nyx-discord/djs-core';
+import type { Schedule, Metadata } from '@nyx-discord/djs-core';
 
- class MyFilter extends AbstractScheduleFilter {
-   public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
-     // Do some checks
-     return true; // or false if the schedule should not be executed
-   }
- }
+class MyFilter extends AbstractScheduleFilter {
+  public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the schedule should not be executed
+  }
+}
  ```
   </Tab>
 </Tabs>
@@ -58,24 +58,24 @@ Either:
  <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
- // ---cut---
- import { type ScheduleFilterResolvable } from '@nyx-discord/djs';
+// ---cut---
+import { type ScheduleFilterResolvable } from '@nyx-discord/djs';
 
- const myFilter: ScheduleFilterResolvable = async (schedule, meta) => {
-   // Do some checks
-   return true; // or false if the schedule should not be executed
- };
+const myFilter: ScheduleFilterResolvable = async (schedule, meta) => {
+  // Do some checks
+  return true; // or false if the schedule should not be executed
+};
  ```
   </Tab>
   <Tab>
 ```ts twoslash
- // ---cut---
- import { type ScheduleFilterResolvable } from '@nyx-discord/djs-core';
+// ---cut---
+import { type ScheduleFilterResolvable } from '@nyx-discord/djs-core';
 
- const myFilter: ScheduleFilterResolvable = async (schedule, meta) => {
-   // Do some checks
-   return true; // or false if the schedule should not be executed
- };
+const myFilter: ScheduleFilterResolvable = async (schedule, meta) => {
+  // Do some checks
+  return true; // or false if the schedule should not be executed
+};
  ```
   </Tab>
 </Tabs>

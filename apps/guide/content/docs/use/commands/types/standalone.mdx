@@ -54,40 +54,40 @@ Implement `data` that stores the command's data, and `execute()` that executes t
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
-    import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
-    import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
 
-    class MyCommand extends AbstractStandaloneCommand {
-      protected readonly data = new SlashCommandBuilder()
-        .setName('my-command')
-        .setDescription('My command')
-        .toJSON();
+class MyCommand extends AbstractStandaloneCommand {
+  protected readonly data = new SlashCommandBuilder()
+    .setName('my-command')
+    .setDescription('My command')
+    .toJSON();
 
-      public async execute(interaction: ChatInputCommandInteraction) {
-        await interaction.reply('Hello!');
-      }
-    }
+  public async execute(interaction: ChatInputCommandInteraction) {
+    await interaction.reply('Hello!');
+  }
+}
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
-    import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
-    class MyCommand extends AbstractStandaloneCommand {
-      protected readonly data = {
-        name: 'my-command',
-        description: 'My command',
-      };
+class MyCommand extends AbstractStandaloneCommand {
+  protected readonly data = {
+    name: 'my-command',
+    description: 'My command',
+  };
 
-      public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>) {
-        await interaction.api.interactions.reply(
-          interaction.data.id,
-          interaction.data.token,
-          { content: 'Hello!' },
-        );
-      }
-    }
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Hello!' },
+    );
+  }
+}
 ```
   </Tab>
 </Tabs>

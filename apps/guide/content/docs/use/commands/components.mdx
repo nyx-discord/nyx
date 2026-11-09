@@ -75,53 +75,53 @@ Create your component the same way you'd normally do, but use the `bot` instance
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
-    import { ButtonBuilder, ActionRowBuilder } from 'discord.js';
-    import type { ChatInputCommandInteraction } from 'discord.js';
-    import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
+import { ButtonBuilder, ActionRowBuilder } from 'discord.js';
+import type { ChatInputCommandInteraction } from 'discord.js';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
 
-    // ---cut-start---
-    // @ts-expect-error Incomplete example
-    // ---cut-end---
-    class MyCommand extends AbstractStandaloneCommand {
-      public async execute(interaction: ChatInputCommandInteraction, meta: Metadata) {
-        const bot = TypedFields.Bot.get(meta, true);
-        const customId = this.buildCustomId(bot); // [!code highlight]
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ChatInputCommandInteraction, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    const customId = this.buildCustomId(bot); // [!code highlight]
 
-        // Other properties omitted for brevity
-        const button = new ButtonBuilder().setCustomId(customId);
-        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    // Other properties omitted for brevity
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 
-        await interaction.reply({ components: [row] });
-      }
-    }
+    await interaction.reply({ components: [row] });
+  }
+}
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
-    import { ComponentType, ButtonStyle } from '@discordjs/core';
-    import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs-core';
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { ComponentType, ButtonStyle } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs-core';
 
-    // ---cut-start---
-    // @ts-expect-error Incomplete example
-    // ---cut-end---
-    class MyCommand extends AbstractStandaloneCommand {
-      public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
-        const bot = TypedFields.Bot.get(meta, true);
-        const customId = this.buildCustomId(bot); // [!code highlight]
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    const customId = this.buildCustomId(bot); // [!code highlight]
 
-        await interaction.api.interactions.reply(
-          interaction.data.id,
-          interaction.data.token,
-          {
-            components: [{
-              type: ComponentType.ActionRow,
-              components: [{ type: ComponentType.Button, style: ButtonStyle.Success, custom_id: customId, label: 'Button' }]
-            }]
-          },
-        );
-      }
-    }
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      {
+        components: [{
+          type: ComponentType.ActionRow,
+          components: [{ type: ComponentType.Button, style: ButtonStyle.Success, custom_id: customId, label: 'Button' }]
+        }]
+      },
+    );
+  }
+}
 ```
   </Tab>
 </Tabs>
@@ -140,36 +140,36 @@ When the component is clicked, the respective callback will be executed:
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
-    import { AbstractStandaloneCommand } from '@nyx-discord/djs';
-    import type { ButtonInteraction } from 'discord.js';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+import type { ButtonInteraction } from 'discord.js';
 
-    // ---cut-start---
-    // @ts-expect-error Incomplete example
-    // ---cut-end---
-    class MyCommand extends AbstractStandaloneCommand {
-      public async handleButton(interaction: ButtonInteraction) {
-        await interaction.reply('You clicked the button!');
-      }
-    }
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async handleButton(interaction: ButtonInteraction) {
+    await interaction.reply('You clicked the button!');
+  }
+}
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import type { APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
-    import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+import type { APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
-    // ---cut-start---
-    // @ts-expect-error Incomplete example
-    // ---cut-end---
-    class MyCommand extends AbstractStandaloneCommand {
-      public async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
-        await interaction.api.interactions.reply(
-          interaction.data.id,
-          interaction.data.token,
-          { content: 'You clicked the button!' },
-        );
-      }
-    }
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'You clicked the button!' },
+    );
+  }
+}
 ```
   </Tab>
 </Tabs>

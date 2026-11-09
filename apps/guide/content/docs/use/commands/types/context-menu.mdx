@@ -52,41 +52,41 @@ Implement `data` that stores the command's data, and the respective `executeX()`
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
-    import { ApplicationCommandType, ContextMenuCommandBuilder, type MessageContextMenuCommandInteraction } from 'discord.js';
-    import { AbstractContextMenuCommand } from '@nyx-discord/djs';
+import { ApplicationCommandType, ContextMenuCommandBuilder, type MessageContextMenuCommandInteraction } from 'discord.js';
+import { AbstractContextMenuCommand } from '@nyx-discord/djs';
 
-    class MyContextMenuCommand extends AbstractContextMenuCommand {
-      protected readonly data = new ContextMenuCommandBuilder()
-        .setName('My Context Menu')
-        .setType(ApplicationCommandType.User) // or ApplicationCommandType.Message
-        .toJSON();
+class MyContextMenuCommand extends AbstractContextMenuCommand {
+  protected readonly data = new ContextMenuCommandBuilder()
+    .setName('My Context Menu')
+    .setType(ApplicationCommandType.User) // or ApplicationCommandType.Message
+    .toJSON();
 
-      public async executeMessage(interaction: MessageContextMenuCommandInteraction) {
-        await interaction.reply('Hello!');
-      }
-    }
+  public async executeMessage(interaction: MessageContextMenuCommandInteraction) {
+    await interaction.reply('Hello!');
+  }
+}
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { ApplicationCommandType } from '@discordjs/core';
-    import type { APIMessageApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
-    import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
+import { ApplicationCommandType } from '@discordjs/core';
+import type { APIMessageApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
 
-    class MyContextMenuCommand extends AbstractContextMenuCommand {
-      protected readonly data = {
-        name: 'My Context Menu',
-        type: ApplicationCommandType.User, // or ApplicationCommandType.Message
-      } as const;
+class MyContextMenuCommand extends AbstractContextMenuCommand {
+  protected readonly data = {
+    name: 'My Context Menu',
+    type: ApplicationCommandType.User, // or ApplicationCommandType.Message
+  } as const;
 
-      public async executeMessage(interaction: ToEventProps<APIMessageApplicationCommandInteraction>) {
-        await interaction.api.interactions.reply(
-          interaction.data.id,
-          interaction.data.token,
-          { content: 'Hello!' },
-        );
-      }
-    }
+  public async executeMessage(interaction: ToEventProps<APIMessageApplicationCommandInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Hello!' },
+    );
+  }
+}
 ```
   </Tab>
 </Tabs>

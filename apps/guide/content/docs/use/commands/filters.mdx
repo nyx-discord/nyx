@@ -34,36 +34,36 @@ Either:
  <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
- import { BaseCommandFilter } from '@nyx-discord/djs';
- import type { AnyExecutableCommand, CommandResolvableInteraction, DjsInteractionTypes, Metadata } from '@nyx-discord/djs';
+import { BaseCommandFilter } from '@nyx-discord/djs';
+import type { AnyExecutableCommand, CommandResolvableInteraction, DjsInteractionTypes, Metadata } from '@nyx-discord/djs';
 
- class MyFilter extends BaseCommandFilter {
-   public async check(
-     command: AnyExecutableCommand,
-     interaction: CommandResolvableInteraction<DjsInteractionTypes>,
-     meta: Metadata
-   ): Promise<boolean> {
-     // Do some checks
-     return true; // or false if the command should not be executed
-   }
- }
+class MyFilter extends BaseCommandFilter {
+  public async check(
+    command: AnyExecutableCommand,
+    interaction: CommandResolvableInteraction<DjsInteractionTypes>,
+    meta: Metadata
+  ): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the command should not be executed
+  }
+}
  ```
   </Tab>
   <Tab>
 ```ts twoslash
- import { BaseCommandFilter } from '@nyx-discord/djs-core';
- import type { AnyExecutableCommand, CommandResolvableInteraction, CoreInteractionTypes, Metadata } from '@nyx-discord/djs-core';
+import { BaseCommandFilter } from '@nyx-discord/djs-core';
+import type { AnyExecutableCommand, CommandResolvableInteraction, CoreInteractionTypes, Metadata } from '@nyx-discord/djs-core';
 
- class MyFilter extends BaseCommandFilter {
-   public async check(
-     command: AnyExecutableCommand,
-     interaction: CommandResolvableInteraction<CoreInteractionTypes>,
-     meta: Metadata
-   ): Promise<boolean> {
-     // Do some checks
-     return true; // or false if the command should not be executed
-   }
- }
+class MyFilter extends BaseCommandFilter {
+  public async check(
+    command: AnyExecutableCommand,
+    interaction: CommandResolvableInteraction<CoreInteractionTypes>,
+    meta: Metadata
+  ): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the command should not be executed
+  }
+}
  ```
   </Tab>
 </Tabs>
@@ -72,22 +72,22 @@ Either:
  <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
- import { type CommandFilterResolvable } from '@nyx-discord/djs';
+import { type CommandFilterResolvable } from '@nyx-discord/djs';
 
- const myFilter: CommandFilterResolvable = async (command, interaction, meta) => {
-   // Do some checks
-   return true; // or false if the command should not be executed
- };
+const myFilter: CommandFilterResolvable = async (command, interaction, meta) => {
+  // Do some checks
+  return true; // or false if the command should not be executed
+};
  ```
   </Tab>
   <Tab>
 ```ts twoslash
- import { type CommandFilterResolvable } from '@nyx-discord/djs-core';
+import { type CommandFilterResolvable } from '@nyx-discord/djs-core';
 
- const myFilter: CommandFilterResolvable = async (command, interaction, meta) => {
-   // Do some checks
-   return true; // or false if the command should not be executed
- };
+const myFilter: CommandFilterResolvable = async (command, interaction, meta) => {
+  // Do some checks
+  return true; // or false if the command should not be executed
+};
  ```
   </Tab>
 </Tabs>

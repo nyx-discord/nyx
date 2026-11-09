@@ -47,29 +47,29 @@ Implement `data` that stores the command's data. The group's `children` collecti
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
-    import { SlashCommandSubcommandGroupBuilder } from 'discord.js';
-    import { AbstractSubCommandGroup } from '@nyx-discord/djs';
+import { SlashCommandSubcommandGroupBuilder } from 'discord.js';
+import { AbstractSubCommandGroup } from '@nyx-discord/djs';
 
-    class MySubCommandGroup extends AbstractSubCommandGroup {
-      protected readonly data = new SlashCommandSubcommandGroupBuilder()
-        .setName('my-group')
-        .setDescription('My group')
-        .toJSON();
-    }
+class MySubCommandGroup extends AbstractSubCommandGroup {
+  protected readonly data = new SlashCommandSubcommandGroupBuilder()
+    .setName('my-group')
+    .setDescription('My group')
+    .toJSON();
+}
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { AbstractSubCommandGroup } from '@nyx-discord/djs-core';
-    import { ApplicationCommandOptionType } from '@discordjs/core';
+import { AbstractSubCommandGroup } from '@nyx-discord/djs-core';
+import { ApplicationCommandOptionType } from '@discordjs/core';
 
-    class MySubCommandGroup extends AbstractSubCommandGroup {
-      protected readonly data = {
-        name: 'my-group',
-        description: 'My group',
-        type: ApplicationCommandOptionType.SubcommandGroup as const,
-      };
-    }
+class MySubCommandGroup extends AbstractSubCommandGroup {
+  protected readonly data = {
+    name: 'my-group',
+    description: 'My group',
+    type: ApplicationCommandOptionType.SubcommandGroup as const,
+  };
+}
 ```
   </Tab>
 </Tabs>

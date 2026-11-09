@@ -26,44 +26,44 @@ Either:
  <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
- type MyEventsArgs = {
-   someEvent: [string, number];
- };
- // ---cut---
- import { AbstractEventSubscriberFilter } from '@nyx-discord/djs';
- import type { EventSubscriber, Metadata } from '@nyx-discord/djs';
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// ---cut---
+import { AbstractEventSubscriberFilter } from '@nyx-discord/djs';
+import type { EventSubscriber, Metadata } from '@nyx-discord/djs';
 
- class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs, 'someEvent'> {
-   public async check(
-     subscriber: EventSubscriber<MyEventsArgs>,
-     meta: Metadata,
-     ...args: MyEventsArgs['someEvent']
-   ): Promise<boolean> {
-     // Do some checks
-     return true; // or false if the subscriber should not be executed
-   }
- }
+class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs, 'someEvent'> {
+  public async check(
+    subscriber: EventSubscriber<MyEventsArgs>,
+    meta: Metadata,
+    ...args: MyEventsArgs['someEvent']
+  ): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the subscriber should not be executed
+  }
+}
  ```
   </Tab>
   <Tab>
 ```ts twoslash
- type MyEventsArgs = {
-   someEvent: [string, number];
- };
- // ---cut---
- import { AbstractEventSubscriberFilter } from '@nyx-discord/djs-core';
- import type { EventSubscriber, Metadata } from '@nyx-discord/djs-core';
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// ---cut---
+import { AbstractEventSubscriberFilter } from '@nyx-discord/djs-core';
+import type { EventSubscriber, Metadata } from '@nyx-discord/djs-core';
 
- class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs, 'someEvent'> {
-   public async check(
-     subscriber: EventSubscriber<MyEventsArgs>,
-     meta: Metadata,
-     ...args: MyEventsArgs['someEvent']
-   ): Promise<boolean> {
-     // Do some checks
-     return true; // or false if the subscriber should not be executed
-   }
- }
+class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs, 'someEvent'> {
+  public async check(
+    subscriber: EventSubscriber<MyEventsArgs>,
+    meta: Metadata,
+    ...args: MyEventsArgs['someEvent']
+  ): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the subscriber should not be executed
+  }
+}
  ```
   </Tab>
 </Tabs>
@@ -72,36 +72,36 @@ Either:
  <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
- type MyEventsArgs = {
-   someEvent: [string, number];
- };
- // ---cut---
- import { type EventSubscriberFilterResolvable } from '@nyx-discord/djs';
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// ---cut---
+import { type EventSubscriberFilterResolvable } from '@nyx-discord/djs';
 
- const myFilter: EventSubscriberFilterResolvable<
-   MyEventsArgs,
-   'someEvent'
- > = async (subscriber, meta, ...args) => {
-   // Do some checks
-   return true; // or false if the subscriber should not be executed
- };
+const myFilter: EventSubscriberFilterResolvable<
+  MyEventsArgs,
+  'someEvent'
+> = async (subscriber, meta, ...args) => {
+  // Do some checks
+  return true; // or false if the subscriber should not be executed
+};
  ```
   </Tab>
   <Tab>
 ```ts twoslash
- type MyEventsArgs = {
-   someEvent: [string, number];
- };
- // ---cut---
- import { type EventSubscriberFilterResolvable } from '@nyx-discord/djs-core';
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// ---cut---
+import { type EventSubscriberFilterResolvable } from '@nyx-discord/djs-core';
 
- const myFilter: EventSubscriberFilterResolvable<
-   MyEventsArgs,
-   'someEvent'
- > = async (subscriber, meta, ...args) => {
-   // Do some checks
-   return true; // or false if the subscriber should not be executed
- };
+const myFilter: EventSubscriberFilterResolvable<
+  MyEventsArgs,
+  'someEvent'
+> = async (subscriber, meta, ...args) => {
+  // Do some checks
+  return true; // or false if the subscriber should not be executed
+};
  ```
   </Tab>
 </Tabs>

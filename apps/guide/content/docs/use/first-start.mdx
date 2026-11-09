@@ -24,17 +24,17 @@ We also recommend using a formatter like [Prettier](https://www.prettier.io/) an
 <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```npm
-    npm i @nyx-discord/djs discord.js
+npm i @nyx-discord/djs discord.js
 ```
   </Tab>
   <Tab>
 ```npm
-    npm i @nyx-discord/djs-core @discordjs/core @discordjs/rest @discordjs/ws
+npm i @nyx-discord/djs-core @discordjs/core @discordjs/rest @discordjs/ws
 ```
   </Tab>
   <Tab>
 ```npm
-    npm i @nyx-discord/http @discordjs/core
+npm i @nyx-discord/http @discordjs/core
 ```
   </Tab>
 </Tabs>
@@ -49,24 +49,24 @@ You'll need a client, which will depend on the adapter you're using. It can be a
 <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-    import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits } from 'discord.js';
 
-    const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { Client, GatewayIntentBits } from '@discordjs/core';
-    import { REST } from '@discordjs/rest';
-    import { WebSocketManager } from '@discordjs/ws';
+import { Client, GatewayIntentBits } from '@discordjs/core';
+import { REST } from '@discordjs/rest';
+import { WebSocketManager } from '@discordjs/ws';
 
-    const rest = new REST({ version: '10' }).setToken('TOKEN');
-    const gateway = new WebSocketManager({
-      token: 'TOKEN',
-      intents: GatewayIntentBits.Guilds,
-      rest,
-    });
-    const client = new Client({ rest, gateway });
+const rest = new REST({ version: '10' }).setToken('TOKEN');
+const gateway = new WebSocketManager({
+  token: 'TOKEN',
+  intents: GatewayIntentBits.Guilds,
+  rest,
+});
+const client = new Client({ rest, gateway });
 ```
   </Tab>
   <Tab>
@@ -90,51 +90,51 @@ instance, and should return the options that you want for the bot.
 <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-    import { Bot, type NyxBot } from '@nyx-discord/djs';
-    // ---cut-start---
-    import { Client, GatewayIntentBits } from 'discord.js';
-    declare const client: Client<boolean>;
-    // ---cut-end---
+import { Bot, type NyxBot } from '@nyx-discord/djs';
+// ---cut-start---
+import { Client, GatewayIntentBits } from 'discord.js';
+declare const client: Client<boolean>;
+// ---cut-end---
 
-    const myBot = Bot.create((bot: NyxBot) => ({
-      token: 'TOKEN',
-      client,
-      logger: console, // Can be your own logger, see the NyxLogger docs
-      deployCommands: true, // Whether to deploy commands to Discord on start
-    }));
+const myBot = Bot.create((bot: NyxBot) => ({
+  token: 'TOKEN',
+  client,
+  logger: console, // Can be your own logger, see the NyxLogger docs
+  deployCommands: true, // Whether to deploy commands to Discord on start
+}));
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { Bot, CoreNyxClient, type NyxBot } from '@nyx-discord/djs-core';
-    // ---cut-start---
-    import { Client, GatewayIntentBits } from '@discordjs/core';
-    import { REST } from '@discordjs/rest';
-    import { WebSocketManager } from '@discordjs/ws';
-    const rest = new REST({ version: '10' }).setToken('TOKEN');
-    const gateway = new WebSocketManager({ token: 'TOKEN', intents: GatewayIntentBits.Guilds, rest });
-    declare const client: Client;
-    // ---cut-end---
+import { Bot, CoreNyxClient, type NyxBot } from '@nyx-discord/djs-core';
+// ---cut-start---
+import { Client, GatewayIntentBits } from '@discordjs/core';
+import { REST } from '@discordjs/rest';
+import { WebSocketManager } from '@discordjs/ws';
+const rest = new REST({ version: '10' }).setToken('TOKEN');
+const gateway = new WebSocketManager({ token: 'TOKEN', intents: GatewayIntentBits.Guilds, rest });
+declare const client: Client;
+// ---cut-end---
 
-    const myBot = Bot.create((bot: NyxBot) => ({
-      token: 'TOKEN',
-      client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'),
-      logger: console, // Can be your own logger, see the NyxLogger docs
-      deployCommands: true, // Whether to deploy commands to Discord on start
-    }));
+const myBot = Bot.create((bot: NyxBot) => ({
+  token: 'TOKEN',
+  client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'),
+  logger: console, // Can be your own logger, see the NyxLogger docs
+  deployCommands: true, // Whether to deploy commands to Discord on start
+}));
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { HttpBot, type NyxBot } from '@nyx-discord/http';
+import { HttpBot, type NyxBot } from '@nyx-discord/http';
 
-    const myBot = HttpBot.create((bot: NyxBot) => ({
-      applicationId: 'APPLICATION_ID',
-      publicKey: 'PUBLIC_KEY', // From the Developer Portal, used to verify requests
-      token: 'TOKEN',
-      logger: console, // Can be your own logger, see the NyxLogger docs
-      deployCommands: true, // Whether to deploy commands to Discord on start
-    }));
+const myBot = HttpBot.create((bot: NyxBot) => ({
+  applicationId: 'APPLICATION_ID',
+  publicKey: 'PUBLIC_KEY', // From the Developer Portal, used to verify requests
+  token: 'TOKEN',
+  logger: console, // Can be your own logger, see the NyxLogger docs
+  deployCommands: true, // Whether to deploy commands to Discord on start
+}));
 ```
   </Tab>
 </Tabs>
@@ -147,24 +147,24 @@ instance, and should return the options that you want for the bot.
     You would need to instantiate and pass every manager to it:
 
 ```ts twoslash
-    import { Client, GatewayIntentBits } from 'discord.js';
-    declare const client: Client<boolean>;
-    // ---cut---
-    import { Bot, DefaultScheduleManager, DjsNyxClient, DefaultPluginManager } from '@nyx-discord/djs';
+import { Client, GatewayIntentBits } from 'discord.js';
+declare const client: Client<boolean>;
+// ---cut---
+import { Bot, DefaultScheduleManager, DjsNyxClient, DefaultPluginManager } from '@nyx-discord/djs';
 
-    // ---cut-start---
-    // @ts-expect-error Other managers missing for brevity
-    // ---cut-end---
-    const myBot = new Bot((bot) => ({
-      token: 'TOKEN',
-      client: new DjsNyxClient(client),
-      logger: console,
-      deployCommands: true,
+// ---cut-start---
+// @ts-expect-error Other managers missing for brevity
+// ---cut-end---
+const myBot = new Bot((bot) => ({
+  token: 'TOKEN',
+  client: new DjsNyxClient(client),
+  logger: console,
+  deployCommands: true,
 
-      scheduleManager: DefaultScheduleManager.create({ bot }),
-      pluginManager: DefaultPluginManager.create({ bot }),
-      // and so on
-    }));
+  scheduleManager: DefaultScheduleManager.create({ bot }),
+  pluginManager: DefaultPluginManager.create({ bot }),
+  // and so on
+}));
 ```
 
     You'll find this pattern in other `@base` objects, where you can use either

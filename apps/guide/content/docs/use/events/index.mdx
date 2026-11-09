@@ -19,42 +19,42 @@ You can see them as a more batteries-included way of handling events than using 
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash
-    import { AbstractDJSClientSubscriber, type Metadata } from '@nyx-discord/djs';
-    import { Events, type Interaction } from 'discord.js';
+import { AbstractDJSClientSubscriber, type Metadata } from '@nyx-discord/djs';
+import { Events, type Interaction } from 'discord.js';
 
-    class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
-      protected readonly event = Events.InteractionCreate;
+class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
+  protected readonly event = Events.InteractionCreate;
 
-      public async handleEvent(meta: Metadata, interaction: Interaction) {
-        console.log(`Interaction created: ${interaction.id}`);
-      }
-    }
+  public async handleEvent(meta: Metadata, interaction: Interaction) {
+    console.log(`Interaction created: ${interaction.id}`);
+  }
+}
 
-    // ---cut-start---
-    import type { Bot } from '@nyx-discord/djs';
-    declare const bot: Bot;
-    // ---cut-end---
-    await bot.subscribeToClient(new InteractionCreateLogger());
+// ---cut-start---
+import type { Bot } from '@nyx-discord/djs';
+declare const bot: Bot;
+// ---cut-end---
+await bot.subscribeToClient(new InteractionCreateLogger());
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/djs-core';
-    import { GatewayDispatchEvents, type ToEventProps, type APIInteraction } from '@discordjs/core';
+import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/djs-core';
+import { GatewayDispatchEvents, type ToEventProps, type APIInteraction } from '@discordjs/core';
 
-    class InteractionCreateLogger extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
-      protected readonly event = GatewayDispatchEvents.InteractionCreate;
+class InteractionCreateLogger extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
 
-      public async handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {
-        console.log(`Interaction created: ${payload.data.id}`);
-      }
-    }
+  public async handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {
+    console.log(`Interaction created: ${payload.data.id}`);
+  }
+}
 
-    // ---cut-start---
-    import type { Bot } from '@nyx-discord/djs-core';
-    declare const bot: Bot;
-    // ---cut-end---
-    await bot.subscribeToClient(new InteractionCreateLogger());
+// ---cut-start---
+import type { Bot } from '@nyx-discord/djs-core';
+declare const bot: Bot;
+// ---cut-end---
+await bot.subscribeToClient(new InteractionCreateLogger());
 ```
   </Tab>
 </Tabs>
