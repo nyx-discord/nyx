@@ -68,6 +68,9 @@ export class HttpNyxClient
 
   protected loggedIn = false;
 
+  /** The request whose interaction or webhook event is being emitted, set only while its listeners are being called. */
+  protected currentRequest: HttpEndpointRequest | null = null;
+
   constructor(options: HttpNyxClientOptions) {
     this.emitter = options.emitter;
     this.rest = options.rest;
@@ -145,7 +148,10 @@ export class HttpNyxClient
       };
     }
 
-    const { handled } = await this.emitAndWaitForAcknowledge(interaction);
+    const { handled } = await this.emitAndWaitForAcknowledge(
+      interaction,
+      request,
+    );
     return { status: 202, headers: {}, body: '', handled };
   }
 
@@ -169,7 +175,7 @@ export class HttpNyxClient
 
     const handled =
       webhookEvent.type === ApplicationWebhookType.Event
-        ? this.emitWebhookEvent(webhookEvent.event)
+        ? this.emitWebhookEvent(webhookEvent.event, request)
         : Promise.resolve();
     return { status: 204, headers: {}, body: '', handled };
   }
@@ -189,6 +195,11 @@ export class HttpNyxClient
   /** Returns a handler for the Webhook Events URL, to mount with the same adapters as the client. */
   public getWebhookEventHandler(): HttpEndpointHandler {
     return this.webhookEventHandler;
+  }
+
+  /** Returns the request whose interaction or webhook event is being emitted, only while its listeners are called synchronously, or `null` otherwise. From handlers, use `TypedFields.HttpRequest` instead. */
+  public getCurrentRequest(): HttpEndpointRequest | null {
+    return this.currentRequest;
   }
 
   /** Returns a rejection result if the request can't be accepted, or `null` if it's a valid, signed request. */
@@ -230,6 +241,7 @@ export class HttpNyxClient
 
   protected async emitAndWaitForAcknowledge(
     interaction: APIInteraction,
+    request: HttpEndpointRequest,
   ): Promise<{ handled: Promise<void> }> {
     const route = Routes.interactionCallback(interaction.id, interaction.token);
 
@@ -240,9 +252,12 @@ export class HttpNyxClient
     });
 
     try {
-      const handled = this.emitter.emit(
-        GatewayDispatchEvents.InteractionCreate,
-        { data: interaction, api: this.api, shardId: -1 },
+      const handled = this.emitWithRequest(request, () =>
+        this.emitter.emit(GatewayDispatchEvents.InteractionCreate, {
+          data: interaction,
+          api: this.api,
+          shardId: -1,
+        }),
       );
       // if the handlers finish without acknowledging (e.g. no command matched), there's nothing left to wait for
       await Promise.race([acknowledged, handled]);
@@ -253,7 +268,10 @@ export class HttpNyxClient
     }
   }
 
-  protected emitWebhookEvent(event: APIWebhookEventBody): Promise<void> {
+  protected emitWebhookEvent(
+    event: APIWebhookEventBody,
+    request: HttpEndpointRequest,
+  ): Promise<void> {
     const props: WebhookEventProps<unknown> = {
       data: event.data,
       api: this.api,
@@ -264,7 +282,20 @@ export class HttpNyxClient
     const emitter = this.emitter as unknown as AwaitableEventEmitter<
       Record<string, [unknown]>
     >;
-    return emitter.emit(event.type, props);
+    return this.emitWithRequest(request, () => emitter.emit(event.type, props));
+  }
+
+  // listeners are called synchronously within emit(), so this is the request for every listener called meanwhile
+  protected emitWithRequest(
+    request: HttpEndpointRequest,
+    emit: () => Promise<void>,
+  ): Promise<void> {
+    this.currentRequest = request;
+    try {
+      return emit();
+    } finally {
+      this.currentRequest = null;
+    }
   }
 
   protected textResult(status: number, body: string): HttpEndpointResult {

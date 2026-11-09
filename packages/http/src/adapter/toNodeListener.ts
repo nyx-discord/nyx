@@ -30,6 +30,7 @@ export function toNodeListener(
         body: Buffer.concat(chunks),
         signature: firstHeader(request.headers['x-signature-ed25519']),
         timestamp: firstHeader(request.headers['x-signature-timestamp']),
+        raw: request,
       });
 
       response.writeHead(result.status, result.headers).end(result.body);

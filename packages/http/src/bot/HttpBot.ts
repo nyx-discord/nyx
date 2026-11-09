@@ -5,6 +5,7 @@ import type {
 } from '@nyx-discord/djs-core';
 import { CoreBot } from '@nyx-discord/djs-core';
 import { HttpNyxClient } from '../client/HttpNyxClient.js';
+import { TypedFields } from '../fields/TypedFields.js';
 
 type HttpClientCreateOptions = Parameters<typeof HttpNyxClient.create>[0];
 
@@ -33,7 +34,7 @@ export const HttpBot = {
   create<Implementations extends Partial<Omit<CoreBotDependencies, 'client'>>>(
     generator: (bot: NyxBot) => HttpBotOptions<Implementations>,
   ): HttpBot<Implementations> {
-    return CoreBot.create((bot) => {
+    const httpBot = CoreBot.create((bot) => {
       const { applicationId, publicKey, clientInjections, ...options } =
         generator(bot);
       const client = HttpNyxClient.create({
@@ -45,5 +46,16 @@ export const HttpBot = {
 
       return { ...options, client };
     });
+
+    // metadata is created synchronously when the bus emits, while the client still knows which request it's emitting
+    const client = httpBot.getClient();
+    httpBot
+      .getClientEventBus()
+      .getMetadataFactory()
+      .addDefaultField(TypedFields.HttpRequest, () =>
+        client.getCurrentRequest(),
+      );
+
+    return httpBot;
   },
 } as const;

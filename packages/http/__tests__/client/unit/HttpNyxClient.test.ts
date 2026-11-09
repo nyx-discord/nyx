@@ -312,6 +312,82 @@ describe('HttpNyxClient (handled)', () => {
   });
 });
 
+describe('HttpNyxClient (current request)', () => {
+  test('GIVEN an interaction WHEN its listeners are called THEN getCurrentRequest returns its request, and null afterwards', async () => {
+    const { client } = createClient();
+    await client.login();
+    const seen: unknown[] = [];
+    client
+      .getEmitter()
+      .on(GatewayDispatchEvents.InteractionCreate, () =>
+        seen.push(client.getCurrentRequest()),
+      );
+    const handled = request(CommandInteraction);
+
+    await client.handle(handled);
+
+    expect(seen).toEqual([handled]);
+    expect(client.getCurrentRequest()).toBeNull();
+  });
+
+  test('GIVEN concurrent requests WHEN their listeners are called THEN each sees its own request', async () => {
+    const { client } = createClient({
+      verifier: {
+        // resolves in different ticks, so the requests interleave
+        verify: (body) =>
+          new Promise((resolve) =>
+            setTimeout(
+              () => resolve(true),
+              String(body).includes('"2"') ? 5 : 15,
+            ),
+          ),
+      },
+    });
+    await client.login();
+    const seen: [string, unknown][] = [];
+    client
+      .getEmitter()
+      .on(GatewayDispatchEvents.InteractionCreate, ({ data }) =>
+        seen.push([data.id, client.getCurrentRequest()]),
+      );
+    const first = request({ ...CommandInteraction, id: '1' });
+    const second = request({ ...CommandInteraction, id: '2' });
+
+    await Promise.all([client.handle(first), client.handle(second)]);
+
+    expect(seen).toEqual([
+      ['2', second],
+      ['1', first],
+    ]);
+  });
+
+  test('GIVEN a webhook event WHEN its listeners are called THEN getCurrentRequest returns its request', async () => {
+    const { client } = createClient();
+    await client.login();
+    const seen: unknown[] = [];
+    client
+      .getEmitter()
+      .on(ApplicationWebhookEventType.ApplicationAuthorized, () =>
+        seen.push(client.getCurrentRequest()),
+      );
+    const handled = request({
+      version: 1,
+      application_id: '123',
+      type: ApplicationWebhookType.Event,
+      event: {
+        type: ApplicationWebhookEventType.ApplicationAuthorized,
+        timestamp: '2026-11-08T00:00:00.000Z',
+        data: { user: { id: '7' }, scopes: [] },
+      },
+    });
+
+    await client.handleWebhookEvent(handled);
+
+    expect(seen).toEqual([handled]);
+    expect(client.getCurrentRequest()).toBeNull();
+  });
+});
+
 describe('HttpNyxClient (handleWebhookEvent)', () => {
   const AuthorizedEvent = {
     version: 1,

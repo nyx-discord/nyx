@@ -27,6 +27,7 @@ export function toFetchHandler(
       body: new Uint8Array(await request.arrayBuffer()),
       signature: request.headers.get('X-Signature-Ed25519'),
       timestamp: request.headers.get('X-Signature-Timestamp'),
+      raw: request,
     });
 
     context?.waitUntil?.(result.handled);

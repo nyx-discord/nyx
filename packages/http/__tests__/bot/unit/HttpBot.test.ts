@@ -14,6 +14,7 @@ import { REST } from '@discordjs/rest';
 import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import type {
   EventEmitterLike,
+  HttpEndpointRequest,
   HttpClientEvents,
   Metadata,
   WebhookEventProps,
@@ -37,10 +38,13 @@ class PingCommand extends AbstractStandaloneCommand {
     type: ApplicationCommandType.ChatInput,
   };
 
-  public async execute({
-    data,
-    api,
-  }: ToEventProps<APIChatInputApplicationCommandInteraction>): Promise<void> {
+  public receivedRequest: HttpEndpointRequest | null | undefined;
+
+  public async execute(
+    { data, api }: ToEventProps<APIChatInputApplicationCommandInteraction>,
+    meta: Metadata,
+  ): Promise<void> {
+    this.receivedRequest = TypedFields.HttpRequest.get(meta);
     await api.interactions.reply(data.id, data.token, { content: 'Pong!' });
   }
 }
@@ -51,10 +55,14 @@ class AuthorizedSubscriber extends AbstractWebhookEventSubscriber<ApplicationWeb
   public readonly handled = vi.fn();
 
   public handleEvent(
-    _meta: Metadata,
+    meta: Metadata,
     props: WebhookEventProps<APIWebhookEventApplicationAuthorizedData>,
   ): void {
-    this.handled(props.data.user.id, props.timestamp);
+    this.handled(
+      props.data.user.id,
+      props.timestamp,
+      TypedFields.HttpRequest.get(meta),
+    );
   }
 }
 
@@ -92,7 +100,7 @@ describe('HttpBot', () => {
     >();
   });
 
-  test('GIVEN a started bot WHEN a signed command arrives THEN the command replies through the callback before handle resolves', async () => {
+  test('GIVEN a started bot WHEN a signed command arrives THEN the command replies through the callback and gets the request in its metadata', async () => {
     const signer = await MockSigner.create();
     const makeRequest = vi.fn((_url: string, _init: unknown) =>
       Promise.resolve(new Response(null, { status: 204 })),
@@ -108,7 +116,8 @@ describe('HttpBot', () => {
     }));
     const client = bot.getClient();
 
-    await bot.getCommandManager().addCommands(new PingCommand());
+    const command = new PingCommand();
+    await bot.getCommandManager().addCommands(command);
     await bot.start();
 
     const interaction = {
@@ -118,11 +127,11 @@ describe('HttpBot', () => {
       type: InteractionType.ApplicationCommand,
       data: { id: '1', name: 'ping', type: ApplicationCommandType.ChatInput },
     };
-    const result = await client.handle(
-      await signer.signRequest(JSON.stringify(interaction)),
-    );
+    const request = await signer.signRequest(JSON.stringify(interaction));
+    const result = await client.handle(request);
 
     expect(result.status).toBe(202);
+    expect(command.receivedRequest).toBe(request);
     expect(makeRequest).toHaveBeenCalledOnce();
     const [url, init] = makeRequest.mock.calls[0]!;
     expect(url).toContain('/interactions/42/interaction-token/callback');
@@ -131,7 +140,7 @@ describe('HttpBot', () => {
     await bot.stop();
   });
 
-  test('GIVEN a started bot WHEN a signed webhook event arrives THEN subscribers on a bus over the client emitter receive it', async () => {
+  test('GIVEN a started bot WHEN a signed webhook event arrives THEN subscribers on a bus over the client emitter receive it with the request', async () => {
     const signer = await MockSigner.create();
     const bot = HttpBot.create(() => ({
       applicationId: '123',
@@ -144,31 +153,31 @@ describe('HttpBot', () => {
     const webhookBus = BasicEventEmitterBus.createSyncWithEmitter<
       HttpClientEvents,
       EventEmitterLike
-    >(client.getEmitter());
+    >(client.getEmitter(), bot.getClientEventBus().getMetadataFactory());
     const subscriber = new AuthorizedSubscriber();
     await webhookBus.subscribe(subscriber);
     await bot.start();
 
-    const result = await client.getWebhookEventHandler().handle(
-      await signer.signRequest(
-        JSON.stringify({
-          version: 1,
-          application_id: '123',
-          type: ApplicationWebhookType.Event,
-          event: {
-            type: ApplicationWebhookEventType.ApplicationAuthorized,
-            timestamp: '2026-11-08T00:00:00.000Z',
-            data: { user: { id: '7' }, scopes: [] },
-          },
-        }),
-      ),
+    const request = await signer.signRequest(
+      JSON.stringify({
+        version: 1,
+        application_id: '123',
+        type: ApplicationWebhookType.Event,
+        event: {
+          type: ApplicationWebhookEventType.ApplicationAuthorized,
+          timestamp: '2026-11-08T00:00:00.000Z',
+          data: { user: { id: '7' }, scopes: [] },
+        },
+      }),
     );
+    const result = await client.getWebhookEventHandler().handle(request);
 
     expect(result.status).toBe(204);
     await result.handled;
     expect(subscriber.handled).toHaveBeenCalledWith(
       '7',
       '2026-11-08T00:00:00.000Z',
+      request,
     );
 
     await bot.stop();

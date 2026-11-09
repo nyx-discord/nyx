@@ -1,5 +1,5 @@
 import type { AddressInfo } from 'node:net';
-import { createServer } from 'node:http';
+import { createServer, IncomingMessage } from 'node:http';
 import { describe, expect, test, vi } from 'vitest';
 import type { HttpEndpointHandler } from '../../../src';
 import { toFetchHandler, toNodeListener } from '../../../src';
@@ -43,6 +43,7 @@ describe('toFetchHandler (adapter)', () => {
     expect(new TextDecoder().decode(request.body)).toBe('{"type":1}');
     expect(request.signature).toBe('signature');
     expect(request.timestamp).toBe('123');
+    expect(request.raw).toBeInstanceOf(Request);
   });
 
   test('GIVEN a result with no body WHEN handled THEN responds with no body', async () => {
@@ -123,6 +124,7 @@ describe('toNodeListener (adapter)', () => {
       expect(new TextDecoder().decode(request.body)).toBe('{"type":1}');
       expect(request.signature).toBe('signature');
       expect(request.timestamp).toBe('123');
+      expect(request.raw).toBeInstanceOf(IncomingMessage);
     } finally {
       server.close();
     }

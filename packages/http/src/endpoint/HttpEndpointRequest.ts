@@ -8,4 +8,7 @@ export interface HttpEndpointRequest {
 
   /** The `X-Signature-Timestamp` header. */
   timestamp: string | null | undefined;
+
+  /** The original request object from the server or runtime (e.g. a fetch `Request` or a `node:http` `IncomingMessage`), to read anything else from it, like headers. */
+  raw?: unknown;
 }
