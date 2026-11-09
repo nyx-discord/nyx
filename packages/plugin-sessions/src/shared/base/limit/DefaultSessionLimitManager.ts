@@ -4,37 +4,55 @@ import { SessionEndCodes } from '../../types/end/SessionEndCodes.js';
 import { AmbiguousSessionLimitError } from '../../types/limit/errors/AmbiguousSessionLimitError.js';
 import { SessionLimitExceededError } from '../../types/limit/errors/SessionLimitExceededError.js';
 import type { SessionLimit } from '../../types/limit/limit/SessionLimit.js';
+import type { SessionLimitResolvable } from '../../types/limit/limit/SessionLimitResolvable.js';
 import type { SessionLimitRule } from '../../types/limit/rule/SessionLimitRule.js';
 import type { SessionLimitManager } from '../../types/limit/SessionLimitManager.js';
 import type { Session } from '../../types/session/Session.js';
 import { SessionStateEnum } from '../../types/state/SessionState.js';
 import type { BaseSessionPlugin } from '../plugin/BaseSessionPlugin.js';
-import { SessionLimitBuilder } from './limit/SessionLimitBuilder.js';
-import { SessionLimitScope } from './scope/SessionLimitScope.js';
+
+/** Options to construct a {@link DefaultSessionLimitManager}. */
+type DefaultSessionLimitManagerOptions<
+  Types extends InteractionTypes = InteractionTypes,
+> = {
+  /** The plugin whose sessions are limited. */
+  plugin: BaseSessionPlugin<Types>;
+};
 
 /** Default implementation of {@link SessionLimitManager}. */
 export class DefaultSessionLimitManager<
   Types extends InteractionTypes = InteractionTypes,
 > implements SessionLimitManager<Types> {
+  protected readonly policies = new Map<
+    Constructor<Session<unknown, Types>>,
+    SessionLimit<Types>[]
+  >();
+
+  protected readonly plugin: BaseSessionPlugin<Types>;
+
   /** Sessions that passed their limits and haven't ended yet, counted even before the repository saves them. */
   protected readonly reserved = new Map<string, Session<unknown, Types>>();
+
   /** Sessions to displace once the session that displaces them (the key) has started. */
   protected readonly displacements = new Map<
     string,
     Session<unknown, Types>[]
   >();
+
   /** IDs of sessions waiting to be displaced, which no longer count towards limits. */
   protected readonly displacing = new Set<string>();
+
   /** Serializes limit checks, so a session can't pass while another one is displacing. */
   protected lock: Promise<void> = Promise.resolve();
-  private readonly policies = new Map<
-    Constructor<Session<unknown, Types>>,
-    SessionLimit<Types>[]
-  >();
-  private readonly plugin: BaseSessionPlugin<Types>;
 
-  constructor(plugin: BaseSessionPlugin<Types>) {
-    this.plugin = plugin;
+  constructor(options: DefaultSessionLimitManagerOptions<Types>) {
+    this.plugin = options.plugin;
+  }
+
+  public static create<Types extends InteractionTypes = InteractionTypes>(
+    plugin: BaseSessionPlugin<Types>,
+  ): SessionLimitManager<Types> {
+    return new DefaultSessionLimitManager<Types>({ plugin });
   }
 
   /**
@@ -42,17 +60,14 @@ export class DefaultSessionLimitManager<
    *
    * @throws {IllegalStateError} If the plugin has already started.
    */
-  public register(
-    ...limits: (SessionLimit<Types> | SessionLimitBuilder<Types>)[]
-  ): void {
+  public register(...limits: SessionLimitResolvable<Types>[]): void {
     if (this.plugin.isRunning()) {
       throw new IllegalStateError(
         'Cannot register session limits after the plugin has started.',
       );
     }
     for (const input of limits) {
-      const limit =
-        input instanceof SessionLimitBuilder ? input.toSessionLimit() : input;
+      const limit = 'toSessionLimit' in input ? input.toSessionLimit() : input;
       const arr = this.policies.get(limit.session);
       if (arr) {
         arr.push(limit);
@@ -62,7 +77,11 @@ export class DefaultSessionLimitManager<
     }
   }
 
-  /** @inheritdoc */
+  /**
+   * @inheritdoc
+   *
+   * @throws {IllegalStateError} If the plugin has already started.
+   */
   public remove(sessionCtor: Constructor<Session<unknown, Types>>): void {
     if (this.plugin.isRunning()) {
       throw new IllegalStateError(
@@ -70,14 +89,6 @@ export class DefaultSessionLimitManager<
       );
     }
     this.policies.delete(sessionCtor);
-  }
-
-  /** @inheritdoc */
-  public getPolicies(): ReadonlyMap<
-    Constructor<Session<unknown, Types>>,
-    readonly SessionLimit<Types>[]
-  > {
-    return this.policies;
   }
 
   /**
@@ -137,6 +148,14 @@ export class DefaultSessionLimitManager<
     this.cancelDisplacements(session);
   }
 
+  /** @inheritdoc */
+  public getPolicies(): ReadonlyMap<
+    Constructor<Session<unknown, Types>>,
+    readonly SessionLimit<Types>[]
+  > {
+    return this.policies;
+  }
+
   /** Keeps running the sessions that the given session was going to displace. */
   protected cancelDisplacements(session: Session<unknown, Types>): void {
     const targets = this.displacements.get(session.getId()) ?? [];
@@ -167,7 +186,7 @@ export class DefaultSessionLimitManager<
    *
    * @throws {AmbiguousSessionLimitError} If multiple policies match at the same prototype level without disambiguating predicates.
    */
-  private async resolvePolicies(
+  protected async resolvePolicies(
     ctor: Constructor<Session<unknown, Types>>,
     session: Session<unknown, Types>,
     meta: Record<string | symbol, unknown>,
@@ -208,7 +227,7 @@ export class DefaultSessionLimitManager<
    *
    * @throws {SessionLimitExceededError} If the limit is exceeded and the action prevents proceeding.
    */
-  private async checkRule(
+  protected async checkRule(
     session: Session<unknown, Types>,
     meta: Record<string | symbol, unknown>,
     policy: SessionLimit<Types>,
@@ -258,15 +277,13 @@ export class DefaultSessionLimitManager<
   }
 
   /** Finds existing and reserved sessions of the policy's constructor (or its subclasses) that share the same scope key as the given session, ignoring those being displaced. */
-  private getMatchingSessions(
+  protected getMatchingSessions(
     session: Session<unknown, Types>,
-    policyCtor: Constructor<Session<unknown, any>>,
+    policyCtor: Constructor<Session<unknown, Types>>,
     scope: SessionLimitRule<Types>['scope'],
   ): Session<unknown, Types>[] {
     const repo = this.plugin.getRepository();
-    const candidates = new Map(
-      repo.getByConstructor(policyCtor as Constructor<Session<unknown, Types>>),
-    );
+    const candidates = new Map(repo.getByConstructor(policyCtor));
     for (const [id, reserved] of this.reserved) {
       if (reserved instanceof policyCtor && !candidates.has(id)) {
         candidates.set(id, reserved);
@@ -282,14 +299,14 @@ export class DefaultSessionLimitManager<
     );
   }
 
-  /** Computes the scope key for a session, delegating to the scope instance or function. */
-  private computeScopeKey(
+  /** Computes the scope key for a session, delegating to the key provider or function. */
+  protected computeScopeKey(
     session: Session<unknown, Types>,
     scope: SessionLimitRule<Types>['scope'],
   ): string {
-    if (scope instanceof SessionLimitScope) {
-      return scope.computeKey(session);
+    if (typeof scope === 'function') {
+      return scope(session);
     }
-    return scope(session);
+    return scope.computeKey(session);
   }
 }

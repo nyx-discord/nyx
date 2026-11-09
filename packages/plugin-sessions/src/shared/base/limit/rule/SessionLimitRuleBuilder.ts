@@ -1,4 +1,5 @@
 import type { InteractionTypes } from '@nyx-discord/base';
+import type { SessionExceedHandler } from '../../../types/limit/action/SessionExceedHandler.js';
 import type { SessionLimitRule } from '../../../types/limit/rule/SessionLimitRule.js';
 import { SessionExceedAction } from '../action/SessionExceedAction.js';
 import { SessionLimitScope } from '../scope/SessionLimitScope.js';
@@ -7,24 +8,38 @@ import { SessionLimitScope } from '../scope/SessionLimitScope.js';
 export class SessionLimitRuleBuilder<
   Types extends InteractionTypes = InteractionTypes,
 > {
-  private max: SessionLimitRule<Types>['max'] = 1;
+  protected max: SessionLimitRule<Types>['max'] = 1;
 
-  private scope: SessionLimitRule<Types>['scope'] = SessionLimitScope.User;
+  protected scope: SessionLimitRule<Types>['scope'] = SessionLimitScope.User;
 
-  private onExceed: SessionExceedAction<Types> =
-    SessionExceedAction.Error as unknown as SessionExceedAction<Types>;
+  protected onExceed: SessionExceedHandler<Types> = SessionExceedAction.Error;
 
+  /**
+   * Sets the maximum number of concurrent sessions allowed within the scope.
+   *
+   * @default 1
+   */
   public setMax(max: number): this {
     this.max = max;
     return this;
   }
 
+  /**
+   * Sets the scope within which to enforce the limit.
+   *
+   * @default SessionLimitScope.User
+   */
   public setScope(scope: SessionLimitRule<Types>['scope']): this {
     this.scope = scope;
     return this;
   }
 
-  public setOnExceed(onExceed: SessionExceedAction<Types>): this {
+  /**
+   * Sets the action to take when the limit is exceeded.
+   *
+   * @default SessionExceedAction.Error
+   */
+  public setOnExceed(onExceed: SessionExceedHandler<Types>): this {
     this.onExceed = onExceed;
     return this;
   }

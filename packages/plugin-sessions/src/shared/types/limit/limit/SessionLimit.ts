@@ -10,13 +10,13 @@ import type { SessionLimitRule } from '../rule/SessionLimitRule.js';
 export interface SessionLimit<
   Types extends InteractionTypes = InteractionTypes,
 > {
-  /** The session constructor this limit applies to. */
-  session: Constructor<Session<unknown, any>>;
+  /** The session constructor this limit applies to, including its subclasses. */
+  session: Constructor<Session<unknown, Types>>;
   /** The rules defining scope and max concurrency for this limit. */
   rules: SessionLimitRule<Types>[];
   /** Optional predicate to conditionally apply this limit based on session metadata. */
   predicate?: (
-    session: Session<unknown, any>,
+    session: Session<unknown, Types>,
     meta: Record<string | symbol, unknown>,
   ) => Awaitable<boolean>;
 }

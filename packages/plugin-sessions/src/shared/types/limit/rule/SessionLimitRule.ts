@@ -1,7 +1,7 @@
 import type { InteractionTypes } from '@nyx-discord/base';
-import type { SessionExceedAction } from '../../../base/limit/action/SessionExceedAction.js';
-import type { SessionLimitScope } from '../../../base/limit/scope/SessionLimitScope.js';
 import type { Session } from '../../session/Session.js';
+import type { SessionExceedHandler } from '../action/SessionExceedHandler.js';
+import type { SessionLimitKeyProvider } from '../scope/SessionLimitKeyProvider.js';
 
 /** A single concurrency rule within a session limit policy. */
 export interface SessionLimitRule<
@@ -10,7 +10,9 @@ export interface SessionLimitRule<
   /** Maximum number of concurrent sessions allowed within the scope. */
   max: number;
   /** The scope within which to enforce the limit. */
-  scope: SessionLimitScope<any> | ((session: Session<unknown, any>) => string);
+  scope:
+    | SessionLimitKeyProvider<Types>
+    | ((session: Session<unknown, Types>) => string);
   /** The action to take when the limit is exceeded. */
-  onExceed: SessionExceedAction<any>;
+  onExceed: SessionExceedHandler<Types>;
 }

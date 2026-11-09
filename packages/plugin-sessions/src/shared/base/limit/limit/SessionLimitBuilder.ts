@@ -13,17 +13,19 @@ import { SessionLimitRuleBuilder } from '../rule/SessionLimitRuleBuilder.js';
 export class SessionLimitBuilder<
   Types extends InteractionTypes = InteractionTypes,
 > {
-  private session?: Constructor<Session<unknown, any>>;
+  protected session?: Constructor<Session<unknown, Types>>;
 
-  private predicate?: SessionLimit<Types>['predicate'];
+  protected predicate?: SessionLimit<Types>['predicate'];
 
-  private readonly rules: SessionLimitRule<Types>[] = [];
+  protected readonly rules: SessionLimitRule<Types>[] = [];
 
-  public setSession(ctor: Constructor<Session<unknown, any>>): this {
+  /** Sets the session constructor this limit applies to, including its subclasses. */
+  public setSession(ctor: Constructor<Session<unknown, Types>>): this {
     this.session = ctor;
     return this;
   }
 
+  /** Sets a predicate to conditionally apply this limit based on the session and its metadata. */
   public setPredicate(
     predicate: (
       session: Session<unknown, Types>,

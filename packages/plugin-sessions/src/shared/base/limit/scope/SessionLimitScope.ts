@@ -1,4 +1,5 @@
 import type { InteractionTypes } from '@nyx-discord/base';
+import type { SessionLimitKeyProvider } from '../../../types/limit/scope/SessionLimitKeyProvider.js';
 import type { Session } from '../../../types/session/Session.js';
 
 /**
@@ -9,23 +10,25 @@ import type { Session } from '../../../types/session/Session.js';
  */
 export class SessionLimitScope<
   Types extends InteractionTypes = InteractionTypes,
-> {
+> implements SessionLimitKeyProvider<Types> {
   /** Limits sessions per user (by user ID). */
-  public static readonly User: SessionLimitScope<never> = new SessionLimitScope(
+  public static readonly User: SessionLimitScope = new SessionLimitScope(
     (session) => session.getUserId(),
   );
 
   /** Limits sessions per guild (by guild ID, or `'dm'` for DMs). */
-  public static readonly Guild: SessionLimitScope<never> =
-    new SessionLimitScope((session) => session.getGuildId() ?? 'dm');
+  public static readonly Guild: SessionLimitScope = new SessionLimitScope(
+    (session) => session.getGuildId() ?? 'dm',
+  );
 
   /** Limits sessions per channel (by channel ID, or `'unknown'` if missing). */
-  public static readonly Channel: SessionLimitScope<never> =
-    new SessionLimitScope((session) => session.getChannelId());
+  public static readonly Channel: SessionLimitScope = new SessionLimitScope(
+    (session) => session.getChannelId(),
+  );
 
-  private readonly keyFn: (session: Session<unknown, any>) => string;
+  protected readonly keyFn: (session: Session<unknown, Types>) => string;
 
-  private constructor(keyFn: (session: Session<unknown, any>) => string) {
+  protected constructor(keyFn: (session: Session<unknown, Types>) => string) {
     this.keyFn = keyFn;
   }
 
@@ -34,7 +37,7 @@ export class SessionLimitScope<
    * Component keys are sorted alphabetically and joined with `:` for order-independent matching.
    */
   public static composite<Types extends InteractionTypes = InteractionTypes>(
-    ...scopes: SessionLimitScope<Types>[]
+    ...scopes: SessionLimitKeyProvider<Types>[]
   ): SessionLimitScope<Types> {
     return new SessionLimitScope<Types>((session) =>
       scopes
@@ -51,7 +54,7 @@ export class SessionLimitScope<
     return new SessionLimitScope<Types>(fn);
   }
 
-  /** Computes the scope key for the given session. */
+  /** @inheritdoc */
   public computeKey(session: Session<unknown, Types>): string {
     return this.keyFn(session);
   }

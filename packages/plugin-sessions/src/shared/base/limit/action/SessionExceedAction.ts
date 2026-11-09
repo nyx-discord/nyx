@@ -1,36 +1,24 @@
 import type { Awaitable, InteractionTypes } from '@nyx-discord/base';
-import type { SessionLimitRule } from '../../../types/limit/rule/SessionLimitRule.js';
+import type { ExceedDecision } from '../../../types/limit/action/ExceedDecision.js';
+import type { SessionExceedContext } from '../../../types/limit/action/SessionExceedContext.js';
+import type { SessionExceedHandler } from '../../../types/limit/action/SessionExceedHandler.js';
 import type { Session } from '../../../types/session/Session.js';
 import { SessionStateEnum } from '../../../types/state/SessionState.js';
-
-/** Context provided to exceed action handlers when a session limit is reached. */
-export interface SessionExceedContext<
-  Types extends InteractionTypes = InteractionTypes,
-> {
-  attempted: Session<unknown, Types>;
-  existing: Session<unknown, Types>[];
-  rule: SessionLimitRule<Types>;
-  meta: Record<string | symbol, unknown>;
-}
-
-/** Decision returned by a {@link SessionExceedAction} handler. */
-export type ExceedDecision<Types extends InteractionTypes = InteractionTypes> =
-  | { proceed: false }
-  | { proceed: true; displace: Session<unknown, Types> | null };
 
 /** Defines the action to take when a session limit is exceeded. */
 export class SessionExceedAction<
   Types extends InteractionTypes = InteractionTypes,
-> {
+> implements SessionExceedHandler<Types> {
   /** Returns a decision that prevents the session from starting. */
+  // any: sessions are invariant in their interaction types, and this action fits rules of every one
   public static readonly Error: SessionExceedAction<any> =
-    new SessionExceedAction(() => ({ proceed: false as const }));
+    new SessionExceedAction<any>(() => ({ proceed: false as const }));
 
-  private readonly fn: (
+  protected readonly fn: (
     ctx: SessionExceedContext<Types>,
   ) => Awaitable<ExceedDecision<Types>>;
 
-  private constructor(
+  protected constructor(
     fn: (ctx: SessionExceedContext<Types>) => Awaitable<ExceedDecision<Types>>,
   ) {
     this.fn = fn;
@@ -43,8 +31,8 @@ export class SessionExceedAction<
    */
   public static displace<Types extends InteractionTypes = InteractionTypes>(
     pick?: (existing: Session<unknown, Types>[]) => Session<unknown, Types>,
-  ): SessionExceedAction<any> {
-    return new SessionExceedAction<any>((ctx) => {
+  ): SessionExceedAction<Types> {
+    return new SessionExceedAction<Types>((ctx) => {
       if (pick) {
         return { proceed: true as const, displace: pick([...ctx.existing]) };
       }
@@ -67,11 +55,7 @@ export class SessionExceedAction<
     return new SessionExceedAction<Types>(handler);
   }
 
-  /**
-   * Evaluates the exceed action for the given context.
-   *
-   * @returns The decision on whether to proceed and whether to displace another session.
-   */
+  /** @inheritdoc */
   public decide(
     ctx: SessionExceedContext<Types>,
   ): Awaitable<ExceedDecision<Types>> {

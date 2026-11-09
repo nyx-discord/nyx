@@ -114,7 +114,7 @@ export abstract class BaseSessionPlugin<
     this.bus = options.bus;
     this.metaFactory = options.metaFactory;
     this.limitManager =
-      options.limitManager ?? new DefaultSessionLimitManager<Types>(this);
+      options.limitManager ?? DefaultSessionLimitManager.create<Types>(this);
     this.subscriber.protect();
   }
 
