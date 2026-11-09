@@ -1,5 +1,8 @@
 import type { APIInteraction, ToEventProps } from '@discordjs/core';
-import { GatewayDispatchEvents, InteractionType } from '@discordjs/core';
+import {
+  GatewayDispatchEvents,
+  InteractionType,
+} from '@discordjs/core/http-only';
 import type { CommandExecutableInteraction, Metadata } from '@nyx-discord/base';
 import { TypedFields } from '@nyx-discord/base';
 import type { CoreInteractionTypes } from '../../../types/CoreInteractionTypes.js';

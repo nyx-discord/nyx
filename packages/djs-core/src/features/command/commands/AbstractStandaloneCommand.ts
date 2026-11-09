@@ -4,7 +4,7 @@ import type {
   APIModalSubmitInteraction,
   ToEventProps,
 } from '@discordjs/core';
-import { ComponentType, InteractionType } from '@discordjs/core';
+import { ComponentType, InteractionType } from '@discordjs/core/http-only';
 import type { Awaitable, Metadata } from '@nyx-discord/base';
 import { BaseStandaloneCommand } from '@nyx-discord/base';
 import type { CoreComponentInteraction } from '../../../types/CoreComponentInteraction.js';

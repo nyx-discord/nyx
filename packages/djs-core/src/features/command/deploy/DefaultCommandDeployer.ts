@@ -1,7 +1,7 @@
 import type { ReadonlyCollection } from '@discordjs/collection';
 import { Collection } from '@discordjs/collection';
 import type { API, APIApplicationCommand, Snowflake } from '@discordjs/core';
-import { ApplicationCommandType } from '@discordjs/core';
+import { ApplicationCommandType } from '@discordjs/core/http-only';
 import type { CommandDeployer, TopLevelCommand } from '@nyx-discord/base';
 import {
   AssertionError,

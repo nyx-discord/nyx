@@ -11,7 +11,7 @@ import {
   ApplicationCommandType,
   ComponentType,
   InteractionType,
-} from '@discordjs/core';
+} from '@discordjs/core/http-only';
 import type { Awaitable, Metadata } from '@nyx-discord/base';
 import { BaseContextMenuCommand } from '@nyx-discord/base';
 import type { CoreComponentInteraction } from '../../../types/CoreComponentInteraction.js';

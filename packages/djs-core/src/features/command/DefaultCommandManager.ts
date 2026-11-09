@@ -3,7 +3,7 @@ import type {
   MappedEvents,
   ToEventProps,
 } from '@discordjs/core';
-import { InteractionType } from '@discordjs/core';
+import { InteractionType } from '@discordjs/core/http-only';
 import type {
   AnyExecutableCommand,
   ApplicationCommandInteraction,

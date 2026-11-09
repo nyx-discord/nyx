@@ -7,7 +7,7 @@ import {
   ApplicationCommandOptionType,
   ApplicationCommandType,
   InteractionType,
-} from '@discordjs/core';
+} from '@discordjs/core/http-only';
 import type {
   AnyExecutableCommand,
   ApplicationCommandInteraction,

@@ -5,7 +5,10 @@ import type {
   APIUserApplicationCommandInteraction,
   ToEventProps,
 } from '@discordjs/core';
-import { ApplicationCommandType, InteractionType } from '@discordjs/core';
+import {
+  ApplicationCommandType,
+  InteractionType,
+} from '@discordjs/core/http-only';
 import type {
   AnyExecutableCommand,
   Awaitable,

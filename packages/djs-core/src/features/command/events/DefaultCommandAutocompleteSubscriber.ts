@@ -3,7 +3,10 @@ import type {
   APIInteraction,
   ToEventProps,
 } from '@discordjs/core';
-import { GatewayDispatchEvents, InteractionType } from '@discordjs/core';
+import {
+  GatewayDispatchEvents,
+  InteractionType,
+} from '@discordjs/core/http-only';
 import type { Metadata } from '@nyx-discord/base';
 import { TypedFields } from '@nyx-discord/base';
 import { AbstractCoreClientSubscriber } from '../../event/subscriber/AbstractCoreClientSubscriber.js';
