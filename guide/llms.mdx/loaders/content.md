@@ -1,0 +1,216 @@
+# Overview (https://nyx-discord.github.io/nyx/guide/loaders)
+
+The [`@nyx-discord/loaders`](https://www.npmjs.com/package/@nyx-discord/loaders) package provides directory-scanning loaders that automatically discover and instantiate your commands, event subscribers, and schedules from compiled output directories.
+
+Instead of manually importing and registering every project file, you point a loader at a directory and it scans `.js` / `.mjs` files, instantiates them, adds them to the Bot, and returns them.
+
+## Installation [#installation]
+
+<Steps>
+<Step>
+
+### Installing [#installing]
+
+```npm
+npm i @nyx-discord/loaders
+```
+
+</Step>
+<Step>
+
+### Usage [#usage]
+
+Each loader is exposed as a single `load()` method:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+import { CommandLoader, EventLoader, ScheduleLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load({ bot, path: './dist/commands' });
+//    ^?
+
+const events = await EventLoader.load({ bot, path: './dist/events' });
+//    ^?
+
+const schedules = await ScheduleLoader.load({ bot, path: './dist/schedules' });
+//    ^?
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { CommandLoader, EventLoader, ScheduleLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load({ bot, path: './dist/commands' });
+//    ^?
+
+const events = await EventLoader.load({ bot, path: './dist/events' });
+//    ^?
+
+const schedules = await ScheduleLoader.load({ bot, path: './dist/schedules' });
+//    ^?
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+import { CommandLoader, EventLoader, ScheduleLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load({ bot, path: './dist/commands' });
+//    ^?
+
+const events = await EventLoader.load({ bot, path: './dist/events' });
+//    ^?
+
+const schedules = await ScheduleLoader.load({ bot, path: './dist/schedules' });
+//    ^?
+```
+  </Tab>
+</Tabs>
+
+These returned objects are already added by the loader, they are only returned for informational purposes.
+
+</Step>
+</Steps>
+
+## Options [#options]
+
+All loaders share a common options interface:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs';
+// ---cut---
+type LoaderOptions = {
+  /** The bot to load objects for. Also passed to static create() methods. */
+  bot: NyxBot;
+  /** The directory to scan for .js / .mjs files. */
+  path: string;
+  /**
+   * Whether to auto-register loaded objects with the bot.
+   * @default true
+   */
+  register?: boolean;
+  /**
+   * Optional filter to include only specific files by their absolute path.
+   * Files returning false are silently skipped.
+   */
+  filter?: (filePath: string) => boolean;
+};
+```
+
+### `register` [#register]
+
+Set to `false` to skip automatic registration and handle it yourself:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+import { CommandLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load({
+  bot,
+  path: './dist/commands',
+  register: false,
+});
+bot.getCommandManager().addCommands(...commands);
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { CommandLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load({
+  bot,
+  path: './dist/commands',
+  register: false,
+});
+bot.getCommandManager().addCommands(...commands);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+import { CommandLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load({
+  bot,
+  path: './dist/commands',
+  register: false,
+});
+bot.getCommandManager().addCommands(...commands);
+```
+  </Tab>
+</Tabs>
+
+### `filter` [#filter]
+
+Filter files by their absolute path before they are imported. Useful for excluding tests, dev-only files, or selectively loading subsets:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+const events = await EventLoader.load({
+  bot,
+  path: './dist/events',
+  filter: (file) => !file.includes('.test.') && !file.includes('.spec.'),
+});
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+const events = await EventLoader.load({
+  bot,
+  path: './dist/events',
+  filter: (file) => !file.includes('.test.') && !file.includes('.spec.'),
+});
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+const events = await EventLoader.load({
+  bot,
+  path: './dist/events',
+  filter: (file) => !file.includes('.test.') && !file.includes('.spec.'),
+});
+```
+  </Tab>
+</Tabs>
+
+The filter is applied before any file is imported, making it efficient for excluding large numbers of files.

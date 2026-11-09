@@ -1,0 +1,551 @@
+# Components (https://nyx-discord.github.io/nyx/guide/use/commands/components)
+
+You can make your components sent by your commands trigger a callback in the command itself, instead of having to listen to `interactionCreate` separately.
+
+<Callout>
+  This is only recommended for simple non complex components that originate directly from a command.
+  For other cases, create an [`interactionCreate` subscriber](/use/events).
+</Callout>
+
+Given only these are executable, you can only use this in [Standalone Commands](./types/standalone), [SubCommands](./types/subcommand) and [Context Menu Commands](./types/context-menu).
+
+## Usage [#usage]
+
+In this example we'll use a standalone command, but the same applies to the rest.
+
+<Steps>
+<Step>
+
+### Bot extraction [#bot-extraction]
+
+You'll first need your bot instance, since it contains the codec used to de/serialize the customIds.
+
+You can either instantiate your command with it, or get it from the execution metadata:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
+import type { ChatInputCommandInteraction } from 'discord.js';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ChatInputCommandInteraction, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    //    ^?
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields } from '@nyx-discord/djs-core';
+import type { Metadata } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    //    ^?
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields } from '@nyx-discord/http';
+import type { Metadata } from '@nyx-discord/http';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    //    ^?
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+To learn more about TypedFields, check the [Metadata](../other/meta) page.
+
+</Step>
+<Step>
+
+### Component creation [#component-creation]
+
+Create your component the same way you'd normally do, but use the `bot` instance to create the customId:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { ButtonBuilder, ActionRowBuilder } from 'discord.js';
+import type { ChatInputCommandInteraction } from 'discord.js';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ChatInputCommandInteraction, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    const customId = this.buildCustomId(bot); // [!code highlight]
+
+    // Other properties omitted for brevity
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    await interaction.reply({ components: [row] });
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { ComponentType, ButtonStyle } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    const customId = this.buildCustomId(bot); // [!code highlight]
+
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      {
+        components: [{
+          type: ComponentType.ActionRow,
+          components: [{ type: ComponentType.Button, style: ButtonStyle.Success, custom_id: customId, label: 'Button' }]
+        }]
+      },
+    );
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { ComponentType, ButtonStyle } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/http';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    const customId = this.buildCustomId(bot); // [!code highlight]
+
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      {
+        components: [{
+          type: ComponentType.ActionRow,
+          components: [{ type: ComponentType.Button, style: ButtonStyle.Success, custom_id: customId, label: 'Button' }]
+        }]
+      },
+    );
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Interaction handling [#interaction-handling]
+
+When the component is clicked, the respective callback will be executed:
+
+- `handleButton` for buttons
+- `handleSelectMenu` for select menus
+- `handleModal` for modals
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+import type { ButtonInteraction } from 'discord.js';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async handleButton(interaction: ButtonInteraction) {
+    await interaction.reply('You clicked the button!');
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'You clicked the button!' },
+    );
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'You clicked the button!' },
+    );
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+</Steps>
+
+## Attaching extra data [#attaching-extra-data]
+
+You can also attach an extra string to the customId, which will be sent back when the component is clicked. The `buildCustomId` method accepts an optional `data` parameter, which can be any string.
+
+When the component is clicked, the metadata will contain the data you passed in the customId. It's cached there so you don't need to de-serialize it again.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
+import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ChatInputCommandInteraction, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    const customId = this.buildCustomId(bot, 'my-data');
+  }
+
+  public async handleButton(interaction: ButtonInteraction, meta: Metadata) {
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
+    await interaction.reply(extra) // Replies 'my-data'
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    const customId = this.buildCustomId(bot, 'my-data');
+  }
+
+  public async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>, meta: Metadata) {
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: extra }, // Replies 'my-data'
+    );
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/http';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+    const customId = this.buildCustomId(bot, 'my-data');
+  }
+
+  public async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>, meta: Metadata) {
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: extra }, // Replies 'my-data'
+    );
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+### Complex data [#complex-data]
+
+If you need to store a complex object as extra data you can consider using the [`@sapphire/string-store`](https://www.npmjs.com/package/@sapphire/string-store) package, which is what
+the framework already uses for serialization to short strings:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
+import { Schema, SchemaStore } from '@sapphire/string-store';
+import { ButtonBuilder, ActionRowBuilder, type ButtonInteraction, type ChatInputCommandInteraction } from 'discord.js';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  protected static readonly Store = new SchemaStore()
+    // Add an schema with a 'name' field stored as a string and an 'age' field stored as a int32:
+    .add(new Schema(0).string('name').int32('age'));
+
+  public async execute(interaction: ChatInputCommandInteraction, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+
+    const extra = MyCommand.Store.serialize(0, { age: 25, name: 'amgelo563' }); // [!code highlight]
+    const customId = this.buildCustomId(bot, extra);
+
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    await interaction.reply({ components: [row] });
+  }
+
+  protected async handleButton(interaction: ButtonInteraction, meta: Metadata) {
+    // We can force the get here (`true`) since we know we passed an extra
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
+    const deserialized = MyCommand.Store.deserialize(extra).data; // { age: 25, name: 'amgelo563' } // [!code highlight]
+
+    await interaction.reply(`Name: ${deserialized.name}, Age: ${deserialized.age}`);
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs-core';
+import { Schema, SchemaStore } from '@sapphire/string-store';
+import { ButtonBuilder, ActionRowBuilder } from '@discordjs/builders';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  protected static readonly Store = new SchemaStore()
+    // Add an schema with a 'name' field stored as a string and an 'age' field stored as a int32:
+    .add(new Schema(0).string('name').int32('age'));
+
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+
+    const extra = MyCommand.Store.serialize(0, { age: 25, name: 'amgelo563' }); // [!code highlight]
+    const customId = this.buildCustomId(bot, extra);
+
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { components: [row.toJSON()] },
+    );
+  }
+
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>, meta: Metadata) {
+    // We can force the get here (`true`) since we know we passed an extra
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
+    const deserialized = MyCommand.Store.deserialize(extra).data; // { age: 25, name: 'amgelo563' } // [!code highlight]
+
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: `Name: ${deserialized.name}, Age: ${deserialized.age}` },
+    );
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, APIMessageComponentButtonInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/http';
+import { Schema, SchemaStore } from '@sapphire/string-store';
+import { ButtonBuilder, ActionRowBuilder } from '@discordjs/builders';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  protected static readonly Store = new SchemaStore()
+    // Add an schema with a 'name' field stored as a string and an 'age' field stored as a int32:
+    .add(new Schema(0).string('name').int32('age'));
+
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+
+    const extra = MyCommand.Store.serialize(0, { age: 25, name: 'amgelo563' }); // [!code highlight]
+    const customId = this.buildCustomId(bot, extra);
+
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { components: [row.toJSON()] },
+    );
+  }
+
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>, meta: Metadata) {
+    // We can force the get here (`true`) since we know we passed an extra
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
+    const deserialized = MyCommand.Store.deserialize(extra).data; // { age: 25, name: 'amgelo563' } // [!code highlight]
+
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: `Name: ${deserialized.name}, Age: ${deserialized.age}` },
+    );
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+Check their documentation for more information and examples.
+
+## Referring to other commands [#referring-to-other-commands]
+
+You can also execute other commands callbacks by creating a customId that refers to them.
+
+In order to do so, you'll need the command instance first. You can read how to obtain it in the [Command Location](./location) page.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { StandaloneCommand } from '@nyx-discord/djs';
+declare const commandInstance: StandaloneCommand;
+// ---cut-end---
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs';
+import type { ChatInputCommandInteraction } from 'discord.js';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ChatInputCommandInteraction, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+
+    /** Somehow get the command instance using one of the provided methods, eg: */
+    const command = bot.getCommandManager().getRepository().getCommandByName('my-other-command');
+    if (!command || command.isParent()) return;
+
+    /** Then build the customId: */
+    const customId = command.buildCustomId(bot);
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { StandaloneCommand } from '@nyx-discord/djs-core';
+declare const commandInstance: StandaloneCommand;
+// ---cut-end---
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+
+    /** Somehow get the command instance using one of the provided methods, eg: */
+    const command = bot.getCommandManager().getRepository().getCommandByName('my-other-command');
+    if (!command || command.isParent()) return;
+
+    /** Then build the customId: */
+    const customId = command.buildCustomId(bot);
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { StandaloneCommand } from '@nyx-discord/http';
+declare const commandInstance: StandaloneCommand;
+// ---cut-end---
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/http';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const bot = TypedFields.Bot.get(meta, true);
+
+    /** Somehow get the command instance using one of the provided methods, eg: */
+    const command = bot.getCommandManager().getRepository().getCommandByName('my-other-command');
+    if (!command || command.isParent()) return;
+
+    /** Then build the customId: */
+    const customId = command.buildCustomId(bot);
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+When the button is clicked, the `MyOtherCommand`'s `handleButton` callback will be executed.

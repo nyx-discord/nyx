@@ -1,0 +1,271 @@
+# Events (https://nyx-discord.github.io/nyx/guide/loaders/events)
+
+<Callout type="warn">It's recommended to read the [Events Overview](../use/events) and [Event Subscribers](../events/subscribers) pages first.</Callout>
+
+The <DocsLink pkg="loaders" name="EventLoader" decorated={false} /> scans a directory for event subscriber classes and returns them grouped into six typed arrays.
+
+## Folder structure [#folder-structure]
+
+There is no enforced folder structure, any file in any subdirectory at any depth will be classified by the subscriber class it extends:
+- <DocsLink pkg="djs" name="AbstractDJSClientSubscriber" decorated={false} /> for Discord.js client events
+- <DocsLink pkg="base" name="AbstractCommandSubscriber" decorated={false} /> for command manager events
+- <DocsLink pkg="base" name="AbstractServiceSubscriber" decorated={false} /> for bot service events
+- <DocsLink pkg="base" name="AbstractPluginSubscriber" decorated={false} /> for plugin manager events
+- <DocsLink pkg="base" name="AbstractBusSubscriber" decorated={false} /> for event bus events
+- <DocsLink pkg="base" name="AbstractScheduleSubscriber" decorated={false} /> for schedule manager events
+
+A recommended convention:
+
+<Files>
+  <Folder name="dist/events" defaultOpen>
+    <Folder name="client" defaultOpen>
+      <File name="ready.js" />
+    </Folder>
+    <Folder name="command" defaultOpen>
+      <File name="command-add.js" />
+    </Folder>
+    <Folder name="service" defaultOpen>
+      <File name="service-start.js" />
+    </Folder>
+    <Folder name="plugin" defaultOpen>
+      <File name="plugin-add.js" />
+    </Folder>
+    <Folder name="bus" defaultOpen>
+      <File name="subscriber-add.js" />
+    </Folder>
+    <Folder name="schedule" defaultOpen>
+      <File name="schedule-add.js" />
+    </Folder>
+  </Folder>
+</Files>
+
+## Usage [#usage]
+
+By default, events are automatically subscribed to the appropriate buses:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+await EventLoader.load({ bot, path: './dist/events' });
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+await EventLoader.load({ bot, path: './dist/events' });
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+await EventLoader.load({ bot, path: './dist/events' });
+```
+  </Tab>
+</Tabs>
+
+Pass `register: false` to handle registration yourself:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+const events = await EventLoader.load({
+  bot,
+  path: './dist/events',
+  register: false,
+});
+
+await bot.subscribeToClient(...events.client);
+await bot.getCommandManager().subscribe(...events.command);
+await bot.getService().subscribe(...events.service);
+await bot.getPluginManager().subscribe(...events.plugin);
+await bot.getScheduleManager().subscribe(...events.schedule);
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+const events = await EventLoader.load({
+  bot,
+  path: './dist/events',
+  register: false,
+});
+
+await bot.subscribeToClient(...events.client);
+await bot.getCommandManager().subscribe(...events.command);
+await bot.getService().subscribe(...events.service);
+await bot.getPluginManager().subscribe(...events.plugin);
+await bot.getScheduleManager().subscribe(...events.schedule);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+const events = await EventLoader.load({
+  bot,
+  path: './dist/events',
+  register: false,
+});
+
+await bot.subscribeToClient(...events.client);
+await bot.getCommandManager().subscribe(...events.command);
+await bot.getService().subscribe(...events.service);
+await bot.getPluginManager().subscribe(...events.plugin);
+await bot.getScheduleManager().subscribe(...events.schedule);
+```
+  </Tab>
+</Tabs>
+
+EventBus subscribers (`events.bus`) cannot be registered automatically, so you need to attach them manually
+
+
+## Writing subscribers for the loader [#writing-subscribers-for-the-loader]
+
+Any class extending one of the six abstract subscriber base classes will be detected:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractDJSClientSubscriber, type Metadata } from '@nyx-discord/djs';
+import type { Client } from 'discord.js';
+
+export class ReadySubscriber extends AbstractDJSClientSubscriber<'ready'> {
+  protected readonly event = 'ready' as const;
+
+  public handleEvent(meta: Metadata, client: Client<true>) {
+    console.log(`Bot logged in as ${client.user.tag}`);
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/djs-core';
+import { type ToEventProps, type GatewayReadyDispatchData, GatewayDispatchEvents } from '@discordjs/core';
+
+export class ReadySubscriber extends AbstractCoreClientSubscriber<typeof GatewayDispatchEvents.Ready> {
+  protected readonly event = GatewayDispatchEvents.Ready;
+
+  public handleEvent(meta: Metadata, payload: ToEventProps<GatewayReadyDispatchData>) {
+    console.log(`Bot logged in as ${payload.data.user.username}`);
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/http';
+import { type APIInteraction, type ToEventProps, GatewayDispatchEvents } from '@discordjs/core';
+
+// gateway events like Ready never fire over HTTP, but interactions do
+export class InteractionLogSubscriber extends AbstractCoreClientSubscriber<typeof GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+  public handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {
+    console.log(`Received interaction ${payload.data.id}`);
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+<Callout>
+Top-level subscribers are instantiated with <code>new Class()</code> (no arguments). Subscribers don't receive a parent instance.
+</Callout>
+
+Alternatively, you can specify a `static create(bot)` factory:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractDJSClientSubscriber } from '@nyx-discord/djs';
+import type { NyxBot, Metadata } from '@nyx-discord/djs';
+import type { Client } from 'discord.js';
+
+export class ReadySubscriber extends AbstractDJSClientSubscriber<'ready'> {
+  protected readonly event = 'ready' as const;
+
+  public static create(bot: NyxBot) {
+    return new ReadySubscriber();
+  }
+
+  // ...
+  // ---cut-start---
+  public handleEvent(meta: Metadata, client: Client<true>) {}
+  // ---cut-end---
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractCoreClientSubscriber } from '@nyx-discord/djs-core';
+import type { Bot, Metadata } from '@nyx-discord/djs-core';
+import { type ToEventProps, type GatewayReadyDispatchData, GatewayDispatchEvents } from '@discordjs/core';
+
+export class ReadySubscriber extends AbstractCoreClientSubscriber<typeof GatewayDispatchEvents.Ready> {
+  protected readonly event = GatewayDispatchEvents.Ready;
+
+  public static create(bot: Bot) {
+    return new ReadySubscriber();
+  }
+
+  // ...
+  // ---cut-start---
+  public handleEvent(meta: Metadata, payload: ToEventProps<GatewayReadyDispatchData>) {}
+  // ---cut-end---
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractCoreClientSubscriber } from '@nyx-discord/http';
+import type { Bot, Metadata } from '@nyx-discord/http';
+import { type APIInteraction, type ToEventProps, GatewayDispatchEvents } from '@discordjs/core';
+
+export class InteractionLogSubscriber extends AbstractCoreClientSubscriber<typeof GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+  public static create(bot: Bot) {
+    return new InteractionLogSubscriber();
+  }
+
+  // ...
+  // ---cut-start---
+  public handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {}
+  // ---cut-end---
+}
+```
+  </Tab>
+</Tabs>
+
+The loader will call this method instead of the constructor if it exists. This allows you to access the bot instance,
+or add logic, for example to inject services or other dependencies with a DI container.

@@ -1,0 +1,682 @@
+# Stage Pagination Session (https://nyx-discord.github.io/nyx/guide/session/types/stage-pagination-session)
+
+<Callout type="warn">It's recommended to read the [Pagination Session](./pagination-session) page first, all of its features apply to this.</Callout>
+
+A `StagePaginationSession` is a special type of pagination session made to paginate a list of stages.
+
+## Stages [#stages]
+
+A stage is an object inside a `StagePaginationSession` that represents a single page in the pagination. You can view them as a "nested" session.
+
+Switching from one stage to another is the equivalent of switching pages on a pagination component.
+
+A stage can:
+* Be updated, similar to a `Session` update.
+* Be switched to and reply to the interaction switching to it.
+* Be left and perform some cleanup logic.
+* Return a result, similar to a `Session` result.
+
+The first stage is a `SessionStartStage`. It behaves exactly the same as any other, except it also has a `SessionStartStage#onStart()` method.
+
+## Pagination [#pagination]
+
+The pagination works in a similar way as in the `PaginationSession`. In essence:
+
+- A customId not referring to a page is handled by `#update()` of the current stage.
+- A customId referring to a page makes the session switch to that stage, calling `SessionStage#onSwitch()` on the new one and `SessionStage#onLeave()` on the old one.
+
+## Creation [#creation]
+
+There are three things you need to build to create a full `StagePaginationSession`:
+1. The start stage
+2. The stages (at least one)
+3. The session
+
+### Start stage creation [#start-stage-creation]
+
+You'll first need to build the first stage of the session, a `SessionStartStage`.
+
+<Steps>
+<Step>
+
+#### Class creation [#class-creation]
+
+Extend the `AbstractSessionStartStage` class:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSessionStartStage } from '@nyx-discord/plugin-sessions/djs';
+import type { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+
+// ---cut-start---
+class MySessionStartStage extends AbstractSessionStartStage {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as ActionRowBuilder<ButtonBuilder>; }
+}
+// ---cut-end---
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSessionStartStage } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+// ---cut-start---
+class MySessionStartStage extends AbstractSessionStartStage {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+// ---cut-end---
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSessionStartStage } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+// ---cut-start---
+class MySessionStartStage extends AbstractSessionStartStage {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+// ---cut-end---
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+#### Implementation [#implementation]
+
+Implement:
+- `onStart()`: Replies to the start interaction.
+- `onSwitch()`: Replies to the interaction when the user switches to this stage.
+- `onLeave()`: Performs some cleanup logic when the user leaves the stage.
+
+<Callout type="warn">You should not reply to the `onLeave()` interaction, as this will be done by the next stage.</Callout>
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import {
+  AbstractSessionStartStage,
+  type DjsSessionStartInteraction,
+  type DjsSessionUpdateInteraction
+} from '@nyx-discord/plugin-sessions/djs';
+import type { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+
+class MySessionStartStage extends AbstractSessionStartStage {
+// ---cut-start---
+  protected generateRow() { return null as unknown as ActionRowBuilder<ButtonBuilder>; }
+// ---cut-end---
+  // Example property, not required
+  protected userOnStage = true;
+
+  public async onStart(interaction: DjsSessionStartInteraction): Promise<void> {
+    await interaction.reply('Welcome to the session!');
+  }
+
+  public async onSwitch(interaction: DjsSessionUpdateInteraction): Promise<boolean> {
+    await interaction.reply('Welcome to this stage!');
+    this.userOnStage = true;
+    return true;
+  }
+
+  public async onLeave(interaction: DjsSessionUpdateInteraction): Promise<void> {
+    this.userOnStage = false;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import {
+  AbstractSessionStartStage,
+  type CoreSessionStartInteraction,
+  type CoreSessionUpdateInteraction
+} from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+class MySessionStartStage extends AbstractSessionStartStage {
+// ---cut-start---
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+// ---cut-end---
+  // Example property, not required
+  protected userOnStage = true;
+
+  public async onStart(interaction: CoreSessionStartInteraction): Promise<void> {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Welcome to the session!' }
+    );
+  }
+
+  public async onSwitch(interaction: CoreSessionUpdateInteraction): Promise<boolean> {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Welcome to this stage!' }
+    );
+    this.userOnStage = true;
+    return true;
+  }
+
+  public async onLeave(interaction: CoreSessionUpdateInteraction): Promise<void> {
+    this.userOnStage = false;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import {
+  AbstractSessionStartStage,
+  type CoreSessionStartInteraction,
+  type CoreSessionUpdateInteraction
+} from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+class MySessionStartStage extends AbstractSessionStartStage {
+// ---cut-start---
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+// ---cut-end---
+  // Example property, not required
+  protected userOnStage = true;
+
+  public async onStart(interaction: CoreSessionStartInteraction): Promise<void> {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Welcome to the session!' }
+    );
+  }
+
+  public async onSwitch(interaction: CoreSessionUpdateInteraction): Promise<boolean> {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Welcome to this stage!' }
+    );
+    this.userOnStage = true;
+    return true;
+  }
+
+  public async onLeave(interaction: CoreSessionUpdateInteraction): Promise<void> {
+    this.userOnStage = false;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+The type argument is the [return type](#stage-result) of your stage, which will be explained later.
+
+</Step>
+</Steps>
+
+### Stages creation [#stages-creation]
+
+After the first stage, you can create as many stages as you want.
+
+<Steps>
+<Step>
+
+#### Class creation [#class-creation-1]
+
+Extend the `AbstractSessionStage` class:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSessionStage } from '@nyx-discord/plugin-sessions/djs';
+import type { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+
+// ---cut-start---
+class MySessionStage extends AbstractSessionStage {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as ActionRowBuilder<ButtonBuilder>; }
+}
+// ---cut-end---
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSessionStage } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+// ---cut-start---
+class MySessionStage extends AbstractSessionStage {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+// ---cut-end---
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSessionStage } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+// ---cut-start---
+class MySessionStage extends AbstractSessionStage {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+// ---cut-end---
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+#### Implementation [#implementation-1]
+
+Implement:
+- `onSwitch()`: Replies to the interaction when the user switches to this stage.
+- `onLeave()`: Performs some cleanup logic when the user leaves the stage.
+
+<Callout type="warn">You should not reply to the `onLeave()` interaction, as this will be done by the next stage.</Callout>
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSessionStage, type DjsSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs';
+import type { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+
+class MySessionStage extends AbstractSessionStage {
+// ---cut-start---
+  public async onStart() {}
+  protected generateRow() { return null as unknown as ActionRowBuilder<ButtonBuilder>; }
+// ---cut-end---
+  // Example property, not required
+  protected userOnStage = true;
+
+  public async onSwitch(interaction: DjsSessionUpdateInteraction): Promise<boolean> {
+    await interaction.reply('Welcome to this stage!');
+    this.userOnStage = true;
+    return true;
+  }
+
+  public async onLeave(interaction: DjsSessionUpdateInteraction): Promise<void> {
+    this.userOnStage = false;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSessionStage, type CoreSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+class MySessionStage extends AbstractSessionStage {
+// ---cut-start---
+  public async onStart() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+// ---cut-end---
+  // Example property, not required
+  protected userOnStage = true;
+
+  public async onSwitch(interaction: CoreSessionUpdateInteraction): Promise<boolean> {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Welcome to this stage!' }
+    );
+    this.userOnStage = true;
+    return true;
+  }
+
+  public async onLeave(interaction: CoreSessionUpdateInteraction): Promise<void> {
+    this.userOnStage = false;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSessionStage, type CoreSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+class MySessionStage extends AbstractSessionStage {
+// ---cut-start---
+  public async onStart() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+// ---cut-end---
+  // Example property, not required
+  protected userOnStage = true;
+
+  public async onSwitch(interaction: CoreSessionUpdateInteraction): Promise<boolean> {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Welcome to this stage!' }
+    );
+    this.userOnStage = true;
+    return true;
+  }
+
+  public async onLeave(interaction: CoreSessionUpdateInteraction): Promise<void> {
+    this.userOnStage = false;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+</Steps>
+
+### Session creation [#session-creation]
+
+After all stages are created, you can create the session.
+
+<Steps>
+<Step>
+
+#### Class creation [#class-creation-2]
+
+Extend the `AbstractStagePaginationSession` class:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
+import { AbstractStagePaginationSession, AbstractSessionStartStage, type SessionStageArray } from '@nyx-discord/plugin-sessions/djs';
+import type { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+
+// ---cut-start---
+class MySessionStartStage extends AbstractSessionStartStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as ActionRowBuilder<ButtonBuilder>; }
+}
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages: SessionStageArray<DjsInteractionTypes> = [new MySessionStartStage(this)];
+  public async onEnd() {}
+}
+// ---cut-end---
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+import { AbstractStagePaginationSession, AbstractSessionStartStage, type SessionStageArray } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+// ---cut-start---
+class MySessionStartStage extends AbstractSessionStartStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages: SessionStageArray<CoreInteractionTypes> = [new MySessionStartStage(this)];
+  public async onEnd() {}
+}
+// ---cut-end---
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { CoreInteractionTypes } from '@nyx-discord/http';
+import { AbstractStagePaginationSession, AbstractSessionStartStage, type SessionStageArray } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+// ---cut-start---
+class MySessionStartStage extends AbstractSessionStartStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages: SessionStageArray<CoreInteractionTypes> = [new MySessionStartStage(this)];
+  public async onEnd() {}
+}
+// ---cut-end---
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+#### Implementation [#implementation-2]
+
+Implement `onEnd()` and `stages`:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { DjsInteractionTypes } from '@nyx-discord/djs';
+import { AbstractStagePaginationSession, type SessionStageArray } from '@nyx-discord/plugin-sessions/djs';
+import type { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+
+// ---cut-start---
+import { AbstractSessionStartStage, AbstractSessionStage } from '@nyx-discord/plugin-sessions/djs';
+class MySessionStartStage extends AbstractSessionStartStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as ActionRowBuilder<ButtonBuilder>; }
+}
+class MySessionStage extends AbstractSessionStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as ActionRowBuilder<ButtonBuilder>; }
+}
+// ---cut-end---
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages: SessionStageArray<DjsInteractionTypes> = [
+    new MySessionStartStage(this),
+    new MySessionStage(this)
+  ];
+
+  public async onEnd(): Promise<void> {
+    await this.startInteraction.editReply('Session ended!');
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
+import { AbstractStagePaginationSession, type SessionStageArray } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+// ---cut-start---
+import { AbstractSessionStartStage, AbstractSessionStage } from '@nyx-discord/plugin-sessions/djs-core';
+class MySessionStartStage extends AbstractSessionStartStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+class MySessionStage extends AbstractSessionStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+// ---cut-end---
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages: SessionStageArray<CoreInteractionTypes> = [
+    new MySessionStartStage(this),
+    new MySessionStage(this)
+  ];
+
+  public async onEnd(): Promise<void> {
+    await this.startInteraction.api.interactions.editReply(
+      this.startInteraction.data.application_id,
+      this.startInteraction.data.token,
+      { content: 'Session ended!' }
+    );
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { CoreInteractionTypes } from '@nyx-discord/http';
+import { AbstractStagePaginationSession, type SessionStageArray } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+// ---cut-start---
+import { AbstractSessionStartStage, AbstractSessionStage } from '@nyx-discord/plugin-sessions/djs-core';
+class MySessionStartStage extends AbstractSessionStartStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+class MySessionStage extends AbstractSessionStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+// ---cut-end---
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages: SessionStageArray<CoreInteractionTypes> = [
+    new MySessionStartStage(this),
+    new MySessionStage(this)
+  ];
+
+  public async onEnd(): Promise<void> {
+    await this.startInteraction.api.interactions.editReply(
+      this.startInteraction.data.application_id,
+      this.startInteraction.data.token,
+      { content: 'Session ended!' }
+    );
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+#### Initialization [#initialization]
+
+Instantiate and start your session the same way as a regular one:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { DjsInteractionTypes, NyxBot } from '@nyx-discord/djs';
+import { AbstractStagePaginationSession, AbstractSessionStartStage, type DjsSessionStartInteraction, type SessionStageArray } from '@nyx-discord/plugin-sessions/djs';
+import type { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+
+class MySessionStartStage extends AbstractSessionStartStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as ActionRowBuilder<ButtonBuilder>; }
+}
+
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages: SessionStageArray<DjsInteractionTypes> = [new MySessionStartStage(this)];
+  public async onEnd() {}
+}
+
+declare const startInteraction: DjsSessionStartInteraction;
+declare const bot: NyxBot;
+declare const id: string;
+// ---cut-end---
+const session = new MyStagePaginationSession({ bot, startInteraction, id });
+await session.start();
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { CoreInteractionTypes, NyxBot } from '@nyx-discord/djs-core';
+import { AbstractStagePaginationSession, AbstractSessionStartStage, type CoreSessionStartInteraction, type SessionStageArray } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+class MySessionStartStage extends AbstractSessionStartStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages: SessionStageArray<CoreInteractionTypes> = [new MySessionStartStage(this)];
+  public async onEnd() {}
+}
+
+declare const startInteraction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+declare const id: string;
+// ---cut-end---
+const session = new MyStagePaginationSession({ bot, startInteraction, id });
+await session.start();
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { CoreInteractionTypes, NyxBot } from '@nyx-discord/http';
+import { AbstractStagePaginationSession, AbstractSessionStartStage, type CoreSessionStartInteraction, type SessionStageArray } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIActionRowComponent, APIButtonComponent } from '@discordjs/core';
+
+class MySessionStartStage extends AbstractSessionStartStage<void> {
+  public async onStart() {}
+  public async onSwitch() { return true; }
+  public async onLeave() {}
+  protected generateRow() { return null as unknown as APIActionRowComponent<APIButtonComponent>; }
+}
+
+class MyStagePaginationSession extends AbstractStagePaginationSession<void> {
+  protected readonly stages: SessionStageArray<CoreInteractionTypes> = [new MySessionStartStage(this)];
+  public async onEnd() {}
+}
+
+declare const startInteraction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+declare const id: string;
+// ---cut-end---
+const session = new MyStagePaginationSession({ bot, startInteraction, id });
+await session.start();
+```
+  </Tab>
+</Tabs>
+
+</Step>
+</Steps>

@@ -1,0 +1,242 @@
+# Events Overview (https://nyx-discord.github.io/nyx/guide/use/events)
+
+The event system in nyx is powered by [EventBuses](/use/events/buses). These are objects that store and notify their [EventSubscribers](/use/events/subscribers) when an event is called either internally or from another source.
+
+You can see them as a more batteries-included way of handling events than using the native Node.js `EventEmitter`.
+
+<Callout>
+  HTTP bots (`@nyx-discord/http`) have no gateway connection, so their client only emits `InteractionCreate`, plus
+  [webhook events](/use/http/webhook-events) if you set them up. Subscribers to other client events never fire.
+</Callout>
+
+## Quick example [#quick-example]
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractDJSClientSubscriber, type Metadata } from '@nyx-discord/djs';
+import { Events, type Interaction } from 'discord.js';
+
+class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
+  protected readonly event = Events.InteractionCreate;
+
+  public async handleEvent(meta: Metadata, interaction: Interaction) {
+    console.log(`Interaction created: ${interaction.id}`);
+  }
+}
+
+// ---cut-start---
+import type { Bot } from '@nyx-discord/djs';
+declare const bot: Bot;
+// ---cut-end---
+await bot.subscribeToClient(new InteractionCreateLogger());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/djs-core';
+import { GatewayDispatchEvents, type ToEventProps, type APIInteraction } from '@discordjs/core';
+
+class InteractionCreateLogger extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+  public async handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {
+    console.log(`Interaction created: ${payload.data.id}`);
+  }
+}
+
+// ---cut-start---
+import type { Bot } from '@nyx-discord/djs-core';
+declare const bot: Bot;
+// ---cut-end---
+await bot.subscribeToClient(new InteractionCreateLogger());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractCoreClientSubscriber, type Metadata } from '@nyx-discord/http';
+import { GatewayDispatchEvents, type ToEventProps, type APIInteraction } from '@discordjs/core';
+
+class InteractionCreateLogger extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+  public async handleEvent(meta: Metadata, payload: ToEventProps<APIInteraction>) {
+    console.log(`Interaction created: ${payload.data.id}`);
+  }
+}
+
+// ---cut-start---
+import type { Bot } from '@nyx-discord/http';
+declare const bot: Bot;
+// ---cut-end---
+await bot.subscribeToClient(new InteractionCreateLogger());
+```
+  </Tab>
+</Tabs>
+
+That's it! Your bot will now log every interaction.
+
+## Client Bus [#client-bus]
+
+The client is wrapped under an event bus, which you can get:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { Bot } from '@nyx-discord/djs';
+declare const bot: Bot;
+// ---cut-end---
+const bus = bot.getClientEventBus();
+//    ^?
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { Bot } from '@nyx-discord/djs-core';
+declare const bot: Bot;
+// ---cut-end---
+const bus = bot.getClientEventBus();
+//    ^?
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { Bot } from '@nyx-discord/http';
+declare const bot: Bot;
+// ---cut-end---
+const bus = bot.getClientEventBus();
+//    ^?
+```
+  </Tab>
+</Tabs>
+
+And you can directly subscribe to it:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { Bot, AbstractDJSClientSubscriber } from '@nyx-discord/djs';
+import { Events } from 'discord.js';
+declare const bot: Bot;
+class InteractionCreateLogger extends AbstractDJSClientSubscriber<typeof Events.InteractionCreate> {
+  protected readonly event = Events.InteractionCreate;
+
+  public async handleEvent() {}
+}
+
+// ---cut-end---
+await bot.subscribeToClient(new InteractionCreateLogger());
+// Equivalent to:
+await bot.getClientEventBus().subscribe(new InteractionCreateLogger());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { Bot, AbstractCoreClientSubscriber } from '@nyx-discord/djs-core';
+import { GatewayDispatchEvents } from '@discordjs/core';
+declare const bot: Bot;
+class InteractionCreateLogger extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+  public async handleEvent() {}
+}
+
+// ---cut-end---
+await bot.subscribeToClient(new InteractionCreateLogger());
+// Equivalent to:
+await bot.getClientEventBus().subscribe(new InteractionCreateLogger());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { Bot, AbstractCoreClientSubscriber } from '@nyx-discord/http';
+import { GatewayDispatchEvents } from '@discordjs/core';
+declare const bot: Bot;
+class InteractionCreateLogger extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
+  protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+  public async handleEvent() {}
+}
+
+// ---cut-end---
+await bot.subscribeToClient(new InteractionCreateLogger());
+// Equivalent to:
+await bot.getClientEventBus().subscribe(new InteractionCreateLogger());
+```
+  </Tab>
+</Tabs>
+
+## Custom buses [#custom-buses]
+
+You can create and directly use any bus you want:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { BasicEventBus } from '@nyx-discord/djs';
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+const syncBus = BasicEventBus.createSync<MyEventsArgs>(); // Waits for its subscribers to finish, with a timeout
+const asyncBus = BasicEventBus.createAsync<MyEventsArgs>(); // Executes a pool of subscribers at once
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { BasicEventBus } from '@nyx-discord/djs-core';
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+const syncBus = BasicEventBus.createSync<MyEventsArgs>(); // Waits for its subscribers to finish, with a timeout
+const asyncBus = BasicEventBus.createAsync<MyEventsArgs>(); // Executes a pool of subscribers at once
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { BasicEventBus } from '@nyx-discord/http';
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+const syncBus = BasicEventBus.createSync<MyEventsArgs>(); // Waits for its subscribers to finish, with a timeout
+const asyncBus = BasicEventBus.createAsync<MyEventsArgs>(); // Executes a pool of subscribers at once
+```
+  </Tab>
+</Tabs>
+
+You can check more information about bus creation in the [Event Buses](/use/events/buses) page.
+
+## What's next? [#whats-next]
+
+<Callout>Click on each card to go to its page.</Callout>
+
+<Cards>
+  <Card href="events/buses" title="Event Buses" icon={<BusIcon />} external={false}>
+    Learn how to create your own event bus, or use built-in ones.
+  </Card>
+  <Card href="events/subscribers" title="Subscribers" icon={<EyeIcon />} external={false}>
+    Learn how to create event subscribers, and the features they provide.
+  </Card>
+</Cards>

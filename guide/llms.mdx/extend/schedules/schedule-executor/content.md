@@ -1,0 +1,122 @@
+# Executor (https://nyx-discord.github.io/nyx/guide/extend/schedules/schedule-executor)
+
+The `ScheduleExecutor` is responsible for the actual execution of a schedule's logic.
+
+It runs the schedule's `tick()` method, and also:
+
+- Checks the [`ScheduleMiddlewareList`](/extend/schedules/schedule-executor/schedule-middleware-list).
+- Wraps the execution in a try-catch block.
+- Emits events for success or failure.
+
+## When to override [#when-to-override]
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Customize execution behavior, including middleware injection or error handling. | Only change the middleware chain. Use `ScheduleMiddlewareList` for that. |
+| Instrument executor-owned branches such as success/failure handling. | Only change how errors are consumed. Use `ScheduleErrorHandler` for that. |
+| Implement custom retry/backoff or exception mapping for failed executions. | Change when schedules run. That belongs to `ScheduleExecutionScheduler` and `ScheduleJobAdapter`. |
+
+## Overriding [#overriding]
+
+<Steps>
+<Step>
+### Creation [#creation]
+
+Create a custom executor by either:
+
+* Extending `DefaultScheduleExecutor` (recommended, less work).
+* Implementing <DocsLink pkg='base' name='ScheduleExecutor' decorated={false} />.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleExecutor } from '@nyx-discord/djs';
+
+class MyExecutor extends DefaultScheduleExecutor {}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleExecutor } from '@nyx-discord/djs-core';
+
+class MyExecutor extends DefaultScheduleExecutor {}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultScheduleExecutor } from '@nyx-discord/http';
+
+class MyExecutor extends DefaultScheduleExecutor {}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+### Registration [#registration]
+
+Create it and set it to the [`ScheduleManager`](/extend/schedules/schedule-manager).
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleExecutor } from '@nyx-discord/djs';
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+class MyExecutor extends DefaultScheduleExecutor {
+  /** Your overrides */
+}
+
+bot.getScheduleManager().setExecutor(MyExecutor.create());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleExecutor } from '@nyx-discord/djs-core';
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+class MyExecutor extends DefaultScheduleExecutor {
+  /** Your overrides */
+}
+
+bot.getScheduleManager().setExecutor(MyExecutor.create());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultScheduleExecutor } from '@nyx-discord/http';
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+class MyExecutor extends DefaultScheduleExecutor {
+  /** Your overrides */
+}
+
+bot.getScheduleManager().setExecutor(MyExecutor.create());
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='base' name='DefaultScheduleExecutor.create()' decorated={false} /> method instantiates your custom executor, not the default one.
+
+</Step>
+</Steps>
+
+## Dependencies [#dependencies]
+
+The executor has two core dependencies you can customize:
+
+<Cards>
+  <Card title="Middleware List" href="/extend/schedules/schedule-executor/schedule-middleware-list" icon={<LayersIcon />} external={false}>
+    Holds and executes schedule middlewares before `tick()` runs.
+  </Card>
+  <Card title="Error Handler" href="/extend/schedules/schedule-executor/schedule-error-handler" icon={<AmbulanceIcon />} external={false}>
+    Handles middleware and schedule execution errors.
+  </Card>
+</Cards>

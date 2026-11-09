@@ -1,0 +1,441 @@
+# SubCommands (https://nyx-discord.github.io/nyx/guide/use/commands/types/parent/subcommand)
+
+<Callout type="warn">It's recommended to read the [Commands Overview](../../index) and [Parent Commands](./) pages first.</Callout>
+
+Subcommands are executable commands stored inside a [Parent Command](./) or a [SubCommand Group](./subcommand-group).
+
+While they don't depend on a specific bot, they do depend on their parent (a parent command or a group).
+
+## Creation [#creation]
+
+<Steps>
+<Step>
+### Creation [#creation-1]
+Extend the `AbstractSubCommand` class:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/djs';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommand extends AbstractSubCommand {}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/djs-core';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommand extends AbstractSubCommand {}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/http';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommand extends AbstractSubCommand {}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+### Implementation [#implementation]
+Implement `data` that stores the command's data, and `execute()` that executes the command.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { SlashCommandSubcommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import { AbstractSubCommand } from '@nyx-discord/djs';
+
+class MySubCommand extends AbstractSubCommand {
+  protected readonly data = new SlashCommandSubcommandBuilder()
+    .setName('my-command')
+    .setDescription('My command')
+    .toJSON();
+
+  public async execute(interaction: ChatInputCommandInteraction) {
+    await interaction.reply('Hello!');
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { type APIChatInputApplicationCommandInteraction, ApplicationCommandOptionType, type ToEventProps } from '@discordjs/core';
+import { AbstractSubCommand } from '@nyx-discord/djs-core';
+
+class MySubCommand extends AbstractSubCommand {
+  protected readonly data = {
+    name: 'my-command',
+    description: 'My command',
+    type: ApplicationCommandOptionType.Subcommand,
+  } as const;
+
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Hello!' },
+    );
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { type APIChatInputApplicationCommandInteraction, ApplicationCommandOptionType, type ToEventProps } from '@discordjs/core';
+import { AbstractSubCommand } from '@nyx-discord/http';
+
+class MySubCommand extends AbstractSubCommand {
+  protected readonly data = {
+    name: 'my-command',
+    description: 'My command',
+    type: ApplicationCommandOptionType.Subcommand,
+  } as const;
+
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Hello!' },
+    );
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+### Addition to its parent [#addition-to-its-parent]
+Instantiate and add it to a parent command or a subcommand group.
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup, SubCommand, NyxBot } from '@nyx-discord/djs';
+declare const MySubCommand: new (parent: ParentCommand | SubCommandGroup) => SubCommand;
+declare const parent: ParentCommand | SubCommandGroup;
+declare const bot: NyxBot;
+// ---cut-end---
+const subCommand = new MySubCommand(parent);
+parent.addChildren(subCommand);
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup, SubCommand, NyxBot } from '@nyx-discord/djs-core';
+declare const MySubCommand: new (parent: ParentCommand | SubCommandGroup) => SubCommand;
+declare const parent: ParentCommand | SubCommandGroup;
+declare const bot: NyxBot;
+// ---cut-end---
+const subCommand = new MySubCommand(parent);
+parent.addChildren(subCommand);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup, SubCommand, NyxBot } from '@nyx-discord/http';
+declare const MySubCommand: new (parent: ParentCommand | SubCommandGroup) => SubCommand;
+declare const parent: ParentCommand | SubCommandGroup;
+declare const bot: NyxBot;
+// ---cut-end---
+const subCommand = new MySubCommand(parent);
+parent.addChildren(subCommand);
+```
+  </Tab>
+</Tabs>
+Or do it in the parent or group's class:
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractParentCommand, AbstractSubCommandGroup } from '@nyx-discord/djs';
+import { SlashCommandBuilder } from 'discord.js';
+
+// ---cut-start---
+import type { ParentCommand, SubCommand, SubCommandGroup } from '@nyx-discord/djs';
+declare const MySubCommand: new (parent: ParentCommand | SubCommandGroup) => SubCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+// On a parent command:
+class MyCommand extends AbstractParentCommand {
+  constructor() {
+    super();
+    this.addChildren(new MySubCommand(this));
+  }
+}
+
+// Or on a subcommand group:
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyGroup extends AbstractSubCommandGroup {
+  constructor(parent: ParentCommand) {
+    super(parent);
+    this.addChildren(new MySubCommand(this));
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractParentCommand, AbstractSubCommandGroup } from '@nyx-discord/djs-core';
+import { SlashCommandBuilder } from 'discord.js';
+
+// ---cut-start---
+import type { ParentCommand, SubCommand, SubCommandGroup } from '@nyx-discord/djs-core';
+declare const MySubCommand: new (parent: ParentCommand | SubCommandGroup) => SubCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+// On a parent command:
+class MyCommand extends AbstractParentCommand {
+  constructor() {
+    super();
+    this.addChildren(new MySubCommand(this));
+  }
+}
+
+// Or on a subcommand group:
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyGroup extends AbstractSubCommandGroup {
+  constructor(parent: ParentCommand) {
+    super(parent);
+    this.addChildren(new MySubCommand(this));
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractParentCommand, AbstractSubCommandGroup } from '@nyx-discord/http';
+import { SlashCommandBuilder } from 'discord.js';
+
+// ---cut-start---
+import type { ParentCommand, SubCommand, SubCommandGroup } from '@nyx-discord/http';
+declare const MySubCommand: new (parent: ParentCommand | SubCommandGroup) => SubCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+// On a parent command:
+class MyCommand extends AbstractParentCommand {
+  constructor() {
+    super();
+    this.addChildren(new MySubCommand(this));
+  }
+}
+
+// Or on a subcommand group:
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyGroup extends AbstractSubCommandGroup {
+  constructor(parent: ParentCommand) {
+    super(parent);
+    this.addChildren(new MySubCommand(this));
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+Then it'll show up when the top-level parent command is registered.
+
+</Step>
+</Steps>
+
+## Execution Meta [#execution-meta]
+
+The second argument of the execute method is a `Metadata` object, which is a `Record` that stores metadata about the command call.
+
+Apart from the keys saved by the caller or the middleware, the dispatch meta contains:
+
+* The execution ID, via the `TypedFields.Id` field.
+* The execution start date, via the `TypedFields.CreationDate` field.
+* The bot whose `Client` sent the interaction, via the `TypedFields.Bot` field.
+
+To learn more about TypedFields, check the [Metadata](/use/other/meta) page.
+
+## Autocompletion [#autocompletion]
+
+If your subcommand has autocompletable options, you can implement the `autocomplete()` method.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/djs';
+import type { AutocompleteInteraction } from 'discord.js';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommand extends AbstractSubCommand {
+  public async autocomplete(interaction: AutocompleteInteraction) {
+    await interaction.respond([
+      { name: 'First option', value: 'first' },
+      { name: 'Second option', value: 'second' },
+    ]);
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/djs-core';
+import type { APIApplicationCommandAutocompleteInteraction, ToEventProps } from '@discordjs/core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommand extends AbstractSubCommand {
+  public async autocomplete(interaction: ToEventProps<APIApplicationCommandAutocompleteInteraction>) {
+    await interaction.api.interactions.createAutocompleteResponse(
+      interaction.data.id,
+      interaction.data.token,
+      {
+        choices: [
+          { name: 'First option', value: 'first' },
+          { name: 'Second option', value: 'second' },
+        ],
+      },
+    );
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/http';
+import type { APIApplicationCommandAutocompleteInteraction, ToEventProps } from '@discordjs/core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommand extends AbstractSubCommand {
+  public async autocomplete(interaction: ToEventProps<APIApplicationCommandAutocompleteInteraction>) {
+    await interaction.api.interactions.createAutocompleteResponse(
+      interaction.data.id,
+      interaction.data.token,
+      {
+        choices: [
+          { name: 'First option', value: 'first' },
+          { name: 'Second option', value: 'second' },
+        ],
+      },
+    );
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+## Metadata [#metadata]
+
+When extending nyx with plugins, you may want to specify extra data for them. You can do so with the `Metadata` object, saved on the subcommand.
+
+<Callout>
+While subcommands internally save a `Metadata`, the return type of `#getMeta()` is a `ReadonlyMetadata`,
+meaning that external objects can read the object, but not modify it.
+</Callout>
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/djs';
+
+// ---cut-start---
+import { ParentCommand } from '@nyx-discord/djs';
+declare const parent: ParentCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommand extends AbstractSubCommand {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const subcommand = new MySubCommand(parent);
+const meta = subcommand.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+import { ParentCommand } from '@nyx-discord/djs-core';
+declare const parent: ParentCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommand extends AbstractSubCommand {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const subcommand = new MySubCommand(parent);
+const meta = subcommand.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/http';
+
+// ---cut-start---
+import { ParentCommand } from '@nyx-discord/http';
+declare const parent: ParentCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommand extends AbstractSubCommand {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const subcommand = new MySubCommand(parent);
+const meta = subcommand.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+</Tabs>
+
+For a more type-safe approach, you can use `TypedFields`. Check the [Metadata](/use/other/meta) page for more information.
+
+## Advanced features [#advanced-features]
+
+<Callout>Click on each card to learn more about that feature.</Callout>
+
+<Cards>
+  <Card title="Command components" icon={<MousePointerClickIcon />} href="../../components">
+    Handle components interactions directly in the subcommand that sent them, without a separate `interactionCreate` listener.
+  </Card>
+  <Card title="Filters" icon={<LockIcon />} href="../../filters">
+    Add pre-execution checks to your subcommand, like permissions or cooldowns.
+  </Card>
+  <Card title="Middlewares" icon={<LayersIcon />} href="../../middlewares">
+    Run code before every command's execution, like logging or pre-conditions.
+  </Card>
+</Cards>

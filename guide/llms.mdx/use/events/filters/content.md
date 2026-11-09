@@ -1,0 +1,587 @@
+# Filters (https://nyx-discord.github.io/nyx/guide/use/events/filters)
+
+Filters restrict the execution of a given subscriber. For example:
+- A [bot filter](#bot-filter) that ignores events triggered by bots
+- A [guild filter](#guild-filter) that restricts the execution to a specific guild.
+
+They receive all the information about the subscriber, the event arguments that triggered it, and the execution metadata, and return a boolean indicating whether the subscriber should be executed or not.
+
+For more general information about filters, you must first read the general [Filters](/use/other/filters) guide.
+
+## Usage [#usage]
+
+<Steps>
+<Step>
+
+### Creation [#creation]
+
+Either:
+
+- Create a class that extends `AbstractEventSubscriberFilter` and implements the `check()` method.
+ <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// ---cut---
+import { AbstractEventSubscriberFilter } from '@nyx-discord/djs';
+import type { EventSubscriber, Metadata } from '@nyx-discord/djs';
+
+class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs, 'someEvent'> {
+  public async check(
+    subscriber: EventSubscriber<MyEventsArgs>,
+    meta: Metadata,
+    ...args: MyEventsArgs['someEvent']
+  ): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the subscriber should not be executed
+  }
+}
+ ```
+  </Tab>
+  <Tab>
+```ts twoslash
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// ---cut---
+import { AbstractEventSubscriberFilter } from '@nyx-discord/djs-core';
+import type { EventSubscriber, Metadata } from '@nyx-discord/djs-core';
+
+class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs, 'someEvent'> {
+  public async check(
+    subscriber: EventSubscriber<MyEventsArgs>,
+    meta: Metadata,
+    ...args: MyEventsArgs['someEvent']
+  ): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the subscriber should not be executed
+  }
+}
+ ```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// ---cut---
+import { AbstractEventSubscriberFilter } from '@nyx-discord/http';
+import type { EventSubscriber, Metadata } from '@nyx-discord/http';
+
+class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs, 'someEvent'> {
+  public async check(
+    subscriber: EventSubscriber<MyEventsArgs>,
+    meta: Metadata,
+    ...args: MyEventsArgs['someEvent']
+  ): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the subscriber should not be executed
+  }
+}
+ ```
+  </Tab>
+</Tabs>
+
+- Create a function that returns a boolean or a Promise that resolves to a boolean.
+ <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// ---cut---
+import { type EventSubscriberFilterResolvable } from '@nyx-discord/djs';
+
+const myFilter: EventSubscriberFilterResolvable<
+  MyEventsArgs,
+  'someEvent'
+> = async (subscriber, meta, ...args) => {
+  // Do some checks
+  return true; // or false if the subscriber should not be executed
+};
+ ```
+  </Tab>
+  <Tab>
+```ts twoslash
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// ---cut---
+import { type EventSubscriberFilterResolvable } from '@nyx-discord/djs-core';
+
+const myFilter: EventSubscriberFilterResolvable<
+  MyEventsArgs,
+  'someEvent'
+> = async (subscriber, meta, ...args) => {
+  // Do some checks
+  return true; // or false if the subscriber should not be executed
+};
+ ```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// ---cut---
+import { type EventSubscriberFilterResolvable } from '@nyx-discord/http';
+
+const myFilter: EventSubscriberFilterResolvable<
+  MyEventsArgs,
+  'someEvent'
+> = async (subscriber, meta, ...args) => {
+  // Do some checks
+  return true; // or false if the subscriber should not be executed
+};
+ ```
+  </Tab>
+</Tabs>
+
+<Callout title="Generic filter">
+  You can also write a filter that will work regardless of the event being handled, by omitting the event name in the type arguments:
+
+  <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriberFilter, type EventSubscriberFilterResolvable, type Metadata, type EventSubscriber } from '@nyx-discord/djs';
+// ---cut---
+  type MyEventsArgs = {
+    someEvent: [string, number];
+    otherEvent: [boolean];
+  };
+
+// With a class:
+  class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs> {
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+    public async check(
+      subscriber: EventSubscriber<MyEventsArgs>,
+      meta: Metadata,
+      ...args: MyEventsArgs[keyof MyEventsArgs]
+      // ^?
+    ) { /** ... */ }
+  }
+
+// Or with a function:
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+  const myFilter: EventSubscriberFilterResolvable<MyEventsArgs> = async (
+    subscriber,
+    ...args
+  //   ^?
+  ) => { /** ... */ };
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriberFilter, type EventSubscriberFilterResolvable, type Metadata, type EventSubscriber } from '@nyx-discord/djs-core';
+// ---cut---
+  type MyEventsArgs = {
+    someEvent: [string, number];
+    otherEvent: [boolean];
+  };
+
+// With a class:
+  class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs> {
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+    public async check(
+      subscriber: EventSubscriber<MyEventsArgs>,
+      meta: Metadata,
+      ...args: MyEventsArgs[keyof MyEventsArgs]
+      // ^?
+    ) { /** ... */ }
+  }
+
+// Or with a function:
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+  const myFilter: EventSubscriberFilterResolvable<MyEventsArgs> = async (
+    subscriber,
+    ...args
+  //   ^?
+  ) => { /** ... */ };
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractEventSubscriberFilter, type EventSubscriberFilterResolvable, type Metadata, type EventSubscriber } from '@nyx-discord/http';
+// ---cut---
+  type MyEventsArgs = {
+    someEvent: [string, number];
+    otherEvent: [boolean];
+  };
+
+// With a class:
+  class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs> {
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+    public async check(
+      subscriber: EventSubscriber<MyEventsArgs>,
+      meta: Metadata,
+      ...args: MyEventsArgs[keyof MyEventsArgs]
+      // ^?
+    ) { /** ... */ }
+  }
+
+// Or with a function:
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+  const myFilter: EventSubscriberFilterResolvable<MyEventsArgs> = async (
+    subscriber,
+    ...args
+  //   ^?
+  ) => { /** ... */ };
+```
+  </Tab>
+</Tabs>
+
+  Notice how `args` accepts a union of the possible event arguments for any event in the `MyEventsArgs` type.
+</Callout>
+
+</Step>
+<Step>
+
+### Filter usage [#filter-usage]
+
+Override the `filter` property in your subscriber:
+
+- If you created a class, instantiate it:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriber } from '@nyx-discord/djs';
+
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+import { AbstractEventSubscriberFilter } from '@nyx-discord/djs';
+// @ts-expect-error Incomplete example
+class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs, 'someEvent'> {}
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected override readonly filter = new MyFilter();
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriber } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+import { AbstractEventSubscriberFilter } from '@nyx-discord/djs-core';
+// @ts-expect-error Incomplete example
+class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs, 'someEvent'> {}
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected override readonly filter = new MyFilter();
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractEventSubscriber } from '@nyx-discord/http';
+
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+import { AbstractEventSubscriberFilter } from '@nyx-discord/http';
+// @ts-expect-error Incomplete example
+class MyFilter extends AbstractEventSubscriberFilter<MyEventsArgs, 'someEvent'> {}
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected override readonly filter = new MyFilter();
+}
+```
+  </Tab>
+</Tabs>
+
+- If you created a function, assign it:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriber } from '@nyx-discord/djs';
+
+// ---cut-start---
+import { type EventSubscriberFilterResolvable } from '@nyx-discord/djs';
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+declare const myFilter: EventSubscriberFilterResolvable<MyEventsArgs, 'someEvent'>;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected override readonly filter = myFilter;
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriber } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+import { type EventSubscriberFilterResolvable } from '@nyx-discord/djs-core';
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+declare const myFilter: EventSubscriberFilterResolvable<MyEventsArgs, 'someEvent'>;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected override readonly filter = myFilter;
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractEventSubscriber } from '@nyx-discord/http';
+
+// ---cut-start---
+import { type EventSubscriberFilterResolvable } from '@nyx-discord/http';
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+declare const myFilter: EventSubscriberFilterResolvable<MyEventsArgs, 'someEvent'>;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected override readonly filter = myFilter;
+}
+```
+  </Tab>
+</Tabs>
+
+Or use a simple arrow function directly:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriber } from '@nyx-discord/djs';
+
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected override readonly filter = () => {
+    // Do some checks
+    return true;
+  };
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriber } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected override readonly filter = () => {
+    // Do some checks
+    return true;
+  };
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractEventSubscriber } from '@nyx-discord/http';
+
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+};
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubscriber extends AbstractEventSubscriber<MyEventsArgs, 'someEvent'> {
+  protected override readonly filter = () => {
+    // Do some checks
+    return true;
+  };
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+</Steps>
+
+## Examples [#examples]
+
+### Bot Filter [#bot-filter]
+
+A simple filter that ignores events triggered by bots. This example assumes the event argument is a `Message`.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriberFilter } from '@nyx-discord/djs';
+import type { EventSubscriber, Metadata } from '@nyx-discord/djs';
+import type { Message, ClientEvents } from 'discord.js';
+
+class BotFilter extends AbstractEventSubscriberFilter<ClientEvents, 'messageCreate'> {
+  public async check(
+    subscriber: EventSubscriber<ClientEvents, 'messageCreate'>,
+    meta: Metadata,
+    message: Message
+  ): Promise<boolean> {
+    return !message.author.bot;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriberFilter } from '@nyx-discord/djs-core';
+import type { EventSubscriber, Metadata } from '@nyx-discord/djs-core';
+import type { Message, ClientEvents } from 'discord.js';
+
+class BotFilter extends AbstractEventSubscriberFilter<ClientEvents, 'messageCreate'> {
+  public async check(
+    subscriber: EventSubscriber<ClientEvents, 'messageCreate'>,
+    meta: Metadata,
+    message: Message
+  ): Promise<boolean> {
+    return !message.author.bot;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractEventSubscriberFilter } from '@nyx-discord/http';
+import type { EventSubscriber, Metadata } from '@nyx-discord/http';
+import type { Message, ClientEvents } from 'discord.js';
+
+class BotFilter extends AbstractEventSubscriberFilter<ClientEvents, 'messageCreate'> {
+  public async check(
+    subscriber: EventSubscriber<ClientEvents, 'messageCreate'>,
+    meta: Metadata,
+    message: Message
+  ): Promise<boolean> {
+    return !message.author.bot;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+### Guild Filter [#guild-filter]
+
+A filter that restricts the execution to a specific guild. This example assumes the event argument has a `guildId` property (like an Interaction or Message).
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriberFilter } from '@nyx-discord/djs';
+import type { EventSubscriber, Metadata } from '@nyx-discord/djs';
+import type { ClientEvents } from 'discord.js';
+
+class GuildFilter extends AbstractEventSubscriberFilter<ClientEvents, 'interactionCreate' | 'messageCreate'> {
+  protected readonly guildId: string;
+
+  constructor(guildId: string) {
+    super();
+    this.guildId = guildId;
+  }
+
+  public async check(
+    subscriber: EventSubscriber<ClientEvents, 'interactionCreate' | 'messageCreate'>,
+    meta: Metadata,
+    object: { guildId: string | null }
+  ): Promise<boolean> {
+    return object.guildId === this.guildId;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractEventSubscriberFilter } from '@nyx-discord/djs-core';
+import type { EventSubscriber, Metadata } from '@nyx-discord/djs-core';
+import type { ClientEvents } from 'discord.js';
+
+class GuildFilter extends AbstractEventSubscriberFilter<ClientEvents, 'interactionCreate' | 'messageCreate'> {
+  protected readonly guildId: string;
+
+  constructor(guildId: string) {
+    super();
+    this.guildId = guildId;
+  }
+
+  public async check(
+    subscriber: EventSubscriber<ClientEvents, 'interactionCreate' | 'messageCreate'>,
+    meta: Metadata,
+    object: { guildId: string | null }
+  ): Promise<boolean> {
+    return object.guildId === this.guildId;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractEventSubscriberFilter } from '@nyx-discord/http';
+import type { EventSubscriber, Metadata } from '@nyx-discord/http';
+import type { ClientEvents } from 'discord.js';
+
+class GuildFilter extends AbstractEventSubscriberFilter<ClientEvents, 'interactionCreate' | 'messageCreate'> {
+  protected readonly guildId: string;
+
+  constructor(guildId: string) {
+    super();
+    this.guildId = guildId;
+  }
+
+  public async check(
+    subscriber: EventSubscriber<ClientEvents, 'interactionCreate' | 'messageCreate'>,
+    meta: Metadata,
+    object: { guildId: string | null }
+  ): Promise<boolean> {
+    return object.guildId === this.guildId;
+  }
+}
+```
+  </Tab>
+</Tabs>

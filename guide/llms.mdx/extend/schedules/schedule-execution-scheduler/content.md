@@ -1,0 +1,114 @@
+# Execution Scheduler (https://nyx-discord.github.io/nyx/guide/extend/schedules/schedule-execution-scheduler)
+
+The <DocsLink pkg='base' name='DefaultScheduleExecutionScheduler' decorated={false} /> is responsible for interpreting the schedule's interval (usually a cron string) and creating/managing the <DocsLink pkg='base' name='ScheduleJobAdapter' decorated={false} /> that will trigger execution.
+
+It relies on the [`ScheduleJobAdapter`](/extend/schedules/schedule-job-adapter) to interface with the actual timing mechanism (e.g. `croner`), and the adapter is the one that waits for the scheduled time and invokes the execution.
+
+## When to override [#when-to-override]
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Use a different timing library or job backend (e.g., not `croner`). | Just adjust the job adapter itself. Create a custom `ScheduleJobAdapter` instead. |
+| Support a different interval format or next-run strategy (e.g., RRULE-like scheduling). | Change schedule execution logic (try/catch, retry, middleware behavior). That belongs to `ScheduleExecutor`. |
+| Implement custom misfire/catch-up behavior for delayed or missed runs. | Change schedule persistence. That belongs to `ScheduleRepository`. |
+
+## Overriding [#overriding]
+
+<Steps>
+<Step>
+### Creation [#creation]
+
+Create a custom scheduler extending <DocsLink pkg='base' name='DefaultScheduleExecutionScheduler' decorated={false} />.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/djs';
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  // Override internal methods
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/djs-core';
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  // Override internal methods
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/http';
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  // Override internal methods
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+### Registration [#registration]
+
+Create it and set it to the [`ScheduleManager`](/extend/schedules/schedule-manager).
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/djs';
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  /** Your overrides */
+}
+
+// @noErrors
+bot.getScheduleManager().setScheduler(MyScheduler.create());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/djs-core';
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  /** Your overrides */
+}
+
+// @noErrors
+bot.getScheduleManager().setScheduler(MyScheduler.create());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/http';
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  /** Your overrides */
+}
+
+// @noErrors
+bot.getScheduleManager().setScheduler(MyScheduler.create());
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='base' name='DefaultScheduleExecutionScheduler.create()' decorated={false} /> method instantiates your custom scheduler, not the default one.
+
+</Step>
+</Steps>

@@ -1,0 +1,445 @@
+# SubCommand Groups (https://nyx-discord.github.io/nyx/guide/use/commands/types/parent/subcommand-group)
+
+<Callout type="warn">It's recommended to read the [Commands Overview](../../index), [Parent Commands](./) and [SubCommands](./subcommand) pages first.</Callout>
+
+Subcommand groups are non executable commands that have subcommand children. They are stored inside a [Parent Command](./).
+
+While they don't depend on a specific bot, they do depend on their parent (a parent command).
+
+## Creation [#creation]
+
+<Steps>
+<Step>
+### Creation [#creation-1]
+Extend the `AbstractSubCommandGroup` class:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommandGroup } from '@nyx-discord/djs';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandGroup extends AbstractSubCommandGroup {}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommandGroup } from '@nyx-discord/djs-core';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandGroup extends AbstractSubCommandGroup {}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSubCommandGroup } from '@nyx-discord/http';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandGroup extends AbstractSubCommandGroup {}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+### Implementation [#implementation]
+Implement `data` that stores the command's data. The group's `children` collection is provided by the base class.
+<Callout type="warn">The `data` field must not contain any option, only the base values (name, description, etc). If they are included, they will be ignored.</Callout>
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { SlashCommandSubcommandGroupBuilder } from 'discord.js';
+import { AbstractSubCommandGroup } from '@nyx-discord/djs';
+
+class MySubCommandGroup extends AbstractSubCommandGroup {
+  protected readonly data = new SlashCommandSubcommandGroupBuilder()
+    .setName('my-group')
+    .setDescription('My group')
+    .toJSON();
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommandGroup } from '@nyx-discord/djs-core';
+import { ApplicationCommandOptionType } from '@discordjs/core';
+
+class MySubCommandGroup extends AbstractSubCommandGroup {
+  protected readonly data = {
+    name: 'my-group',
+    description: 'My group',
+    type: ApplicationCommandOptionType.SubcommandGroup as const,
+  };
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSubCommandGroup } from '@nyx-discord/http';
+import { ApplicationCommandOptionType } from '@discordjs/core';
+
+class MySubCommandGroup extends AbstractSubCommandGroup {
+  protected readonly data = {
+    name: 'my-group',
+    description: 'My group',
+    type: ApplicationCommandOptionType.SubcommandGroup as const,
+  };
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+### Addition to its parent [#addition-to-its-parent]
+
+Instantiate and add it to a parent command.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup, SubCommand, NyxBot } from '@nyx-discord/djs';
+declare const MySubCommandGroup: new (parent: ParentCommand) => SubCommandGroup;
+declare const parent: ParentCommand;
+declare const bot: NyxBot;
+// ---cut-end---
+const subCommandGroup = new MySubCommandGroup(parent);
+parent.addChildren(subCommandGroup);
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup, SubCommand, NyxBot } from '@nyx-discord/djs-core';
+declare const MySubCommandGroup: new (parent: ParentCommand) => SubCommandGroup;
+declare const parent: ParentCommand;
+declare const bot: NyxBot;
+// ---cut-end---
+const subCommandGroup = new MySubCommandGroup(parent);
+parent.addChildren(subCommandGroup);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup, SubCommand, NyxBot } from '@nyx-discord/http';
+declare const MySubCommandGroup: new (parent: ParentCommand) => SubCommandGroup;
+declare const parent: ParentCommand;
+declare const bot: NyxBot;
+// ---cut-end---
+const subCommandGroup = new MySubCommandGroup(parent);
+parent.addChildren(subCommandGroup);
+```
+  </Tab>
+</Tabs>
+
+Or do it in the parent's class:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractParentCommand, AbstractSubCommandGroup } from '@nyx-discord/djs';
+import { SlashCommandBuilder } from 'discord.js';
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup } from '@nyx-discord/djs';
+declare const MySubCommandGroup: new (parent: ParentCommand) => SubCommandGroup;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+
+class MyCommand extends AbstractParentCommand {
+  constructor() {
+    super();
+    this.addChildren(new MySubCommandGroup(this));
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractParentCommand, AbstractSubCommandGroup } from '@nyx-discord/djs-core';
+import { SlashCommandBuilder } from 'discord.js';
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup } from '@nyx-discord/djs-core';
+declare const MySubCommandGroup: new (parent: ParentCommand) => SubCommandGroup;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+
+class MyCommand extends AbstractParentCommand {
+  constructor() {
+    super();
+    this.addChildren(new MySubCommandGroup(this));
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractParentCommand, AbstractSubCommandGroup } from '@nyx-discord/http';
+import { SlashCommandBuilder } from 'discord.js';
+// ---cut-start---
+import type { ParentCommand, SubCommandGroup } from '@nyx-discord/http';
+declare const MySubCommandGroup: new (parent: ParentCommand) => SubCommandGroup;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+
+class MyCommand extends AbstractParentCommand {
+  constructor() {
+    super();
+    this.addChildren(new MySubCommandGroup(this));
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+Then it'll show up when the top-level parent command is registered.
+
+</Step>
+</Steps>
+
+## Children management [#children-management]
+
+Children aren't static: they can be added and removed in runtime.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { SubCommand, SubCommandGroup } from '@nyx-discord/djs';
+declare const subCommand: SubCommand;
+declare const subCommandGroup: SubCommandGroup;
+// ---cut-end---
+subCommandGroup.addChildren(subCommand);
+subCommandGroup.removeChildByInstance(subCommand);
+subCommandGroup.removeChildByName('sub-command-name');
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { SubCommand, SubCommandGroup } from '@nyx-discord/djs-core';
+declare const subCommand: SubCommand;
+declare const subCommandGroup: SubCommandGroup;
+// ---cut-end---
+subCommandGroup.addChildren(subCommand);
+subCommandGroup.removeChildByInstance(subCommand);
+subCommandGroup.removeChildByName('sub-command-name');
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { SubCommand, SubCommandGroup } from '@nyx-discord/http';
+declare const subCommand: SubCommand;
+declare const subCommandGroup: SubCommandGroup;
+// ---cut-end---
+subCommandGroup.addChildren(subCommand);
+subCommandGroup.removeChildByInstance(subCommand);
+subCommandGroup.removeChildByName('sub-command-name');
+```
+  </Tab>
+</Tabs>
+
+However, for the changes to be reflected in Discord, you must edit the **parent command** afterwards:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot, ParentCommand } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+declare const parentCommand: ParentCommand;
+// ---cut-end---
+await bot.getCommandManager().editCommands(parentCommand);
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot, ParentCommand } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+declare const parentCommand: ParentCommand;
+// ---cut-end---
+await bot.getCommandManager().editCommands(parentCommand);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { NyxBot, ParentCommand } from '@nyx-discord/http';
+declare const bot: NyxBot;
+declare const parentCommand: ParentCommand;
+// ---cut-end---
+await bot.getCommandManager().editCommands(parentCommand);
+```
+  </Tab>
+</Tabs>
+
+You can also query them by name, class or `Collection`:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { SubCommandGroup } from '@nyx-discord/djs';
+declare const group: SubCommandGroup;
+// ---cut-end---
+import { AbstractSubCommand } from '@nyx-discord/djs';
+
+const byName = group.findChildByName('sub-command-name');
+//    ^?
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandClass extends AbstractSubCommand { /** */ }
+
+const byClass = group.findChildByClass(MySubCommandClass);
+//    ^?
+
+const allChildren = group.getChildren();
+//    ^?
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { SubCommandGroup } from '@nyx-discord/djs-core';
+declare const group: SubCommandGroup;
+// ---cut-end---
+import { AbstractSubCommand } from '@nyx-discord/djs-core';
+
+const byName = group.findChildByName('sub-command-name');
+//    ^?
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandClass extends AbstractSubCommand { /** */ }
+
+const byClass = group.findChildByClass(MySubCommandClass);
+//    ^?
+
+const allChildren = group.getChildren();
+//    ^?
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { SubCommandGroup } from '@nyx-discord/http';
+declare const group: SubCommandGroup;
+// ---cut-end---
+import { AbstractSubCommand } from '@nyx-discord/http';
+
+const byName = group.findChildByName('sub-command-name');
+//    ^?
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandClass extends AbstractSubCommand { /** */ }
+
+const byClass = group.findChildByClass(MySubCommandClass);
+//    ^?
+
+const allChildren = group.getChildren();
+//    ^?
+```
+  </Tab>
+</Tabs>
+
+## Metadata [#metadata]
+
+When extending nyx with plugins, you may want to specify extra data for them. You can do so with the `Metadata` object, saved on the group.
+
+<Callout>
+While groups internally save a `Metadata`, the return type of `#getMeta()` is a `ReadonlyMetadata`,
+meaning that external objects can read the object, but not modify it.
+</Callout>
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommandGroup } from '@nyx-discord/djs';
+
+// ---cut-start---
+import { ParentCommand } from '@nyx-discord/djs';
+declare const parent: ParentCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandGroup extends AbstractSubCommandGroup {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const group = new MySubCommandGroup(parent);
+const meta = group.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSubCommandGroup } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+import { ParentCommand } from '@nyx-discord/djs-core';
+declare const parent: ParentCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandGroup extends AbstractSubCommandGroup {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const group = new MySubCommandGroup(parent);
+const meta = group.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSubCommandGroup } from '@nyx-discord/http';
+
+// ---cut-start---
+import { ParentCommand } from '@nyx-discord/http';
+declare const parent: ParentCommand;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandGroup extends AbstractSubCommandGroup {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const group = new MySubCommandGroup(parent);
+const meta = group.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+</Tabs>
+
+For a more type-safe approach, you can use `TypedFields`. Check the [Metadata](/use/other/meta) page for more information.

@@ -1,0 +1,1075 @@
+# Session (https://nyx-discord.github.io/nyx/guide/session/types/session)
+
+<Callout type="warn">It's recommended to read the [Overview](../) page first.</Callout>
+
+A `Session` is the simplest, most generic object for the sessions API. It replies to interactions it receives and ends after a given TTL.
+
+Further session types are based on this one, and are specifically built for other common use cases.
+
+## Usage [#usage]
+
+<Steps>
+<Step>
+
+### Creation [#creation]
+
+Extend the `AbstractSession` class:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+// ---cut-end---
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+// ---cut-end---
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+// ---cut-end---
+```
+  </Tab>
+</Tabs>
+
+There's an optional type argument which is the [return type](#session-result) of your session, which will be explained later.
+
+</Step>
+<Step>
+
+### Implementation [#implementation]
+
+Implement the `onStart` and `onEnd` methods:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+
+class MySession extends AbstractSession {
+  public async onStart() {
+    // Reply to the startInteraction
+  }
+
+  public async onEnd() {
+    // Do something when the session ends
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  public async onStart() {
+    // Reply to the startInteraction
+  }
+
+  public async onEnd() {
+    // Do something when the session ends
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  public async onStart() {
+    // Reply to the startInteraction
+  }
+
+  public async onEnd() {
+    // Do something when the session ends
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+Your `onStart` method should perform the initial reply, and `onEnd` any necessary cleanup logic.
+
+<Callout type="warn">
+If the `onStart` method errors, the session will not be registered and the `onEnd` method will not be called.
+</Callout>
+
+Optionally implement `handleButton`, `handleSelectMenu`, and `handleModal` methods to listen to interactions:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+import type { ButtonInteraction, AnySelectMenuInteraction, ModalSubmitInteraction } from 'discord.js';
+
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected async handleButton(interaction: ButtonInteraction) {
+    // Reply to buttons
+    return true;
+  }
+
+  protected async handleSelectMenu(interaction: AnySelectMenuInteraction) {
+    // Reply to select menus
+    return true;
+  }
+
+  protected async handleModal(interaction: ModalSubmitInteraction) {
+    // Reply to modals
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import type {
+  ToEventProps,
+  APIMessageComponentButtonInteraction,
+  APIMessageComponentSelectMenuInteraction,
+  APIModalSubmitInteraction,
+} from '@discordjs/core';
+
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    // Reply to buttons
+    return true;
+  }
+
+  protected async handleSelectMenu(interaction: ToEventProps<APIMessageComponentSelectMenuInteraction>) {
+    // Reply to select menus
+    return true;
+  }
+
+  protected async handleModal(interaction: ToEventProps<APIModalSubmitInteraction>) {
+    // Reply to modals
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import type {
+  ToEventProps,
+  APIMessageComponentButtonInteraction,
+  APIMessageComponentSelectMenuInteraction,
+  APIModalSubmitInteraction,
+} from '@discordjs/core';
+
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    // Reply to buttons
+    return true;
+  }
+
+  protected async handleSelectMenu(interaction: ToEventProps<APIMessageComponentSelectMenuInteraction>) {
+    // Reply to select menus
+    return true;
+  }
+
+  protected async handleModal(interaction: ToEventProps<APIModalSubmitInteraction>) {
+    // Reply to modals
+    return true;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Initialization [#initialization]
+
+Somewhere in your code where you want to start a session, create an id for it, instantiate and start the session:
+
+<Callout>
+  In production your ID should be randomly generated using something like [nanoid](https://www.npmjs.com/package/nanoid), and it should be short enough to not collide with extra customId data.
+
+  You can use [nanoid's collission calculator](https://zelark.github.io/nano-id-cc/) to find out how short your ID needs to be.
+  Consider a collision only happens if two **currently active** sessions have the same ID.
+</Callout>
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/djs';
+import { AbstractSession, type DjsSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs';
+
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+
+declare const interaction: DjsSessionStartInteraction;
+declare const bot: NyxBot;
+// ---cut-end---
+const sessionId = 'mySessionId';
+const session = new MySession({ bot, id: sessionId, startInteraction: interaction });
+await session.start();
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/djs-core';
+import { AbstractSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+
+declare const interaction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+// ---cut-end---
+const sessionId = 'mySessionId';
+const session = new MySession({ bot, id: sessionId, startInteraction: interaction });
+await session.start();
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/http';
+import { AbstractSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+
+declare const interaction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+// ---cut-end---
+const sessionId = 'mySessionId';
+const session = new MySession({ bot, id: sessionId, startInteraction: interaction });
+await session.start();
+```
+  </Tab>
+</Tabs>
+
+</Step>
+</Steps>
+
+## Component customIds [#component-customids]
+
+Given sessions aren't limited to a single `Message`, and the framework needs to know to which session a given component belongs to, you'll need to go through the `buildCustomId` method in order to get your customIds.
+This will append the necessary information to the customId to allow the framework to know how to route the interaction.
+
+You can also append extra data to it by passing it to the method, and it will be saved in the `TypedFields.CustomIdExtra` field.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+import { TypedFields, type Metadata } from '@nyx-discord/djs';
+import { ButtonBuilder, ActionRowBuilder, type ButtonInteraction } from 'discord.js';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+// ---cut-end---
+  public async start() {
+    const customId = this.buildCustomId('my-data'); // [!code highlight]
+
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    await this.startInteraction.reply({ components: [row] });
+  }
+
+  protected async handleButton(interaction: ButtonInteraction, meta: Metadata) {
+    // We can force the get here (`true`) since we know we passed 'my-data'
+    const extra = TypedFields.CustomIdExtra.get(meta, true); // [!code highlight]
+    await interaction.reply(extra); // Replies 'my-data';
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import { TypedFields, type Metadata } from '@nyx-discord/djs-core';
+import { ButtonBuilder, ActionRowBuilder } from 'discord.js';
+import type { ToEventProps, APIMessageComponentButtonInteraction } from '@discordjs/core';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+// ---cut-end---
+  public async start() {
+    const customId = this.buildCustomId('my-data'); // [!code highlight]
+
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    await this.startInteraction.api.interactions.reply(
+      this.startInteraction.data.id,
+      this.startInteraction.data.token,
+      { components: [row.toJSON()] }
+    );
+  }
+
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>, meta: Metadata) {
+    // We can force the get here (`true`) since we know we passed 'my-data'
+    const extra = TypedFields.CustomIdExtra.get(meta, true); // [!code highlight]
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: extra }
+    ); // Replies 'my-data';
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import { TypedFields, type Metadata } from '@nyx-discord/http';
+import { ButtonBuilder, ActionRowBuilder } from 'discord.js';
+import type { ToEventProps, APIMessageComponentButtonInteraction } from '@discordjs/core';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+// ---cut-end---
+  public async start() {
+    const customId = this.buildCustomId('my-data'); // [!code highlight]
+
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    await this.startInteraction.api.interactions.reply(
+      this.startInteraction.data.id,
+      this.startInteraction.data.token,
+      { components: [row.toJSON()] }
+    );
+  }
+
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>, meta: Metadata) {
+    // We can force the get here (`true`) since we know we passed 'my-data'
+    const extra = TypedFields.CustomIdExtra.get(meta, true); // [!code highlight]
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: extra }
+    ); // Replies 'my-data';
+    return true;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+### Complex data [#complex-data]
+
+If you need to store a complex object as extra data you can consider using the [`@sapphire/string-store`](https://www.npmjs.com/package/@sapphire/string-store) package, which is what
+the framework and plugin already uses for serialization to short strings:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+import { TypedFields, type Metadata } from '@nyx-discord/djs';
+import { Schema, SchemaStore } from '@sapphire/string-store';
+import { ButtonBuilder, ActionRowBuilder, type ButtonInteraction } from 'discord.js';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+// ---cut-end---
+  protected static readonly Store = new SchemaStore()
+    // Add an schema with a 'name' field stored as a string and an 'age' field stored as a int32:
+    .add(new Schema(0).string('name').int32('age'));
+
+  public async start() {
+    const extra = MySession.Store.serialize(0, { age: 25, name: 'amgelo563' }); // [!code highlight]
+    const customId = this.buildCustomId(extra);
+
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    await this.startInteraction.reply({ components: [row] });
+  }
+
+  protected async handleButton(interaction: ButtonInteraction, meta: Metadata) {
+    // We can force the get here (`true`) since we know we passed an extra
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
+    const deserialized = MySession.Store.deserialize(extra).data; // { age: 25, name: 'amgelo563' } // [!code highlight]
+    await interaction.reply(`Name: ${deserialized.name}, Age: ${deserialized.age}`);
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import { TypedFields, type Metadata } from '@nyx-discord/djs-core';
+import { Schema, SchemaStore } from '@sapphire/string-store';
+import { ButtonBuilder, ActionRowBuilder } from 'discord.js';
+import type { ToEventProps, APIMessageComponentButtonInteraction } from '@discordjs/core';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+// ---cut-end---
+  protected static readonly Store = new SchemaStore()
+    // Add an schema with a 'name' field stored as a string and an 'age' field stored as a int32:
+    .add(new Schema(0).string('name').int32('age'));
+
+  public async start() {
+    const extra = MySession.Store.serialize(0, { age: 25, name: 'amgelo563' }); // [!code highlight]
+    const customId = this.buildCustomId(extra);
+
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    await this.startInteraction.api.interactions.reply(
+      this.startInteraction.data.id,
+      this.startInteraction.data.token,
+      { components: [row.toJSON()] }
+    );
+  }
+
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>, meta: Metadata) {
+    // We can force the get here (`true`) since we know we passed an extra
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
+    const deserialized = MySession.Store.deserialize(extra).data; // { age: 25, name: 'amgelo563' } // [!code highlight]
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: `Name: ${deserialized.name}, Age: ${deserialized.age}` }
+    );
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import { TypedFields, type Metadata } from '@nyx-discord/http';
+import { Schema, SchemaStore } from '@sapphire/string-store';
+import { ButtonBuilder, ActionRowBuilder } from 'discord.js';
+import type { ToEventProps, APIMessageComponentButtonInteraction } from '@discordjs/core';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+// ---cut-end---
+  protected static readonly Store = new SchemaStore()
+    // Add an schema with a 'name' field stored as a string and an 'age' field stored as a int32:
+    .add(new Schema(0).string('name').int32('age'));
+
+  public async start() {
+    const extra = MySession.Store.serialize(0, { age: 25, name: 'amgelo563' }); // [!code highlight]
+    const customId = this.buildCustomId(extra);
+
+    const button = new ButtonBuilder().setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    await this.startInteraction.api.interactions.reply(
+      this.startInteraction.data.id,
+      this.startInteraction.data.token,
+      { components: [row.toJSON()] }
+    );
+  }
+
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>, meta: Metadata) {
+    // We can force the get here (`true`) since we know we passed an extra
+    const extra = TypedFields.CustomIdExtra.get(meta, true);
+    const deserialized = MySession.Store.deserialize(extra).data; // { age: 25, name: 'amgelo563' } // [!code highlight]
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: `Name: ${deserialized.name}, Age: ${deserialized.age}` }
+    );
+    return true;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+Check their documentation for more information and examples.
+
+## Session lifecycle [#session-lifecycle]
+
+After it's started, a session will have a given TTL before ending. The default is 3 minutes, and it can be overriden per session (in milliseconds):
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+// ---cut-end---
+class MySessionTtl extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected readonly ttl = 10_000; // 10 seconds
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+// ---cut-end---
+class MySessionTtl extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected readonly ttl = 10_000; // 10 seconds
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+// ---cut-start---
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+// ---cut-end---
+class MySessionTtl extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected readonly ttl = 10_000; // 10 seconds
+}
+```
+  </Tab>
+</Tabs>
+
+When the session receives an interaction, it can decide whether or not to renew its TTL by returning `true` on the appropiate handler (or `false` to not renew it):
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+import type { ButtonInteraction } from 'discord.js';
+
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected async handleButton(interaction: ButtonInteraction) {
+    if (interaction.user.id !== this.startInteraction.user.id) {
+      await interaction.reply('You cannot use this button!');
+      return false;
+    }
+    await interaction.reply('Hello!');
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import type { ToEventProps, APIMessageComponentButtonInteraction } from '@discordjs/core';
+
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    const userId = interaction.data.member?.user.id ?? interaction.data.user?.id;
+    const startUserId = this.startInteraction.data.member?.user.id ?? this.startInteraction.data.user?.id;
+    if (userId !== startUserId) {
+      await interaction.api.interactions.reply(
+        interaction.data.id,
+        interaction.data.token,
+        { content: 'You cannot use this button!' }
+      );
+      return false;
+    }
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Hello!' }
+    );
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import type { ToEventProps, APIMessageComponentButtonInteraction } from '@discordjs/core';
+
+class MySession extends AbstractSession {
+  // ---cut-start---
+  public async onStart() {}
+  public async onEnd() {}
+  // ---cut-end---
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    const userId = interaction.data.member?.user.id ?? interaction.data.user?.id;
+    const startUserId = this.startInteraction.data.member?.user.id ?? this.startInteraction.data.user?.id;
+    if (userId !== startUserId) {
+      await interaction.api.interactions.reply(
+        interaction.data.id,
+        interaction.data.token,
+        { content: 'You cannot use this button!' }
+      );
+      return false;
+    }
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Hello!' }
+    );
+    return true;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+This is useful to "filter out" interactions that you don't want to renew the TTL of, like from other users or with invalid input.
+
+### End promise [#end-promise]
+
+Sessions are asynchronous by nature, and you may want to wait for a session to finish before continuing. The `getEndPromise()` method returns a promise that resolves when the session ends, either by timeout or manual end.
+
+This promise resolves to an <DocsLink pkg="plugin-sessions" name="SessionEndData" decorated={false} label="SessionEndData" /> object containing the session's final state and result:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/djs';
+import { AbstractSession, type DjsSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs';
+
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+
+declare const interaction: DjsSessionStartInteraction;
+declare const bot: NyxBot;
+// ---cut-end---
+const session = new MySession({ bot, id: 'mySessionId', startInteraction: interaction });
+await session.start();
+
+// Wait for the session to end
+const endData = await session.getEndPromise();
+console.log('Session ended');
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/djs-core';
+import { AbstractSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+
+declare const interaction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+// ---cut-end---
+const session = new MySession({ bot, id: 'mySessionId', startInteraction: interaction });
+await session.start();
+
+// Wait for the session to end
+const endData = await session.getEndPromise();
+console.log('Session ended');
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/http';
+import { AbstractSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+}
+
+declare const interaction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+// ---cut-end---
+const session = new MySession({ bot, id: 'mySessionId', startInteraction: interaction });
+await session.start();
+
+// Wait for the session to end
+const endData = await session.getEndPromise();
+console.log('Session ended');
+```
+  </Tab>
+</Tabs>
+
+This is particularly useful when you want to perform additional actions after a session completes, such as logging, notifications, or cleanup operations.
+
+### Result [#result]
+
+Sessions can specify a `result` that will be passed to awaiters of the session's promise, and the session end event:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
+import { ButtonBuilder, ActionRowBuilder, type ButtonInteraction } from 'discord.js';
+
+class MySession extends AbstractSession<number> {
+//                                      ^^^^^^
+  protected override result = 0; // [!code highlight]
+
+  public async onStart() {}
+  public async onEnd() {}
+
+  public async start() {
+    const customId = this.buildCustomId();
+    const button = new ButtonBuilder()
+      .setLabel('Click to increment!')
+      .setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    await this.startInteraction.reply({
+      content: this.result.toString(),
+      components: [row],
+    });
+  }
+
+  protected async handleButton(interaction: ButtonInteraction) {
+    this.result += 1; // [!code highlight]
+    await interaction.update({ content: this.result.toString() });
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import { ButtonBuilder, ActionRowBuilder } from 'discord.js';
+import type { ToEventProps, APIMessageComponentButtonInteraction } from '@discordjs/core';
+
+class MySession extends AbstractSession<number> {
+//                                      ^^^^^^
+  protected override result = 0; // [!code highlight]
+
+  public async onStart() {}
+  public async onEnd() {}
+
+  public async start() {
+    const customId = this.buildCustomId();
+    const button = new ButtonBuilder()
+      .setLabel('Click to increment!')
+      .setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    await this.startInteraction.api.interactions.reply(
+      this.startInteraction.data.id,
+      this.startInteraction.data.token,
+      { content: this.result.toString(), components: [row.toJSON()] }
+    );
+  }
+
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    this.result += 1; // [!code highlight]
+    await interaction.api.interactions.updateMessage(
+      interaction.data.id,
+      interaction.data.token,
+      { content: this.result.toString() }
+    );
+    return true;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import { ButtonBuilder, ActionRowBuilder } from 'discord.js';
+import type { ToEventProps, APIMessageComponentButtonInteraction } from '@discordjs/core';
+
+class MySession extends AbstractSession<number> {
+//                                      ^^^^^^
+  protected override result = 0; // [!code highlight]
+
+  public async onStart() {}
+  public async onEnd() {}
+
+  public async start() {
+    const customId = this.buildCustomId();
+    const button = new ButtonBuilder()
+      .setLabel('Click to increment!')
+      .setCustomId(customId);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    await this.startInteraction.api.interactions.reply(
+      this.startInteraction.data.id,
+      this.startInteraction.data.token,
+      { content: this.result.toString(), components: [row.toJSON()] }
+    );
+  }
+
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    this.result += 1; // [!code highlight]
+    await interaction.api.interactions.updateMessage(
+      interaction.data.id,
+      interaction.data.token,
+      { content: this.result.toString() }
+    );
+    return true;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+The default value of the `result` is `null`, which is what consumers will receive if you don't set it.
+
+<Callout>
+  The `onEnd()` method will be called **before** the framework gets the result from the session, so you can use it to make some final changes to it,
+  before it's communicated to the consumer.
+</Callout>
+
+Then you can await the session's promise to get the result:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/djs';
+import { AbstractSession, type DjsSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs';
+
+class MySession extends AbstractSession<number> {
+  public async onStart() {}
+  public async onEnd() {}
+}
+
+declare const interaction: DjsSessionStartInteraction;
+declare const bot: NyxBot;
+const id = 'mySessionId';
+// ---cut-end---
+const session = new MySession({ bot, id, startInteraction: interaction });
+await session.start();
+const endData = await session.getEndPromise();
+//    ^?
+const result = endData.result;
+//    ^?
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/djs-core';
+import { AbstractSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession<number> {
+  public async onStart() {}
+  public async onEnd() {}
+}
+
+declare const interaction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+const id = 'mySessionId';
+// ---cut-end---
+const session = new MySession({ bot, id, startInteraction: interaction });
+await session.start();
+const endData = await session.getEndPromise();
+//    ^?
+const result = endData.result;
+//    ^?
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/http';
+import { AbstractSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession<number> {
+  public async onStart() {}
+  public async onEnd() {}
+}
+
+declare const interaction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+const id = 'mySessionId';
+// ---cut-end---
+const session = new MySession({ bot, id, startInteraction: interaction });
+await session.start();
+const endData = await session.getEndPromise();
+//    ^?
+const result = endData.result;
+//    ^?
+```
+  </Tab>
+</Tabs>
+
+A useful use case is to make sessions where a user is "building" something, and you want to get the final result the user inputted.
+
+## Metadata [#metadata]
+
+When extending with plugins, you may want to specify extra data for them to read. You can do so with the `Metadata` object, saved on the session.
+
+<Callout>
+While sessions internally save a `Metadata`, the return type of `#getMeta()` is a `ReadonlyMetadata`,
+meaning that external objects can read the object, but not modify it.
+</Callout>
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/djs';
+import { AbstractSession, type DjsSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs';
+
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+declare const interaction: DjsSessionStartInteraction;
+declare const bot: NyxBot;
+const id = 'mySessionId';
+// ---cut-end---
+const session = new MySession({ bot, id, startInteraction: interaction });
+const meta = session.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/djs-core';
+import { AbstractSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+declare const interaction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+const id = 'mySessionId';
+// ---cut-end---
+const session = new MySession({ bot, id, startInteraction: interaction });
+const meta = session.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/http';
+import { AbstractSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  public async onStart() {}
+  public async onEnd() {}
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+declare const interaction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+const id = 'mySessionId';
+// ---cut-end---
+const session = new MySession({ bot, id, startInteraction: interaction });
+const meta = session.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+</Tabs>
+
+For a more type-safe approach, you can use `TypedFields`. Check the [Metadata](/use/other/metadata) page for more information.

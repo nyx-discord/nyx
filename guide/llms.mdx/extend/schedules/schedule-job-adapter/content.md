@@ -1,0 +1,316 @@
+# Job Adapter (https://nyx-discord.github.io/nyx/guide/extend/schedules/schedule-job-adapter)
+
+The <DocsLink pkg='base' name='ScheduleJobAdapter' decorated={false} /> wraps a specific scheduled job implementation so the schedule system can interact with jobs (pause, resume, destroy) without knowing the underlying library.
+
+There are two default implementations: <DocsLink pkg='base' name='CronJobAdapter' decorated={false} /> wraps jobs created by the `croner` library for cron strings and `Date`s, and <DocsLink pkg='base' name='TimerJobAdapter' decorated={false} /> runs millisecond intervals with its own timer.
+
+## When to override [#when-to-override]
+
+| ✅ Override if you want to... | ❌ Don't override if you want to... |
+|---|---|
+| Use a different timing/job backend (not `croner`) through a custom [`ScheduleExecutionScheduler`](/extend/schedules/schedule-execution-scheduler). | Change only schedule storage or execution behavior. Those are responsibilities of `ScheduleRepository` and `ScheduleExecutor`. |
+| Adapt a third-party scheduler/queue API to Nyx's `pause`/`resume`/`destroy` contract. | Only change interval parsing or next-run calculation. That belongs to `ScheduleExecutionScheduler`. |
+| Wrap platform-specific timer handles (e.g., `setTimeout`-based jobs) behind a uniform adapter API. | Add pre-execution checks. That belongs to `ScheduleMiddlewareList`. |
+
+## Overriding [#overriding]
+
+<Steps>
+<Step>
+### Creation [#creation]
+
+Create a custom adapter implementing `ScheduleJobAdapter`.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { ScheduleJobAdapter, ScheduleInterval } from '@nyx-discord/djs';
+
+class SimpleTimerAdapter implements ScheduleJobAdapter<NodeJS.Timeout> {
+  constructor(
+    private readonly timer: NodeJS.Timeout,
+    private readonly interval: ScheduleInterval
+  ) {}
+
+  public pause() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public resume() {
+    this.timer.refresh();
+    return this;
+  }
+
+  public destroy() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public isRunning() {
+    // NodeJS.Timeout has no built-in running-state check; illustrative only.
+    return true;
+  }
+
+  public getRaw() {
+    return this.timer;
+  }
+
+  public getInterval() {
+    return this.interval;
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { ScheduleJobAdapter, ScheduleInterval } from '@nyx-discord/djs-core';
+
+class SimpleTimerAdapter implements ScheduleJobAdapter<NodeJS.Timeout> {
+  constructor(
+    private readonly timer: NodeJS.Timeout,
+    private readonly interval: ScheduleInterval
+  ) {}
+
+  public pause() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public resume() {
+    this.timer.refresh();
+    return this;
+  }
+
+  public destroy() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public isRunning() {
+    // NodeJS.Timeout has no built-in running-state check; illustrative only.
+    return true;
+  }
+
+  public getRaw() {
+    return this.timer;
+  }
+
+  public getInterval() {
+    return this.interval;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { ScheduleJobAdapter, ScheduleInterval } from '@nyx-discord/http';
+
+class SimpleTimerAdapter implements ScheduleJobAdapter<NodeJS.Timeout> {
+  constructor(
+    private readonly timer: NodeJS.Timeout,
+    private readonly interval: ScheduleInterval
+  ) {}
+
+  public pause() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public resume() {
+    this.timer.refresh();
+    return this;
+  }
+
+  public destroy() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public isRunning() {
+    // NodeJS.Timeout has no built-in running-state check; illustrative only.
+    return true;
+  }
+
+  public getRaw() {
+    return this.timer;
+  }
+
+  public getInterval() {
+    return this.interval;
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+### Registration [#registration]
+
+Use your adapter from a custom [`ScheduleExecutionScheduler`](/extend/schedules/schedule-execution-scheduler), then set that scheduler to the [`ScheduleManager`](/extend/schedules/schedule-manager).
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { ScheduleInterval, ScheduleJobAdapter } from '@nyx-discord/djs';
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/djs';
+
+class MyScheduleJobAdapter implements ScheduleJobAdapter<NodeJS.Timeout> {
+  constructor(
+    private readonly timer: NodeJS.Timeout,
+    private readonly interval: ScheduleInterval
+  ) {}
+
+  public pause() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public resume() {
+    this.timer.refresh();
+    return this;
+  }
+
+  public destroy() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public isRunning() {
+    return true;
+  }
+
+  public getRaw() {
+    return this.timer;
+  }
+
+  public getInterval() {
+    return this.interval;
+  }
+}
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  // Instantiate your documented adapter in your custom scheduler flow.
+  // @ts-expect-error Incomplete example
+  private readonly adapter = new MyScheduleJobAdapter(/** ... */);
+}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+
+// @noErrors
+bot.getScheduleManager().setScheduler(MyScheduler.create());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { ScheduleInterval, ScheduleJobAdapter } from '@nyx-discord/djs-core';
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/djs-core';
+
+class MyScheduleJobAdapter implements ScheduleJobAdapter<NodeJS.Timeout> {
+  constructor(
+    private readonly timer: NodeJS.Timeout,
+    private readonly interval: ScheduleInterval
+  ) {}
+
+  public pause() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public resume() {
+    this.timer.refresh();
+    return this;
+  }
+
+  public destroy() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public isRunning() {
+    return true;
+  }
+
+  public getRaw() {
+    return this.timer;
+  }
+
+  public getInterval() {
+    return this.interval;
+  }
+}
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  // Instantiate your documented adapter in your custom scheduler flow.
+  // @ts-expect-error Incomplete example
+  private readonly adapter = new MyScheduleJobAdapter(/** ... */);
+}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+
+// @noErrors
+bot.getScheduleManager().setScheduler(MyScheduler.create());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { ScheduleInterval, ScheduleJobAdapter } from '@nyx-discord/http';
+import { DefaultScheduleExecutionScheduler } from '@nyx-discord/http';
+
+class MyScheduleJobAdapter implements ScheduleJobAdapter<NodeJS.Timeout> {
+  constructor(
+    private readonly timer: NodeJS.Timeout,
+    private readonly interval: ScheduleInterval
+  ) {}
+
+  public pause() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public resume() {
+    this.timer.refresh();
+    return this;
+  }
+
+  public destroy() {
+    clearTimeout(this.timer);
+    return this;
+  }
+
+  public isRunning() {
+    return true;
+  }
+
+  public getRaw() {
+    return this.timer;
+  }
+
+  public getInterval() {
+    return this.interval;
+  }
+}
+
+class MyScheduler extends DefaultScheduleExecutionScheduler {
+  // Instantiate your documented adapter in your custom scheduler flow.
+  // @ts-expect-error Incomplete example
+  private readonly adapter = new MyScheduleJobAdapter(/** ... */);
+}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+
+// @noErrors
+bot.getScheduleManager().setScheduler(MyScheduler.create());
+```
+  </Tab>
+</Tabs>
+
+</Step>
+</Steps>

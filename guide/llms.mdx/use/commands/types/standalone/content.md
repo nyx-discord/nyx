@@ -1,0 +1,385 @@
+# Standalone Commands (https://nyx-discord.github.io/nyx/guide/use/commands/types/standalone)
+
+<Callout type="warn">It's recommended to read the [Commands Overview](../index) page first.</Callout>
+
+Standalone commands are fully executable, top level commands that don't store any children. In Discord, they are
+triggered on Slash Commands.
+
+## Creation [#creation]
+
+<Steps>
+<Step>
+
+### Creation [#creation-1]
+
+Extend the `AbstractStandaloneCommand` class:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Implementation [#implementation]
+
+Implement `data` that stores the command's data, and `execute()` that executes the command.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+
+class MyCommand extends AbstractStandaloneCommand {
+  protected readonly data = new SlashCommandBuilder()
+    .setName('my-command')
+    .setDescription('My command')
+    .toJSON();
+
+  public async execute(interaction: ChatInputCommandInteraction) {
+    await interaction.reply('Hello!');
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+
+class MyCommand extends AbstractStandaloneCommand {
+  protected readonly data = {
+    name: 'my-command',
+    description: 'My command',
+  };
+
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Hello!' },
+    );
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+
+class MyCommand extends AbstractStandaloneCommand {
+  protected readonly data = {
+    name: 'my-command',
+    description: 'My command',
+  };
+
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Hello!' },
+    );
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Registration [#registration]
+
+Instantiate and register it to a bot's `CommandManager`.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { StandaloneCommand, NyxBot } from '@nyx-discord/djs';
+declare const MyCommand: new () => StandaloneCommand;
+declare const bot: NyxBot;
+// ---cut---
+await bot.getCommandManager().addCommands(new MyCommand());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { StandaloneCommand, NyxBot } from '@nyx-discord/djs-core';
+declare const MyCommand: new () => StandaloneCommand;
+declare const bot: NyxBot;
+// ---cut---
+await bot.getCommandManager().addCommands(new MyCommand());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { StandaloneCommand, NyxBot } from '@nyx-discord/http';
+declare const MyCommand: new () => StandaloneCommand;
+declare const bot: NyxBot;
+// ---cut---
+await bot.getCommandManager().addCommands(new MyCommand());
+```
+  </Tab>
+</Tabs>
+
+</Step>
+</Steps>
+
+## Guild deployment [#guild-deployment]
+
+By default, all commands will be deployed in the global scope. If you want to deploy them in a specific guild, you can do so by implementing the `getGuilds()` method.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public getGuilds() {
+    return ['GUILD_ID', 'ANOTHER_GUILD_ID'];
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public getGuilds() {
+    return ['GUILD_ID', 'ANOTHER_GUILD_ID'];
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public getGuilds() {
+    return ['GUILD_ID', 'ANOTHER_GUILD_ID'];
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+If you're ever overriding from another base command, you can return `null` to make it global again, this is the default implementation.
+
+## Execution Meta [#execution-meta]
+
+The second argument of the execute method is a `Metadata` object, which is a `Record` that stores metadata about the command call.
+
+Apart from the keys saved by the caller or the middleware, the dispatch meta contains:
+
+* The execution ID, via the `TypedFields.Id` field.
+* The execution start date, via the `TypedFields.CreationDate` field.
+* The bot whose `Client` sent the interaction, via the `TypedFields.Bot` field.
+
+To learn more about TypedFields, check the [Metadata](/use/other/meta) page.
+
+## Autocompletion [#autocompletion]
+
+If your command has autocompletable options, you can implement the `autocomplete()` method.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import type { AutocompleteInteraction } from 'discord.js';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async autocomplete(interaction: AutocompleteInteraction) {
+    await interaction.respond([
+      { name: 'First option', value: 'first' },
+      { name: 'Second option', value: 'second' },
+    ]);
+  }
+}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import type { APIApplicationCommandAutocompleteInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async autocomplete(interaction: ToEventProps<APIApplicationCommandAutocompleteInteraction>) {
+    await interaction.api.interactions.createAutocompleteResponse(
+      interaction.data.id,
+      interaction.data.token,
+      { choices: [
+            { name: 'First option', value: 'first' },
+            { name: 'Second option', value: 'second' },
+      ] },
+    );
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { APIApplicationCommandAutocompleteInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  public async autocomplete(interaction: ToEventProps<APIApplicationCommandAutocompleteInteraction>) {
+    await interaction.api.interactions.createAutocompleteResponse(
+      interaction.data.id,
+      interaction.data.token,
+      { choices: [
+            { name: 'First option', value: 'first' },
+            { name: 'Second option', value: 'second' },
+      ] },
+    );
+  }
+}
+```
+  </Tab>
+</Tabs>
+
+## Metadata [#metadata]
+
+When extending nyx with plugins, you may want to specify extra data for them. You can do so with the `Metadata` object, saved on the command.
+
+<Callout>
+While commands internally save a `Metadata`, the return type of `#getMeta()` is a `ReadonlyMetadata`,
+meaning that external objects can read the object, but not modify it.
+</Callout>
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const command = new MyCommand();
+const meta = command.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const command = new MyCommand();
+const meta = command.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const command = new MyCommand();
+const meta = command.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+</Tabs>
+
+For a more type-safe approach, you can use `TypedFields`. Check the [Metadata](/use/other/meta) page for more information.
+
+## Advanced features [#advanced-features]
+
+<Callout>Click on each card to learn more about that feature.</Callout>
+
+<Cards>
+  <Card title="Command components" icon={<MousePointerClickIcon />} href="../components">
+    Handle components interactions directly in the command that sent them, without a separate `interactionCreate` listener.
+  </Card>
+  <Card title="Filters" icon={<LockIcon />} href="../filters">
+    Add pre-execution checks to your command, like permissions or cooldowns.
+  </Card>
+  <Card title="Middlewares" icon={<LayersIcon />} href="../middlewares">
+    Run code before every command's execution, like logging or pre-conditions.
+  </Card>
+</Cards>

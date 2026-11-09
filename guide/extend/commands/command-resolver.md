@@ -1,0 +1,101 @@
+# Resolver (https://nyx-discord.github.io/nyx/guide/extend/commands/command-resolver)
+
+The `CommandResolver` is responsible for locating commands given an interaction or `customId` context.
+
+## When to override [#when-to-override]
+
+| ✅ Override if you want to...                                                            | ❌ Don't override if you want to...                                                                           |
+|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| Customize how commands are located from the repository when an interaction is received. | Introduce other localization methods. It's easier to make your own method that uses the `CommandRepository`. |
+| You need to perform extra logic while locating a command.                               | Deserialize `customIds` in different ways. That would be the [`CommandCustomIdCodec`](./command-customid-codec)'s job.                   |
+
+## Overriding [#overriding]
+
+<Steps>
+<Step>
+### Creation [#creation]
+Create a custom command resolver by either:
+
+* Extending `DefaultCommandResolver` (recommended, less work).
+* Implementing `CommandResolver`.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/djs';
+
+class MyCommandResolver extends DefaultCommandResolver {}
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/djs-core';
+
+class MyCommandResolver extends DefaultCommandResolver {}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/http';
+
+class MyCommandResolver extends DefaultCommandResolver {}
+```
+  </Tab>
+</Tabs>
+
+</Step>
+<Step>
+### Registration [#registration]
+
+Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/djs';
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+class MyCommandResolver extends DefaultCommandResolver {
+  /** Your overrides */
+}
+
+bot.getCommandManager().setResolver(MyCommandResolver.create());
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/djs-core';
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+class MyCommandResolver extends DefaultCommandResolver {
+  /** Your overrides */
+}
+
+bot.getCommandManager().setResolver(MyCommandResolver.create());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/http';
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+class MyCommandResolver extends DefaultCommandResolver {
+  /** Your overrides */
+}
+
+bot.getCommandManager().setResolver(MyCommandResolver.create());
+```
+  </Tab>
+</Tabs>
+
+The <DocsLink pkg='djs' name='DefaultCommandResolver.create()' decorated={false} /> method instantiates your custom resolver, not the default one.
+
+</Step>
+</Steps>

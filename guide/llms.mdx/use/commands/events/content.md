@@ -1,0 +1,97 @@
+# Events (https://nyx-discord.github.io/nyx/guide/use/commands/events)
+
+<Callout type="warn">It's recommended to read the [Events Overview](../events/index) and [Event Subscribers](../events/subscribers) pages first.</Callout>
+
+The `CommandManager` has an `EventBus` that allows you to listen to events related to commands.
+
+This is useful for monitoring, logging, or any other custom logic you want to execute when a command is executed.
+
+## Events [#events]
+
+The following events are available:
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { CommandEventEnum } from '@nyx-discord/djs';
+
+// @noErrors
+CommandEventEnum.
+//               ^|
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { CommandEventEnum } from '@nyx-discord/djs-core';
+
+// @noErrors
+CommandEventEnum.
+//               ^|
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { CommandEventEnum } from '@nyx-discord/http';
+
+// @noErrors
+CommandEventEnum.
+//               ^|
+```
+  </Tab>
+</Tabs>
+
+## Usage [#usage]
+
+<Steps>
+<Step>
+### Subscriber creation [#subscriber-creation]
+
+Create a subscriber that will listen to a given event, use the `CommandEventArgs` type for the arguments map. Check the [Event Subscribers](../events/subscribers) page for more information.
+
+</Step>
+<Step>
+### Subscription [#subscription]
+
+Subscribe to the event using the `CommandManager`'s `subscribe()` method.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { EventSubscriber, CommandEventArgs } from '@nyx-discord/djs';
+declare const subscriber: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>;
+import type { NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut-end---
+await bot.getCommandManager().subscribe(subscriber);
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+// ---cut-start---
+import { EventSubscriber, CommandEventArgs } from '@nyx-discord/djs-core';
+declare const subscriber: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>;
+import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut-end---
+await bot.getCommandManager().subscribe(subscriber);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { EventSubscriber, CommandEventArgs } from '@nyx-discord/http';
+declare const subscriber: EventSubscriber<CommandEventArgs, keyof CommandEventArgs>;
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut-end---
+await bot.getCommandManager().subscribe(subscriber);
+```
+  </Tab>
+</Tabs>
+</Step>
+</Steps>

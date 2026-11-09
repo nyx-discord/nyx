@@ -1,0 +1,59 @@
+# Middlewares (https://nyx-discord.github.io/nyx/guide/use/other/middlewares)
+
+Middlewares are objects or callbacks that run before an execution. They can do some pre-processing logic and store it in the metadata, or even prevent the execution.
+
+We will review some concepts before going into the usage.
+
+## Priorities [#priorities]
+
+The <DocsLink pkg="base" name="Priority" decorated={false} label="Priority" /> determines the order in which they are executed:
+
+- Higher priorities are executed first.
+- Monitors are specifically meant for monitoring (e.g. metrics), though that's not enforced.
+  - `HighMonitor` is the first priority to be executed.
+  - `LowMonitor` is the last priority to be executed.
+
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
+  <Tab>
+```ts twoslash
+import { PriorityEnum } from '@nyx-discord/djs';
+
+// @noErrors
+PriorityEnum.
+//           ^|
+```
+  </Tab>
+  <Tab>
+```ts twoslash
+import { PriorityEnum } from '@nyx-discord/djs-core';
+
+// @noErrors
+PriorityEnum.
+//           ^|
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { PriorityEnum } from '@nyx-discord/http';
+
+// @noErrors
+PriorityEnum.
+//           ^|
+```
+  </Tab>
+</Tabs>
+
+The default priority is `Normal`, it's changed by overriding the `priority` property in classes. It can't be changed for callback-based middlewares.
+
+## Responses [#responses]
+
+A middleware returns a <DocsLink pkg="base" name="MiddlewareResponse" decorated={false} label="MiddlewareResponse" /> that indicates whether it passes, forces to pass, or fails. If a middleware fails, the execution will stop.
+
+Use the utility methods from the abstract middleware class to create the response:
+- `true()` - The middleware passes, and the execution will continue.
+- `false()` - The middleware fails, and the execution will stop.
+- `forceTrue()` - The middleware forces to pass, even if other later middlewares would fail.
+
+If you're using a callback-based middleware, you'll need to create your response manually.

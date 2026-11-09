@@ -1,0 +1,101 @@
+# Handling requests (https://nyx-discord.github.io/nyx/guide/use/http/requests)
+
+## Responses [#responses]
+
+Every request goes through the same checks before it reaches your bot:
+
+| Request                                           | Response               |
+|---------------------------------------------------|------------------------|
+| Before `bot.start()` finishes                     | `503`                  |
+| Missing or invalid signature                      | `401`                  |
+| Timestamp older (or newer) than `maxTimestampAge` | `401`                  |
+| Body that isn't valid JSON                        | `400`                  |
+| Interaction `PING` (Discord checking your URL)    | `200` with a `PONG`    |
+| Any other interaction                             | `202` with no body     |
+| [Webhook event](/use/http/webhook-events) or its `PING` | `204` with no body   |
+
+Rejecting old timestamps protects against replayed requests: someone who captured a valid request can't send it again later. The window is 5 minutes by default, see [Configuration](/use/http/configuration).
+
+## Replying to interactions [#replying-to-interactions]
+
+Over the gateway, commands reply by calling Discord's REST API, like `api.interactions.reply()`. Over HTTP they do exactly the same: Discord accepts interaction responses through the REST callback endpoint, as long as the HTTP request itself is answered with a `202`.
+
+This means commands, components and autocompletes written for `@discordjs/core` work unchanged:
+
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, RESTPostAPIChatInputApplicationCommandsJSONBody, ToEventProps } from '@discordjs/core';
+// ---cut---
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+
+class PingCommand extends AbstractStandaloneCommand {
+  // ---cut-start---
+  protected readonly data = {} as RESTPostAPIChatInputApplicationCommandsJSONBody;
+  // ---cut-end---
+  public async execute({ data, api }: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+    await api.interactions.reply(data.id, data.token, { content: 'Pong!' });
+  }
+}
+```
+
+The client doesn't answer Discord's request right away. It waits until the interaction is acknowledged (any reply, defer, update, modal or autocomplete response), until the handlers finish without acknowledging it (for example, when no command matches), or until `acknowledgeTimeout` passes (3 seconds by default), and then returns the `202`. Discord requires the first response within 3 seconds, so slow commands should defer first, exactly like on the gateway.
+
+## Reading the request [#reading-the-request]
+
+`TypedFields.HttpRequest` gets the HTTP request an interaction or webhook event came from, from the metadata of commands, components and subscribers. Its `raw` property is the original request from your server or runtime, so you can read anything else from it, like headers:
+
+```ts twoslash
+import type { APIChatInputApplicationCommandInteraction, RESTPostAPIChatInputApplicationCommandsJSONBody, ToEventProps } from '@discordjs/core';
+// ---cut---
+import { AbstractStandaloneCommand, TypedFields, type Metadata } from '@nyx-discord/http';
+
+class WhereAmICommand extends AbstractStandaloneCommand {
+  // ---cut-start---
+  protected readonly data = {} as RESTPostAPIChatInputApplicationCommandsJSONBody;
+  // ---cut-end---
+  public async execute({ data, api }: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    const request = TypedFields.HttpRequest.get(meta);
+    //    ^?
+
+    // raw is a fetch Request with toFetchHandler, or a node:http IncomingMessage with toNodeListener
+    const country = request?.raw instanceof Request ? request.raw.headers.get('cf-ipcountry') : null;
+
+    await api.interactions.reply(data.id, data.token, { content: `You're in ${country ?? 'somewhere'}` });
+  }
+}
+```
+
+`HttpBot` sets this up for you. If you create the `HttpNyxClient` yourself, add the field to the client event bus once the bot is created:
+
+```ts twoslash
+import type { CoreNyxBot, HttpNyxClient } from '@nyx-discord/http';
+declare const bot: CoreNyxBot;
+declare const client: HttpNyxClient;
+// ---cut---
+import { TypedFields } from '@nyx-discord/http';
+
+bot.getClientEventBus().getMetadataFactory().addDefaultField(TypedFields.HttpRequest, () => client.getCurrentRequest());
+```
+
+<Callout>
+  The client only knows which request it's emitting while its listeners are being called, so this relies on the bus creating its metadata as soon as it receives an event, before awaiting anything. nyx's default buses do. A custom bus that doesn't would see `null`.
+</Callout>
+
+## Serverless platforms [#serverless-platforms]
+
+On serverless platforms, the runtime may stop once the response is sent. Anything your command does after its first reply (follow-ups, edits, other API calls) can then be cut off.
+
+Every result from the client has a `handled` promise, which settles once the request's handlers finish: your commands, components and subscribers. Pass it to your platform's tool for keeping work alive, like [`ctx.waitUntil()`](https://developers.cloudflare.com/workers/runtime-apis/context/#waituntil) on Cloudflare Workers or [`after()`](https://nextjs.org/docs/app/api-reference/functions/after) on Next.js.
+
+`toFetchHandler()` does it for you when you pass a context with `waitUntil` as its second argument, see [Mounting](/use/http/mounting). When calling `handle()` yourself:
+
+```ts twoslash
+import type { HttpNyxClient, HttpEndpointRequest } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+declare const request: HttpEndpointRequest;
+declare const ctx: { waitUntil(promise: Promise<unknown>): void };
+// ---cut---
+const result = await client.handle(request);
+ctx.waitUntil(result.handled);
+```
+
+Webhook events need this the most: the client answers them right away, before any subscriber runs.
