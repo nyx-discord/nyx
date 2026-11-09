@@ -8,6 +8,7 @@
   --nyx-color: #7d91fe;
 
   --loaders-color: #fee97d;
+  --typed-options-color: #fe7dc4;
   --session-color: #7dfef3;
   --use-color: #5fc8fe;
   --extend-color: #a584ff;
@@ -20,6 +21,11 @@
 
 .loaders {
   --color-fd-primary: var(--loaders-color);
+}
+
+
+.typed-options {
+  --color-fd-primary: var(--typed-options-color);
 }
 
 

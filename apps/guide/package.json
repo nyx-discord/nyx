@@ -46,6 +46,7 @@
     "@nyx-discord/http": "workspace:*",
     "@nyx-discord/loaders": "workspace:*",
     "@nyx-discord/plugin-sessions": "workspace:*",
+    "@nyx-discord/typed-options": "workspace:*",
     "@repo/typedoc-plugin-entities": "workspace:*",
     "@sapphire/string-store": "3.0.0",
     "@tailwindcss/postcss": "^4.3.4",
