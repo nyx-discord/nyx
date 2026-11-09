@@ -1,6 +1,6 @@
 {
   "name": "@nyx-discord/plugin-sessions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A nyx plugin to manage user interaction sessions in your bot.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

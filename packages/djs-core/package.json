@@ -1,6 +1,6 @@
 {
   "name": "@nyx-discord/djs-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The @discordjs/core adapter for nyx, the Discord bot framework.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

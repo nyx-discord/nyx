@@ -1,6 +1,6 @@
 {
   "name": "@nyx-discord/http",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Receive Discord interactions and webhook events over HTTP with any server or runtime, using the @discordjs/core adapter.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/nyx-discord/nyx/compare/%40nyx-discord%2Fplugin-sessions%401.0.0...%40nyx-discord%2Fplugin-sessions%401.0.1) (2026-11-09)
+
+### Bug Fixes
+
+- add missing readmes and update old ones ([bdbd807](https://github.com/nyx-discord/nyx/commit/bdbd807235c952834bd7c56edbe2575a106719fa))
+
 ## 1.0.0 (2026-11-09)
 
 ### ⚠ BREAKING CHANGES

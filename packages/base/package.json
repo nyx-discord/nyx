@@ -1,6 +1,6 @@
 {
   "name": "@nyx-discord/base",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The default implementations of nyx, decoupled from any Discord library.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

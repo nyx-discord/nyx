@@ -1,6 +1,6 @@
 {
   "name": "@nyx-discord/loaders",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Directory-scanning loaders for nyx commands, events, and schedules.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
