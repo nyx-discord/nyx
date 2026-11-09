@@ -24,10 +24,13 @@ export class DefaultCommandAutocompleteSubscriber extends AbstractCoreClientSubs
 
     const bot = TypedFields.Bot.get(meta, true);
 
-    const handled = await bot.getCommandManager().autocomplete({
-      data: payload.data as APIApplicationCommandAutocompleteInteraction,
-      api: payload.api,
-    });
+    const handled = await bot.getCommandManager().autocomplete(
+      {
+        data: payload.data as APIApplicationCommandAutocompleteInteraction,
+        api: payload.api,
+      },
+      { ...meta },
+    );
 
     if (handled) {
       TypedFields.EventHandled.set(meta, true);

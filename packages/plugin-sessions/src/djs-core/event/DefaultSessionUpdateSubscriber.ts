@@ -33,10 +33,13 @@ export class DefaultSessionUpdateSubscriber extends AbstractCoreClientSubscriber
     const handled = await bot
       .getPluginManager()
       .getPluginByClass(CoreSessionPlugin, true)
-      .update({
-        data,
-        api: payload.api,
-      } as SessionUpdateInteraction<CoreInteractionTypes>);
+      .update(
+        {
+          data,
+          api: payload.api,
+        } as SessionUpdateInteraction<CoreInteractionTypes>,
+        { ...meta },
+      );
     if (handled) {
       TypedFields.EventHandled.set(meta, true);
     }

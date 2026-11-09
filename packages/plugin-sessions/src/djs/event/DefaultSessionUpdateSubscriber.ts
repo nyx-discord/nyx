@@ -29,7 +29,9 @@ export class DefaultSessionUpdateSubscriber extends AbstractDJSClientSubscriber<
     const handled = await bot
       .getPluginManager()
       .getPluginByClass(DjsSessionPlugin, true)
-      .update(interaction as SessionUpdateInteraction<DjsInteractionTypes>);
+      .update(interaction as SessionUpdateInteraction<DjsInteractionTypes>, {
+        ...meta,
+      });
     if (handled) {
       TypedFields.EventHandled.set(meta, true);
     }

@@ -21,10 +21,13 @@ export class DefaultCommandInteractionSubscriber extends AbstractCoreClientSubsc
 
     const bot = TypedFields.Bot.get(meta, true);
 
-    const handled = await bot.getCommandManager().execute({
-      data: payload.data,
-      api: payload.api,
-    } as CommandExecutableInteraction<CoreInteractionTypes>);
+    const handled = await bot.getCommandManager().execute(
+      {
+        data: payload.data,
+        api: payload.api,
+      } as CommandExecutableInteraction<CoreInteractionTypes>,
+      { ...meta },
+    );
 
     if (handled) {
       TypedFields.EventHandled.set(meta, true);

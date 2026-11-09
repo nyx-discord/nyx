@@ -20,7 +20,9 @@ export class DefaultCommandInteractionSubscriber extends AbstractDJSClientSubscr
 
     const bot = TypedFields.Bot.get(meta, true);
 
-    const handled = await bot.getCommandManager().execute(interaction);
+    const handled = await bot
+      .getCommandManager()
+      .execute(interaction, { ...meta });
 
     if (handled || interaction.replied) {
       TypedFields.EventHandled.set(meta, true);

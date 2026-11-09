@@ -14,7 +14,9 @@ export class DefaultCommandAutocompleteSubscriber extends AbstractDJSClientSubsc
     if (!interaction.isAutocomplete()) return;
     const bot = TypedFields.Bot.get(meta, true);
 
-    const handled = await bot.getCommandManager().autocomplete(interaction);
+    const handled = await bot
+      .getCommandManager()
+      .autocomplete(interaction, { ...meta });
 
     if (handled || interaction.responded) {
       TypedFields.EventHandled.set(meta, true);
