@@ -1,4 +1,4 @@
-// Entry point of a bot that receives interactions over HTTP (Interactions Endpoint URL) instead of the gateway.
+// Entry point of a bot that receives interactions (Interactions Endpoint URL) and webhook events (Webhook Events URL) over HTTP instead of the gateway.
 // Everything else is written like @discordjs/core: reuse ../djs-core, importing from @nyx-discord/http.
 // Docs: https://nyx-discord.github.io/nyx/guide/use/http.md
 import { createServer } from 'node:http';
