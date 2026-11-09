@@ -7,23 +7,26 @@ import type {
 import {
   ApplicationCommandType,
   ApplicationWebhookEventType,
+  GatewayDispatchEvents,
   ApplicationWebhookType,
   InteractionType,
 } from '@discordjs/core/http-only';
 import { REST } from '@discordjs/rest';
 import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import type {
-  EventEmitterLike,
+  APIInteraction,
+  ToEventProps as CoreEventProps,
+} from '@discordjs/core';
+import type {
   HttpEndpointRequest,
-  HttpClientEvents,
   Metadata,
   WebhookEventProps,
 } from '../../../src';
 import {
   AbstractStandaloneCommand,
   Bot,
+  AbstractCoreClientSubscriber,
   AbstractWebhookEventSubscriber,
-  BasicEventEmitterBus,
   CoreBot,
   HttpBot,
   HttpNyxClient,
@@ -100,6 +103,21 @@ describe('HttpBot', () => {
     >();
   });
 
+  test('GIVEN an HttpBot WHEN subscribing to its client event bus THEN accepts both @discordjs/core and webhook event subscribers', () => {
+    class InteractionSubscriber extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
+      protected readonly event = GatewayDispatchEvents.InteractionCreate;
+
+      public handleEvent(
+        _meta: Metadata,
+        _props: CoreEventProps<APIInteraction>,
+      ) {}
+    }
+
+    type Subscribe = Parameters<HttpBot['subscribeToClient']>[0];
+    expectTypeOf<InteractionSubscriber>().toExtend<Subscribe>();
+    expectTypeOf<AuthorizedSubscriber>().toExtend<Subscribe>();
+  });
+
   test('GIVEN a started bot WHEN a signed command arrives THEN the command replies through the callback and gets the request in its metadata', async () => {
     const signer = await MockSigner.create();
     const makeRequest = vi.fn((_url: string, _init: unknown) =>
@@ -140,7 +158,7 @@ describe('HttpBot', () => {
     await bot.stop();
   });
 
-  test('GIVEN a started bot WHEN a signed webhook event arrives THEN subscribers on a bus over the client emitter receive it with the request', async () => {
+  test('GIVEN a started bot WHEN a signed webhook event arrives THEN client subscribers receive it with the request', async () => {
     const signer = await MockSigner.create();
     const bot = HttpBot.create(() => ({
       applicationId: '123',
@@ -150,12 +168,8 @@ describe('HttpBot', () => {
       deployCommands: false,
     }));
     const client = bot.getClient();
-    const webhookBus = BasicEventEmitterBus.createSyncWithEmitter<
-      HttpClientEvents,
-      EventEmitterLike
-    >(client.getEmitter(), bot.getClientEventBus().getMetadataFactory());
     const subscriber = new AuthorizedSubscriber();
-    await webhookBus.subscribe(subscriber);
+    await bot.subscribeToClient(subscriber);
     await bot.start();
 
     const request = await signer.signRequest(

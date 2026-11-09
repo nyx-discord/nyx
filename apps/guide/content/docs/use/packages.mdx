@@ -19,8 +19,6 @@ Every component depends on the interfaces rather than on the default implementat
 
 ## Which package to use?
 
-Most of the time, you'll want to use an adapter, depending on the library your bot uses:
-
 <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
     If your bot uses [discord.js](https://discord.js.org), install `@nyx-discord/djs`:
@@ -38,12 +36,16 @@ npm i @nyx-discord/djs-core @discordjs/core @discordjs/rest @discordjs/ws
   </Tab>
   <Tab>
     If your bot only needs interactions (commands, components, modals) and should receive them over HTTP, for example on a
-    serverless platform, install `@nyx-discord/http`. It runs the `@discordjs/core` adapter without a gateway connection,
-    see [HTTP](/use/http):
+    serverless platform, install `@nyx-discord/http`:
 
 ```npm
 npm i @nyx-discord/http @discordjs/core
 ```
+
+    <Callout type="warn">
+      HTTP bots also need to be mounted on your server, and work differently in a few places. Read the
+      [HTTP section](/use/http) right after [First start](/use/first-start).
+    </Callout>
   </Tab>
 </Tabs>
 

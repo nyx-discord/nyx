@@ -1,6 +1,7 @@
 # @nyx-discord/http
 
 Receive Discord interactions and webhook events over HTTP instead of the gateway, with any server or runtime.
+See the [guide's HTTP section](https://nyx-discord.github.io/nyx/guide/use/http) for everything else.
 
 ```ts
 import { HttpBot } from '@nyx-discord/http';
@@ -26,7 +27,20 @@ Point the Interactions Endpoint URL at `client`, and the Webhook Events URL (opt
 import { createServer } from 'node:http';
 import { toNodeListener } from '@nyx-discord/http';
 
-createServer(toNodeListener(client)).listen(3000);
+const interactions = toNodeListener(client);
+const webhookEvents = toNodeListener(client.getWebhookEventHandler());
+
+createServer((req, res) => {
+  const listener =
+    req.url === '/interactions'
+      ? interactions
+      : req.url === '/webhook-events'
+        ? webhookEvents
+        : null;
+  if (!listener) return void res.writeHead(404).end();
+
+  listener(req, res).catch(console.error);
+}).listen(3000);
 ```
 
 ## Express
@@ -34,6 +48,7 @@ createServer(toNodeListener(client)).listen(3000);
 ```ts
 import { toNodeListener } from '@nyx-discord/http';
 
+// no express.json() on these routes: the signature is checked against the raw body
 app.post('/interactions', toNodeListener(client));
 app.post('/webhook-events', toNodeListener(client.getWebhookEventHandler()));
 ```
@@ -47,14 +62,20 @@ app.addContentTypeParser(
   (_req, body, done) => done(null, body),
 );
 
-app.post('/interactions', async (req, reply) => {
-  const result = await client.handle({
-    body: req.body as Buffer,
-    signature: req.headers['x-signature-ed25519'] as string | undefined,
-    timestamp: req.headers['x-signature-timestamp'] as string | undefined,
+for (const [path, handler] of [
+  ['/interactions', client],
+  ['/webhook-events', client.getWebhookEventHandler()],
+] as const) {
+  app.post(path, async (req, reply) => {
+    const result = await handler.handle({
+      body: req.body as Buffer,
+      signature: req.headers['x-signature-ed25519'] as string | undefined,
+      timestamp: req.headers['x-signature-timestamp'] as string | undefined,
+      raw: req,
+    });
+    return reply.code(result.status).headers(result.headers).send(result.body);
   });
-  return reply.code(result.status).headers(result.headers).send(result.body);
-});
+}
 ```
 
 ## Hono
@@ -63,7 +84,10 @@ app.post('/interactions', async (req, reply) => {
 import { toFetchHandler } from '@nyx-discord/http';
 
 const interactions = toFetchHandler(client);
+const webhookEvents = toFetchHandler(client.getWebhookEventHandler());
+
 app.post('/interactions', (c) => interactions(c.req.raw));
+app.post('/webhook-events', (c) => webhookEvents(c.req.raw));
 ```
 
 ## Cloudflare Workers
@@ -72,9 +96,18 @@ app.post('/interactions', (c) => interactions(c.req.raw));
 import { toFetchHandler } from '@nyx-discord/http';
 
 const interactions = toFetchHandler(client);
+const webhookEvents = toFetchHandler(client.getWebhookEventHandler());
 
-// passing ctx keeps the worker alive until your handlers finish
-export default { fetch: (request, env, ctx) => interactions(request, ctx) };
+export default {
+  fetch(request, env, ctx) {
+    const { pathname } = new URL(request.url);
+    const handler =
+      pathname === '/webhook-events' ? webhookEvents : interactions;
+
+    // passing ctx keeps the worker alive until your handlers finish
+    return handler(request, ctx);
+  },
+};
 ```
 
 ## Bun / Deno
@@ -82,12 +115,23 @@ export default { fetch: (request, env, ctx) => interactions(request, ctx) };
 ```ts
 import { toFetchHandler } from '@nyx-discord/http';
 
-export default { fetch: toFetchHandler(client) };
+const interactions = toFetchHandler(client);
+const webhookEvents = toFetchHandler(client.getWebhookEventHandler());
+
+export default {
+  fetch(request: Request) {
+    const { pathname } = new URL(request.url);
+    return pathname === '/webhook-events'
+      ? webhookEvents(request)
+      : interactions(request);
+  },
+};
 ```
 
-## Next.js (route handler)
+## Next.js (route handlers)
 
 ```ts
+// app/interactions/route.ts
 import { after } from 'next/server';
 import { toFetchHandler } from '@nyx-discord/http';
 
@@ -95,4 +139,15 @@ const interactions = toFetchHandler(client);
 
 export const POST = (request: Request) =>
   interactions(request, { waitUntil: after });
+```
+
+```ts
+// app/webhook-events/route.ts
+import { after } from 'next/server';
+import { toFetchHandler } from '@nyx-discord/http';
+
+const webhookEvents = toFetchHandler(client.getWebhookEventHandler());
+
+export const POST = (request: Request) =>
+  webhookEvents(request, { waitUntil: after });
 ```

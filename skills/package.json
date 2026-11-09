@@ -15,6 +15,7 @@
     "@nyx-discord/base": "workspace:*",
     "@nyx-discord/djs": "workspace:*",
     "@nyx-discord/djs-core": "workspace:*",
+    "@nyx-discord/http": "workspace:*",
     "@nyx-discord/loaders": "workspace:*",
     "@nyx-discord/plugin-sessions": "workspace:*",
     "@repo/typescript-config": "workspace:*",

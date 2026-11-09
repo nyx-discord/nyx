@@ -3,7 +3,7 @@ import type { Awaitable, Metadata } from '@nyx-discord/djs-core';
 import { BaseClientSubscriber } from '@nyx-discord/djs-core';
 import type { HttpClientEvents } from '../client/HttpClientEvents.js';
 
-/** Utility to make a subscriber for a webhook event, on an event bus over the {@link HttpNyxClient} emitter. */
+/** Utility to make a subscriber for a webhook event, for the client event bus of an {@link HttpBot}. */
 export abstract class AbstractWebhookEventSubscriber<
   Event extends ApplicationWebhookEventType & keyof HttpClientEvents,
 > extends BaseClientSubscriber<HttpClientEvents, Event> {

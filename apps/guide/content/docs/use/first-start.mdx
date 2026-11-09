@@ -5,7 +5,7 @@ icon: Rocket
 ---
 
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
-import { AlarmClockIcon, LaptopIcon, MegaphoneIcon, PuzzleIcon, UserIcon } from 'lucide-react';
+import { AlarmClockIcon, GlobeIcon, LaptopIcon, MegaphoneIcon, PuzzleIcon, UserIcon } from 'lucide-react';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 ## First Start
@@ -183,8 +183,8 @@ Finally, to start it, simply call `.start()`. This will log in the client, set u
 <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
+// ---cut-start---
 import { Bot } from '@nyx-discord/djs';
-// ---cut-start---
 declare const myBot: Bot;
 // ---cut-end---
 await myBot.start();
@@ -192,17 +192,21 @@ await myBot.start();
   </Tab>
   <Tab>
 ```ts twoslash
+// ---cut-start---
 import { Bot } from '@nyx-discord/djs-core';
-// ---cut-start---
 declare const myBot: Bot;
 // ---cut-end---
 await myBot.start();
 ```
   </Tab>
   <Tab>
+
+This example uses `node:http`, but you can use any backend you want, including serverless!
+Check out the [HTTP Bots](/use/http) section for more details.
+
 ```ts twoslash
-import { HttpBot } from '@nyx-discord/http';
 // ---cut-start---
+import { HttpBot } from '@nyx-discord/http';
 declare const myBot: HttpBot;
 // ---cut-end---
 import { createServer } from 'node:http';

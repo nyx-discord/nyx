@@ -5,6 +5,7 @@
 export * from './adapter/toFetchHandler';
 export * from './adapter/toNodeListener';
 export * from './bot/HttpBot';
+export * from './bot/HttpBotEvents';
 export * from './client/HttpClientEvents';
 export * from './client/HttpNyxClient';
 export * from './emitter/AwaitableEventEmitter';

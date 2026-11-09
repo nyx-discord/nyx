@@ -9,8 +9,9 @@ A Discord bot framework that stays out of your way.
 [![Discord Invite](https://img.shields.io/badge/Visit%20us%20in-Discord-5662f6?style=for-the-badge&logo=discord&logoColor=5662f6)](https://discord.gg/PQZmwaBZd5)
 
 nyx handles application commands, components, events, schedules and plugins on top of
-[discord.js](https://discord.js.org) or [@discordjs/core](https://discord.js.org/docs/packages/core/main). It's built
-to be the Discord layer of your app, not your whole app.
+[discord.js](https://discord.js.org) or [@discordjs/core](https://discord.js.org/docs/packages/core/main), through the
+gateway or [over HTTP](https://nyx-discord.github.io/nyx/guide/use/http) with `@nyx-discord/http`. It's built to be the
+Discord layer of your app, not your whole app.
 
 ## ✨ Why nyx
 
@@ -21,6 +22,9 @@ to be the Discord layer of your app, not your whole app.
   keep the business logic, making your code testable and maintainable.
 - **Same API on discord.js and @discordjs/core.** Pick the library you want; filters, middlewares, events, schedules
   and plugins work the same on both.
+- **Gateway or HTTP.** With `@nyx-discord/http` you can make a bot receive interactions and webhook events over
+  HTTP, mounted on any server or runtime (node:http, Express, Fastify, Hono, Workers, Bun, Deno, Next.js), with no
+  gateway connection.
 - **Commands that handle their own components.** Buttons, select menus and modals sent by a command come back to that
   command, with extra data encoded in the customId for you.
 - **Type-safe events and metadata.** Event buses are typed by their events, and metadata is read and written through
