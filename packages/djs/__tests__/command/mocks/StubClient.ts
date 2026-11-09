@@ -1,11 +1,12 @@
 import type { Client } from 'discord.js';
+import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 
 export class StubClient {
   public static create(overrides?: {
-    set?: ReturnType<typeof vi.fn>;
-    delete?: ReturnType<typeof vi.fn>;
-    edit?: ReturnType<typeof vi.fn>;
+    set?: Mock;
+    delete?: Mock;
+    edit?: Mock;
   }) {
     const cmdMgr = {
       set: overrides?.set ?? vi.fn(),

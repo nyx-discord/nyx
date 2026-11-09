@@ -1,14 +1,15 @@
 import type { API } from '@discordjs/core';
+import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 
 export class StubApi {
   public static create(overrides?: {
-    bulkOverwriteGlobalCommands?: ReturnType<typeof vi.fn>;
-    bulkOverwriteGuildCommands?: ReturnType<typeof vi.fn>;
-    editGlobalCommand?: ReturnType<typeof vi.fn>;
-    editGuildCommand?: ReturnType<typeof vi.fn>;
-    deleteGlobalCommand?: ReturnType<typeof vi.fn>;
-    deleteGuildCommand?: ReturnType<typeof vi.fn>;
+    bulkOverwriteGlobalCommands?: Mock;
+    bulkOverwriteGuildCommands?: Mock;
+    editGlobalCommand?: Mock;
+    editGuildCommand?: Mock;
+    deleteGlobalCommand?: Mock;
+    deleteGuildCommand?: Mock;
   }) {
     const appCommands = {
       bulkOverwriteGlobalCommands:
