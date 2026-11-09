@@ -10,7 +10,7 @@ Session limits cap how many concurrent sessions a user, guild, or channel can ha
 They are enforced **before** a session starts, and they are registered externally via `plugin.getSessionLimits().register(...)`.
 
 <Callout type="warn">
-Limits must be registered **before** starting. Calling `register()` after starting the bot throws an `IllegalStateError`.
+Limits must be registered and removed **before** starting. Calling `register()` or `remove()` after starting the bot throws an `IllegalStateError`.
 </Callout>
 
 ## Registration

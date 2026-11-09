@@ -9,7 +9,7 @@ import type {
   Metadata,
   NyxBot
 } from '@nyx-discord/base';
-import { TypedFields } from '@nyx-discord/base';
+import { IllegalStateError, TypedFields } from '@nyx-discord/base';
 import {
   beforeAll,
   describe,
@@ -366,6 +366,28 @@ describe('DefaultSessionLimitManager', () => {
       plugin.getSessionLimits().remove(MockSession);
 
       await expect(plugin.start(makeSession({ userId: 'u' }))).resolves.toBe(
+        true,
+      );
+    });
+
+    it('throws IllegalStateError after the plugin has started', () => {
+      const plugin = createPlugin();
+      plugin.getSessionLimits().register({
+        session: MockSession,
+        rules: [
+          {
+            max: 1,
+            scope: SessionLimitScope.User,
+            onExceed: SessionExceedAction.Error,
+          },
+        ],
+      });
+      vi.spyOn(plugin, 'isRunning').mockReturnValue(true);
+
+      expect(() => plugin.getSessionLimits().remove(MockSession)).toThrow(
+        IllegalStateError,
+      );
+      expect(plugin.getSessionLimits().getPolicies().has(MockSession)).toBe(
         true,
       );
     });

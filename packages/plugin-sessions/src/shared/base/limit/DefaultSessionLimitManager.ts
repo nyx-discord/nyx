@@ -16,27 +16,22 @@ import { SessionLimitScope } from './scope/SessionLimitScope.js';
 export class DefaultSessionLimitManager<
   Types extends InteractionTypes = InteractionTypes,
 > implements SessionLimitManager<Types> {
-  private readonly policies = new Map<
-    Constructor<Session<unknown, Types>>,
-    SessionLimit<Types>[]
-  >();
-
-  private readonly plugin: BaseSessionPlugin<Types>;
-
   /** Sessions that passed their limits and haven't ended yet, counted even before the repository saves them. */
   protected readonly reserved = new Map<string, Session<unknown, Types>>();
-
   /** Sessions to displace once the session that displaces them (the key) has started. */
   protected readonly displacements = new Map<
     string,
     Session<unknown, Types>[]
   >();
-
   /** IDs of sessions waiting to be displaced, which no longer count towards limits. */
   protected readonly displacing = new Set<string>();
-
   /** Serializes limit checks, so a session can't pass while another one is displacing. */
   protected lock: Promise<void> = Promise.resolve();
+  private readonly policies = new Map<
+    Constructor<Session<unknown, Types>>,
+    SessionLimit<Types>[]
+  >();
+  private readonly plugin: BaseSessionPlugin<Types>;
 
   constructor(plugin: BaseSessionPlugin<Types>) {
     this.plugin = plugin;
@@ -69,6 +64,11 @@ export class DefaultSessionLimitManager<
 
   /** @inheritdoc */
   public remove(sessionCtor: Constructor<Session<unknown, Types>>): void {
+    if (this.plugin.isRunning()) {
+      throw new IllegalStateError(
+        'Cannot remove session limits after the plugin has started.',
+      );
+    }
     this.policies.delete(sessionCtor);
   }
 

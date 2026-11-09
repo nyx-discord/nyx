@@ -36,7 +36,11 @@ export interface SessionLimitManager<
    */
   register(...limits: SessionLimitResolvable<Types>[]): void;
 
-  /** Removes all limit policies for the given session constructor. */
+  /**
+   * Removes all limit policies for the given session constructor.
+   *
+   * @throws {IllegalStateError} If called after the plugin has started.
+   */
   remove(sessionCtor: Constructor<Session<unknown, Types>>): void;
 
   /** Returns a read-only view of all registered limit policies. */
