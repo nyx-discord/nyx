@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+:root {
+  --nyx-color: #7d91fe;
+  --guide-color: #5fc8fe;
+  --docs-color: #a584ff;
+
+  --color-fd-primary: var(--nyx-color);
+}
+
+body {
+  overscroll-behavior-y: none;
+  background-color: var(--color-fd-background);
+}

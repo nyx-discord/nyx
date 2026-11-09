@@ -1,0 +1,51 @@
+name: Deploy Landing
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/landing/**
+      - .github/workflows/deploy-landing.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    name: Deploy Landing to GitHub Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Use pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build website
+        run: pnpm turbo run build --filter=@nyx-discord/landing
+        env:
+          NEXT_PUBLIC_BASE_PATH: /nyx
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./apps/landing/out
+          publish_branch: gh-pages
+          # Publishes to the root, so keep docs/, guide/ and their versioned folders
+          keep_files: true
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
