@@ -12,9 +12,10 @@ export default defineConfig({
   keepNames: true,
   cjsInterop: true,
   dts: {
-    // Build declarations against other packages' published types (dist), not their
-    // source through the dev-only custom conditions in each tsconfig.
-    compilerOptions: { customConditions: [] },
+    compilerOptions: {
+      customConditions: [],
+      moduleResolution: 'node16'
+    },
   },
   treeshake: false,
   clean: true,
