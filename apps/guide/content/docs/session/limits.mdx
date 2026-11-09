@@ -467,6 +467,10 @@ try {
 
 Evicts an existing session to make room. The displaced session receives `SessionEndCodes.Displaced`.
 
+The existing session is only ended **after** the new one has started. If the new session doesn't start (its start filter
+rejects it, a middleware stops it, or its `onStart()` throws), the existing session keeps running. Only running sessions
+are displaced: if every session in the scope is still starting, the new one is rejected with `SessionLimitExceededError`.
+
 <Tabs items={['discord.js', '@discordjs/core']}>
   <Tab>
 ```ts twoslash

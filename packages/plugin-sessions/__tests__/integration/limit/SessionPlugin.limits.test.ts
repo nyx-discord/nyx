@@ -32,6 +32,10 @@ class GameSession extends MockSession {}
 class TriviaSession extends GameSession {}
 class HangmanSession extends GameSession {}
 
+class FilteredSession extends MockSession {
+  protected override readonly startFilter = () => false;
+}
+
 const makeGame = <T extends typeof MockSession>(
   Ctor: T,
   userId = 'u',
@@ -524,6 +528,93 @@ describe('SessionPlugin integration', () => {
 
       expect(trivia.getState()).toBe('ended');
       expect(hangman.getState()).toBe('running');
+    });
+  });
+  describe('deferred displacement', () => {
+    test('GIVEN the new session is rejected by its start filter THEN the existing one keeps running', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: MockSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.displace() }],
+      });
+
+      const old = makeSess({ userId: 'u' });
+      await plugin.start(old);
+
+      await expect(plugin.start(makeGame(FilteredSession))).resolves.toBe(
+        false,
+      );
+      expect(old.getState()).toBe('running');
+
+      const replacement = makeSess({ userId: 'u' });
+      await expect(plugin.start(replacement)).resolves.toBe(true);
+      expect(old.getState()).toBe('ended');
+    });
+
+    test('GIVEN the new session fails in onStart THEN the existing one keeps running', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: MockSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.displace() }],
+      });
+
+      const old = makeSess({ userId: 'u' });
+      await plugin.start(old);
+
+      const failing = makeSess({ userId: 'u' });
+      failing.onStart = vi.fn(() => {
+        throw new Error('boom');
+      });
+      await expect(plugin.start(failing)).resolves.toBe(false);
+
+      expect(old.getState()).toBe('running');
+    });
+
+    test('GIVEN a displacement THEN the old session ends after the new one starts', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: MockSession,
+        rules: [{ max: 1, scope: Scope.User, onExceed: AE.displace() }],
+      });
+
+      const calls: string[] = [];
+      const old = makeSess({ userId: 'u' });
+      old.onEnd = vi.fn(() => {
+        calls.push('old ended');
+      });
+      await plugin.start(old);
+
+      const replacement = makeSess({ userId: 'u' });
+      replacement.onStart = vi.fn(() => {
+        calls.push('new started');
+      });
+      await plugin.start(replacement);
+
+      expect(calls).toEqual(['new started', 'old ended']);
+    });
+
+    test('GIVEN one rule displaces and a later rule rejects THEN nothing is displaced', async () => {
+      const plugin = DjsSessionPlugin.create();
+      plugin.getSessionLimits().register({
+        session: MockSession,
+        rules: [
+          { max: 1, scope: Scope.User, onExceed: AE.displace() },
+          { max: 1, scope: Scope.Channel, onExceed: AE.Error },
+        ],
+      });
+
+      const old = makeSess({ userId: 'u', channelId: 'c1' });
+      await plugin.start(old);
+      await plugin.start(makeSess({ userId: 'w', channelId: 'c2' }));
+
+      await expect(
+        plugin.start(makeSess({ userId: 'u', channelId: 'c2' })),
+      ).rejects.toThrow(SessionLimitExceededError);
+      expect(old.getState()).toBe('running');
+
+      const replacement = makeSess({ userId: 'u', channelId: 'c3' });
+      await expect(plugin.start(replacement)).resolves.toBe(true);
+      expect(old.getState()).toBe('ended');
     });
   });
 });

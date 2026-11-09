@@ -170,6 +170,8 @@ export abstract class BaseSessionPlugin<
         return false;
       }
 
+      await this.limitManager.commit(session);
+
       Promise.resolve(
         this.bus.emit(SessionEventEnum.SessionStart, [
           session,

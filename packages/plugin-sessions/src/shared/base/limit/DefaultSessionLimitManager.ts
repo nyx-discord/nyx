@@ -26,6 +26,15 @@ export class DefaultSessionLimitManager<
   /** Sessions that passed their limits and haven't ended yet, counted even before the repository saves them. */
   protected readonly reserved = new Map<string, Session<unknown, Types>>();
 
+  /** Sessions to displace once the session that displaces them (the key) has started. */
+  protected readonly displacements = new Map<
+    string,
+    Session<unknown, Types>[]
+  >();
+
+  /** IDs of sessions waiting to be displaced, which no longer count towards limits. */
+  protected readonly displacing = new Set<string>();
+
   /** Serializes limit checks, so a session can't pass while another one is displacing. */
   protected lock: Promise<void> = Promise.resolve();
 
@@ -85,18 +94,56 @@ export class DefaultSessionLimitManager<
     if (policies.length === 0) return;
 
     await this.withLock(async () => {
-      for (const policy of policies) {
-        for (const rule of policy.rules) {
-          await this.checkRule(session, meta, policy, rule);
+      try {
+        for (const policy of policies) {
+          for (const rule of policy.rules) {
+            await this.checkRule(session, meta, policy, rule);
+          }
         }
+      } catch (error) {
+        this.cancelDisplacements(session);
+        throw error;
       }
       this.reserved.set(session.getId(), session);
     });
   }
 
   /** @inheritdoc */
+  public async commit(session: Session<unknown, Types>): Promise<void> {
+    const targets = this.displacements.get(session.getId()) ?? [];
+    this.displacements.delete(session.getId());
+
+    for (const target of targets) {
+      this.displacing.delete(target.getId());
+      // it may have ended or expired while the new session was starting
+      if (
+        target.getState() !== SessionStateEnum.Running
+        || !this.plugin.getRepository().has(target.getId())
+      ) {
+        continue;
+      }
+
+      await this.plugin.end(
+        target,
+        'Session replaced',
+        SessionEndCodes.Displaced,
+      );
+    }
+  }
+
+  /** @inheritdoc */
   public release(session: Session<unknown, Types>): void {
     this.reserved.delete(session.getId());
+    this.cancelDisplacements(session);
+  }
+
+  /** Keeps running the sessions that the given session was going to displace. */
+  protected cancelDisplacements(session: Session<unknown, Types>): void {
+    const targets = this.displacements.get(session.getId()) ?? [];
+    for (const target of targets) {
+      this.displacing.delete(target.getId());
+    }
+    this.displacements.delete(session.getId());
   }
 
   /** Runs the given function once every previous call has finished. */
@@ -189,23 +236,28 @@ export class DefaultSessionLimitManager<
       });
     }
     if (decision.displace) {
-      // a session that is still starting can't be ended yet
-      if (decision.displace.getState() !== SessionStateEnum.Running) {
+      const target = decision.displace;
+      // a session that is still starting can't be ended, and one already being displaced frees no slot
+      if (
+        target.getState() !== SessionStateEnum.Running
+        || this.displacing.has(target.getId())
+      ) {
         throw new SessionLimitExceededError({
           attempted: session,
           existing: matching,
           rule,
         });
       }
-      await this.plugin.end(
-        decision.displace,
-        'Session replaced',
-        SessionEndCodes.Displaced,
-      );
+
+      // ended in commit(), once the attempted session has started
+      this.displacing.add(target.getId());
+      const targets = this.displacements.get(session.getId()) ?? [];
+      targets.push(target);
+      this.displacements.set(session.getId(), targets);
     }
   }
 
-  /** Finds existing and reserved sessions of the policy's constructor (or its subclasses) that share the same scope key as the given session. */
+  /** Finds existing and reserved sessions of the policy's constructor (or its subclasses) that share the same scope key as the given session, ignoring those being displaced. */
   private getMatchingSessions(
     session: Session<unknown, Types>,
     policyCtor: Constructor<Session<unknown, any>>,
@@ -223,7 +275,10 @@ export class DefaultSessionLimitManager<
 
     const targetKey = this.computeScopeKey(session, scope);
     return [...candidates.values()].filter(
-      (s) => s !== session && this.computeScopeKey(s, scope) === targetKey,
+      (s) =>
+        s !== session
+        && !this.displacing.has(s.getId())
+        && this.computeScopeKey(s, scope) === targetKey,
     );
   }
 

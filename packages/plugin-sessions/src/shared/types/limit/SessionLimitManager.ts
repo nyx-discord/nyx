@@ -12,7 +12,9 @@ export interface SessionLimitManager<
   Types extends InteractionTypes = InteractionTypes,
 > {
   /**
-   * Checks whether starting the given session would exceed any registered limits.
+   * Checks whether starting the given session would exceed any registered limits, and reserves its slot if it doesn't.
+   *
+   * Sessions chosen for displacement stop counting towards limits, but are only ended on {@link commit}.
    *
    * @throws {SessionLimitExceededError} If the session exceeds a limit with an error action.
    */
@@ -21,7 +23,10 @@ export interface SessionLimitManager<
     meta: Record<string | symbol, unknown>,
   ): Awaitable<void>;
 
-  /** Releases a session's reserved slot. Called when the session ends, expires or fails to start. */
+  /** Ends the sessions displaced to make room for the given session. Called once it has started. */
+  commit(session: Session<unknown, Types>): Awaitable<void>;
+
+  /** Releases a session's reserved slot, and keeps running any session it was going to displace. Called when the session ends, expires or fails to start. */
   release(session: Session<unknown, Types>): void;
 
   /**
