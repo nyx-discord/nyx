@@ -11,7 +11,7 @@ Every part of the client can be replaced through `clientInjections` (or `injecti
 | `verifier`           | `DefaultSignatureVerifier`                                 | Verifies Discord's Ed25519 signatures.                                            |
 | `rest`               | A `REST` with the bot's token                              | The REST client used by `api`.                                                    |
 | `api`                | An `API` over `rest`                                       | The API passed to commands and subscribers.                                       |
-| `emitter`            | An `AsyncEventEmitter`                                     | The emitter interactions and webhook events are emitted on.                       |
+| `emitter`            | A `BasicAwaitableEventEmitter`                             | The emitter interactions and webhook events are emitted on. Its `emit()` resolves when the listeners finish, which is what `handled` waits for. |
 | `acknowledgeTimeout` | `3_000`                                                    | How long to wait for an interaction to be acknowledged, in milliseconds.          |
 | `maxTimestampAge`    | `300_000`                                                  | How old (or how far in the future) a request can be before it's rejected, in ms.  |
 

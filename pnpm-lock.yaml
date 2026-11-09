@@ -402,9 +402,6 @@ importers:
       '@nyx-discord/djs-core':
         specifier: workspace:*
         version: link:../djs-core
-      '@vladfrangu/async_event_emitter':
-        specifier: ^2.4.6
-        version: 2.4.6
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*

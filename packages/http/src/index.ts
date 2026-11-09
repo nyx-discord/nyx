@@ -7,6 +7,8 @@ export * from './adapter/toNodeListener';
 export * from './bot/HttpBot';
 export * from './client/HttpClientEvents';
 export * from './client/HttpNyxClient';
+export * from './emitter/AwaitableEventEmitter';
+export * from './emitter/BasicAwaitableEventEmitter';
 export * from './endpoint/HttpEndpointHandler';
 export * from './endpoint/HttpEndpointRequest';
 export * from './endpoint/HttpEndpointResult';

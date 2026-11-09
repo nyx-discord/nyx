@@ -84,9 +84,27 @@ const interactions = toFetchHandler(client);
 app.post('/interactions', (c) => interactions(c.req.raw));
 ```
 
-## Cloudflare Workers, Bun and Deno
+## Cloudflare Workers
 
-All three accept a default export with a `fetch` handler:
+Pass the worker's `ctx` as the handler's second argument, so the worker stays alive until your handlers finish (see [Serverless platforms](/use/http/requests#serverless-platforms)):
+
+```ts twoslash
+import type { HttpNyxClient } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+type ExecutionContext = { waitUntil(promise: Promise<unknown>): void };
+// ---cut---
+import { toFetchHandler } from '@nyx-discord/http';
+
+const interactions = toFetchHandler(client);
+
+export default {
+  fetch: (request: Request, env: unknown, ctx: ExecutionContext) => interactions(request, ctx),
+};
+```
+
+## Bun and Deno
+
+Both accept a default export with a `fetch` handler:
 
 ```ts twoslash
 import type { HttpNyxClient } from '@nyx-discord/http';
@@ -99,15 +117,18 @@ export default { fetch: toFetchHandler(client) };
 
 ## Next.js
 
-In a route handler, like `app/interactions/route.ts`:
+In a route handler, like `app/interactions/route.ts`, pass [`after()`](https://nextjs.org/docs/app/api-reference/functions/after) as `waitUntil`, so the function stays alive until your handlers finish:
 
 ```ts twoslash
 import type { HttpNyxClient } from '@nyx-discord/http';
 declare const client: HttpNyxClient;
 // ---cut---
+import { after } from 'next/server';
 import { toFetchHandler } from '@nyx-discord/http';
 
-export const POST = toFetchHandler(client);
+const interactions = toFetchHandler(client);
+
+export const POST = (request: Request) => interactions(request, { waitUntil: after });
 ```
 
 ## Anything else

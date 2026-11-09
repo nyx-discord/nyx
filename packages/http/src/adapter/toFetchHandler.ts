@@ -7,12 +7,15 @@ import type { HttpEndpointHandler } from '../endpoint/HttpEndpointHandler.js';
  * const handler = toFetchHandler(client);
  *
  * app.post('/interactions', (c) => handler(c.req.raw)); // Hono
- * export default { fetch: handler }; // Workers / Bun
+ * export default { fetch: (request, env, ctx) => handler(request, ctx) }; // Workers
  */
 export function toFetchHandler(
   handler: HttpEndpointHandler,
-): (request: Request) => Promise<Response> {
-  return async (request) => {
+): (
+  request: Request,
+  context?: { waitUntil?(promise: Promise<unknown>): void },
+) => Promise<Response> {
+  return async (request, context) => {
     if (request.method !== 'POST') {
       return new Response('Method not allowed.', {
         status: 405,
@@ -25,6 +28,8 @@ export function toFetchHandler(
       signature: request.headers.get('X-Signature-Ed25519'),
       timestamp: request.headers.get('X-Signature-Timestamp'),
     });
+
+    context?.waitUntil?.(result.handled);
 
     return new Response(result.body === '' ? null : result.body, {
       status: result.status,

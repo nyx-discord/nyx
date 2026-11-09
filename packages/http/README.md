@@ -66,7 +66,18 @@ const interactions = toFetchHandler(client);
 app.post('/interactions', (c) => interactions(c.req.raw));
 ```
 
-## Cloudflare Workers / Bun / Deno
+## Cloudflare Workers
+
+```ts
+import { toFetchHandler } from '@nyx-discord/http';
+
+const interactions = toFetchHandler(client);
+
+// passing ctx keeps the worker alive until your handlers finish
+export default { fetch: (request, env, ctx) => interactions(request, ctx) };
+```
+
+## Bun / Deno
 
 ```ts
 import { toFetchHandler } from '@nyx-discord/http';
@@ -77,7 +88,11 @@ export default { fetch: toFetchHandler(client) };
 ## Next.js (route handler)
 
 ```ts
+import { after } from 'next/server';
 import { toFetchHandler } from '@nyx-discord/http';
 
-export const POST = toFetchHandler(client);
+const interactions = toFetchHandler(client);
+
+export const POST = (request: Request) =>
+  interactions(request, { waitUntil: after });
 ```

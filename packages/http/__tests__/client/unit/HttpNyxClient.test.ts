@@ -46,6 +46,13 @@ function request(body: unknown) {
   };
 }
 
+// simulates handlers that are still running, so only the callback or the timeout can end the wait
+function keepHandling(client: HttpNyxClient) {
+  client
+    .getEmitter()
+    .on(GatewayDispatchEvents.InteractionCreate, () => new Promise(() => {}));
+}
+
 function callbackRequest(id: string, token: string): APIRequest {
   return {
     method: 'POST',
@@ -142,7 +149,7 @@ describe('HttpNyxClient (handle)', () => {
 
     const result = await client.handle(request(CommandInteraction));
 
-    expect(result).toEqual({ status: 202, headers: {}, body: '' });
+    expect(result).toMatchObject({ status: 202, headers: {}, body: '' });
     expect(listener).toHaveBeenCalledWith({
       data: CommandInteraction,
       api: client.getApi(),
@@ -153,6 +160,7 @@ describe('HttpNyxClient (handle)', () => {
   test('GIVEN an interaction WHEN the callback is posted later THEN resolves only after it', async () => {
     const { client, rest } = createClient({ acknowledgeTimeout: 10_000 });
     await client.login();
+    keepHandling(client);
 
     let settled = false;
     const handling = client.handle(request(CommandInteraction)).then((r) => {
@@ -186,6 +194,7 @@ describe('HttpNyxClient (handle)', () => {
     try {
       const { client } = createClient({ acknowledgeTimeout: 3_000 });
       await client.login();
+      keepHandling(client);
 
       const handling = client.handle(request(CommandInteraction));
       await vi.advanceTimersByTimeAsync(3_000);
@@ -199,12 +208,107 @@ describe('HttpNyxClient (handle)', () => {
   test('GIVEN a pending interaction WHEN destroying THEN releases it', async () => {
     const { client } = createClient({ acknowledgeTimeout: 10_000 });
     await client.login();
+    keepHandling(client);
 
     const handling = client.handle(request(CommandInteraction));
     await new Promise((resolve) => setTimeout(resolve, 20));
     await client.destroy();
 
     await expect(handling).resolves.toMatchObject({ status: 202 });
+  });
+});
+
+describe('HttpNyxClient (handled)', () => {
+  test('GIVEN handlers that finish without acknowledging WHEN handling THEN returns without waiting for the timeout', async () => {
+    vi.useFakeTimers();
+    try {
+      const { client } = createClient({ acknowledgeTimeout: 10_000 });
+      await client.login();
+      client
+        .getEmitter()
+        .on(GatewayDispatchEvents.InteractionCreate, () => Promise.resolve());
+
+      const handling = client.handle(request(CommandInteraction));
+      await vi.advanceTimersByTimeAsync(0);
+
+      await expect(handling).resolves.toMatchObject({ status: 202 });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  test('GIVEN a handler that keeps working after acknowledging WHEN handling THEN handled settles after it', async () => {
+    const { client, rest } = createClient();
+    await client.login();
+    let finishWork!: () => void;
+    client.getEmitter().on(GatewayDispatchEvents.InteractionCreate, () => {
+      rest.emit(
+        RESTEvents.Response,
+        callbackRequest(CommandInteraction.id, CommandInteraction.token),
+        {} as never,
+      );
+      return new Promise<void>((resolve) => {
+        finishWork = resolve;
+      });
+    });
+
+    const result = await client.handle(request(CommandInteraction));
+
+    let handled = false;
+    void result.handled.then(() => {
+      handled = true;
+    });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(handled).toBe(false);
+
+    finishWork();
+    await expect(result.handled).resolves.toBeUndefined();
+  });
+
+  test('GIVEN a webhook event subscriber still working WHEN handling THEN answers 204 before handled settles', async () => {
+    const { client } = createClient();
+    await client.login();
+    let finishWork!: () => void;
+    client.getEmitter().on(
+      ApplicationWebhookEventType.ApplicationAuthorized,
+      () =>
+        new Promise<void>((resolve) => {
+          finishWork = resolve;
+        }),
+    );
+
+    const result = await client.handleWebhookEvent(
+      request({
+        version: 1,
+        application_id: '123',
+        type: ApplicationWebhookType.Event,
+        event: {
+          type: ApplicationWebhookEventType.ApplicationAuthorized,
+          timestamp: '2026-11-08T00:00:00.000Z',
+          data: { user: { id: '7' }, scopes: [] },
+        },
+      }),
+    );
+
+    expect(result.status).toBe(204);
+    let handled = false;
+    void result.handled.then(() => {
+      handled = true;
+    });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(handled).toBe(false);
+
+    finishWork();
+    await expect(result.handled).resolves.toBeUndefined();
+  });
+
+  test('GIVEN a rejected request WHEN handling THEN handled is already settled', async () => {
+    const { client } = createClient();
+
+    const result = await client.handle(request(CommandInteraction));
+
+    expect(result.status).toBe(503);
+    await expect(result.handled).resolves.toBeUndefined();
   });
 });
 
@@ -252,7 +356,7 @@ describe('HttpNyxClient (handleWebhookEvent)', () => {
       }),
     );
 
-    expect(result).toEqual({ status: 204, headers: {}, body: '' });
+    expect(result).toMatchObject({ status: 204, headers: {}, body: '' });
     expect(emit).not.toHaveBeenCalled();
   });
 

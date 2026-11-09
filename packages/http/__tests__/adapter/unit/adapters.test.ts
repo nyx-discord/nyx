@@ -13,6 +13,7 @@ function createHandler(): HttpEndpointHandler & {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
         body: '{"type":1}',
+        handled: Promise.resolve(),
       }),
     ),
   };
@@ -46,7 +47,12 @@ describe('toFetchHandler (adapter)', () => {
 
   test('GIVEN a result with no body WHEN handled THEN responds with no body', async () => {
     const handler = createHandler();
-    handler.handle.mockResolvedValue({ status: 202, headers: {}, body: '' });
+    handler.handle.mockResolvedValue({
+      status: 202,
+      headers: {},
+      body: '',
+      handled: Promise.resolve(),
+    });
 
     const response = await toFetchHandler(handler)(
       new Request('http://localhost', { method: 'POST', body: '{}' }),
@@ -54,6 +60,25 @@ describe('toFetchHandler (adapter)', () => {
 
     expect(response.status).toBe(202);
     expect(response.body).toBeNull();
+  });
+
+  test('GIVEN a context with waitUntil WHEN handled THEN passes it the handled promise', async () => {
+    const handler = createHandler();
+    const handled = new Promise<void>(() => {});
+    handler.handle.mockResolvedValue({
+      status: 202,
+      headers: {},
+      body: '',
+      handled,
+    });
+    const waitUntil = vi.fn();
+
+    await toFetchHandler(handler)(
+      new Request('http://localhost', { method: 'POST', body: '{}' }),
+      { waitUntil },
+    );
+
+    expect(waitUntil).toHaveBeenCalledWith(handled);
   });
 
   test('GIVEN a GET request WHEN handled THEN returns 405 without handling', async () => {

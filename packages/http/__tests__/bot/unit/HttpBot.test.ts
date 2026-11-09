@@ -165,11 +165,10 @@ describe('HttpBot', () => {
     );
 
     expect(result.status).toBe(204);
-    await vi.waitFor(() =>
-      expect(subscriber.handled).toHaveBeenCalledWith(
-        '7',
-        '2026-11-08T00:00:00.000Z',
-      ),
+    await result.handled;
+    expect(subscriber.handled).toHaveBeenCalledWith(
+      '7',
+      '2026-11-08T00:00:00.000Z',
     );
 
     await bot.stop();

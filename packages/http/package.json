@@ -60,7 +60,6 @@
   "dependencies": {
     "@discordjs/core": "^2.6.0",
     "@discordjs/rest": "^2.6.3",
-    "@nyx-discord/djs-core": "workspace:*",
-    "@vladfrangu/async_event_emitter": "^2.4.6"
+    "@nyx-discord/djs-core": "workspace:*"
   }
 }

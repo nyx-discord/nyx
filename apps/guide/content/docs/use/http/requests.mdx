@@ -41,10 +41,24 @@ class PingCommand extends AbstractStandaloneCommand {
 }
 ```
 
-The client doesn't answer Discord's request right away. It waits until the interaction is acknowledged (any reply, defer, update, modal or autocomplete response), or until `acknowledgeTimeout` passes (3 seconds by default), and then returns the `202`. Discord requires the first response within 3 seconds, so slow commands should defer first, exactly like on the gateway.
+The client doesn't answer Discord's request right away. It waits until the interaction is acknowledged (any reply, defer, update, modal or autocomplete response), until the handlers finish without acknowledging it (for example, when no command matches), or until `acknowledgeTimeout` passes (3 seconds by default), and then returns the `202`. Discord requires the first response within 3 seconds, so slow commands should defer first, exactly like on the gateway.
 
 ## Serverless platforms
 
 On serverless platforms, the runtime may stop once the response is sent. Anything your command does after its first reply (follow-ups, edits, other API calls) can then be cut off.
 
-Keep that work alive with your platform's tools, like [`ctx.waitUntil()`](https://developers.cloudflare.com/workers/runtime-apis/context/#waituntil) on Cloudflare Workers or [`after()`](https://nextjs.org/docs/app/api-reference/functions/after) on Next.js.
+Every result from the client has a `handled` promise, which settles once the request's handlers finish: your commands, components and subscribers. Pass it to your platform's tool for keeping work alive, like [`ctx.waitUntil()`](https://developers.cloudflare.com/workers/runtime-apis/context/#waituntil) on Cloudflare Workers or [`after()`](https://nextjs.org/docs/app/api-reference/functions/after) on Next.js.
+
+`toFetchHandler()` does it for you when you pass a context with `waitUntil` as its second argument, see [Mounting](/use/http/mounting). When calling `handle()` yourself:
+
+```ts twoslash
+import type { HttpNyxClient, HttpEndpointRequest } from '@nyx-discord/http';
+declare const client: HttpNyxClient;
+declare const request: HttpEndpointRequest;
+declare const ctx: { waitUntil(promise: Promise<unknown>): void };
+// ---cut---
+const result = await client.handle(request);
+ctx.waitUntil(result.handled);
+```
+
+Webhook events need this the most: the client answers them right away, before any subscriber runs.

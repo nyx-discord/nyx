@@ -15,7 +15,8 @@ import {
 import type { APIRequest } from '@discordjs/rest';
 import { REST, RESTEvents } from '@discordjs/rest';
 import type { CoreClient } from '@nyx-discord/djs-core';
-import { AsyncEventEmitter } from '@vladfrangu/async_event_emitter';
+import type { AwaitableEventEmitter } from '../emitter/AwaitableEventEmitter.js';
+import { BasicAwaitableEventEmitter } from '../emitter/BasicAwaitableEventEmitter.js';
 import type { HttpEndpointHandler } from '../endpoint/HttpEndpointHandler.js';
 import type { HttpEndpointRequest } from '../endpoint/HttpEndpointRequest.js';
 import type { HttpEndpointResult } from '../endpoint/HttpEndpointResult.js';
@@ -25,7 +26,7 @@ import type { HttpClientEvents } from './HttpClientEvents.js';
 import type { WebhookEventProps } from '../webhook/WebhookEventProps.js';
 
 type HttpNyxClientOptions = {
-  emitter: AsyncEventEmitter<HttpClientEvents>;
+  emitter: AwaitableEventEmitter<HttpClientEvents>;
   rest: REST;
   api: API;
   applicationId: string;
@@ -39,10 +40,10 @@ type HttpNyxClientOptions = {
 /** A {@link CoreClient} that receives interactions and webhook events over HTTP instead of the gateway, emitting them on its emitter. */
 export class HttpNyxClient
   implements
-    CoreClient<AsyncEventEmitter<HttpClientEvents>>,
+    CoreClient<AwaitableEventEmitter<HttpClientEvents>>,
     HttpEndpointHandler
 {
-  protected readonly emitter: AsyncEventEmitter<HttpClientEvents>;
+  protected readonly emitter: AwaitableEventEmitter<HttpClientEvents>;
 
   protected readonly rest: REST;
 
@@ -88,7 +89,9 @@ export class HttpNyxClient
       injections.rest ?? new REST({ version: '10' }).setToken(options.token);
 
     return new this({
-      emitter: injections.emitter ?? new AsyncEventEmitter<HttpClientEvents>(),
+      emitter:
+        injections.emitter
+        ?? new BasicAwaitableEventEmitter<HttpClientEvents>(),
       rest,
       // same class as @discordjs/core's API, from the entry point that doesn't load @discordjs/ws
       api: injections.api ?? (new HttpOnlyAPI(rest) as unknown as API),
@@ -119,7 +122,7 @@ export class HttpNyxClient
     return Promise.resolve();
   }
 
-  /** Verifies the request, answers `PING`, and otherwise emits the interaction, returning a `202` once it's acknowledged or the acknowledge timeout passes. */
+  /** Verifies the request, answers `PING`, and otherwise emits the interaction, returning a `202` once it's acknowledged, its handlers finish, or the acknowledge timeout passes. */
   public async handle(
     request: HttpEndpointRequest,
   ): Promise<HttpEndpointResult> {
@@ -138,11 +141,12 @@ export class HttpNyxClient
         status: 200,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: InteractionResponseType.Pong }),
+        handled: Promise.resolve(),
       };
     }
 
-    await this.emitAndWaitForAcknowledge(interaction);
-    return { status: 202, headers: {}, body: '' };
+    const { handled } = await this.emitAndWaitForAcknowledge(interaction);
+    return { status: 202, headers: {}, body: '', handled };
   }
 
   /** Verifies the request, answers `PING`, and otherwise emits the webhook event under its type, returning a `204`. */
@@ -163,13 +167,14 @@ export class HttpNyxClient
       return this.textResult(400, 'Invalid webhook event body.');
     }
 
-    if (webhookEvent.type === ApplicationWebhookType.Event) {
-      this.emitWebhookEvent(webhookEvent.event);
-    }
-    return { status: 204, headers: {}, body: '' };
+    const handled =
+      webhookEvent.type === ApplicationWebhookType.Event
+        ? this.emitWebhookEvent(webhookEvent.event)
+        : Promise.resolve();
+    return { status: 204, headers: {}, body: '', handled };
   }
 
-  public getEmitter(): AsyncEventEmitter<HttpClientEvents> {
+  public getEmitter(): AwaitableEventEmitter<HttpClientEvents> {
     return this.emitter;
   }
 
@@ -225,7 +230,7 @@ export class HttpNyxClient
 
   protected async emitAndWaitForAcknowledge(
     interaction: APIInteraction,
-  ): Promise<void> {
+  ): Promise<{ handled: Promise<void> }> {
     const route = Routes.interactionCallback(interaction.id, interaction.token);
 
     let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -235,19 +240,20 @@ export class HttpNyxClient
     });
 
     try {
-      this.emitter.emit(GatewayDispatchEvents.InteractionCreate, {
-        data: interaction,
-        api: this.api,
-        shardId: -1,
-      });
-      await acknowledged;
+      const handled = this.emitter.emit(
+        GatewayDispatchEvents.InteractionCreate,
+        { data: interaction, api: this.api, shardId: -1 },
+      );
+      // if the handlers finish without acknowledging (e.g. no command matched), there's nothing left to wait for
+      await Promise.race([acknowledged, handled]);
+      return { handled };
     } finally {
       clearTimeout(timeout);
       this.pending.delete(route);
     }
   }
 
-  protected emitWebhookEvent(event: APIWebhookEventBody): void {
+  protected emitWebhookEvent(event: APIWebhookEventBody): Promise<void> {
     const props: WebhookEventProps<unknown> = {
       data: event.data,
       api: this.api,
@@ -255,14 +261,19 @@ export class HttpNyxClient
       timestamp: event.timestamp,
     };
     // the event type and its data are correlated, which emit() can't see through the union
-    const emitter = this.emitter as unknown as AsyncEventEmitter<
+    const emitter = this.emitter as unknown as AwaitableEventEmitter<
       Record<string, [unknown]>
     >;
-    emitter.emit(event.type, props);
+    return emitter.emit(event.type, props);
   }
 
   protected textResult(status: number, body: string): HttpEndpointResult {
-    return { status, headers: { 'Content-Type': 'text/plain' }, body };
+    return {
+      status,
+      headers: { 'Content-Type': 'text/plain' },
+      body,
+      handled: Promise.resolve(),
+    };
   }
 
   // arrow function to keep `this` when used as a listener
