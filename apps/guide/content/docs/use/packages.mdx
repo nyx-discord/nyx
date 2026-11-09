@@ -4,69 +4,54 @@ description: Explore the packages that make up nyx
 icon: Package
 ---
 
-## Structure
+## Which package do I need?
 
-The framework is split into these packages:
+You only need to install **one**: the adapter that matches how your bot connects to Discord.
 
-| Package                       | Purpose                                                                                                                            |
-|-------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| `@nyx-discord/base`           | Defines all the object templates (interfaces) and their relations, and provides default, minimal implementations of them.          |
-| `@nyx-discord/djs`            | The [discord.js](https://discord.js.org) adapter, connecting the framework to a discord.js `Client`.                                |
-| `@nyx-discord/djs-core`       | The [@discordjs/core](https://discord.js.org/docs/packages/core/main) adapter, connecting the framework to a raw `Client`.          |
-| `@nyx-discord/http`           | Runs the `@discordjs/core` adapter over HTTP, receiving interactions from your own server instead of the gateway.                  |
+| If your bot...                                                                                    | Install                 |
+|---------------------------------------------------------------------------------------------------|-------------------------|
+| Uses [discord.js](https://discord.js.org)                                                         | `@nyx-discord/djs`      |
+| Uses [@discordjs/core](https://discord.js.org/docs/packages/core/main)                            | `@nyx-discord/djs-core` |
+| Only handles HTTP payloads instead of the gateway (e.g. on a serverless platform)                 | `@nyx-discord/http`     |
 
-Every component depends on the interfaces rather than on the default implementations, so you can replace any of them with your own. The adapters only exist to plug the framework into a specific Discord library.
+Under the hood, every adapter is built over `@nyx-discord/base`, which has the interfaces every component follows,
+plus some default implementations of them. The adapters add the missing parts that connect to your Discord library.
 
-## Which package to use?
+Every component depends on interfaces rather than on the default implementations, so you can replace any of them with
+your own. You can later check the [Extend](/extend) section for how.
 
-<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
-  <Tab>
-    If your bot uses [discord.js](https://discord.js.org), install `@nyx-discord/djs`:
+## Interfaces and implementations
 
-```npm
-npm i @nyx-discord/djs discord.js
-```
-  </Tab>
-  <Tab>
-    If your bot uses [@discordjs/core](https://discord.js.org/docs/packages/core/main), install `@nyx-discord/djs-core`:
+`@nyx-discord/base` contains two kinds of objects, which you can tell apart by their names.
 
-```npm
-npm i @nyx-discord/djs-core @discordjs/core @discordjs/rest @discordjs/ws
-```
-  </Tab>
-  <Tab>
-    If your bot only needs interactions (commands, components, modals) and should receive them over HTTP, for example on a
-    serverless platform, install `@nyx-discord/http`:
+**Interfaces** have no prefix, like <DocsLink pkg='base' name='SubCommand' decorated={false} label={<code>SubCommand</code>} /> or <DocsLink pkg='base' name='CommandManager' decorated={false} label={<code>CommandManager</code>} />. They describe what a component does, and are what the rest of the framework expects.
 
-```npm
-npm i @nyx-discord/http @discordjs/core
-```
+**Implementations** have a prefix that tells you how to use them:
 
-    <Callout type="warn">
-      HTTP bots also need to be mounted on your server, and work differently in a few places. Read the
-      [HTTP section](/use/http) right after [First start](/use/first-start).
-    </Callout>
-  </Tab>
-</Tabs>
+| Prefix     | Meaning                                                                                                     | Example                                                                                                                       |
+|------------|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| `Abstract` | Needs to be extended to be used. You'll extend these to create your own commands, subscribers, schedules, etc. | <DocsLink pkg='base' name='AbstractSchedule' decorated={false} label={<code>AbstractSchedule</code>} />                       |
+| `Basic`    | A complete, simple implementation. Use it directly, or extend it to customize it.                           | <DocsLink pkg='base' name='BasicEventBus' decorated={false} label={<code>BasicEventBus</code>} />                             |
+| `Default`  | The implementation the bot uses internally. To customize it, extend it and [inject your version](/extend).  | <DocsLink pkg='base' name='DefaultCommandManager' decorated={false} label={<code>DefaultCommandManager</code>} />           |
+| `Base`     | A Discord-library-agnostic foundation that the adapters build on. You won't use these directly.         | <DocsLink pkg='base' name='BaseCommand' decorated={false} label={<code>BaseCommand</code>} />                                 |
 
-Both adapters re-export `base`, and `@nyx-discord/http` re-exports `@nyx-discord/djs-core`, so you can import everything from a single package.
+For example, your adapter's <DocsLink pkg='djs' name='AbstractStandaloneCommand' decorated={false} label={<code>AbstractStandaloneCommand</code>} /> builds on <DocsLink pkg='base' name='BaseStandaloneCommand' decorated={false} label={<code>BaseStandaloneCommand</code>} />, adding the types of your Discord library. Extend the adapter's version, not the `Base` one.
 
-<Callout>
-  Throughout this guide, code examples use `@nyx-discord/djs` by default. If you use `@discordjs/core`, simply swap the import to `@nyx-discord/djs-core`: the library-agnostic APIs (filters, middlewares, schedules, plugins, events) are identical, and only the parts that touch Discord's client or interactions differ.
+When you want to specify a type, prefer the interfaces, e.g. `consume(cmd: SubCommand)` instead
+of `consume(cmd: AbstractSubCommand)`. That way your code works with any implementation, following
+[Dependency inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle).
 
-  If you use `@nyx-discord/http`, follow the `@discordjs/core` examples, importing from `@nyx-discord/http` instead. Examples include an HTTP tab wherever the two differ.
-</Callout>
+## Building something for nyx
 
-If you want to develop something for nyx, such as a plugin, you can use `@nyx-discord/base` and depend only on its interfaces (see [Object nomenclature](#object-nomenclature)), not on any actual implementation. This ensures your component will work across all adapters.
+If you're developing something for nyx itself, such as a plugin, you can depend on `@nyx-discord/base` instead of an
+adapter, so your component works across all of them.
 
-## Object nomenclature
+`@nyx-discord/base` also lets you import each kind of object separately:
 
-`@nyx-discord/base` contains both interfaces and implementations, which you can tell apart by their names:
+| Import                       | Contains                     |
+|------------------------------|------------------------------|
+| `@nyx-discord/base`          | Everything.                  |
+| `@nyx-discord/base/types`    | Only the interfaces.         |
+| `@nyx-discord/base/defaults` | Only the implementations.    |
 
-- Implementations are prefixed by `Abstract`, `Default` or `Basic` (for example, <DocsLink pkg='base' name='AbstractSubCommand' decorated={false} label={<code>AbstractSubCommand</code>} /> and <DocsLink pkg='base' name='DefaultCommandManager' decorated={false} label={<code>DefaultCommandManager</code>} />). This means that they're base implementations of their respective interfaces. Specifically:
-  - `Abstract` is self explanatory. It needs to be extended to be used, often used by user-defined objects like commands or subscribers.
-  - `Basic` is a basic implementation of an interface, and can be directly extended, with nothing else needed to customize it.
-  - `Default` is a basic implementation but it's used somewhere internally, so to extend it [you'll also need to inject it](/extend).
-- Interfaces have no prefix (for example, <DocsLink pkg='base' name='SubCommand' decorated={false} label={<code>SubCommand</code>} /> and <DocsLink pkg='base' name='CommandManager' decorated={false} label={<code>CommandManager</code>} />). These are the base interfaces for any implementation.
-
-When you want to specify a type, prefer using the interfaces, eg. `consume(cmd: SubCommand)` instead of `consume(cmd: AbstractSubCommand)`, since it'll work across implementations and adapters, and aligns with [Dependency inversion](https://en.wikipedia.org/wiki/Dependency_inversion_principle): objects shouldn't depend on implementations, only on base interfaces.
+Importing your types from `@nyx-discord/base/types` makes it impossible to accidentally depend on an implementation.
