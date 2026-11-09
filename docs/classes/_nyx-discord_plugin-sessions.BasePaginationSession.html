@@ -1,0 +1,725 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>BasePaginationSession | Documentation</title><link rel="icon" href="../assets/favicon.ico"/><meta name="description" content="Typedoc documentation of the nyx framework"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><link rel="stylesheet" href="../assets/typedoc-github-style.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">nyx Typedoc</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/_nyx-discord_plugin-sessions.html">@nyx-discord/plugin-sessions</a></li>
+<li><a href="" aria-current="page">BasePaginationSession</a></li></ul>
+<h1>Class BasePaginationSession&lt;Result, Types&gt;<code class="tsd-tag">Abstract</code></h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>A type of session that can be paginated. For example, <a href="../interfaces/_nyx-discord_plugin-sessions.ListPaginationSession.html" class="tsd-kind-interface">ListPaginationSession</a> or <a href="../interfaces/_nyx-discord_plugin-sessions.StagePaginationSession.html" class="tsd-kind-interface">StagePaginationSession</a>.</p>
+</div></section>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="result"><span class="tsd-kind-type-parameter">Result</span></span></li>
+<li><span id="types"><span class="tsd-kind-type-parameter">Types</span> <span class="tsd-signature-keyword">extends</span> <a href="../interfaces/_nyx-discord_base.InteractionTypes.html" class="tsd-signature-type tsd-kind-interface">InteractionTypes</a> = <a href="../interfaces/_nyx-discord_base.InteractionTypes.html" class="tsd-signature-type tsd-kind-interface">InteractionTypes</a></span></li></ul></section>
+<section class="tsd-panel tsd-hierarchy" data-refl="45567">
+<h4>Hierarchy (<a href="../hierarchy.html#@nyx-discord/plugin-sessions.BasePaginationSession">View Summary</a>)</h4>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><a href="_nyx-discord_plugin-sessions.BaseSession.html" class="tsd-signature-type tsd-kind-class">BaseSession</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">BasePaginationSession</span>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><a href="_nyx-discord_plugin-sessions.AbstractPaginationSession.html" class="tsd-signature-type tsd-kind-class">AbstractPaginationSession</a></li>
+<li class="tsd-hierarchy-item"><a href="_nyx-discord_plugin-sessions.BaseStagePaginationSession.html" class="tsd-signature-type tsd-kind-class">BaseStagePaginationSession</a></li></ul></li></ul></li></ul></section>
+<section class="tsd-panel">
+<h4>Implements</h4>
+<ul class="tsd-hierarchy">
+<li><a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html" class="tsd-signature-type tsd-kind-interface">PaginationSession</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts#L12">packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts:12</a></li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="constructors">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#bot" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>bot</span></a>
+<a href="#codec" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>codec</span></a>
+<a href="#currentpage" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>current<wbr/>Page</span></a>
+<a href="#customiddata" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>custom<wbr/>Id<wbr/>Data</span></a>
+<a href="#id" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>id</span></a>
+<a href="#meta" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>meta</span></a>
+<a href="#result-1" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>result</span></a>
+<a href="#startfilter" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>start<wbr/>Filter</span></a>
+<a href="#startinteraction" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>start<wbr/>Interaction</span></a>
+<a href="#state" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>state</span></a>
+<a href="#ttl" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>ttl</span></a>
+<a href="#updatefilter" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>update<wbr/>Filter</span></a>
+<a href="#defaultttl" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>Default<wbr/>TTL</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#buildbasicpagerow" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>build<wbr/>Basic<wbr/>Page<wbr/>Row</span></a>
+<a href="#buildcustomid" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>build<wbr/>Custom<wbr/>Id</span></a>
+<a href="#buildpagecustomid" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>build<wbr/>Page<wbr/>Custom<wbr/>Id</span></a>
+<a href="#extractpagefromcustomid" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>extract<wbr/>Page<wbr/>From<wbr/>Custom<wbr/>Id</span></a>
+<a href="#getbot" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Bot</span></a>
+<a href="#getchannelid" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Channel<wbr/>Id</span></a>
+<a href="#getcurrentpage" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Current<wbr/>Page</span></a>
+<a href="#getcustomiddata" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Custom<wbr/>Id<wbr/>Data</span></a>
+<a href="#getendpromise" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>End<wbr/>Promise</span></a>
+<a href="#getguildid" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Guild<wbr/>Id</span></a>
+<a href="#getid" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Id</span></a>
+<a href="#getmeta" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Meta</span></a>
+<a href="#getnextpage" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Next<wbr/>Page</span></a>
+<a href="#getpreviouspage" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Previous<wbr/>Page</span></a>
+<a href="#getresult" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Result</span></a>
+<a href="#getstartfilter" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Start<wbr/>Filter</span></a>
+<a href="#getstartinteraction" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Start<wbr/>Interaction</span></a>
+<a href="#getstartinteractioninfo" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Start<wbr/>Interaction<wbr/>Info</span></a>
+<a href="#getstate" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>State</span></a>
+<a href="#getttl" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>TTL</span></a>
+<a href="#getupdatefilter" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Update<wbr/>Filter</span></a>
+<a href="#getuserid" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>User<wbr/>Id</span></a>
+<a href="#handlebutton" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>Button</span></a>
+<a href="#handlemodal" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>Modal</span></a>
+<a href="#handleselectmenu" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>Select<wbr/>Menu</span></a>
+<a href="#hasreplied" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Replied</span></a>
+<a href="#onend" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>End</span></a>
+<a href="#onstart" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Start</span></a>
+<a href="#onupdate" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Update</span></a>
+<a href="#selfend" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>self<wbr/>End</span></a>
+<a href="#setstate" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>State</span></a>
+<a href="#start" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>start</span></a>
+<a href="#updatepage" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Page</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="constructorbasepaginationsession"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">BasePaginationSession</span><span class="tsd-signature-symbol">&lt;</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#constructorbasepaginationsessionresult">Result</a><span class="tsd-signature-symbol">,</span><br/>    <a class="tsd-signature-type tsd-kind-type-parameter" href="#constructorbasepaginationsessiontypes">Types</a> <span class="tsd-signature-keyword">extends</span> <a href="../interfaces/_nyx-discord_base.InteractionTypes.html" class="tsd-signature-type tsd-kind-interface">InteractionTypes</a> <span class="tsd-signature-symbol">=</span> <a href="../interfaces/_nyx-discord_base.InteractionTypes.html" class="tsd-signature-type tsd-kind-interface">InteractionTypes</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionOptions.html" class="tsd-signature-type tsd-kind-type-alias">SessionOptions</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">BasePaginationSession</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><a href="#constructorbasepaginationsession" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="constructorbasepaginationsessionresult"><span class="tsd-kind-type-parameter">Result</span></span></li>
+<li><span id="constructorbasepaginationsessiontypes"><span class="tsd-kind-type-parameter">Types</span> <span class="tsd-signature-keyword">extends</span> <a href="../interfaces/_nyx-discord_base.InteractionTypes.html" class="tsd-signature-type tsd-kind-interface">InteractionTypes</a> = <a href="../interfaces/_nyx-discord_base.InteractionTypes.html" class="tsd-signature-type tsd-kind-interface">InteractionTypes</a></span></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">options</span>: <a href="../types/_nyx-discord_plugin-sessions.SessionOptions.html" class="tsd-signature-type tsd-kind-type-alias">SessionOptions</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">BasePaginationSession</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Overrides <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#constructor">constructor</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts#L21">packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts:21</a></li></ul></aside></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="bot"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>bot</span><a href="#bot" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">bot</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/_nyx-discord_base.NyxBot.html" class="tsd-signature-type tsd-kind-interface">NyxBot</a></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#bot">bot</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L33">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:33</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="codec"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>codec</span><a href="#codec" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">codec</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/_nyx-discord_plugin-sessions.SessionCustomIdCodec.html" class="tsd-signature-type tsd-kind-interface">SessionCustomIdCodec</a></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#codec">codec</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L53">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:53</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="currentpage"><code class="tsd-tag">Protected</code><span>current<wbr/>Page</span><a href="#currentpage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">currentPage</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts#L19">packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts:19</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="customiddata"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>custom<wbr/>Id<wbr/>Data</span><a href="#customiddata" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">customIdData</span><span class="tsd-signature-symbol">:</span> <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype" class="tsd-signature-type external" target="_blank">Readonly</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_nyx-discord_plugin-sessions.SessionCustomIdData.html" class="tsd-signature-type tsd-kind-interface">SessionCustomIdData</a><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#customiddata">customIdData</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L39">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:39</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="id"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>id</span><a href="#id" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">id</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#id">id</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L35">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:35</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="meta"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>meta</span><a href="#meta" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">meta</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#meta">meta</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L55">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:55</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="result-1"><code class="tsd-tag">Protected</code><span>result</span><a href="#result-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">result</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#result-1">result</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L57">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:57</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="startfilter"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>start<wbr/>Filter</span><a href="#startfilter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">startFilter</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionStartFilterResolvable.html" class="tsd-signature-type tsd-kind-type-alias">SessionStartFilterResolvable</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#startfilter">startFilter</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L41">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:41</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="startinteraction"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>start<wbr/>Interaction</span><a href="#startinteraction" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">startInteraction</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionStartInteraction.html" class="tsd-signature-type tsd-kind-type-alias">SessionStartInteraction</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#startinteraction">startInteraction</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L37">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:37</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="state"><code class="tsd-tag">Protected</code><span>state</span><a href="#state" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">state</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionState.html" class="tsd-signature-type tsd-kind-type-alias">SessionState</a><span class="tsd-signature-symbol"> = SessionStateEnum.Uninitalized</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#state">state</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L59">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:59</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="ttl"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>ttl</span><a href="#ttl" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">ttl</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = BaseSession.DefaultTTL</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#ttl">ttl</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L51">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:51</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="updatefilter"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>update<wbr/>Filter</span><a href="#updatefilter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">updateFilter</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionUpdateFilterResolvable.html" class="tsd-signature-type tsd-kind-type-alias">SessionUpdateFilterResolvable</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#updatefilter">updateFilter</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L46">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:46</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="defaultttl"><code class="tsd-tag">Static</code> <code class="tsd-tag">Readonly</code><span>Default<wbr/>TTL</span><a href="#defaultttl" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">DefaultTTL</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">180000</span><span class="tsd-signature-symbol"> = 180_000</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#defaultttl">DefaultTTL</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L31">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:31</a></li></ul></aside></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="buildbasicpagerow"><code class="tsd-tag">Protected</code><span>build<wbr/>Basic<wbr/>Page<wbr/>Row</span><a href="#buildbasicpagerow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="buildbasicpagerow-1"><span class="tsd-kind-call-signature">buildBasicPageRow</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">hasNextPage</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">APIActionRowComponent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">APIButtonComponent</span><span class="tsd-signature-symbol">&gt;</span><a href="#buildbasicpagerow-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Utility to build a pagination ActionRow, considering next/previous pages and disabling buttons accordingly.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">hasNextPage</span>: <span class="tsd-signature-type">boolean</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">APIActionRowComponent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">APIButtonComponent</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts#L52">packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts:52</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="buildcustomid"><span>build<wbr/>Custom<wbr/>Id</span><a href="#buildcustomid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="buildcustomid-1"><span class="tsd-kind-call-signature">buildCustomId</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">extra</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#buildcustomid-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Builds this session's custom id, optionally with extra data.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">extra</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#buildcustomid">buildCustomId</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#buildcustomid">buildCustomId</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L192">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:192</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="buildpagecustomid"><span>build<wbr/>Page<wbr/>Custom<wbr/>Id</span><a href="#buildpagecustomid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="buildpagecustomid-1"><span class="tsd-kind-call-signature">buildPageCustomId</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">page</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">extra</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#buildpagecustomid-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Builds this session's custom id to a specific page, optionally with extra data.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">page</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">extra</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#buildpagecustomid">buildPageCustomId</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts#L38">packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts:38</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="extractpagefromcustomid"><code class="tsd-tag">Protected</code><span>extract<wbr/>Page<wbr/>From<wbr/>Custom<wbr/>Id</span><a href="#extractpagefromcustomid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="extractpagefromcustomid-1"><span class="tsd-kind-call-signature">extractPageFromCustomId</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">customId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#extractpagefromcustomid-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Extracts the referred page in a customId, if any.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">customId</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts#L47">packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts:47</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getbot"><span>get<wbr/>Bot</span><a href="#getbot" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getbot-1"><span class="tsd-kind-call-signature">getBot</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/_nyx-discord_base.NyxBot.html" class="tsd-signature-type tsd-kind-interface">NyxBot</a><a href="#getbot-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the bot that owns this session.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/_nyx-discord_base.NyxBot.html" class="tsd-signature-type tsd-kind-interface">NyxBot</a></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getbot">getBot</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getbot">getBot</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L188">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:188</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getchannelid"><span>get<wbr/>Channel<wbr/>Id</span><a href="#getchannelid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getchannelid-1"><span class="tsd-kind-call-signature">getChannelId</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#getchannelid-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the ID of the channel this session was started in.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getchannelid">getChannelId</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getchannelid">getChannelId</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L106">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:106</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getcurrentpage"><span>get<wbr/>Current<wbr/>Page</span><a href="#getcurrentpage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getcurrentpage-1"><span class="tsd-kind-call-signature">getCurrentPage</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#getcurrentpage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the current page of this session.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getcurrentpage">getCurrentPage</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts#L26">packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts:26</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getcustomiddata"><span>get<wbr/>Custom<wbr/>Id<wbr/>Data</span><a href="#getcustomiddata" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getcustomiddata-1"><span class="tsd-kind-call-signature">getCustomIdData</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">extra</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/_nyx-discord_plugin-sessions.SessionCustomIdData.html" class="tsd-signature-type tsd-kind-interface">SessionCustomIdData</a><a href="#getcustomiddata-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns this session's custom id data.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">extra</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/_nyx-discord_plugin-sessions.SessionCustomIdData.html" class="tsd-signature-type tsd-kind-interface">SessionCustomIdData</a></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getcustomiddata">getCustomIdData</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getcustomiddata">getCustomIdData</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L181">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:181</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getendpromise"><span>get<wbr/>End<wbr/>Promise</span><a href="#getendpromise" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getendpromise-1"><span class="tsd-kind-call-signature">getEndPromise</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/_nyx-discord_plugin-sessions.SessionEndData.html" class="tsd-signature-type tsd-kind-type-alias">SessionEndData</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#getendpromise-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the end promise that will resolve to a <a href="../types/_nyx-discord_plugin-sessions.SessionEndData.html" class="tsd-kind-type-alias">SessionEndData</a> when this session ends.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/_nyx-discord_plugin-sessions.SessionEndData.html" class="tsd-signature-type tsd-kind-type-alias">SessionEndData</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getendpromise">getEndPromise</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getendpromise">getEndPromise</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L119">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:119</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getguildid"><span>get<wbr/>Guild<wbr/>Id</span><a href="#getguildid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getguildid-1"><span class="tsd-kind-call-signature">getGuildId</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#getguildid-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the ID of the guild this session was started in, or <code>null</code> if in a DM.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getguildid">getGuildId</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getguildid">getGuildId</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L101">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:101</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getid"><span>get<wbr/>Id</span><a href="#getid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getid-1"><span class="tsd-kind-call-signature">getId</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#getid-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the identifier of this object.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getid">getId</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getid">getId</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L140">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:140</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getmeta"><span>get<wbr/>Meta</span><a href="#getmeta" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getmeta-1"><span class="tsd-kind-call-signature">getMeta</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.ReadonlyMetadata.html" class="tsd-signature-type tsd-kind-type-alias">ReadonlyMetadata</a><a href="#getmeta-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns a readonly metadata collection of this object, if any.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_nyx-discord_base.ReadonlyMetadata.html" class="tsd-signature-type tsd-kind-type-alias">ReadonlyMetadata</a></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getmeta">getMeta</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getmeta">getMeta</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L125">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:125</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getnextpage"><span>get<wbr/>Next<wbr/>Page</span><a href="#getnextpage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getnextpage-1"><span class="tsd-kind-call-signature">getNextPage</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#getnextpage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the next page of this session, or <code>null</code> if there is no next page.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getnextpage">getNextPage</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts#L30">packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts:30</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getpreviouspage"><span>get<wbr/>Previous<wbr/>Page</span><a href="#getpreviouspage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getpreviouspage-1"><span class="tsd-kind-call-signature">getPreviousPage</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#getpreviouspage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the previous page of this session, or <code>null</code> if there is no previous page.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getpreviouspage">getPreviousPage</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts#L34">packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts:34</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getresult"><span>get<wbr/>Result</span><a href="#getresult" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getresult-1"><span class="tsd-kind-call-signature">getResult</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#getresult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the result of this session.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getresult">getResult</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getresult">getResult</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L115">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:115</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getstartfilter"><span>get<wbr/>Start<wbr/>Filter</span><a href="#getstartfilter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getstartfilter-1"><span class="tsd-kind-call-signature">getStartFilter</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionStartFilterResolvable.html" class="tsd-signature-type tsd-kind-type-alias">SessionStartFilterResolvable</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#getstartfilter-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the filter for starting this session.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_nyx-discord_plugin-sessions.SessionStartFilterResolvable.html" class="tsd-signature-type tsd-kind-type-alias">SessionStartFilterResolvable</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getstartfilter">getStartFilter</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getstartfilter">getStartFilter</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L129">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:129</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getstartinteraction"><span>get<wbr/>Start<wbr/>Interaction</span><a href="#getstartinteraction" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getstartinteraction-1"><span class="tsd-kind-call-signature">getStartInteraction</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionStartInteraction.html" class="tsd-signature-type tsd-kind-type-alias">SessionStartInteraction</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><a href="#getstartinteraction-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the <a href="../types/_nyx-discord_plugin-sessions.SessionStartInteraction.html" class="tsd-kind-type-alias">SessionStartInteraction</a> that started this session.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_nyx-discord_plugin-sessions.SessionStartInteraction.html" class="tsd-signature-type tsd-kind-type-alias">SessionStartInteraction</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getstartinteraction">getStartInteraction</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getstartinteraction">getStartInteraction</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L148">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:148</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getstartinteractioninfo"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Abstract</code><span>get<wbr/>Start<wbr/>Interaction<wbr/>Info</span><a href="#getstartinteractioninfo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getstartinteractioninfo-1"><span class="tsd-kind-call-signature">getStartInteractionInfo</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/_nyx-discord_plugin-sessions.SessionInteractionInfo.html" class="tsd-signature-type tsd-kind-interface">SessionInteractionInfo</a><a href="#getstartinteractioninfo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Extracts identity information from the interaction that started this session.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/_nyx-discord_plugin-sessions.SessionInteractionInfo.html" class="tsd-signature-type tsd-kind-interface">SessionInteractionInfo</a></h4><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getstartinteractioninfo">getStartInteractionInfo</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L198">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:198</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getstate"><span>get<wbr/>State</span><a href="#getstate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getstate-1"><span class="tsd-kind-call-signature">getState</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionState.html" class="tsd-signature-type tsd-kind-type-alias">SessionState</a><a href="#getstate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the state of this session.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_nyx-discord_plugin-sessions.SessionState.html" class="tsd-signature-type tsd-kind-type-alias">SessionState</a></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getstate">getState</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getstate">getState</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L152">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:152</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getttl"><span>get<wbr/>TTL</span><a href="#getttl" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getttl-1"><span class="tsd-kind-call-signature">getTTL</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#getttl-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the TTL of this session.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getttl">getTTL</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getttl">getTTL</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L144">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:144</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getupdatefilter"><span>get<wbr/>Update<wbr/>Filter</span><a href="#getupdatefilter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getupdatefilter-1"><span class="tsd-kind-call-signature">getUpdateFilter</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionUpdateFilterResolvable.html" class="tsd-signature-type tsd-kind-type-alias">SessionUpdateFilterResolvable</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#getupdatefilter-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the filter for update interactions of this session.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_nyx-discord_plugin-sessions.SessionUpdateFilterResolvable.html" class="tsd-signature-type tsd-kind-type-alias">SessionUpdateFilterResolvable</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#result">Result</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getupdatefilter">getUpdateFilter</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getupdatefilter">getUpdateFilter</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L133">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:133</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getuserid"><span>get<wbr/>User<wbr/>Id</span><a href="#getuserid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getuserid-1"><span class="tsd-kind-call-signature">getUserId</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#getuserid-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the ID of the user that started this session.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#getuserid">getUserId</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#getuserid">getUserId</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L96">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:96</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="handlebutton"><code class="tsd-tag">Protected</code><span>handle<wbr/>Button</span><a href="#handlebutton" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="handlebutton-1"><span class="tsd-kind-call-signature">handleButton</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">_interaction</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">&quot;ButtonInteraction&quot;</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">_meta</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#handlebutton-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Handles a button interaction whose customId matches this session.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">_interaction</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">&quot;ButtonInteraction&quot;</span><span class="tsd-signature-symbol">]</span></span></li>
+<li><span><span class="tsd-kind-parameter">_meta</span>: <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#handlebutton">handleButton</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L201">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:201</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="handlemodal"><code class="tsd-tag">Protected</code><span>handle<wbr/>Modal</span><a href="#handlemodal" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="handlemodal-1"><span class="tsd-kind-call-signature">handleModal</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">_interaction</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">&quot;ModalSubmitInteraction&quot;</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">_meta</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#handlemodal-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Handles a modal submit interaction whose customId matches this session.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">_interaction</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">&quot;ModalSubmitInteraction&quot;</span><span class="tsd-signature-symbol">]</span></span></li>
+<li><span><span class="tsd-kind-parameter">_meta</span>: <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#handlemodal">handleModal</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L217">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:217</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="handleselectmenu"><code class="tsd-tag">Protected</code><span>handle<wbr/>Select<wbr/>Menu</span><a href="#handleselectmenu" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="handleselectmenu-1"><span class="tsd-kind-call-signature">handleSelectMenu</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">_interaction</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">&quot;SelectMenuInteraction&quot;</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">_meta</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#handleselectmenu-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Handles a select menu interaction whose customId matches this session.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">_interaction</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">&quot;SelectMenuInteraction&quot;</span><span class="tsd-signature-symbol">]</span></span></li>
+<li><span><span class="tsd-kind-parameter">_meta</span>: <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#handleselectmenu">handleSelectMenu</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L209">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:209</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="hasreplied"><span>has<wbr/>Replied</span><a href="#hasreplied" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="hasreplied-1"><span class="tsd-kind-call-signature">hasReplied</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#hasreplied-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns whether the interaction that started this session has already been replied to.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#hasreplied">hasReplied</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#hasreplied">hasReplied</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L111">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:111</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="onend"><code class="tsd-tag">Abstract</code><span>on<wbr/>End</span><a href="#onend" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="onend-1"><span class="tsd-kind-call-signature">onEnd</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">reason</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">code</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionEndCode.html" class="tsd-signature-type tsd-kind-type-alias">SessionEndCode</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">meta</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Awaitable.html" class="tsd-signature-type tsd-kind-type-alias">Awaitable</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#onend-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Ends the session.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">reason</span>: <span class="tsd-signature-type">string</span></span></li>
+<li><span><span class="tsd-kind-parameter">code</span>: <a href="../types/_nyx-discord_plugin-sessions.SessionEndCode.html" class="tsd-signature-type tsd-kind-type-alias">SessionEndCode</a></span></li>
+<li><span><span class="tsd-kind-parameter">meta</span>: <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_nyx-discord_base.Awaitable.html" class="tsd-signature-type tsd-kind-type-alias">Awaitable</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws">Throws<a href="#throws" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the session is already stopped.</p>
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#onend">onEnd</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#onend">onEnd</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L89">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:89</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="onstart"><code class="tsd-tag">Abstract</code><span>on<wbr/>Start</span><a href="#onstart" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="onstart-1"><span class="tsd-kind-call-signature">onStart</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">meta</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Awaitable.html" class="tsd-signature-type tsd-kind-type-alias">Awaitable</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#onstart-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Notifies the session about its start.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">meta</span>: <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_nyx-discord_base.Awaitable.html" class="tsd-signature-type tsd-kind-type-alias">Awaitable</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-1">Throws<a href="#throws-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the session has already started.</p>
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#onstart">onStart</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#onstart">onStart</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L87">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:87</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="onupdate"><code class="tsd-tag">Abstract</code><span>on<wbr/>Update</span><a href="#onupdate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="onupdate-1"><span class="tsd-kind-call-signature">onUpdate</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">interaction</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionUpdateInteraction.html" class="tsd-signature-type tsd-kind-type-alias">SessionUpdateInteraction</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">meta</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Awaitable.html" class="tsd-signature-type tsd-kind-type-alias">Awaitable</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#onupdate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Updates the session's state with an interaction.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">interaction</span>: <a href="../types/_nyx-discord_plugin-sessions.SessionUpdateInteraction.html" class="tsd-signature-type tsd-kind-type-alias">SessionUpdateInteraction</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span></span></li>
+<li><span><span class="tsd-kind-parameter">meta</span>: <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../types/_nyx-discord_base.Awaitable.html" class="tsd-signature-type tsd-kind-type-alias">Awaitable</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Whether the session's TTL should be reset after this
+update.</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-2">Throws<a href="#throws-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the session is not running.</p>
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#onupdate">onUpdate</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#onupdate">onUpdate</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L82">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:82</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="selfend"><code class="tsd-tag">Protected</code><span>self<wbr/>End</span><a href="#selfend" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="selfend-1"><span class="tsd-kind-call-signature">selfEnd</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">reason</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#selfend-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Utility to self end this session.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">reason</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#selfend">selfEnd</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L225">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:225</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="setstate"><span>set<wbr/>State</span><a href="#setstate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="setstate-1"><span class="tsd-kind-call-signature">setState</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">state</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionState.html" class="tsd-signature-type tsd-kind-type-alias">SessionState</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setstate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Sets the state of this session.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">state</span>: <a href="../types/_nyx-discord_plugin-sessions.SessionState.html" class="tsd-signature-type tsd-kind-type-alias">SessionState</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#setstate">setState</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#setstate">setState</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L156">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:156</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="start"><span>start</span><a href="#start" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="start-1"><span class="tsd-kind-call-signature">start</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#start-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Starts the session. Alias of <code>SessionManager#start(this)</code>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-3">Throws<a href="#throws-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the session has already started.</p>
+</div></div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html">PaginationSession</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.PaginationSession.html#start">start</a></p>
+<p>Inherited from <a href="_nyx-discord_plugin-sessions.BaseSession.html">BaseSession</a>.<a href="_nyx-discord_plugin-sessions.BaseSession.html#start">start</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BaseSession.ts#L78">packages/plugin-sessions/src/shared/base/session/BaseSession.ts:78</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="updatepage"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Abstract</code><span>update<wbr/>Page</span><a href="#updatepage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="updatepage-1"><span class="tsd-kind-call-signature">updatePage</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">interaction</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_plugin-sessions.SessionUpdateInteraction.html" class="tsd-signature-type tsd-kind-type-alias">SessionUpdateInteraction</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">meta</span><span class="tsd-signature-symbol">:</span> <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#updatepage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Handles a page update.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">interaction</span>: <a href="../types/_nyx-discord_plugin-sessions.SessionUpdateInteraction.html" class="tsd-signature-type tsd-kind-type-alias">SessionUpdateInteraction</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span></span></li>
+<li><span><span class="tsd-kind-parameter">meta</span>: <a href="../types/_nyx-discord_base.Metadata.html" class="tsd-signature-type tsd-kind-type-alias">Metadata</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts#L80">packages/plugin-sessions/src/shared/base/session/BasePaginationSession.ts:80</a></li></ul></aside></div></li></ul></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
+<div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#bot" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>bot</span></a><a href="#codec" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>codec</span></a><a href="#currentpage" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>current<wbr/>Page</span></a><a href="#customiddata" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>custom<wbr/>Id<wbr/>Data</span></a><a href="#id" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>id</span></a><a href="#meta" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>meta</span></a><a href="#result-1" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>result</span></a><a href="#startfilter" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>start<wbr/>Filter</span></a><a href="#startinteraction" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>start<wbr/>Interaction</span></a><a href="#state" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>state</span></a><a href="#ttl" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>ttl</span></a><a href="#updatefilter" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>update<wbr/>Filter</span></a><a href="#defaultttl" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>Default<wbr/>TTL</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
+<div><a href="#buildbasicpagerow" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>build<wbr/>Basic<wbr/>Page<wbr/>Row</span></a><a href="#buildcustomid" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>build<wbr/>Custom<wbr/>Id</span></a><a href="#buildpagecustomid"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>build<wbr/>Page<wbr/>Custom<wbr/>Id</span></a><a href="#extractpagefromcustomid" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>extract<wbr/>Page<wbr/>From<wbr/>Custom<wbr/>Id</span></a><a href="#getbot" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Bot</span></a><a href="#getchannelid" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Channel<wbr/>Id</span></a><a href="#getcurrentpage"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Current<wbr/>Page</span></a><a href="#getcustomiddata" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Custom<wbr/>Id<wbr/>Data</span></a><a href="#getendpromise" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>End<wbr/>Promise</span></a><a href="#getguildid" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Guild<wbr/>Id</span></a><a href="#getid" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Id</span></a><a href="#getmeta" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Meta</span></a><a href="#getnextpage"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Next<wbr/>Page</span></a><a href="#getpreviouspage"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Previous<wbr/>Page</span></a><a href="#getresult" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Result</span></a><a href="#getstartfilter" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Start<wbr/>Filter</span></a><a href="#getstartinteraction" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Start<wbr/>Interaction</span></a><a href="#getstartinteractioninfo" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Start<wbr/>Interaction<wbr/>Info</span></a><a href="#getstate" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>State</span></a><a href="#getttl" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>TTL</span></a><a href="#getupdatefilter" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Update<wbr/>Filter</span></a><a href="#getuserid" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>User<wbr/>Id</span></a><a href="#handlebutton" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>Button</span></a><a href="#handlemodal" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>Modal</span></a><a href="#handleselectmenu" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>Select<wbr/>Menu</span></a><a href="#hasreplied" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Replied</span></a><a href="#onend" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>End</span></a><a href="#onstart" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Start</span></a><a href="#onupdate" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Update</span></a><a href="#selfend" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>self<wbr/>End</span></a><a href="#setstate" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>State</span></a><a href="#start" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>start</span></a><a href="#updatepage" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Page</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../modules.html">Documentation</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a> with <a href="https://github.com/JulianWowra/typedoc-github-theme" target="_blank">typedoc-github-theme</a></p></footer>
+<div class="overlay"></div></body></html>
