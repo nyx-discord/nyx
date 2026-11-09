@@ -1,0 +1,82 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><link rel="canonical" href="https://nyx-discord.github.io/nyx/docs/"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Documentation</title><link rel="icon" href="assets/favicon.ico"/><meta name="description" content="Typedoc documentation of the nyx framework"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script><link rel="stylesheet" href="assets/typedoc-github-style.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="index.html" class="title">nyx Typedoc</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<h1>Documentation</h1></div>
+<div class="tsd-panel tsd-typography"><p><img src="media/nyx.png" alt="nyx Logo"></p>
+<hr>
+<p>A Discord bot framework that stays out of your way.</p>
+<p><a href="https://github.com/nyx-discord/nyx/actions/workflows/ci.yml" target="_blank" class="external"><img src="https://img.shields.io/github/actions/workflow/status/nyx-discord/nyx/ci.yml?style=for-the-badge&amp;label=CI" alt="CI"></a>
+<a href="https://www.typescriptlang.org/" target="_blank" class="external"><img src="https://img.shields.io/badge/Built%20with-Typescript-3176C6?style=for-the-badge&amp;logo=typescript&amp;logoColor=3178C6" alt="Built with Typescript"></a>
+<a href="https://discord.gg/PQZmwaBZd5" target="_blank" class="external"><img src="https://img.shields.io/badge/Visit%20us%20in-Discord-5662f6?style=for-the-badge&amp;logo=discord&amp;logoColor=5662f6" alt="Discord Invite"></a></p>
+<p>nyx handles application commands, components, events, schedules and plugins on top of
+<a href="https://discord.js.org" target="_blank" class="external">discord.js</a> or <a href="https://discord.js.org/docs/packages/core/main" target="_blank" class="external">@discordjs/core</a>, through the
+gateway or <a href="https://nyx-discord.github.io/nyx/guide/use/http" target="_blank" class="external">over HTTP</a> with <code>@nyx-discord/http</code>. It's built to be the
+Discord layer of your app, not your whole app.</p>
+<h2 id="✨-why-nyx" class="tsd-anchor-link">✨ Why nyx<a href="#✨-why-nyx" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><strong>Everything is replaceable.</strong> Every part (command manager, resolver, deployer, event dispatcher, error handler...) is
+an interface with a default implementation. To change how something works, plug in your own, with no forking, or
+monkey-patching.</li>
+<li><strong>It doesn't take over your app.</strong> nyx doesn't own your process, storage, logging or error reporting. Your services
+keep the business logic, making your code testable and maintainable.</li>
+<li><strong>Same API on discord.js and @discordjs/core.</strong> Pick the library you want; filters, middlewares, events, schedules
+and plugins work the same on both.</li>
+<li><strong>Gateway or HTTP.</strong> With <code>@nyx-discord/http</code> you can make a bot receive interactions and webhook events over
+HTTP, mounted on any server or runtime (node:http, Express, Fastify, Hono, Workers, Bun, Deno, Next.js), with no
+gateway connection.</li>
+<li><strong>Commands that handle their own components.</strong> Buttons, select menus and modals sent by a command come back to that
+command, with extra data encoded in the customId for you.</li>
+<li><strong>Type-safe events and metadata.</strong> Event buses are typed by their events, and metadata is read and written through
+typed fields.</li>
+<li><strong>No global state.</strong> Run several bots in one process, and reuse the same command instances across them.</li>
+<li><strong>Docs for humans and agents.</strong> A guide with typechecked examples, and an agent skill so AI tools write correct nyx code.</li>
+</ul>
+<h2 id="🚀-quick-example" class="tsd-anchor-link">🚀 Quick example<a href="#🚀-quick-example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="bash"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">i</span><span class="hl-1"> </span><span class="hl-2">@nyx-discord/djs</span><span class="hl-1"> </span><span class="hl-2">discord.js</span>
+</code><button type="button">Copy</button></pre>
+
+<pre><code class="ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">AbstractStandaloneCommand</span><span class="hl-1">, </span><span class="hl-4">Bot</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&#39;@nyx-discord/djs&#39;</span><span class="hl-1">;</span><br/><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">Client</span><span class="hl-1">, </span><span class="hl-4">GatewayIntentBits</span><span class="hl-1">, </span><span class="hl-4">SlashCommandBuilder</span><span class="hl-1">, </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">ChatInputCommandInteraction</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&#39;discord.js&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-6">PingCommand</span><span class="hl-1"> </span><span class="hl-5">extends</span><span class="hl-1"> </span><span class="hl-6">AbstractStandaloneCommand</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-5">protected</span><span class="hl-1"> </span><span class="hl-5">readonly</span><span class="hl-1"> </span><span class="hl-4">data</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">SlashCommandBuilder</span><span class="hl-1">().</span><span class="hl-0">setName</span><span class="hl-1">(</span><span class="hl-2">&#39;ping&#39;</span><span class="hl-1">).</span><span class="hl-0">setDescription</span><span class="hl-1">(</span><span class="hl-2">&#39;Pong!&#39;</span><span class="hl-1">).</span><span class="hl-0">toJSON</span><span class="hl-1">();</span><br/><br/><span class="hl-1">  </span><span class="hl-5">public</span><span class="hl-1"> </span><span class="hl-5">async</span><span class="hl-1"> </span><span class="hl-0">execute</span><span class="hl-1">(</span><span class="hl-4">interaction</span><span class="hl-1">: </span><span class="hl-6">ChatInputCommandInteraction</span><span class="hl-1">) {</span><br/><span class="hl-1">    </span><span class="hl-3">await</span><span class="hl-1"> </span><span class="hl-4">interaction</span><span class="hl-1">.</span><span class="hl-0">reply</span><span class="hl-1">(</span><span class="hl-2">&#39;Pong!&#39;</span><span class="hl-1">);</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-7">bot</span><span class="hl-1"> = </span><span class="hl-4">Bot</span><span class="hl-1">.</span><span class="hl-0">create</span><span class="hl-1">(() </span><span class="hl-5">=&gt;</span><span class="hl-1"> ({</span><br/><span class="hl-1">  </span><span class="hl-4">token:</span><span class="hl-1"> </span><span class="hl-4">process</span><span class="hl-1">.</span><span class="hl-4">env</span><span class="hl-1">[</span><span class="hl-2">&#39;DISCORD_TOKEN&#39;</span><span class="hl-1">]!,</span><br/><span class="hl-1">  </span><span class="hl-4">client:</span><span class="hl-1"> </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">Client</span><span class="hl-1">({ </span><span class="hl-4">intents:</span><span class="hl-1"> [</span><span class="hl-4">GatewayIntentBits</span><span class="hl-1">.</span><span class="hl-4">Guilds</span><span class="hl-1">] }),</span><br/><span class="hl-1">  </span><span class="hl-4">logger:</span><span class="hl-1"> </span><span class="hl-4">console</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-4">deployCommands:</span><span class="hl-1"> </span><span class="hl-5">true</span><span class="hl-1">,</span><br/><span class="hl-1">}));</span><br/><br/><span class="hl-3">await</span><span class="hl-1"> </span><span class="hl-4">bot</span><span class="hl-1">.</span><span class="hl-0">getCommandManager</span><span class="hl-1">().</span><span class="hl-0">addCommands</span><span class="hl-1">(</span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">PingCommand</span><span class="hl-1">());</span><br/><span class="hl-3">await</span><span class="hl-1"> </span><span class="hl-4">bot</span><span class="hl-1">.</span><span class="hl-0">start</span><span class="hl-1">();</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="📖-documentation" class="tsd-anchor-link">📖 Documentation<a href="#📖-documentation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><a href="https://nyx-discord.github.io/nyx/guide" target="_blank" class="external">Guide</a>: how to use nyx, and how to replace its internals.</li>
+<li><a href="https://nyx-discord.github.io/nyx/docs">API reference</a>: every class, interface and type.</li>
+</ul>
+<h2 id="🤖-using-an-ai-agent" class="tsd-anchor-link">🤖 Using an AI agent<a href="#🤖-using-an-ai-agent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><strong>Agent skill:</strong> <code>npx skills add nyx-discord/nyx</code> installs <a href="media/SKILL.md">the nyx skill</a> into Claude Code,
+Cursor, Codex and others. It covers nyx's conventions and typechecked examples for both adapters.</li>
+<li><strong>llms.txt:</strong> point your agent at <a href="https://nyx-discord.github.io/nyx/guide/llms.txt" target="_blank" class="external"><code>llms.txt</code></a>, an index of every
+guide page, or at <a href="https://nyx-discord.github.io/nyx/guide/llms-full.txt" target="_blank" class="external"><code>llms-full.txt</code></a> for all of it in one file.</li>
+<li><strong>Markdown pages:</strong> add <code>.md</code> to any guide URL, e.g.
+<a href="https://nyx-discord.github.io/nyx/guide/use/commands.md" target="_blank" class="external"><code>/use/commands.md</code></a>.</li>
+</ul>
+</div></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details"><a href="#✨-why-nyx"><span>✨ <wbr/>Why nyx</span></a><a href="#🚀-quick-example"><span>🚀 <wbr/>Quick example</span></a><a href="#📖-documentation"><span>📖 <wbr/>Documentation</span></a><a href="#🤖-using-an-ai-agent"><span>🤖 <wbr/>Using an <wbr/>AI agent</span></a></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="modules.html">Documentation</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a> with <a href="https://github.com/JulianWowra/typedoc-github-theme" target="_blank">typedoc-github-theme</a></p></footer>
+<div class="overlay"></div></body></html>
