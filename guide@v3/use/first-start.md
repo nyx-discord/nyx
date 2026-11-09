@@ -2,9 +2,8 @@
 
 ## First Start [#first-start]
 
-A minimum version of Node.js 18 is required to run, though we recommend latest LTS.
-
-<Callout type="warn">Although they should work, nyx is not tested on Deno or Bun.</Callout>
+A minimum version of Node.js 18 is required to run, though we recommend latest LTS. Although they should work, nyx is
+not tested on other runtimes, such as Deno or Bun.
 
 We also recommend using a formatter like [Prettier](https://www.prettier.io/) and a linter like [ESLint](https://eslint.org/) or [TypeScript ESLint](https://typescript-eslint.io/).
 

@@ -6,42 +6,46 @@
 
 Hello there 👋! Welcome to official guide for using nyx, a TypeScript bot framework for Discord.
 
-Here, you'll discover what nyx is, when it's useful, how to create your own bot and how to customize it.
+Here, you'll discover what nyx is, how to create your own bot and how to customize it.
 
 ## What is nyx? [#what-is-nyx]
 
-Nyx is a framework to build Discord bots in TypeScript, with adapters for [discord.js](https://discord.js.org) and [@discordjs/core](https://discord.js.org/docs/packages/core/main). With [`@nyx-discord/http`](/use/http), the @discordjs/core adapter can also receive interactions over HTTP instead of a gateway connection, for example on serverless platforms. The main ideas behind it are:
+Nyx is a framework to build Discord bots in TypeScript, with adapters for [discord.js](https://discord.js.org),
+[@discordjs/core](https://discord.js.org/docs/packages/core/main) and HTTP-only bots with [`@nyx-discord/http`](/use/http),
+built on top of `@discordjs/core`.
+
+The main ideas behind the framework are:
 
 <Cards>
   <Card icon={<BlocksIcon />} title="Fully extendable">
-    Every single internal component is documented and can be easily swapped by
-    your own.
+    Every single internal component is documented and can be easily swapped by your own. We want you to know how your
+    bot fully works.
   </Card>
   <Card icon={<CircleDotDashedIcon />} title="Bare-bones">
     As little runtime dependencies as possible, which you can also replace.
   </Card>
+  <Card icon={<LockOpenIcon />} title="Architecture freedom">
+    Nyx doesn't enforce any specific way to do things. Choose your own folder structure, way to load commands/events,
+    databases, naming conventions, etc.
+  </Card>
   <Card icon={<SmileIcon />} title="Easy to understand and setup">
-    Hacky or unnecessarily messy internal code is avoided, like messing with
-    Discord.js internals or its typings.
+    Hacky code is avoided, like changing Discord.js typings or internals.
+    Type safety, error handling and extensibility are prioritized over convenience and magic.
   </Card>
   <Card icon={<SiDiscorddotjs />} title="Native objects">
-    Use the objects you already know from your Discord library without needing wrappers or
-    rewrites when updating.
+    Use the objects you already know from your Discord library without needing to learn new wrappers.
   </Card>
-  <Card icon={<TerminalIcon />} title="Developer friendly">
-    Type safety, predictability, error handling and extensibility are the
-    foundation of the framework.
-  </Card>
-  <Card icon={<LockOpenIcon />} title="Architecture freedom">
-    Nyx doesn't enforce any specific way to do things. Choose your own folder
-    structure, way to load commands/events, databases, etc.
+  <Card icon={<LayersIcon />} title="A presentation layer, not the whole system">
+    Nyx doesn't own your bot's logic, build step or runtime. It's the layer that connects Discord to your design, so
+    your core logic stays independent and testable.
   </Card>
 </Cards>
 
-<Callout type="error" title="What nyx isn't">
-  - It isn't for programming beginners. We assume you have some level of understanding of TypeScript.
-  - It isn't a battery-included framework. It doesn't come with any commands, events or filters (like cooldowns).
-  It only has the things required for you to be able to build such features.
+<Callout type="warn" title="Warnings">
+  - We assume you have some level of understanding of TypeScript.
+  - The framework doesn't come with any commands, events or filters (like cooldowns). To avoid being too opinionated,
+  we only ship the things required for you to be able to build such features. Our optional packages provide some utilities,
+  but you can also build your own.
 </Callout>
 
 ## Key Features [#key-features]
@@ -51,11 +55,12 @@ Nyx is a framework to build Discord bots in TypeScript, with adapters for [disco
 3. **[Schedules](/use/schedules)**, for timed tasks.
 4. **[Plugins](/use/plugins)**, for pieces that extend nyx.
 
+All of these features are documented in detail in their respective sections, which we'll cover next.
+
 Through optional packages, it also supports:
 1. **[Sessions](/session)**, for stateful interaction conversations, similar to collectors.
 2. **[Loaders](/loaders)**, for scanning directories to load commands, events, and schedules.
-
-All of these features are documented in detail in their respective sections, which we'll cover next.
+3. **[Type-safe Options](/typed-options)**, for creating commands with type-safe options.
 
 <Callout title="Codeblocks">
 The codeblocks in this guide are powered by [Twoslash](https://twoslash.netlify.app/guide/), meaning:
