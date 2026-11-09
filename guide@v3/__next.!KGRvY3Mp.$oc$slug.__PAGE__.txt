@@ -1,42 +1,42 @@
 3:"$Sreact.fragment"
-4:"/nyx/guide@v3/_next/static/chunks/2s1457ywq6w1s.js"
-5:"/nyx/guide@v3/_next/static/chunks/24s1pjp4t2wdg.js"
-6:"/nyx/guide@v3/_next/static/chunks/23i_aic_9v0fs.js"
-7:"/nyx/guide@v3/_next/static/chunks/1aw0972fvv1_g.js"
-8:"/nyx/guide@v3/_next/static/chunks/3mgt_wpth3u9i.js"
-9:I[564440,["$4","$5","$6","$7","$8"],"default"]
-a:I[355707,["$4","$5","$6","$7","$8"],"default"]
-f:"/nyx/guide@v3/_next/static/chunks/2jkr-ndzcon7c.js"
-10:"/nyx/guide@v3/_next/static/chunks/1kr4n-_fdfi4h.js"
-11:"/nyx/guide@v3/_next/static/chunks/3um-nc37r7x6j.js"
-12:"/nyx/guide@v3/_next/static/chunks/2jjsefmgqyv8-.js"
-13:I[359892,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsPage"]
-14:I[359892,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsTitle"]
-15:I[359892,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsDescription"]
-16:I[359892,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsBody"]
+4:"/nyx/guide@v3/_next/static/chunks/0kja3iscikfgm.js"
+5:"/nyx/guide@v3/_next/static/chunks/1c2sq9y75-2is.js"
+6:"/nyx/guide@v3/_next/static/chunks/41uxzz6llf0ew.js"
+7:"/nyx/guide@v3/_next/static/chunks/1pjx-agmj5vex.js"
+8:"/nyx/guide@v3/_next/static/chunks/18pdvcabllek_.js"
+9:I[471050,["$4","$5","$6","$7","$8"],"default"]
+a:I[10160,["$4","$5","$6","$7","$8"],"default"]
+f:"/nyx/guide@v3/_next/static/chunks/0ebnicn_afy-w.js"
+10:"/nyx/guide@v3/_next/static/chunks/2bjdy-xsiti-3.js"
+11:"/nyx/guide@v3/_next/static/chunks/3p9f-dg-duqob.js"
+12:"/nyx/guide@v3/_next/static/chunks/23q6mrsmjiocg.js"
+13:I[892365,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsPage"]
+14:I[892365,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsTitle"]
+15:I[892365,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsDescription"]
+16:I[892365,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsBody"]
 17:I[936702,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"default"]
 18:I[663577,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"HoverCard"]
 19:"HoverCardTrigger"
 1a:I[663577,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"$19"]
-1b:I[422171,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"default"]
+1b:I[364778,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"default"]
 1c:"HoverCardContent"
 1d:I[663577,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"$1c"]
 1e:I[86338,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"default"]
-20:I[526524,["$4","$5","$6","$7","$8"],"OutletBoundary"]
+20:I[46213,["$4","$5","$6","$7","$8"],"OutletBoundary"]
 21:"$Sreact.suspense"
 24:"ViewportBoundary"
-25:I[526524,["$4","$5","$6","$7","$8"],"$24"]
+25:I[46213,["$4","$5","$6","$7","$8"],"$24"]
 26:"MetadataBoundary"
-27:I[526524,["$4","$5","$6","$7","$8"],"$26"]
-28:I[449041,["$4","$5","$6","$7","$8"],"IconMark"]
+27:I[46213,["$4","$5","$6","$7","$8"],"$26"]
+28:I[199771,["$4","$5","$6","$7","$8"],"IconMark"]
 c:X
 c:C
 d:X
 1f:["$","meta",null,{"httpEquiv":"refresh","content":"0; url=/nyx/guide@v3/use"}]
-e:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$3","c",{"children":[["$","$L13",null,{"toc":[],"editOnGithub":{"owner":"nyx-discord","repo":"nyx","sha":"main","path":"apps/guide/content/docs/index.mdx"},"tableOfContent":{"single":false,"style":"clerk"},"children":[["$","div",null,{"className":"flex items-center gap-2","children":[["$","span",null,{"className":"text-fd-primary","children":null}],["$","$L14",null,{"children":"Redirecting..."}]]}],["$","$L15",null,{"className":"mb-0"}],null,["$","div",null,{"className":"mb-2 flex flex-col gap-2","children":["$","div",null,{"className":"flex items-center gap-2","children":[["$","span",null,{"className":"text-fd-muted-foreground","children":"Reading time:"}],["$","span",null,{"children":[0," ","min read"]}]]}]}],["$","$L16",null,{"children":[["$","hr",null,{}],[["$","$L17",null,{}],"\n",["$","p",null,{"children":["If you're not redirected, ",["$","$L18",null,{"children":[["$","$L1a",null,{"asChild":true,"children":["$","$L1b",null,{"href":"/use","children":"click here"}]}],["$","$L1d",null,{"className":"text-sm","children":[["$","div",null,{"className":"flex items-center gap-2","children":[["$","span",null,{"className":"text-fd-primary","children":["$","$L1e",null,{"icon":{"name":"sparkles","size":24,"node":[["path",{"d":"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z","key":"1s2grr"}],["path",{"d":"M20 2v4","key":"1rf3ol"}],["path",{"d":"M22 4h-4","key":"gwowj6"}],["circle",{"cx":"4","cy":"20","r":"2","key":"6kqj1y"}]],"aliases":["stars"]}}]}],["$","p",null,{"className":"font-medium mb-2","children":"Introduction"}]]}],["$","p",null,{"className":"text-fd-muted-foreground mb-2"}],["$","hr",null,{"className":"mb-2"}],"\n\nHello there 👋! Welcome to official guide for using nyx, a TypeScript bot framework for Discord."]}]]}],"."]}],"\n",["$","noscript",null,{"children":"$1f"}]]]}]]}],[["$","script","script-0",{"src":"/nyx/guide@v3/_next/static/chunks/2jjsefmgqyv8-.js","async":true}]],["$","$L20",null,{"children":["$","$21",null,{"name":"Next.MetadataOutlet","children":"$@22"}]}]]}],"p":"$@23","v":null,"s":"$d"}}]]
+e:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$3","c",{"children":[["$","$L13",null,{"toc":[],"editOnGithub":{"owner":"nyx-discord","repo":"nyx","sha":"main","path":"apps/guide/content/docs/index.mdx"},"tableOfContent":{"single":false,"style":"clerk"},"children":[["$","div",null,{"className":"flex items-center gap-2","children":[["$","span",null,{"className":"text-fd-primary","children":null}],["$","$L14",null,{"children":"Redirecting..."}]]}],["$","$L15",null,{"className":"mb-0"}],null,["$","div",null,{"className":"mb-2 flex flex-col gap-2","children":["$","div",null,{"className":"flex items-center gap-2","children":[["$","span",null,{"className":"text-fd-muted-foreground","children":"Reading time:"}],["$","span",null,{"children":[0," ","min read"]}]]}]}],["$","$L16",null,{"children":[["$","hr",null,{}],[["$","$L17",null,{}],"\n",["$","p",null,{"children":["If you're not redirected, ",["$","$L18",null,{"children":[["$","$L1a",null,{"asChild":true,"children":["$","$L1b",null,{"href":"/use","children":"click here"}]}],["$","$L1d",null,{"className":"text-sm","children":[["$","div",null,{"className":"flex items-center gap-2","children":[["$","span",null,{"className":"text-fd-primary","children":["$","$L1e",null,{"icon":{"name":"sparkles","size":24,"node":[["path",{"d":"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z","key":"1s2grr"}],["path",{"d":"M20 2v4","key":"1rf3ol"}],["path",{"d":"M22 4h-4","key":"gwowj6"}],["circle",{"cx":"4","cy":"20","r":"2","key":"6kqj1y"}]],"aliases":["stars"]}}]}],["$","p",null,{"className":"font-medium mb-2","children":"Introduction"}]]}],["$","p",null,{"className":"text-fd-muted-foreground mb-2"}],["$","hr",null,{"className":"mb-2"}],"\n\nHello there 👋! Welcome to official guide for using nyx, a TypeScript bot framework for Discord."]}]]}],"."]}],"\n",["$","noscript",null,{"children":"$1f"}]]]}]]}],[["$","script","script-0",{"src":"/nyx/guide@v3/_next/static/chunks/23q6mrsmjiocg.js","async":true}]],["$","$L20",null,{"children":["$","$21",null,{"name":"Next.MetadataOutlet","children":"$@22"}]}]]}],"p":"$@23","v":null,"s":"$d"}}]]
 2:[["children",{"s":{"n":"slug","t":"oc","k":"","s":["api","llms-full.txt","llms.mdx","llms.txt"]},"h":64,"d":{"r":["$","$3","c",{"children":[null,["$","$L9",null,{"parallelRouterKey":"children","template":["$","$La",null,{}]}]]}],"p":"$@b","v":"$c","s":"$d"},"c":"$Qe"}]]
 1:[["children",{"s":"(docs)","h":32,"c":"$Q2"}]]
-0:{"t":{"t":{"s":"","h":80,"c":"$Q1"},"h":{"r":["$","$3","h",{"children":[null,["$","$L25",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","$L27",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$21",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Redirecting..."}],["$","link","1",{"rel":"icon","href":"/nyx/guide@v3/icon.ico?icon.28unqixkwauwh.ico","sizes":"226x256","type":"image/x-icon"}],["$","$L28","2",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@29","v":null,"s":"$d"}},"a":"$@2a","u":"$@2b","b":"JDkQgrW3oPN5yAuGZeDo7"}
+0:{"t":{"t":{"s":"","h":80,"c":"$Q1"},"h":{"r":["$","$3","h",{"children":[null,["$","$L25",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","$L27",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$21",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Redirecting..."}],["$","link","1",{"rel":"icon","href":"/nyx/guide@v3/icon.ico?icon.28unqixkwauwh.ico","sizes":"226x256","type":"image/x-icon"}],["$","$L28","2",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@29","v":null,"s":"$d"}},"a":"$@2a","u":"$@2b","b":"YfDmiSKvBBDmRu4APulqE"}
 22:null
 2b:true
 d:300

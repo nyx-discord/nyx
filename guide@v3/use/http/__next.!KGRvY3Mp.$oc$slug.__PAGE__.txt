@@ -1,52 +1,52 @@
 3:"$Sreact.fragment"
-4:"/nyx/guide@v3/_next/static/chunks/2s1457ywq6w1s.js"
-5:"/nyx/guide@v3/_next/static/chunks/24s1pjp4t2wdg.js"
-6:"/nyx/guide@v3/_next/static/chunks/23i_aic_9v0fs.js"
-7:"/nyx/guide@v3/_next/static/chunks/1aw0972fvv1_g.js"
-8:"/nyx/guide@v3/_next/static/chunks/3mgt_wpth3u9i.js"
-9:I[564440,["$4","$5","$6","$7","$8"],"default"]
-a:I[355707,["$4","$5","$6","$7","$8"],"default"]
-f:"/nyx/guide@v3/_next/static/chunks/2jkr-ndzcon7c.js"
-10:"/nyx/guide@v3/_next/static/chunks/1kr4n-_fdfi4h.js"
-11:"/nyx/guide@v3/_next/static/chunks/3um-nc37r7x6j.js"
-12:"/nyx/guide@v3/_next/static/chunks/2jjsefmgqyv8-.js"
-13:I[359892,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsPage"]
+4:"/nyx/guide@v3/_next/static/chunks/0kja3iscikfgm.js"
+5:"/nyx/guide@v3/_next/static/chunks/1c2sq9y75-2is.js"
+6:"/nyx/guide@v3/_next/static/chunks/41uxzz6llf0ew.js"
+7:"/nyx/guide@v3/_next/static/chunks/1pjx-agmj5vex.js"
+8:"/nyx/guide@v3/_next/static/chunks/18pdvcabllek_.js"
+9:I[471050,["$4","$5","$6","$7","$8"],"default"]
+a:I[10160,["$4","$5","$6","$7","$8"],"default"]
+f:"/nyx/guide@v3/_next/static/chunks/0ebnicn_afy-w.js"
+10:"/nyx/guide@v3/_next/static/chunks/2bjdy-xsiti-3.js"
+11:"/nyx/guide@v3/_next/static/chunks/3p9f-dg-duqob.js"
+12:"/nyx/guide@v3/_next/static/chunks/23q6mrsmjiocg.js"
+13:I[892365,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsPage"]
 14:I[86338,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"default"]
-15:I[359892,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsTitle"]
-16:I[359892,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsDescription"]
-17:I[359892,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsBody"]
-18:I[422171,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"default"]
-19:I[788645,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"Heading"]
-1a:I[418367,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"CodeBlockTabs"]
+15:I[892365,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsTitle"]
+16:I[892365,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsDescription"]
+17:I[892365,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"DocsBody"]
+18:I[364778,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"default"]
+19:I[3733,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"Heading"]
+1a:I[653281,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"CodeBlockTabs"]
 1b:"CodeBlockTabsList"
-1c:I[418367,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"$1b"]
+1c:I[653281,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"$1b"]
 1d:"CodeBlockTabsTrigger"
-1e:I[418367,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"$1d"]
-1f:I[418367,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"CodeBlockTab"]
-20:I[418367,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"CodeBlock"]
-21:I[418367,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"Pre"]
+1e:I[653281,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"$1d"]
+1f:I[653281,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"CodeBlockTab"]
+20:I[653281,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"CodeBlock"]
+21:I[653281,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"Pre"]
 34:"ViewportBoundary"
-35:I[526524,["$4","$5","$6","$7","$8"],"$34"]
+35:I[46213,["$4","$5","$6","$7","$8"],"$34"]
 36:"MetadataBoundary"
-37:I[526524,["$4","$5","$6","$7","$8"],"$36"]
+37:I[46213,["$4","$5","$6","$7","$8"],"$36"]
 38:"$Sreact.suspense"
-39:I[449041,["$4","$5","$6","$7","$8"],"IconMark"]
+39:I[199771,["$4","$5","$6","$7","$8"],"IconMark"]
 c:X
 c:C
 d:X
 e:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$3","c",{"children":[["$","$L13",null,{"toc":[{"depth":2,"url":"#installation","title":"Installation"},{"depth":3,"url":"#installing","title":"Installing"},{"depth":3,"url":"#creating-the-bot","title":"Creating the bot"},{"depth":3,"url":"#mounting-the-client","title":"Mounting the client"},{"depth":3,"url":"#setting-the-endpoint","title":"Setting the endpoint"},{"depth":2,"url":"#whats-different-from-the-gateway","title":"What's different from the gateway"},{"depth":2,"url":"#getting-the-bot","title":"Getting the bot"}],"editOnGithub":{"owner":"nyx-discord","repo":"nyx","sha":"main","path":"apps/guide/content/docs/use/http/index.mdx"},"tableOfContent":{"single":false,"style":"clerk"},"children":[["$","div",null,{"className":"flex items-center gap-2","children":[["$","span",null,{"className":"text-fd-primary","children":["$","$L14",null,{"icon":{"name":"globe","size":24,"node":[["circle",{"cx":"12","cy":"12","r":"10","key":"1mglay"}],["path",{"d":"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20","key":"13o1zl"}],["path",{"d":"M2 12h20","key":"9i4pu4"}]]},"size":"3em"}]}],["$","$L15",null,{"children":"HTTP Overview"}]]}],["$","$L16",null,{"className":"mb-0"}],null,["$","div",null,{"className":"mb-2 flex flex-col gap-2","children":["$","div",null,{"className":"flex items-center gap-2","children":[["$","span",null,{"className":"text-fd-muted-foreground","children":"Reading time:"}],["$","span",null,{"children":[3," ","min read"]}]]}]}],["$","$L17",null,{"children":[["$","hr",null,{}],[["$","p",null,{"children":["The ",["$","$L18",null,{"href":"https://www.npmjs.com/package/@nyx-discord/http","children":["$","code",null,{"children":"@nyx-discord/http"}]}]," package lets an ",["$","code",null,{"children":"@discordjs/core"}]," bot receive ",["$","$L18",null,{"href":"https://discord.com/developers/docs/interactions/overview","children":"interactions"}],"\nand ",["$","$L18",null,{"href":"https://discord.com/developers/docs/events/webhook-events","children":"webhook events"}]," over HTTP, instead of through a gateway connection."]}],"\n",["$","p",null,{"children":["Discord sends each interaction as a ",["$","code",null,{"children":"POST"}]," request to your app's Interactions Endpoint URL, so a bot that only handles\ncommands and components doesn't need a long-lived connection at all. It can run on a regular server, or on serverless\nplatforms like Cloudflare Workers or Vercel."]}],"\n",["$","p",null,{"children":["The framework doesn't ship a server and never opens a port. Our client takes a request and returns a response, and you pass\nrequests to it from the server you already use: ",["$","code",null,{"children":"node:http"}],", Express, Fastify, Hono, Next.js, Bun, Deno, Workers..."]}],"\n",["$","$L19",null,{"as":"h2","id":"installation","children":"Installation"}],"\n",["$","div",null,{"className":"fd-steps","children":[["$","div",null,{"className":"fd-step","children":[["$","$L19",null,{"as":"h3","id":"installing","children":"Installing"}],["$","$L1a",null,{"defaultValue":"npm","children":[["$","$L1c",null,{"children":[["$","$L1e",null,{"value":"npm","children":"npm"}],["$","$L1e",null,{"value":"pnpm","children":"pnpm"}],["$","$L1e",null,{"value":"yarn","children":"yarn"}],["$","$L1e",null,{"value":"bun","children":"bun"}]]}],["$","$L1f",null,{"value":"npm","children":["$","$L20",null,{"className":"shiki shiki-themes github-light github-dark","style":{"--shiki-light":"#24292e","--shiki-dark":"#e1e4e8","--shiki-light-bg":"#fff","--shiki-dark-bg":"#24292e"},"tabIndex":"0","icon":"<svg viewBox=\"0 0 24 24\"><path d=\"m 4,4 a 1,1 0 0 0 -0.7070312,0.2929687 1,1 0 0 0 0,1.4140625 L 8.5859375,11 3.2929688,16.292969 a 1,1 0 0 0 0,1.414062 1,1 0 0 0 1.4140624,0 l 5.9999998,-6 a 1.0001,1.0001 0 0 0 0,-1.414062 L 4.7070312,4.2929687 A 1,1 0 0 0 4,4 Z m 8,14 a 1,1 0 0 0 -1,1 1,1 0 0 0 1,1 h 8 a 1,1 0 0 0 1,-1 1,1 0 0 0 -1,-1 z\" fill=\"currentColor\" /></svg>","children":["$","$L21",null,{"children":["$","code",null,{"children":["$","span",null,{"className":"line","children":[["$","span",null,{"style":{"--shiki-light":"#6F42C1","--shiki-dark":"#B392F0"},"children":"npm"}],["$","span",null,{"style":{"--shiki-light":"#032F62","--shiki-dark":"#9ECBFF"},"children":" i"}],"$L22","$L23"]}]}]}]}]}],"$L24","$L25","$L26"]}],"$L27"]}],"$L28","$L29","$L2a"]}],"\n","$L2b","\n","$L2c","\n","$L2d","\n","$L2e","\n","$L2f","\n","$L30"]]}]]}],["$L31"],"$L32"]}],"p":"$@33","v":null,"s":"$d"}}]]
 2:[["children",{"s":{"n":"slug","t":"oc","k":"use/http","s":["api","llms-full.txt","llms.mdx","llms.txt"]},"h":64,"d":{"r":["$","$3","c",{"children":[null,["$","$L9",null,{"parallelRouterKey":"children","template":["$","$La",null,{}]}]]}],"p":"$@b","v":"$c","s":"$d"},"c":"$Qe"}]]
 1:[["children",{"s":"(docs)","h":32,"c":"$Q2"}]]
-0:{"t":{"t":{"s":"","h":80,"c":"$Q1"},"h":{"r":["$","$3","h",{"children":[null,["$","$L35",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","$L37",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$38",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Use | HTTP Overview"}],["$","link","1",{"rel":"icon","href":"/nyx/guide@v3/icon.ico?icon.28unqixkwauwh.ico","sizes":"226x256","type":"image/x-icon"}],["$","$L39","2",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@3a","v":null,"s":"$d"}},"a":"$@3b","u":"$@3c","b":"JDkQgrW3oPN5yAuGZeDo7"}
-3e:I[708589,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"Popup"]
-3f:I[708589,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"PopupContent"]
+0:{"t":{"t":{"s":"","h":80,"c":"$Q1"},"h":{"r":["$","$3","h",{"children":[null,["$","$L35",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","$L37",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$38",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Use | HTTP Overview"}],["$","link","1",{"rel":"icon","href":"/nyx/guide@v3/icon.ico?icon.28unqixkwauwh.ico","sizes":"226x256","type":"image/x-icon"}],["$","$L39","2",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@3a","v":null,"s":"$d"}},"a":"$@3b","u":"$@3c","b":"YfDmiSKvBBDmRu4APulqE"}
+3e:I[163064,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"Popup"]
+3f:I[163064,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"PopupContent"]
 7b:I[663577,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"HoverCard"]
 7c:"HoverCardTrigger"
 7d:I[663577,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"$7c"]
 7e:"HoverCardContent"
 7f:I[663577,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"$7e"]
-a7:I[708589,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"PopupTrigger"]
-e4:I[526524,["$4","$5","$6","$7","$8"],"OutletBoundary"]
+a7:I[163064,["$4","$5","$6","$7","$8","$f","$10","$11","$12"],"PopupTrigger"]
+e4:I[46213,["$4","$5","$6","$7","$8"],"OutletBoundary"]
 22:["$","span",null,{"style":{"--shiki-light":"#032F62","--shiki-dark":"#9ECBFF"},"children":" @nyx-discord/http"}]
 23:["$","span",null,{"style":{"--shiki-light":"#032F62","--shiki-dark":"#9ECBFF"},"children":" @discordjs/core"}]
 24:["$","$L1f",null,{"value":"pnpm","children":["$","$L20",null,{"className":"shiki shiki-themes github-light github-dark","style":{"--shiki-light":"#24292e","--shiki-dark":"#e1e4e8","--shiki-light-bg":"#fff","--shiki-dark-bg":"#24292e"},"tabIndex":"0","icon":"<svg viewBox=\"0 0 24 24\"><path d=\"m 4,4 a 1,1 0 0 0 -0.7070312,0.2929687 1,1 0 0 0 0,1.4140625 L 8.5859375,11 3.2929688,16.292969 a 1,1 0 0 0 0,1.414062 1,1 0 0 0 1.4140624,0 l 5.9999998,-6 a 1.0001,1.0001 0 0 0 0,-1.414062 L 4.7070312,4.2929687 A 1,1 0 0 0 4,4 Z m 8,14 a 1,1 0 0 0 -1,1 1,1 0 0 0 1,1 h 8 a 1,1 0 0 0 1,-1 1,1 0 0 0 -1,-1 z\" fill=\"currentColor\" /></svg>","children":["$","$L21",null,{"children":["$","code",null,{"children":["$","span",null,{"className":"line","children":[["$","span",null,{"style":{"--shiki-light":"#6F42C1","--shiki-dark":"#B392F0"},"children":"pnpm"}],["$","span",null,{"style":{"--shiki-light":"#032F62","--shiki-dark":"#9ECBFF"},"children":" add"}],["$","span",null,{"style":{"--shiki-light":"#032F62","--shiki-dark":"#9ECBFF"},"children":" @nyx-discord/http"}],["$","span",null,{"style":{"--shiki-light":"#032F62","--shiki-dark":"#9ECBFF"},"children":" @discordjs/core"}]]}]}]}]}]}]
@@ -62,7 +62,7 @@ e4:I[526524,["$4","$5","$6","$7","$8"],"OutletBoundary"]
 2e:["$","p",null,{"children":["Inside commands, subscribers and schedules, ",["$","code",null,{"children":"TypedFields.HttpBot"}]," gets the bot from the metadata, typed so its client is the ",["$","code",null,{"children":"HttpNyxClient"}],":"]}]
 a6:T4dc,<svg viewBox="0 0 24 24"><path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z" fill="currentColor" /></svg>2f:["$","$L20",null,{"className":"shiki shiki-themes github-light github-dark twoslash lsp","style":{"--shiki-light":"#24292e","--shiki-dark":"#e1e4e8","--shiki-light-bg":"#fff","--shiki-dark-bg":"#24292e"},"tabIndex":"0","icon":"$a6","children":["$","$L21",null,{"children":["$","code",null,{"children":[["$","span",null,{"className":"line","children":[["$","span",null,{"style":{"--shiki-light":"#D73A49","--shiki-dark":"#F97583"},"children":"import"}],["$","span",null,{"style":{"--shiki-light":"#24292E","--shiki-dark":"#E1E4E8"},"children":" { "}],["$","span",null,{"style":{"--shiki-light":"#24292E","--shiki-dark":"#E1E4E8"},"children":["$","$L3e",null,{"className":"twoslash-hover","children":[["$","$L3f",null,{"className":"nd-copy-ignore","children":["$","div",null,{"className":"twoslash shiki fd-codeblock prose-no-margin","children":["$","code",null,{"className":"twoslash-popup-code","children":[["$","span",null,{"style":{"--shiki-light":"#D73A49","--shiki-dark":"#F97583"},"children":"class"}],["$","span",null,{"style":{"--shiki-light":"#6F42C1","--shiki-dark":"#B392F0"},"children":" AbstractSchedule"}]]}]}]}],["$","$La7",null,{"children":"AbstractSchedule"}]]}]}],["$","span",null,{"style":{"--shiki-light":"#24292E","--shiki-dark":"#E1E4E8"},"children":", "}],["$","span",null,{"style":{"--shiki-light":"#24292E","--shiki-dark":"#E1E4E8"},"children":["$","$L3e",null,{"className":"twoslash-hover","children":[["$","$L3f",null,{"className":"nd-copy-ignore","children":["$","div",null,{"className":"twoslash shiki fd-codeblock prose-no-margin","children":["$","$L20",null,{"className":"shiki shiki-themes github-light github-dark","style":{"--shiki-light":"#24292e","--shiki-dark":"#e1e4e8","--shiki-light-bg":"#fff","--shiki-dark-bg":"#24292e"},"tabIndex":"0","children":["$","$L21",null,{"children":["$","code",null,{"children":[["$","span",null,{"className":"line","children":[["$","span",null,{"style":{"--shiki-light":"#D73A49","--shiki-dark":"#F97583"},"children":"const"}],["$","span",null,{"style":{"--shiki-light":"#005CC5","--shiki-dark":"#79B8FF"},"children":" TypedFields"}],["$","span",null,{"style":{"--shiki-light":"#D73A49","--shiki-dark":"#F97583"},"children":":"}],["$","span",null,{"style":{"--shiki-light":"#6F42C1","--shiki-dark":"#B392F0"},"children":" Omit"}],["$","span",null,{"style":{"--shiki-light":"#24292E","--shiki-dark":"#E1E4E8"},"children":"<{"}]]}],"\n",["$","span",null,{"className":"line","children":[["$","span",null,{"style":{"--shiki-light":"#D73A49","--shiki-dark":"#F97583"},"children":"    readonly"}],["$","span",null,{"style":{"--shiki-light":"#E36209","--shiki-dark":"#FFAB70"},"children":" Bot"}],["$","span",null,{"style":{"--shiki-light":"#D73A49","--shiki-dark":"#F97583"},"children":":"}],["$","span",null,{"style":{"--shiki-light":"#24292E","--shiki-dark":"#E1E4E8"},"children":" {"}]]}],"\n",["$","span",null,{"className":"line","children":[["$","span",null,{"style":{"--shiki-light":"#6F42C1","--shiki-dark":"#B392F0"},"children":"        get"}],"$La8","$La9","$Laa","$Lab","$Lac","$Lad","$Lae","$Laf","$Lb0","$Lb1","$Lb2","$Lb3","$Lb4","$Lb5","$Lb6","$Lb7","$Lb8","$Lb9","$Lba","$Lbb","$Lbc","$Lbd","$Lbe","$Lbf","$Lc0","$Lc1","$Lc2","$Lc3","$Lc4","$Lc5","$Lc6","$Lc7","$Lc8","$Lc9","$Lca","$Lcb"]}],"\n","$Lcc","\n","$Lcd","\n","$Lce","\n","$Lcf","\n","$Ld0"]}]}]}]}]}],"$Ld1"]}]}],"$Ld2","$Ld3","$Ld4","$Ld5","$Ld6","$Ld7","$Ld8","$Ld9"]}],"\n","$Lda","\n","$Ldb","\n","$Ldc","\n","$Ldd","\n","$Lde","\n","$Ldf","\n","$Le0","$Le1","$Le2","\n","$Le3"]}]}]}]
 30:["$","p",null,{"children":[["$","code",null,{"children":"@nyx-discord/http"}]," exports its own ",["$","code",null,{"children":"TypedFields"}],", without ",["$","code",null,{"children":"@nyx-discord/djs-core"}],"'s ",["$","code",null,{"children":"GatewayCoreBot"}],", since HTTP bots have no gateway client."]}]
-31:["$","script","script-0",{"src":"/nyx/guide@v3/_next/static/chunks/2jjsefmgqyv8-.js","async":true}]
+31:["$","script","script-0",{"src":"/nyx/guide@v3/_next/static/chunks/23q6mrsmjiocg.js","async":true}]
 32:["$","$Le4",null,{"children":["$","$38",null,{"name":"Next.MetadataOutlet","children":"$@e5"}]}]
 3c:true
 d:300
