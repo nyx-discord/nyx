@@ -4,7 +4,7 @@ Session limits cap how many concurrent sessions a user, guild, or channel can ha
 They are enforced **before** a session starts, and they are registered externally via `plugin.getSessionLimits().register(...)`.
 
 <Callout type="warn">
-Limits must be registered **before** starting. Calling `register()` after starting the bot throws an `IllegalStateError`.
+Limits must be registered and removed **before** starting. Calling `register()` or `remove()` after starting the bot throws an `IllegalStateError`.
 </Callout>
 
 ## Registration [#registration]
@@ -71,7 +71,7 @@ plugin.getSessionLimits().register(limit);
 ```ts twoslash
 import {
   DjsSessionPlugin,
-  SessionLimitBuilder,
+  DjsSessionLimitBuilder,
   SessionLimitScope,
   SessionExceedAction,
   AbstractSession,
@@ -82,7 +82,7 @@ import type { DjsInteractionTypes } from '@nyx-discord/djs';
 declare const plugin: DjsSessionPlugin;
 declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
-const limit = new SessionLimitBuilder()
+const limit = new DjsSessionLimitBuilder()
   .setSession(MySession)
   .addRule((rule) =>
     rule
@@ -99,7 +99,7 @@ plugin.getSessionLimits().register(limit);
 ```ts twoslash
 import {
   CoreSessionPlugin,
-  SessionLimitBuilder,
+  CoreSessionLimitBuilder,
   SessionLimitScope,
   SessionExceedAction,
   AbstractSession,
@@ -110,7 +110,7 @@ import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
 declare const plugin: CoreSessionPlugin;
 declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
 // ---cut---
-const limit = new SessionLimitBuilder()
+const limit = new CoreSessionLimitBuilder()
   .setSession(MySession)
   .addRule((rule) =>
     rule
@@ -129,7 +129,7 @@ plugin.getSessionLimits().register(limit);
 ```ts twoslash
 import {
   CoreSessionPlugin,
-  SessionLimitBuilder,
+  CoreSessionLimitBuilder,
   SessionLimitScope,
   SessionExceedAction,
   AbstractSession,
@@ -140,7 +140,7 @@ import type { CoreInteractionTypes } from '@nyx-discord/http';
 declare const plugin: CoreSessionPlugin;
 declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
 // ---cut---
-const limit = new SessionLimitBuilder()
+const limit = new CoreSessionLimitBuilder()
   .setSession(MySession)
   .addRule((rule) =>
     rule
@@ -626,6 +626,10 @@ try {
 ### Displace [#displace]
 
 Evicts an existing session to make room. The displaced session receives `SessionEndCodes.Displaced`.
+
+The existing session is only ended **after** the new one has started. If the new session doesn't start (its start filter
+rejects it, a middleware stops it, or its `onStart()` throws), the existing session keeps running. Only running sessions
+are displaced: if every session in the scope is still starting, the new one is rejected with `SessionLimitExceededError`.
 
 <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
