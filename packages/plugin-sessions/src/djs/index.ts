@@ -7,6 +7,7 @@ export * from './filter/update/DjsSessionUpdateFilterResolvable';
 export * from './interaction/DjsSessionStartInteraction';
 export * from './interaction/DjsSessionUpdateInteraction';
 export * from './limit/DjsSessionLimit';
+export * from './limit/DjsSessionLimitBuilder';
 export * from './limit/DjsSessionLimitResolvable';
 export * from './middleware/start/AbstractSessionStartMiddleware';
 export * from './middleware/start/DjsSessionStartMiddlewareResolvable';

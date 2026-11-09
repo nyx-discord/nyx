@@ -77,7 +77,7 @@ plugin.getSessionLimits().register(limit);
 ```ts twoslash
 import {
   DjsSessionPlugin,
-  SessionLimitBuilder,
+  DjsSessionLimitBuilder,
   SessionLimitScope,
   SessionExceedAction,
   AbstractSession,
@@ -88,7 +88,7 @@ import type { DjsInteractionTypes } from '@nyx-discord/djs';
 declare const plugin: DjsSessionPlugin;
 declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
-const limit = new SessionLimitBuilder<DjsInteractionTypes>()
+const limit = new DjsSessionLimitBuilder()
   .setSession(MySession)
   .addRule((rule) =>
     rule
@@ -105,7 +105,7 @@ plugin.getSessionLimits().register(limit);
 ```ts twoslash
 import {
   CoreSessionPlugin,
-  SessionLimitBuilder,
+  CoreSessionLimitBuilder,
   SessionLimitScope,
   SessionExceedAction,
   AbstractSession,
@@ -116,7 +116,7 @@ import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
 declare const plugin: CoreSessionPlugin;
 declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
 // ---cut---
-const limit = new SessionLimitBuilder<CoreInteractionTypes>()
+const limit = new CoreSessionLimitBuilder()
   .setSession(MySession)
   .addRule((rule) =>
     rule

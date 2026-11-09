@@ -7,6 +7,7 @@ export * from './filter/update/CoreSessionUpdateFilterResolvable';
 export * from './interaction/CoreSessionStartInteraction';
 export * from './interaction/CoreSessionUpdateInteraction';
 export * from './limit/CoreSessionLimit';
+export * from './limit/CoreSessionLimitBuilder';
 export * from './limit/CoreSessionLimitResolvable';
 export * from './middleware/start/AbstractSessionStartMiddleware';
 export * from './middleware/start/CoreSessionStartMiddlewareResolvable';

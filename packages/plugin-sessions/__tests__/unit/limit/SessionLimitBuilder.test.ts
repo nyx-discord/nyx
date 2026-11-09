@@ -1,10 +1,14 @@
+import type { CoreSessionLimit } from '../../../src/djs-core';
+import { CoreSessionLimitBuilder } from '../../../src/djs-core';
 import {
+  DjsSessionLimitBuilder,
+  DjsSessionPlugin,
   SessionLimitBuilder,
   SessionLimitRuleBuilder,
   SessionLimitScope,
   SessionExceedAction,
 } from '#src';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { MockSession } from '#mocks/MockSession';
 
 describe('SessionLimitBuilder', () => {
@@ -89,5 +93,28 @@ describe('SessionLimitBuilder', () => {
       .toSessionLimit();
 
     expect(limit.predicate).toBe(predicate);
+  });
+
+  describe('adapter builders', () => {
+    it('registers a DjsSessionLimitBuilder limit without a type argument', () => {
+      const plugin = DjsSessionPlugin.create();
+      const limit = new DjsSessionLimitBuilder()
+        .setSession(MockSession)
+        .addRule((rule) => rule.setMax(1).setScope(SessionLimitScope.User))
+        .toSessionLimit();
+
+      plugin.getSessionLimits().register(limit);
+
+      expect(plugin.getSessionLimits().getPolicies().get(MockSession)).toEqual(
+        [limit],
+      );
+    });
+
+    it('builds a CoreSessionLimit with CoreSessionLimitBuilder', () => {
+      expectTypeOf<
+        ReturnType<CoreSessionLimitBuilder['toSessionLimit']>
+      >().toEqualTypeOf<CoreSessionLimit>();
+      expect(new CoreSessionLimitBuilder()).toBeInstanceOf(SessionLimitBuilder);
+    });
   });
 });
