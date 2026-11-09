@@ -43,10 +43,19 @@ jobs:
             echo "dir=guide@${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
           fi
 
+      # build docs to avoid depending on the Typedoc deploy having finished first,
+      # since the guide links entities from build/docs/entities.json
+      - name: Build packages
+        run: pnpm turbo run build --filter="./packages/*"
+
+      - name: Build Typedoc
+        run: pnpm typedoc
+
       - name: Build website
         run: pnpm turbo run build --filter=@nyx-discord/guide
         env:
           NEXT_PUBLIC_BASE_PATH: /nyx/${{ steps.dest.outputs.dir }}
+          NYX_DOCS_ENTITIES_SOURCE: local
 
       # Popular action to deploy to GitHub Pages:
       # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
