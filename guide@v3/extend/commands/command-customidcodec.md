@@ -21,7 +21,7 @@ Create a custom codec by either:
 * Extending <DocsLink pkg='base' name='DefaultCommandCustomIdCodec' decorated={false} /> (<BaseMention />'s implementation, recommended for less work).
 * Implementing <DocsLink pkg='base' name='CommandCustomIdCodec' decorated={false} /> (<BaseMention />'s interface).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs';
@@ -36,6 +36,15 @@ import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs-core';
 class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/http';
+
+class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {}
+```
+  </Tab>
 </Tabs>
 </Step>
 <Step>
@@ -43,7 +52,7 @@ class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {}
 
 Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut---
@@ -68,6 +77,25 @@ import type { NyxBot } from '@nyx-discord/djs-core';
 declare const bot: NyxBot;
 // ---cut---
 import { DefaultCommandCustomIdCodec } from '@nyx-discord/djs-core';
+
+class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {
+  /** Your overrides */
+}
+
+const customIdCodec = MyCommandCustomIdCodec.create();
+
+bot.getCommandManager().setCustomIdCodec(customIdCodec);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut---
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+import { DefaultCommandCustomIdCodec } from '@nyx-discord/http';
 
 class MyCommandCustomIdCodec extends DefaultCommandCustomIdCodec {
   /** Your overrides */

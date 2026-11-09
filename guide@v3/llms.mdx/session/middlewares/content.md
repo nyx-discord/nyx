@@ -16,69 +16,69 @@ For general information about middlewares, you must first read the general [Midd
 Either:
 - Create a class that extends `BaseSessionStartMiddleware` or `BaseSessionUpdateMiddleware` and implements the `check()` method.
 ```ts twoslash
-  import {
-    AbstractSessionStartMiddleware,
-    AbstractSessionUpdateMiddleware
-  } from '@nyx-discord/plugin-sessions/djs';
-  import type {
-    DjsInteractionTypes,
-    Metadata,
-    MiddlewareResponse,
-  } from '@nyx-discord/djs';
-  import type { Session, DjsSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs';
+import {
+  AbstractSessionStartMiddleware,
+  AbstractSessionUpdateMiddleware
+} from '@nyx-discord/plugin-sessions/djs';
+import type {
+  DjsInteractionTypes,
+  Metadata,
+  MiddlewareResponse,
+} from '@nyx-discord/djs';
+import type { Session, DjsSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs';
 
-  class MyStartMiddleware extends AbstractSessionStartMiddleware {
-    public async check(
-      session: Session<unknown, DjsInteractionTypes>,
-      meta: Metadata
-    ): Promise<MiddlewareResponse> {
-      // Do some pre-processing logic
-      return this.true();
-    }
+class MyStartMiddleware extends AbstractSessionStartMiddleware {
+  public async check(
+    session: Session<unknown, DjsInteractionTypes>,
+    meta: Metadata
+  ): Promise<MiddlewareResponse> {
+    // Do some pre-processing logic
+    return this.true();
   }
+}
 
-  class MyUpdateMiddleware extends AbstractSessionUpdateMiddleware {
-    public async check(
-      session: Session<unknown, DjsInteractionTypes>,
-      interaction: DjsSessionUpdateInteraction,
-      meta: Metadata
-    ): Promise<MiddlewareResponse> {
-      return this.true();
-    }
+class MyUpdateMiddleware extends AbstractSessionUpdateMiddleware {
+  public async check(
+    session: Session<unknown, DjsInteractionTypes>,
+    interaction: DjsSessionUpdateInteraction,
+    meta: Metadata
+  ): Promise<MiddlewareResponse> {
+    return this.true();
   }
+}
 ```
 
 - Create a function that returns a `MiddlewareResponse`.
 ```ts twoslash
-  import type { DjsInteractionTypes, Metadata } from '@nyx-discord/djs';
-  import type {
-    SessionStartMiddlewareResolvable,
-    DjsSessionUpdateMiddlewareResolvable,
-    Session,
-    DjsSessionUpdateInteraction
-  } from '@nyx-discord/plugin-sessions/djs';
+import type { DjsInteractionTypes, Metadata } from '@nyx-discord/djs';
+import type {
+  SessionStartMiddlewareResolvable,
+  DjsSessionUpdateMiddlewareResolvable,
+  Session,
+  DjsSessionUpdateInteraction
+} from '@nyx-discord/plugin-sessions/djs';
 
-  const myCallbackStartMiddleware: SessionStartMiddlewareResolvable = async (
-    session: Session<unknown, DjsInteractionTypes>,
-    meta: Metadata
-  ) => {
-    // Do some pre-processing logic
-    return {
-      allowed: true,
-      checkNext: true,
-    };
+const myCallbackStartMiddleware: SessionStartMiddlewareResolvable = async (
+  session: Session<unknown, DjsInteractionTypes>,
+  meta: Metadata
+) => {
+  // Do some pre-processing logic
+  return {
+    allowed: true,
+    checkNext: true,
   };
+};
 
-  const myCallbackUpdateMiddleware: DjsSessionUpdateMiddlewareResolvable = async (
-    session: Session<unknown, DjsInteractionTypes>,
-    interaction: DjsSessionUpdateInteraction,
-    meta: Metadata
-  ) => {
-    return {
-      allowed: true,
-      checkNext: true,
-    };
+const myCallbackUpdateMiddleware: DjsSessionUpdateMiddlewareResolvable = async (
+  session: Session<unknown, DjsInteractionTypes>,
+  interaction: DjsSessionUpdateInteraction,
+  meta: Metadata
+) => {
+  return {
+    allowed: true,
+    checkNext: true,
   };
+};
 ```
 
 </Step>
@@ -88,7 +88,7 @@ Either:
 
 Register it to the executor's `MiddlewareList`:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -116,6 +116,32 @@ executor.getUpdateMiddleware().add(new MyUpdateMiddleware(), myCallbackUpdateMid
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs-core';
+import type {
+  AbstractSessionStartMiddleware,
+  AbstractSessionUpdateMiddleware,
+  SessionStartMiddlewareResolvable,
+  CoreSessionUpdateMiddlewareResolvable,
+  CoreSessionPlugin
+} from '@nyx-discord/plugin-sessions/djs-core';
+
+declare const MyStartMiddleware: new () => AbstractSessionStartMiddleware;
+declare const MyUpdateMiddleware: new () => AbstractSessionUpdateMiddleware;
+
+declare const myCallbackUpdateMiddleware: CoreSessionUpdateMiddlewareResolvable;
+declare const myCallbackStartMiddleware: SessionStartMiddlewareResolvable;
+declare const sessionPlugin: CoreSessionPlugin;
+// ---cut---
+const executor = sessionPlugin.getExecutor();
+
+executor.getStartMiddleware().add(new MyStartMiddleware(), myCallbackStartMiddleware);
+executor.getUpdateMiddleware().add(new MyUpdateMiddleware(), myCallbackUpdateMiddleware);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
 import type {
   AbstractSessionStartMiddleware,
   AbstractSessionUpdateMiddleware,

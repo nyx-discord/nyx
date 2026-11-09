@@ -14,7 +14,7 @@ Initially, the item's values are received at the session's constructor. You can 
 ### Creation [#creation-1]
 Extend the `AbstractListPaginationSession` class:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractListPaginationSession } from '@nyx-discord/plugin-sessions/djs';
@@ -26,6 +26,18 @@ class MyListPaginationSession extends AbstractListPaginationSession<number> {}
 ```
   </Tab>
   <Tab>
+```ts twoslash
+import { AbstractListPaginationSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyListPaginationSession extends AbstractListPaginationSession<number> {}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
 ```ts twoslash
 import { AbstractListPaginationSession } from '@nyx-discord/plugin-sessions/djs-core';
 
@@ -56,7 +68,7 @@ Implement it the same way you'd implement a `PaginationSession`.
 
 Instantiate and start your session the same way as a regular one, but passing the list of items:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -97,6 +109,28 @@ const session = new MyListPaginationSession({
 await session.start();
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
+import { AbstractListPaginationSession } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+declare const startInteraction: ToEventProps<APIChatInputApplicationCommandInteraction>;
+declare const bot: NyxBot;
+declare const id: string;
+// @ts-expect-error Incomplete example
+class MyListPaginationSession extends AbstractListPaginationSession<number, void> {}
+// ---cut---
+const session = new MyListPaginationSession({
+  bot,
+  id,
+  startInteraction,
+  items: [1, 2, 3, /** ... */]
+});
+await session.start();
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -106,7 +140,7 @@ await session.start();
 
 This example will paginate a list of the currently cached guilds:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -256,11 +290,88 @@ class GuildsPaginationSession extends AbstractListPaginationSession<Guild, void>
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
+import {
+  AbstractListPaginationSession,
+  type CoreSessionUpdateInteraction,
+  type CoreSessionStartInteraction
+} from '@nyx-discord/plugin-sessions/djs-core';
+import { ContainerBuilder, SectionBuilder, MessageFlags, type Guild } from 'discord.js';
+
+class GuildsPaginationSession extends AbstractListPaginationSession<Guild, void> {
+//                                                                  ^^^^^
+  constructor(options: {
+    bot: NyxBot;
+    id: string;
+    startInteraction: CoreSessionStartInteraction;
+    items: Guild[];
+  }) {
+    super(options);
+  }
+
+  public async onStart() {
+    const container = this.generateContainer();
+    const row = this.buildBasicPageRow();
+
+    await this.startInteraction.api.interactions.reply(
+      this.startInteraction.data.id,
+      this.startInteraction.data.token,
+      { components: [container.toJSON(), row] }
+    );
+  }
+
+  protected async updatePage(interaction: CoreSessionUpdateInteraction): Promise<boolean> {
+    const container = this.generateContainer();
+    const row = this.buildBasicPageRow();
+
+    await interaction.api.interactions.updateMessage(
+      interaction.data.id,
+      interaction.data.token,
+      { components: [container.toJSON(), row] }
+    );
+    return true;
+  }
+
+  public async onEnd() {
+    const container = this.generateContainer();
+    await this.startInteraction.api.interactions.editReply(
+      this.startInteraction.data.application_id,
+      this.startInteraction.data.token,
+      { components: [container.toJSON()] }
+    );
+  }
+
+  protected generateContainer(): ContainerBuilder {
+    const guilds = this.getCurrentPageItems(); // [!code highlight]
+    const container = new ContainerBuilder()
+      .addTextDisplayComponents((textDisplay) => textDisplay.setContent('# Guilds'));
+
+    for (const guild of guilds) {
+      const icon = guild.iconURL();
+      if (icon) {
+        container.addSectionComponents((section) => section
+          .addTextDisplayComponents((textDisplay) => textDisplay.setContent(guild.name))
+          .setThumbnailAccessory((thumbnail) => thumbnail.setURL(icon))
+        );
+      } else {
+        container.addTextDisplayComponents((textDisplay) => textDisplay.setContent(guild.name));
+      }
+    }
+
+    return container;
+  }
+}
+```
+  </Tab>
 </Tabs>
 
 You can then use it in your command or anywhere where you have an interaction:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -297,6 +408,40 @@ await session.start();
 ```ts twoslash
 // ---cut-start---
 import type { NyxBot } from '@nyx-discord/djs-core';
+import { AbstractListPaginationSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+import type { Guild, ContainerBuilder } from 'discord.js';
+
+class GuildsPaginationSession extends AbstractListPaginationSession<Guild, void> {
+  constructor(options: {
+    bot: NyxBot;
+    id: string;
+    startInteraction: CoreSessionStartInteraction;
+    items: Guild[];
+  }) {
+    super(options);
+  }
+
+  public async onStart() {}
+  public async onEnd() {}
+  protected async updatePage() { return true; }
+  protected generateContainer() { return null as unknown as ContainerBuilder; }
+}
+
+declare const startInteraction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+declare const items: Guild[];
+const id = 'mySessionId';
+// ---cut-end---
+const session = new GuildsPaginationSession({ bot, id, startInteraction, items });
+await session.start();
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/http';
 import { AbstractListPaginationSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
 import type { Guild, ContainerBuilder } from 'discord.js';
 

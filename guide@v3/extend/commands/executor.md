@@ -21,7 +21,7 @@ Create a custom executor by either:
 * Extending `DefaultCommandExecutor` (recommended, less work).
 * Implementing `CommandExecutor`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultCommandExecutor } from '@nyx-discord/djs';
@@ -36,6 +36,15 @@ import { DefaultCommandExecutor } from '@nyx-discord/djs-core';
 class MyCommandExecutor extends DefaultCommandExecutor {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandExecutor } from '@nyx-discord/http';
+
+class MyCommandExecutor extends DefaultCommandExecutor {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -44,7 +53,7 @@ class MyCommandExecutor extends DefaultCommandExecutor {}
 
 Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultCommandExecutor } from '@nyx-discord/djs';
@@ -60,6 +69,19 @@ bot.getCommandManager().setExecutor(MyCommandExecutor.create());
 ```ts twoslash
 import { DefaultCommandExecutor } from '@nyx-discord/djs-core';
 import type { Bot } from '@nyx-discord/djs-core';
+declare const bot: Bot;
+// ---cut---
+class MyCommandExecutor extends DefaultCommandExecutor {}
+
+bot.getCommandManager().setExecutor(MyCommandExecutor.create());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandExecutor } from '@nyx-discord/http';
+import type { Bot } from '@nyx-discord/http';
 declare const bot: Bot;
 // ---cut---
 class MyCommandExecutor extends DefaultCommandExecutor {}

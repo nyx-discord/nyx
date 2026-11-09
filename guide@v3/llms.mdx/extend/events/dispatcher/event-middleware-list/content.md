@@ -23,7 +23,7 @@ Create a custom middleware list by either:
 * Extending `SubscriberMiddlewareList` (recommended, less work).
 * Implementing `MiddlewareList<EventSubscriberMiddlewareResolvable>`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { SubscriberMiddlewareList } from '@nyx-discord/djs';
@@ -38,6 +38,15 @@ import { SubscriberMiddlewareList } from '@nyx-discord/djs-core';
 class MyMiddlewareList extends SubscriberMiddlewareList {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { SubscriberMiddlewareList } from '@nyx-discord/http';
+
+class MyMiddlewareList extends SubscriberMiddlewareList {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -46,7 +55,7 @@ class MyMiddlewareList extends SubscriberMiddlewareList {}
 
 Inject it directly when creating the dispatcher:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import {
@@ -82,6 +91,31 @@ declare const bus: EventBus<{ someEvent: [string] }>;
 class MyMiddlewareList extends SubscriberMiddlewareList {}
 // ---cut---
 import { BasicSyncEventDispatcher } from '@nyx-discord/djs-core';
+
+// Works the same with the async dispatcher
+const dispatcher = BasicSyncEventDispatcher.create({
+  injections: {
+    middleware: MyMiddlewareList.create(),
+  },
+});
+
+bus.setDispatcher(dispatcher);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import {
+  SubscriberMiddlewareList,
+  type EventBus,
+} from '@nyx-discord/http';
+
+declare const bus: EventBus<{ someEvent: [string] }>;
+
+class MyMiddlewareList extends SubscriberMiddlewareList {}
+// ---cut---
+import { BasicSyncEventDispatcher } from '@nyx-discord/http';
 
 // Works the same with the async dispatcher
 const dispatcher = BasicSyncEventDispatcher.create({

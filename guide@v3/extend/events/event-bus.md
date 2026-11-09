@@ -21,7 +21,7 @@ Create a custom event bus by either:
 * Extending `BasicEventEmitterBus` (recommended if wrapping a Node.js `EventEmitter`).
 * Implementing `EventBus` from scratch.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { BasicEventBus } from '@nyx-discord/djs';
@@ -36,6 +36,15 @@ import { BasicEventBus } from '@nyx-discord/djs-core';
 class MyEventBus extends BasicEventBus<{ myEvent: [string] }> {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { BasicEventBus } from '@nyx-discord/http';
+
+class MyEventBus extends BasicEventBus<{ myEvent: [string] }> {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -44,7 +53,7 @@ class MyEventBus extends BasicEventBus<{ myEvent: [string] }> {}
 
 If you are wrapping an external source, you can listen to it and call `emit()`:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { BasicEventBus, BasicSyncEventDispatcher, DefaultMetadataFactory } from '@nyx-discord/djs';
@@ -75,6 +84,34 @@ class MySocketBus extends BasicEventBus<{ message: [string] }> {
 ```ts twoslash
 import { BasicEventBus, BasicSyncEventDispatcher, DefaultMetadataFactory } from '@nyx-discord/djs-core';
 import type { Identifier, MetadataFactory } from '@nyx-discord/djs-core';
+
+// Mock external source
+declare const socket: { on: (event: string, cb: (data: string) => void) => void };
+
+class MySocketBus extends BasicEventBus<{ message: [string] }> {
+  constructor(
+    metaFactory: MetadataFactory = new DefaultMetadataFactory(),
+  ) {
+    super(
+        (a, b) => a.getPriority() - b.getPriority(),
+        BasicSyncEventDispatcher.create(),
+        metaFactory
+    );
+
+    // Listen to external source and emit internally
+    socket.on('message', (data) => {
+      this.emit('message', [data]);
+    });
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { BasicEventBus, BasicSyncEventDispatcher, DefaultMetadataFactory } from '@nyx-discord/http';
+import type { Identifier, MetadataFactory } from '@nyx-discord/http';
 
 // Mock external source
 declare const socket: { on: (event: string, cb: (data: string) => void) => void };

@@ -62,7 +62,7 @@ Assuming the exported command classes have their `data.name` set the same as the
 
 By default, commands are automatically registered via `commandManager.addCommands()`:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot, DjsInteractionTypes } from '@nyx-discord/djs';
@@ -83,11 +83,23 @@ import { CommandLoader } from '@nyx-discord/loaders';
 await CommandLoader.load<CoreInteractionTypes>({ bot, path: './dist/commands' });
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot, CoreInteractionTypes } from '@nyx-discord/http';
+declare const bot: NyxBot<any>;
+// ---cut---
+import { CommandLoader } from '@nyx-discord/loaders';
+
+await CommandLoader.load<CoreInteractionTypes>({ bot, path: './dist/commands' });
+```
+  </Tab>
 </Tabs>
 
 Pass `register: false` to handle registration yourself:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot, DjsInteractionTypes } from '@nyx-discord/djs';
@@ -107,6 +119,24 @@ bot.getCommandManager().addCommands(...commands);
   <Tab>
 ```ts twoslash
 import type { NyxBot, CoreInteractionTypes } from '@nyx-discord/djs-core';
+declare const bot: NyxBot<any>;
+// ---cut---
+import { CommandLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load<CoreInteractionTypes>({
+  bot,
+  path: './dist/commands',
+  register: false,
+});
+
+bot.getCommandManager().addCommands(...commands);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot, CoreInteractionTypes } from '@nyx-discord/http';
 declare const bot: NyxBot<any>;
 // ---cut---
 import { CommandLoader } from '@nyx-discord/loaders';
@@ -170,7 +200,7 @@ export class PingCommand extends AbstractStandaloneCommand {
 
 Alternatively, you can specify a `static create(bot)` factory:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractStandaloneCommand } from '@nyx-discord/djs';
@@ -217,6 +247,31 @@ export class PingCommand extends AbstractStandaloneCommand {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+import type { Metadata, NyxBot } from '@nyx-discord/http';
+import { SlashCommandBuilder } from 'discord.js';
+
+export class PingCommand extends AbstractStandaloneCommand {
+  protected readonly data = new SlashCommandBuilder()
+    .setName('ping')
+    .setDescription('Replies with pong')
+    .toJSON();
+
+  public static create(bot: NyxBot<any>) {
+    return new PingCommand();
+  }
+
+  // ...
+  // ---cut-start---
+  public async execute(interaction: any, meta: Metadata) {}
+  // ---cut-end---
+}
+```
+  </Tab>
 </Tabs>
 
 </Tab>
@@ -224,7 +279,7 @@ export class PingCommand extends AbstractStandaloneCommand {
 
 Child commands (subcommands and subcommand groups) must accept a `parent` argument in their constructor:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractSubCommand } from '@nyx-discord/djs';
@@ -270,11 +325,36 @@ export class BanCommand extends AbstractSubCommand {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/http';
+import type { AbstractParentCommand, AbstractSubCommandGroup, Metadata } from '@nyx-discord/http';
+import type { ToEventProps, APIChatInputApplicationCommandInteraction } from '@discordjs/core';
+import { SlashCommandSubcommandBuilder } from 'discord.js';
+
+export class BanCommand extends AbstractSubCommand {
+  data = new SlashCommandSubcommandBuilder()
+    .setName('ban')
+    .setDescription('Ban a user')
+    .toJSON();
+
+  constructor(parent: AbstractParentCommand | AbstractSubCommandGroup) {
+    super(parent);
+  }
+
+  async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>, meta: Metadata) {
+    // ...
+  }
+}
+```
+  </Tab>
 </Tabs>
 
 Alternatively, you can specify a `static create(bot, parent)` factory:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractSubCommand } from '@nyx-discord/djs';
@@ -302,6 +382,31 @@ export class BanCommand extends AbstractSubCommand {
 ```ts twoslash
 import { AbstractSubCommand } from '@nyx-discord/djs-core';
 import type { AbstractParentCommand, AbstractSubCommandGroup, NyxBot } from '@nyx-discord/djs-core';
+import { SlashCommandSubcommandBuilder } from 'discord.js';
+
+export class BanCommand extends AbstractSubCommand {
+  protected readonly data = new SlashCommandSubcommandBuilder()
+    .setName('ban')
+    .setDescription('Ban a user')
+    .toJSON();
+
+  public static create(bot: NyxBot<any>, parent: AbstractParentCommand | AbstractSubCommandGroup) {
+    return new BanCommand(parent);
+  }
+
+  // ...
+  // ---cut-start---
+  public async execute() {}
+  // ---cut-end---
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSubCommand } from '@nyx-discord/http';
+import type { AbstractParentCommand, AbstractSubCommandGroup, NyxBot } from '@nyx-discord/http';
 import { SlashCommandSubcommandBuilder } from 'discord.js';
 
 export class BanCommand extends AbstractSubCommand {

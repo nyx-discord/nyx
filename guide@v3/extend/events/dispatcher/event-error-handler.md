@@ -23,7 +23,7 @@ Create a custom error handler by either:
 * Extending `BasicErrorHandler<AnyEventSubscriber, EventDispatchArgs>` (recommended, less work).
 * Implementing `EventSubscriberErrorHandler`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { BasicErrorHandler, type AnyEventSubscriber, type EventDispatchArgs } from '@nyx-discord/djs';
@@ -38,6 +38,15 @@ import { BasicErrorHandler, type AnyEventSubscriber, type EventDispatchArgs } fr
 class MyErrorHandler extends BasicErrorHandler<AnyEventSubscriber, EventDispatchArgs> {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { BasicErrorHandler, type AnyEventSubscriber, type EventDispatchArgs } from '@nyx-discord/http';
+
+class MyErrorHandler extends BasicErrorHandler<AnyEventSubscriber, EventDispatchArgs> {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -46,7 +55,7 @@ class MyErrorHandler extends BasicErrorHandler<AnyEventSubscriber, EventDispatch
 
 Inject it directly when creating the dispatcher:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import {
@@ -95,12 +104,38 @@ const dispatcher = BasicSyncEventDispatcher.create({
 bus.setDispatcher(dispatcher);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import {
+  BasicErrorHandler,
+  type AnyEventSubscriber,
+  type EventDispatchArgs,
+  type EventBus,
+} from '@nyx-discord/http';
+
+declare const bus: EventBus<{ someEvent: [string] }>;
+
+class MyErrorHandler extends BasicErrorHandler<AnyEventSubscriber, EventDispatchArgs> {}
+// ---cut---
+import { BasicSyncEventDispatcher } from '@nyx-discord/http';
+
+const dispatcher = BasicSyncEventDispatcher.create({
+  injections: {
+    errorHandler: MyErrorHandler.create(),
+  },
+});
+
+bus.setDispatcher(dispatcher);
+```
+  </Tab>
 </Tabs>
 
 <Callout type="warn" title="Using the Bot's logger">
 To use the bot logger as fallback, create a handler with `createWithFallbackLogger` and inject it:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import {
@@ -141,6 +176,38 @@ import {
   type EventDispatchArgs,
   type EventBus,
 } from '@nyx-discord/djs-core';
+
+type MyEvents = {
+  someEvent: [string];
+};
+
+declare const bus: EventBus<MyEvents>;
+
+const errorHandler = BasicErrorHandler.createWithFallbackLogger<AnyEventSubscriber, EventDispatchArgs>(
+  (_error, _subscriber, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+);
+
+const dispatcher = BasicSyncEventDispatcher.create({
+  injections: {
+    errorHandler,
+  },
+});
+
+bus.setDispatcher(dispatcher);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import {
+  BasicSyncEventDispatcher,
+  BasicErrorHandler,
+  TypedFields,
+  type AnyEventSubscriber,
+  type EventDispatchArgs,
+  type EventBus,
+} from '@nyx-discord/http';
 
 type MyEvents = {
   someEvent: [string];

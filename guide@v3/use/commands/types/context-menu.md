@@ -13,7 +13,7 @@ Context menu commands are commands executed on special menus. Currently Discord 
 
 Extend the `AbstractContextMenuCommand` class:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs';
@@ -32,6 +32,17 @@ import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
 class MyContextMenuCommand extends AbstractContextMenuCommand {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/http';
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyContextMenuCommand extends AbstractContextMenuCommand {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -43,44 +54,68 @@ Implement `data` that stores the command's data, and the respective `executeX()`
 - `executeMessage()` for message context menus.
 - `executeUser()` for user context menus.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-    import { ApplicationCommandType, ContextMenuCommandBuilder, type MessageContextMenuCommandInteraction } from 'discord.js';
-    import { AbstractContextMenuCommand } from '@nyx-discord/djs';
+import { ApplicationCommandType, ContextMenuCommandBuilder, type MessageContextMenuCommandInteraction } from 'discord.js';
+import { AbstractContextMenuCommand } from '@nyx-discord/djs';
 
-    class MyContextMenuCommand extends AbstractContextMenuCommand {
-      protected readonly data = new ContextMenuCommandBuilder()
-        .setName('My Context Menu')
-        .setType(ApplicationCommandType.User) // or ApplicationCommandType.Message
-        .toJSON();
+class MyContextMenuCommand extends AbstractContextMenuCommand {
+  protected readonly data = new ContextMenuCommandBuilder()
+    .setName('My Context Menu')
+    .setType(ApplicationCommandType.User) // or ApplicationCommandType.Message
+    .toJSON();
 
-      public async executeMessage(interaction: MessageContextMenuCommandInteraction) {
-        await interaction.reply('Hello!');
-      }
-    }
+  public async executeMessage(interaction: MessageContextMenuCommandInteraction) {
+    await interaction.reply('Hello!');
+  }
+}
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { ApplicationCommandType } from '@discordjs/core';
-    import type { APIMessageApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
-    import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
+import { ApplicationCommandType } from '@discordjs/core';
+import type { APIMessageApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
 
-    class MyContextMenuCommand extends AbstractContextMenuCommand {
-      protected readonly data = {
-        name: 'My Context Menu',
-        type: ApplicationCommandType.User, // or ApplicationCommandType.Message
-      } as const;
+class MyContextMenuCommand extends AbstractContextMenuCommand {
+  protected readonly data = {
+    name: 'My Context Menu',
+    type: ApplicationCommandType.User, // or ApplicationCommandType.Message
+  } as const;
 
-      public async executeMessage(interaction: ToEventProps<APIMessageApplicationCommandInteraction>) {
-        await interaction.api.interactions.reply(
-          interaction.data.id,
-          interaction.data.token,
-          { content: 'Hello!' },
-        );
-      }
-    }
+  public async executeMessage(interaction: ToEventProps<APIMessageApplicationCommandInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Hello!' },
+    );
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { ApplicationCommandType } from '@discordjs/core';
+import type { APIMessageApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractContextMenuCommand } from '@nyx-discord/http';
+
+class MyContextMenuCommand extends AbstractContextMenuCommand {
+  protected readonly data = {
+    name: 'My Context Menu',
+    type: ApplicationCommandType.User, // or ApplicationCommandType.Message
+  } as const;
+
+  public async executeMessage(interaction: ToEventProps<APIMessageApplicationCommandInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Hello!' },
+    );
+  }
+}
 ```
   </Tab>
 </Tabs>
@@ -91,7 +126,7 @@ Implement `data` that stores the command's data, and the respective `executeX()`
 
 Instantiate and register it to a bot's `CommandManager`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { ContextMenuCommand, NyxBot } from '@nyx-discord/djs';
@@ -110,6 +145,17 @@ declare const bot: NyxBot;
 await bot.getCommandManager().addCommands(new MyContextMenuCommand());
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { ContextMenuCommand, NyxBot } from '@nyx-discord/http';
+declare const MyContextMenuCommand: new () => ContextMenuCommand;
+declare const bot: NyxBot;
+// ---cut---
+await bot.getCommandManager().addCommands(new MyContextMenuCommand());
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -120,7 +166,7 @@ await bot.getCommandManager().addCommands(new MyContextMenuCommand());
 
 By default, all commands will be deployed in the global scope. If you want to deploy them in a specific guild, you can do so by implementing the `getGuilds()` method.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs';
@@ -138,6 +184,22 @@ class MyCommand extends AbstractContextMenuCommand {
   <Tab>
 ```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractContextMenuCommand {
+  public getGuilds() {
+    return ['GUILD_ID', 'ANOTHER_GUILD_ID'];
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/http';
 
 // ---cut-start---
 // @ts-expect-error Incomplete example
@@ -172,7 +234,7 @@ While commands internally save a `Metadata`, the return type of `#getMeta()` is 
 meaning that external objects can read the object, but not modify it.
 </Callout>
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs';
@@ -194,6 +256,26 @@ const value = meta['someKey']; // 'someValue'
   <Tab>
 ```ts twoslash
 import { AbstractContextMenuCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractContextMenuCommand {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const command = new MyCommand();
+const meta = command.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractContextMenuCommand } from '@nyx-discord/http';
 
 // ---cut-start---
 // @ts-expect-error Incomplete example

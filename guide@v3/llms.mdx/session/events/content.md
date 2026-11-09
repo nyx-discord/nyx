@@ -10,7 +10,7 @@ This is useful for monitoring, logging, or any other custom logic you want to ex
 
 The following events are available:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { SessionEventEnum } from '@nyx-discord/plugin-sessions/djs';
@@ -21,6 +21,17 @@ SessionEventEnum.
 ```
   </Tab>
   <Tab>
+```ts twoslash
+import { SessionEventEnum } from '@nyx-discord/plugin-sessions/djs-core';
+
+// @noErrors
+SessionEventEnum.
+//               ^|
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
 ```ts twoslash
 import { SessionEventEnum } from '@nyx-discord/plugin-sessions/djs-core';
 
@@ -45,7 +56,7 @@ Create a subscriber that will listen to a given event, use the `SessionEventArgs
 
 Subscribe to the event using the `SessionManager`'s `subscribe()` method.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -66,6 +77,21 @@ import { EventSubscriber } from '@nyx-discord/djs-core';
 import type { SessionEventArgs, CoreSessionPlugin } from '@nyx-discord/plugin-sessions/djs-core';
 declare const subscriber: EventSubscriber<SessionEventArgs, keyof SessionEventArgs>;
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+declare const sessionPlugin: CoreSessionPlugin;
+// ---cut-end---
+await sessionPlugin.subscribe(subscriber);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { EventSubscriber } from '@nyx-discord/http';
+import type { SessionEventArgs, CoreSessionPlugin } from '@nyx-discord/plugin-sessions/djs-core';
+declare const subscriber: EventSubscriber<SessionEventArgs, keyof SessionEventArgs>;
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 declare const sessionPlugin: CoreSessionPlugin;
 // ---cut-end---

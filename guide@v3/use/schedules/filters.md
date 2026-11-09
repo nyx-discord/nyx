@@ -18,59 +18,88 @@ For more general information about filters, you must first read the general [Fil
 Either:
 
 - Create a class that extends `AbstractScheduleFilter` and implements the `check()` method.
- <Tabs items={['discord.js', '@discordjs/core']}>
+ <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
- // ---cut---
- import { AbstractScheduleFilter } from '@nyx-discord/djs';
- import type { Schedule, Metadata } from '@nyx-discord/djs';
+// ---cut---
+import { AbstractScheduleFilter } from '@nyx-discord/djs';
+import type { Schedule, Metadata } from '@nyx-discord/djs';
 
- class MyFilter extends AbstractScheduleFilter {
-   public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
-     // Do some checks
-     return true; // or false if the schedule should not be executed
-   }
- }
+class MyFilter extends AbstractScheduleFilter {
+  public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the schedule should not be executed
+  }
+}
  ```
   </Tab>
   <Tab>
 ```ts twoslash
- // ---cut---
- import { AbstractScheduleFilter } from '@nyx-discord/djs-core';
- import type { Schedule, Metadata } from '@nyx-discord/djs-core';
+// ---cut---
+import { AbstractScheduleFilter } from '@nyx-discord/djs-core';
+import type { Schedule, Metadata } from '@nyx-discord/djs-core';
 
- class MyFilter extends AbstractScheduleFilter {
-   public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
-     // Do some checks
-     return true; // or false if the schedule should not be executed
-   }
- }
+class MyFilter extends AbstractScheduleFilter {
+  public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the schedule should not be executed
+  }
+}
+ ```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut---
+import { AbstractScheduleFilter } from '@nyx-discord/http';
+import type { Schedule, Metadata } from '@nyx-discord/http';
+
+class MyFilter extends AbstractScheduleFilter {
+  public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
+    // Do some checks
+    return true; // or false if the schedule should not be executed
+  }
+}
  ```
   </Tab>
 </Tabs>
 
 - Create a function that returns a boolean or a Promise that resolves to a boolean.
- <Tabs items={['discord.js', '@discordjs/core']}>
+ <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
- // ---cut---
- import { type ScheduleFilterResolvable } from '@nyx-discord/djs';
+// ---cut---
+import { type ScheduleFilterResolvable } from '@nyx-discord/djs';
 
- const myFilter: ScheduleFilterResolvable = async (schedule, meta) => {
-   // Do some checks
-   return true; // or false if the schedule should not be executed
- };
+const myFilter: ScheduleFilterResolvable = async (schedule, meta) => {
+  // Do some checks
+  return true; // or false if the schedule should not be executed
+};
  ```
   </Tab>
   <Tab>
 ```ts twoslash
- // ---cut---
- import { type ScheduleFilterResolvable } from '@nyx-discord/djs-core';
+// ---cut---
+import { type ScheduleFilterResolvable } from '@nyx-discord/djs-core';
 
- const myFilter: ScheduleFilterResolvable = async (schedule, meta) => {
-   // Do some checks
-   return true; // or false if the schedule should not be executed
- };
+const myFilter: ScheduleFilterResolvable = async (schedule, meta) => {
+  // Do some checks
+  return true; // or false if the schedule should not be executed
+};
+ ```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut---
+import { type ScheduleFilterResolvable } from '@nyx-discord/http';
+
+const myFilter: ScheduleFilterResolvable = async (schedule, meta) => {
+  // Do some checks
+  return true; // or false if the schedule should not be executed
+};
  ```
   </Tab>
 </Tabs>
@@ -84,7 +113,7 @@ Override the `filter` property in your schedule:
 
 - If you created a class, instantiate it:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractSchedule } from '@nyx-discord/djs';
@@ -115,11 +144,28 @@ class MySchedule extends AbstractSchedule {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/http';
+
+// ---cut-start---
+import { AbstractScheduleFilter } from '@nyx-discord/http';
+// @ts-expect-error Incomplete example
+class MyFilter extends AbstractScheduleFilter {}
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySchedule extends AbstractSchedule {
+  protected override readonly filter = new MyFilter();
+}
+```
+  </Tab>
 </Tabs>
 
 - If you created a function, assign it directly:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractSchedule } from '@nyx-discord/djs';
@@ -148,11 +194,27 @@ class MySchedule extends AbstractSchedule {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/http';
+
+// ---cut-start---
+import { type ScheduleFilterResolvable } from '@nyx-discord/http';
+declare const myFilter: ScheduleFilterResolvable;
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySchedule extends AbstractSchedule {
+  protected override readonly filter = myFilter;
+}
+```
+  </Tab>
 </Tabs>
 
 Or use a simple arrow function directly:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractSchedule } from '@nyx-discord/djs';
@@ -183,6 +245,23 @@ class MySchedule extends AbstractSchedule {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/http';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySchedule extends AbstractSchedule {
+  protected override readonly filter = () => {
+    // Do some checks
+    return true;
+  };
+}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -194,7 +273,7 @@ class MySchedule extends AbstractSchedule {
 
 A filter that checks if the system is in maintenance mode, and prevents the schedule from running if it is.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractScheduleFilter } from '@nyx-discord/djs';
@@ -221,13 +300,28 @@ class MaintenanceFilter extends AbstractScheduleFilter {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractScheduleFilter } from '@nyx-discord/http';
+import type { Schedule, Metadata } from '@nyx-discord/http';
+
+class MaintenanceFilter extends AbstractScheduleFilter {
+  public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
+    // Check if the system is in maintenance mode, e.g. from an env variable or database
+    return process.env.MAINTENANCE_MODE !== 'true';
+  }
+}
+```
+  </Tab>
 </Tabs>
 
 ### Production Filter [#production-filter]
 
 A filter that restricts the execution to the production environment.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractScheduleFilter } from '@nyx-discord/djs';
@@ -244,6 +338,20 @@ class ProductionFilter extends AbstractScheduleFilter {
 ```ts twoslash
 import { AbstractScheduleFilter } from '@nyx-discord/djs-core';
 import type { Schedule, Metadata } from '@nyx-discord/djs-core';
+
+class ProductionFilter extends AbstractScheduleFilter {
+  public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {
+    return process.env.NODE_ENV === 'production';
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractScheduleFilter } from '@nyx-discord/http';
+import type { Schedule, Metadata } from '@nyx-discord/http';
 
 class ProductionFilter extends AbstractScheduleFilter {
   public async check(schedule: Schedule, meta: Metadata): Promise<boolean> {

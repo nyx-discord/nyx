@@ -19,7 +19,7 @@ Some examples of sessions are:
 
 This example features many components used in the same session. Some required component properties are omitted for brevity.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { StringSelectMenuBuilder, ButtonBuilder, ActionRowBuilder, ModalBuilder } from 'discord.js';
@@ -151,11 +151,94 @@ class MySession extends AbstractSession {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { StringSelectMenuBuilder, ButtonBuilder, ActionRowBuilder, ModalBuilder } from '@discordjs/builders';
+import { ComponentType } from '@discordjs/core';
+import type {
+  APIMessageComponentButtonInteraction,
+  APIMessageComponentSelectMenuInteraction,
+  APIModalSubmitInteraction,
+  ModalSubmitActionRowComponent,
+  ToEventProps,
+} from '@discordjs/core';
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MySession extends AbstractSession {
+  protected override readonly ttl = 5_000; // End 5 seconds after the last interaction
+
+  public async onStart() {
+    // A select menu that updates this session
+    const selectMenuId = this.buildCustomId('select');
+    const selectMenu = new StringSelectMenuBuilder().setCustomId(selectMenuId);
+    const selectRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
+
+    // A button that updates this session
+    const buttonId = this.buildCustomId('button');
+    const button = new ButtonBuilder().setCustomId(buttonId);
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    await this.startInteraction.api.interactions.reply(
+      this.startInteraction.data.id,
+      this.startInteraction.data.token,
+      { components: [buttonRow.toJSON(), selectRow.toJSON()] },
+    );
+  }
+
+  public async onEnd() {
+    await this.startInteraction.api.interactions.editReply(
+      this.startInteraction.data.application_id,
+      this.startInteraction.data.token,
+      {
+        content: 'Bye from session!',
+        components: [],
+      },
+    );
+  }
+
+  protected async handleButton(interaction: ToEventProps<APIMessageComponentButtonInteraction>) {
+    const modalId = this.buildCustomId('modal');
+    const myModal = new ModalBuilder().setCustomId(modalId);
+    await interaction.api.interactions.createModal(
+      interaction.data.id,
+      interaction.data.token,
+      myModal.toJSON(),
+    );
+    return true;
+  }
+
+  protected async handleSelectMenu(interaction: ToEventProps<APIMessageComponentSelectMenuInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'You selected: ' + interaction.data.data.values[0] },
+    );
+    return true;
+  }
+
+  protected async handleModal(interaction: ToEventProps<APIModalSubmitInteraction>) {
+    const name = interaction.data.data.components
+      .filter((row): row is ModalSubmitActionRowComponent => row.type === ComponentType.ActionRow)
+      .flatMap(row => row.components)
+      .find(component => component.custom_id === 'name')?.value;
+
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: `Your name is ${name}` },
+    );
+    return true;
+  }
+}
+```
+  </Tab>
 </Tabs>
 
 Then somewhere in your code, like inside a command:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -184,6 +267,37 @@ await startInteraction.editReply('Bye from command!');
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs-core';
+import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+declare const bot: NyxBot;
+// @ts-expect-error Incomplete example
+class MySession extends AbstractSession {}
+// ---cut---
+// Can be a command, component or modal interaction
+declare const startInteraction: ToEventProps<APIChatInputApplicationCommandInteraction>;
+
+const id = 'mySessionId'; // Should be short and randomly generated, nanoid is good for this
+const session = new MySession({ bot, id, startInteraction });
+await session.start();
+
+// Wait for the session to end
+await session.getEndPromise();
+
+// Wait 3 seconds
+await new Promise(resolve => setTimeout(resolve, 3000));
+
+await startInteraction.api.interactions.editReply(
+  startInteraction.data.application_id,
+  startInteraction.data.token,
+  { content: 'Bye from command!' },
+);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
 import { AbstractSession } from '@nyx-discord/plugin-sessions/djs-core';
 import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
 declare const bot: NyxBot;
@@ -245,7 +359,7 @@ npm i @nyx-discord/plugin-sessions/djs
 
 Instantiate and register it to your bot's plugin manager:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { type NyxBot } from '@nyx-discord/djs';
@@ -260,6 +374,19 @@ await bot.getPluginManager().register(DjsSessionPlugin.create());
   <Tab>
 ```ts twoslash
 import { type NyxBot } from '@nyx-discord/djs-core';
+
+declare const bot: NyxBot;
+// ---cut---
+import { CoreSessionPlugin } from '@nyx-discord/plugin-sessions/djs-core';
+
+await bot.getPluginManager().register(CoreSessionPlugin.create());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { type NyxBot } from '@nyx-discord/http';
 
 declare const bot: NyxBot;
 // ---cut---

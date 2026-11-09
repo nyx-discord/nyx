@@ -2,7 +2,7 @@
 
 Every executor holds an `ErrorHandler`, where errors thrown by middlewares and executed objects are handled.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { NyxBot, AnyEventBus } from '@nyx-discord/djs';
@@ -25,6 +25,19 @@ const eventErrorHandler = bus.getDispatcher().getErrorHandler();
 const scheduleErrorHandler = bot.getScheduleManager().getExecutor().getErrorHandler();
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { NyxBot, AnyEventBus } from '@nyx-discord/http';
+declare const bot: NyxBot;
+declare const bus: AnyEventBus;
+// ---cut---
+const commandErrorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
+const eventErrorHandler = bus.getDispatcher().getErrorHandler();
+const scheduleErrorHandler = bot.getScheduleManager().getExecutor().getErrorHandler();
+```
+  </Tab>
 </Tabs>
 
 It holds a map of consumers, where each handle a specific error class. It also receives the erroring object, and the arguments that were used to call it.
@@ -35,7 +48,7 @@ It holds a map of consumers, where each handle a specific error class. It also r
 
 To add a consumer, use `ErrorHandler#setConsumer()`:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { NyxBot } from '@nyx-discord/djs';
@@ -92,11 +105,41 @@ errorHandler.setConsumer(
 );
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
+// ---cut---
+import { TypedFields, CommandError } from '@nyx-discord/http';
+import type { CommandExecutionArgs, AnyExecutableCommand } from '@nyx-discord/http';
+
+errorHandler.setConsumer(
+  CommandError,
+  (
+    error: CommandError,
+    command: AnyExecutableCommand,
+    args: CommandExecutionArgs,
+  ) => {
+    const [_interaction, meta] = args;
+    const bot = TypedFields.Bot.get(meta, true);
+    const { name } = command.getData();
+
+    bot.getLogger().error(
+      `MyError occurred while executing ${name} with args: ${args}`,
+      error
+    );
+  }
+);
+```
+  </Tab>
 </Tabs>
 
 You can also remove consumers:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { NyxBot } from '@nyx-discord/djs';
@@ -119,11 +162,24 @@ import type { CommandExecutionArgs, AnyExecutableCommand } from '@nyx-discord/dj
 errorHandler.removeConsumerOf(CommandError);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
+import { CommandError } from '@nyx-discord/http';
+import type { CommandExecutionArgs, AnyExecutableCommand } from '@nyx-discord/http';
+// ---cut---
+errorHandler.removeConsumerOf(CommandError);
+```
+  </Tab>
 </Tabs>
 
 And set a fallback consumer, for all errors that don't have a consumer:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { NyxBot } from '@nyx-discord/djs';
@@ -180,6 +236,36 @@ errorHandler.setFallbackConsumer(
 );
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+const errorHandler = bot.getCommandManager().getExecutor().getErrorHandler();
+import { CommandError } from '@nyx-discord/http';
+import type { CommandExecutionArgs, AnyExecutableCommand } from '@nyx-discord/http';
+// ---cut---
+import { TypedFields } from '@nyx-discord/http';
+
+errorHandler.setFallbackConsumer(
+  (
+    error: object,
+    command: AnyExecutableCommand,
+    args: CommandExecutionArgs,
+  ) => {
+    const [_interaction, meta] = args;
+    const bot = TypedFields.Bot.get(meta, true);
+    const { name } = command.getData();
+
+    bot.getLogger().error(
+      `An unhandled error occurred while executing ${name} with args: ${args}`,
+      error
+    );
+  }
+);
+```
+  </Tab>
 </Tabs>
 
 ## Consumer resolution [#consumer-resolution]
@@ -188,7 +274,7 @@ The error handler resolves a consumer based on the error prototype, going from t
 
 For instance:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { BasicErrorHandler } from '@nyx-discord/djs';
@@ -206,6 +292,22 @@ errorHandler.setConsumer(MyError, () => {
   <Tab>
 ```ts twoslash
 import { BasicErrorHandler } from '@nyx-discord/djs-core';
+const errorHandler = BasicErrorHandler.create<object, unknown[]>();
+// ---cut---
+class MyError extends Error {}
+
+class MyError2 extends MyError {}
+
+errorHandler.setConsumer(MyError, () => {
+  console.log('MyError');
+});
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { BasicErrorHandler } from '@nyx-discord/http';
 const errorHandler = BasicErrorHandler.create<object, unknown[]>();
 // ---cut---
 class MyError extends Error {}

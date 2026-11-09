@@ -22,7 +22,7 @@ Create a custom middleware list by either:
 * Extending `CommandMiddlewareList` (recommended, less work).
 * Implementing `MiddlewareList<CommandMiddlewareResolvable>`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { CommandMiddlewareList } from '@nyx-discord/djs';
@@ -37,6 +37,15 @@ import { CommandMiddlewareList } from '@nyx-discord/djs-core';
 class MyMiddlewareList extends CommandMiddlewareList {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { CommandMiddlewareList } from '@nyx-discord/http';
+
+class MyMiddlewareList extends CommandMiddlewareList {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -45,7 +54,7 @@ class MyMiddlewareList extends CommandMiddlewareList {}
 
 Create it and set it to the [`CommandExecutor`](/extend/commands/executor), then set the executor on the [`CommandManager`](/extend/commands/command-manager).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { CommandMiddlewareList } from '@nyx-discord/djs';
@@ -71,6 +80,26 @@ import type { Bot } from '@nyx-discord/djs-core';
 declare const bot: Bot;
 // ---cut---
 import { DefaultCommandExecutor } from '@nyx-discord/djs-core';
+
+class MyMiddlewareList extends CommandMiddlewareList {}
+
+const executor = DefaultCommandExecutor.create({
+  injections: {
+    middleware: MyMiddlewareList.create(),
+  },
+});
+bot.getCommandManager().setExecutor(executor);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { CommandMiddlewareList } from '@nyx-discord/http';
+import type { Bot } from '@nyx-discord/http';
+declare const bot: Bot;
+// ---cut---
+import { DefaultCommandExecutor } from '@nyx-discord/http';
 
 class MyMiddlewareList extends CommandMiddlewareList {}
 

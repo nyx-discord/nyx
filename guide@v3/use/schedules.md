@@ -89,7 +89,7 @@ It's a wrapper over a more "lower-level" component that will actually do the tic
 
 There are multiple ways to get it, but given a schedule itself does not depend on a bot, you'll always need the bot:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot, Schedule } from '@nyx-discord/djs';
@@ -112,11 +112,24 @@ const fromSchedule = schedule.getJob(bot);
 const whenBeingAdded = await bot.getScheduleManager().addSchedule(schedule);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot, Schedule } from '@nyx-discord/http';
+declare const bot: NyxBot;
+declare const schedule: Schedule;
+// ---cut---
+const fromScheduler = bot.getScheduleManager().getScheduler().getJobForSchedule(schedule);
+const fromSchedule = schedule.getJob(bot);
+const whenBeingAdded = await bot.getScheduleManager().addSchedule(schedule);
+```
+  </Tab>
 </Tabs>
 
 It's the entry point for interacting with the schedule's ticking logic, and can be used to pause or resume it externally.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { UndestroyableScheduleJobAdapter } from '@nyx-discord/djs';
@@ -143,6 +156,21 @@ await job.resume();
 const rawTicker = job.getRaw();
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { UndestroyableScheduleJobAdapter } from '@nyx-discord/http';
+declare const job: UndestroyableScheduleJobAdapter<unknown>;
+// ---cut---
+await job.pause();
+await job.resume();
+
+// A croner `Cron` for cron strings and Dates, or the current timeout for ms intervals
+// Depending on this is fragile and not intended, but it doesn't change for the same major version
+const rawTicker = job.getRaw();
+```
+  </Tab>
 </Tabs>
 
 ## Metadata [#metadata]
@@ -154,7 +182,7 @@ While schedules internally save a `Metadata`, the return type of `#getMeta()` is
 meaning that external objects can read the object, but not modify it.
 </Callout>
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractSchedule } from '@nyx-discord/djs';
@@ -176,6 +204,26 @@ const value = meta['someKey']; // 'someValue'
   <Tab>
 ```ts twoslash
 import { AbstractSchedule } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySchedule extends AbstractSchedule {
+  protected override readonly meta = {
+    someKey: 'someValue',
+  };
+}
+
+const schedule = new MySchedule();
+const meta = schedule.getMeta();
+const value = meta['someKey']; // 'someValue'
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/http';
 
 // ---cut-start---
 // @ts-expect-error Incomplete example

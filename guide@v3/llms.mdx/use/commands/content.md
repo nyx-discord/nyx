@@ -12,55 +12,84 @@ If you really need such functionality, you can implement it yourself using the `
 
 Let's create a simple ping command:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-    import { type NyxBot } from '@nyx-discord/djs';
-    declare const bot: NyxBot;
-    // ---cut---
-    import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
-    import { AbstractStandaloneCommand } from '@nyx-discord/djs';
+import { type NyxBot } from '@nyx-discord/djs';
+declare const bot: NyxBot;
+// ---cut---
+import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs';
 
-    class PingCommand extends AbstractStandaloneCommand {
-      protected readonly data = new SlashCommandBuilder()
-        .setName('ping')
-        .setDescription('Replies with Pong!')
-        .toJSON();
+class PingCommand extends AbstractStandaloneCommand {
+  protected readonly data = new SlashCommandBuilder()
+    .setName('ping')
+    .setDescription('Replies with Pong!')
+    .toJSON();
 
-      public async execute(interaction: ChatInputCommandInteraction) {
-        await interaction.reply('Pong!');
-      }
-    }
+  public async execute(interaction: ChatInputCommandInteraction) {
+    await interaction.reply('Pong!');
+  }
+}
 
-    // Register the command
-    await bot.getCommandManager().addCommands(new PingCommand());
+// Register the command
+await bot.getCommandManager().addCommands(new PingCommand());
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { type NyxBot } from '@nyx-discord/djs-core';
-    declare const bot: NyxBot;
-    // ---cut---
-    import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
-    import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
+import { type NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
-    class PingCommand extends AbstractStandaloneCommand {
-      protected readonly data = {
-        name: 'ping',
-        description: 'Replies with Pong!',
-      };
+class PingCommand extends AbstractStandaloneCommand {
+  protected readonly data = {
+    name: 'ping',
+    description: 'Replies with Pong!',
+  };
 
-      public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>) {
-        await interaction.api.interactions.reply(
-          interaction.data.id,
-          interaction.data.token,
-          { content: 'Pong!' },
-        );
-      }
-    }
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Pong!' },
+    );
+  }
+}
 
-    // Register the command
-    await bot.getCommandManager().addCommands(new PingCommand());
+// Register the command
+await bot.getCommandManager().addCommands(new PingCommand());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { type NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+import type { APIChatInputApplicationCommandInteraction, ToEventProps } from '@discordjs/core';
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+
+class PingCommand extends AbstractStandaloneCommand {
+  protected readonly data = {
+    name: 'ping',
+    description: 'Replies with Pong!',
+  };
+
+  public async execute(interaction: ToEventProps<APIChatInputApplicationCommandInteraction>) {
+    await interaction.api.interactions.reply(
+      interaction.data.id,
+      interaction.data.token,
+      { content: 'Pong!' },
+    );
+  }
+}
+
+// Register the command
+await bot.getCommandManager().addCommands(new PingCommand());
 ```
   </Tab>
 </Tabs>
@@ -76,51 +105,51 @@ For commands to be deployed at Discord, you must either pass `deployCommands: tr
 <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-    import { Client } from 'discord.js';
-    declare const client: Client<boolean>;
-    // ---cut---
-    import { Bot } from '@nyx-discord/djs';
+import { Client } from 'discord.js';
+declare const client: Client<boolean>;
+// ---cut---
+import { Bot } from '@nyx-discord/djs';
 
-    const myBot = Bot.create((bot) => ({
-      // ---cut-start---
-      token: 'TOKEN', client: client, logger: console,
-      // ---cut-end---
-      // ... other options
-      deployCommands: true,
-    }));
+const myBot = Bot.create((bot) => ({
+  // ---cut-start---
+  token: 'TOKEN', client: client, logger: console,
+  // ---cut-end---
+  // ... other options
+  deployCommands: true,
+}));
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { Client, GatewayIntentBits } from '@discordjs/core';
-    import { REST } from '@discordjs/rest';
-    import { WebSocketManager } from '@discordjs/ws';
-    const rest = new REST({ version: '10' }).setToken('TOKEN');
-    const gateway = new WebSocketManager({ token: 'TOKEN', intents: GatewayIntentBits.Guilds, rest });
-    const client = new Client({ rest, gateway });
-    // ---cut---
-    import { Bot, CoreNyxClient } from '@nyx-discord/djs-core';
+import { Client, GatewayIntentBits } from '@discordjs/core';
+import { REST } from '@discordjs/rest';
+import { WebSocketManager } from '@discordjs/ws';
+const rest = new REST({ version: '10' }).setToken('TOKEN');
+const gateway = new WebSocketManager({ token: 'TOKEN', intents: GatewayIntentBits.Guilds, rest });
+const client = new Client({ rest, gateway });
+// ---cut---
+import { Bot, CoreNyxClient } from '@nyx-discord/djs-core';
 
-    const myBot = Bot.create((bot) => ({
-      // ---cut-start---
-      token: 'TOKEN', client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'), logger: console,
-      // ---cut-end---
-      // ... other options
-      deployCommands: true,
-    }));
+const myBot = Bot.create((bot) => ({
+  // ---cut-start---
+  token: 'TOKEN', client: new CoreNyxClient(client, gateway, 'APPLICATION_ID'), logger: console,
+  // ---cut-end---
+  // ... other options
+  deployCommands: true,
+}));
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { HttpBot } from '@nyx-discord/http';
+import { HttpBot } from '@nyx-discord/http';
 
-    const myBot = HttpBot.create((bot) => ({
-      // ---cut-start---
-      applicationId: 'APPLICATION_ID', publicKey: 'PUBLIC_KEY', token: 'TOKEN', logger: console,
-      // ---cut-end---
-      // ... other options
-      deployCommands: true,
-    }));
+const myBot = HttpBot.create((bot) => ({
+  // ---cut-start---
+  applicationId: 'APPLICATION_ID', publicKey: 'PUBLIC_KEY', token: 'TOKEN', logger: console,
+  // ---cut-end---
+  // ... other options
+  deployCommands: true,
+}));
 ```
   </Tab>
 </Tabs>
@@ -131,21 +160,31 @@ You can also deploy manually:
 
 <Callout type="error">This will throw if you passed `deployCommands: true` or already called it before.</Callout>
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-    import { Bot } from '@nyx-discord/djs';
-    declare const bot: Bot;
-    // ---cut---
-    await bot.getCommandManager().deploy();
+import { Bot } from '@nyx-discord/djs';
+declare const bot: Bot;
+// ---cut---
+await bot.getCommandManager().deploy();
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { Bot } from '@nyx-discord/djs-core';
-    declare const bot: Bot;
-    // ---cut---
-    await bot.getCommandManager().deploy();
+import { Bot } from '@nyx-discord/djs-core';
+declare const bot: Bot;
+// ---cut---
+await bot.getCommandManager().deploy();
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { Bot } from '@nyx-discord/http';
+declare const bot: Bot;
+// ---cut---
+await bot.getCommandManager().deploy();
 ```
   </Tab>
 </Tabs>

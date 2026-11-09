@@ -22,7 +22,7 @@ npm i @nyx-discord/loaders
 
 Each loader is exposed as a single `load()` method:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -43,6 +43,25 @@ const schedules = await ScheduleLoader.load({ bot, path: './dist/schedules' });
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { CommandLoader, EventLoader, ScheduleLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load({ bot, path: './dist/commands' });
+//    ^?
+
+const events = await EventLoader.load({ bot, path: './dist/events' });
+//    ^?
+
+const schedules = await ScheduleLoader.load({ bot, path: './dist/schedules' });
+//    ^?
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 // ---cut---
 import { CommandLoader, EventLoader, ScheduleLoader } from '@nyx-discord/loaders';
@@ -93,7 +112,7 @@ type LoaderOptions = {
 
 Set to `false` to skip automatic registration and handle it yourself:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -112,6 +131,23 @@ bot.getCommandManager().addCommands(...commands);
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { CommandLoader } from '@nyx-discord/loaders';
+
+const commands = await CommandLoader.load({
+  bot,
+  path: './dist/commands',
+  register: false,
+});
+bot.getCommandManager().addCommands(...commands);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 // ---cut---
 import { CommandLoader } from '@nyx-discord/loaders';
@@ -130,7 +166,7 @@ bot.getCommandManager().addCommands(...commands);
 
 Filter files by their absolute path before they are imported. Useful for excluding tests, dev-only files, or selectively loading subsets:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -148,6 +184,22 @@ const events = await EventLoader.load({
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+const events = await EventLoader.load({
+  bot,
+  path: './dist/events',
+  filter: (file) => !file.includes('.test.') && !file.includes('.spec.'),
+});
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 // ---cut---
 import { EventLoader } from '@nyx-discord/loaders';

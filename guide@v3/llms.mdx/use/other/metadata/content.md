@@ -12,7 +12,7 @@ For that reason, nyx uses the [`typed-field`](https://www.npmjs.com/package/type
 The `typed-field` package is re-exported in `TypedFields.create()` method, so you don't need to install it separately.
 </Callout>
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // @errors: 2345
@@ -38,6 +38,29 @@ const forced = field.get(meta, true);
 ```ts twoslash
 // @errors: 2345
 import { TypedFields } from '@nyx-discord/djs-core';
+
+const meta: Record<string | symbol, unknown> = Object.create(null);
+
+// Fields with the same description won't collide
+const field = TypedFields.create<number>('someDescription');
+
+field.set(meta, 42);
+field.set(meta, 'foo');
+
+const stored = field.get(meta);
+//    ^?
+
+// Throws if no value was set
+const forced = field.get(meta, true);
+//    ^?
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// @errors: 2345
+import { TypedFields } from '@nyx-discord/http';
 
 const meta: Record<string | symbol, unknown> = Object.create(null);
 
@@ -63,7 +86,7 @@ Most nyx objects implement a `getMeta(): ReadonlyMetadata` method. When creating
 
 As a plugin developer, you may also choose to use the `TypedFields` API to create and expose a field:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { TypedFields } from '@nyx-discord/djs';
@@ -84,11 +107,23 @@ type MyPluginData = {
 export const MyPluginDataField = TypedFields.create<MyPluginData>('myPluginData');
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { TypedFields } from '@nyx-discord/http';
+
+type MyPluginData = {
+  someKey: string;
+}
+export const MyPluginDataField = TypedFields.create<MyPluginData>('myPluginData');
+```
+  </Tab>
 </Tabs>
 
 Then, a consumer of your plugin can use it to decorate their objects' metadata:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // @errors: 2345
@@ -143,6 +178,35 @@ class MyCommand extends AbstractStandaloneCommand {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// @errors: 2345
+import { TypedFields } from '@nyx-discord/http';
+type MyPluginData = {
+  someKey: string;
+}
+const MyPluginDataField = TypedFields.create<MyPluginData>('myPluginData');
+// ---cut---
+import { AbstractStandaloneCommand } from '@nyx-discord/http';
+// @noErrors
+import { MyPluginDataField } from 'my-nyx-plugin';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractStandaloneCommand {
+  constructor() {
+    super();
+    MyPluginDataField.set(this.meta, { someKey: 'someValue' });
+
+    // In case they use it wrongly, it'll error:
+    MyPluginDataField.set(this.meta, 42);
+  }
+}
+```
+  </Tab>
 </Tabs>
 
 Which then you'll be able to read with `MyCommand#getMeta()` and your field, safely.
@@ -153,7 +217,7 @@ Every "executable" object includes in its arguments an instance of a `Metadata`,
 
 Additionally, the `TypedFields` class contains constant fields that the framework uses to store framework-specific data. 
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { Collection } from 'discord.js';
@@ -188,6 +252,36 @@ import { Collection } from 'discord.js';
 const meta: Record<string | symbol, unknown> = Object.create(null);
 // ---cut---
 import { TypedFields } from '@nyx-discord/djs-core';
+
+// The bot who triggered the object (command, event, etc).
+const bot = TypedFields.Bot.get(meta, true);
+//    ^?
+
+// The identifier of this object execution, which is a Symbol containing some debugable information.
+const id = TypedFields.Id.get(meta, true);
+//    ^?
+
+// The creation date of this meta, can be used as the execution start time.
+const creationDate = TypedFields.CreationDate.get(meta, true);
+//    ^?
+
+// Only for event middlewares and subscribers, whether the event was marked as handled by a subscriber.
+const handled = TypedFields.EventHandled.get(meta, true);
+//    ^?
+
+// Only for event middlewares and subscribers, the EventBus that dispatched the event.
+const eventBus = TypedFields.EventBus.get(meta, true);
+//    ^?
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { Collection } from 'discord.js';
+const meta: Record<string | symbol, unknown> = Object.create(null);
+// ---cut---
+import { TypedFields } from '@nyx-discord/http';
 
 // The bot who triggered the object (command, event, etc).
 const bot = TypedFields.Bot.get(meta, true);

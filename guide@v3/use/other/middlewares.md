@@ -13,7 +13,7 @@ The <DocsLink pkg="base" name="Priority" decorated={false} label="Priority" /> d
   - `HighMonitor` is the first priority to be executed.
   - `LowMonitor` is the last priority to be executed.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { PriorityEnum } from '@nyx-discord/djs';
@@ -26,6 +26,17 @@ PriorityEnum.
   <Tab>
 ```ts twoslash
 import { PriorityEnum } from '@nyx-discord/djs-core';
+
+// @noErrors
+PriorityEnum.
+//           ^|
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { PriorityEnum } from '@nyx-discord/http';
 
 // @noErrors
 PriorityEnum.

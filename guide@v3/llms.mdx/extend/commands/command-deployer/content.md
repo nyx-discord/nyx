@@ -20,7 +20,7 @@ Create a custom deployer by either:
 * Extending `DefaultCommandDeployer` (recommended, less work).
 * Implementing `CommandDeployer`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultCommandDeployer } from '@nyx-discord/djs';
@@ -35,6 +35,15 @@ import { DefaultCommandDeployer } from '@nyx-discord/djs-core';
 class MyCommandDeployer extends DefaultCommandDeployer {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandDeployer } from '@nyx-discord/http';
+
+class MyCommandDeployer extends DefaultCommandDeployer {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -43,7 +52,7 @@ class MyCommandDeployer extends DefaultCommandDeployer {}
 
 Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultCommandDeployer } from '@nyx-discord/djs';
@@ -64,6 +73,25 @@ The <DocsLink pkg='djs' name='DefaultCommandDeployer.create()' decorated={false}
   <Tab>
 ```ts twoslash
 import { DefaultCommandDeployer, type Bot } from '@nyx-discord/djs-core';
+import type { API, Snowflake } from '@discordjs/core';
+declare const api: API;
+declare const applicationId: Snowflake;
+declare const bot: Bot;
+// ---cut---
+class MyCommandDeployer extends DefaultCommandDeployer {
+  /** Your overrides */
+}
+
+bot.getCommandManager().setDeployer(MyCommandDeployer.create(api, applicationId));
+```
+
+The <DocsLink pkg='djs-core' name='DefaultCommandDeployer.create()' decorated={false} /> method instantiates your custom deployer, not the default one.
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandDeployer, type Bot } from '@nyx-discord/http';
 import type { API, Snowflake } from '@discordjs/core';
 declare const api: API;
 declare const applicationId: Snowflake;

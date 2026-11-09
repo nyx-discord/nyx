@@ -23,7 +23,7 @@ Create a custom error handler by either:
 * Extending `BasicErrorHandler<Schedule, ScheduleTickArgs>` (recommended, less work).
 * Implementing `ScheduleErrorHandler`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { BasicErrorHandler, type Schedule, type ScheduleTickArgs } from '@nyx-discord/djs';
@@ -38,6 +38,15 @@ import { BasicErrorHandler, type Schedule, type ScheduleTickArgs } from '@nyx-di
 class MyErrorHandler extends BasicErrorHandler<Schedule, ScheduleTickArgs> {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { BasicErrorHandler, type Schedule, type ScheduleTickArgs } from '@nyx-discord/http';
+
+class MyErrorHandler extends BasicErrorHandler<Schedule, ScheduleTickArgs> {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -46,7 +55,7 @@ class MyErrorHandler extends BasicErrorHandler<Schedule, ScheduleTickArgs> {}
 
 Inject it directly when creating the executor, then set that executor to the [`ScheduleManager`](/extend/schedules/schedule-manager):
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import {
@@ -99,12 +108,40 @@ const executor = new DefaultScheduleExecutor(
 bot.getScheduleManager().setExecutor(executor);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import {
+  BasicErrorHandler,
+  ScheduleMiddlewareList,
+  DefaultScheduleExecutor,
+  TypedFields,
+  type Schedule,
+  type ScheduleTickArgs,
+} from '@nyx-discord/http';
+// ---cut---
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+
+const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
+  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+);
+
+const executor = new DefaultScheduleExecutor(
+  ScheduleMiddlewareList.create(),
+  errorHandler,
+);
+
+bot.getScheduleManager().setExecutor(executor);
+```
+  </Tab>
 </Tabs>
 
 <Callout type="warn" title="Using the Bot's logger">
 To use the bot logger as fallback, create a handler with `createWithFallbackLogger` and inject it:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import {
@@ -140,6 +177,32 @@ import {
   type Schedule,
   type ScheduleTickArgs,
 } from '@nyx-discord/djs-core';
+
+declare const bot: NyxBot;
+
+const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
+  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+);
+
+const executor = new DefaultScheduleExecutor(
+  ScheduleMiddlewareList.create(),
+  errorHandler,
+);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import {
+  BasicErrorHandler,
+  DefaultScheduleExecutor,
+  ScheduleMiddlewareList,
+  TypedFields,
+  type NyxBot,
+  type Schedule,
+  type ScheduleTickArgs,
+} from '@nyx-discord/http';
 
 declare const bot: NyxBot;
 

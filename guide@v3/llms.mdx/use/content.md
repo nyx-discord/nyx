@@ -10,7 +10,7 @@ Here, you'll discover what nyx is, when it's useful, how to create your own bot 
 
 ## What is nyx? [#what-is-nyx]
 
-Nyx is a framework to build Discord bots in TypeScript, with adapters for [discord.js](https://discord.js.org) and [@discordjs/core](https://discord.js.org/docs/packages/core/main). The main ideas behind it are:
+Nyx is a framework to build Discord bots in TypeScript, with adapters for [discord.js](https://discord.js.org) and [@discordjs/core](https://discord.js.org/docs/packages/core/main). With [`@nyx-discord/http`](/use/http), the @discordjs/core adapter can also receive interactions over HTTP instead of a gateway connection, for example on serverless platforms. The main ideas behind it are:
 
 <Cards>
   <Card icon={<BlocksIcon />} title="Fully extendable">

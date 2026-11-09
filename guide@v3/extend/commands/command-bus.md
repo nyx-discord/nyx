@@ -10,7 +10,7 @@ The `CommandBus` is the [`EventBus`](/use/events/busses) used for emitting comma
 
 Create your own bus [in any way](/use/events/buses) and set it to the [`CommandManager`](/extend/commands/command-manager).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { type CommandEventArgs, type NyxBot } from '@nyx-discord/djs';
@@ -37,6 +37,26 @@ declare const client: Client;
 declare const bot: NyxBot;
 // ---cut---
 import { BasicEventBus } from '@nyx-discord/djs-core';
+
+class MyCommandBus extends BasicEventBus<CommandEventArgs> {
+  /** Your overrides */
+}
+
+const commandBus = MyCommandBus.createAsync();
+
+await bot.getCommandManager().setEventBus(commandBus);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { type CommandEventArgs, type NyxBot } from '@nyx-discord/http';
+import { Client, type ClientEvents } from 'discord.js';
+declare const client: Client;
+declare const bot: NyxBot;
+// ---cut---
+import { BasicEventBus } from '@nyx-discord/http';
 
 class MyCommandBus extends BasicEventBus<CommandEventArgs> {
   /** Your overrides */

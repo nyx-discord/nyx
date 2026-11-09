@@ -24,27 +24,17 @@ The handler verifies requests like the client does, and answers every event (and
 
 ## Subscribing [#subscribing]
 
-Each event is emitted on the client's emitter under its type, one of the [`ApplicationWebhookEventType`](https://discord-api-types.dev/api/discord-api-types-v10/enum/ApplicationWebhookEventType) values. The bot's client event bus is typed for gateway events, so create a bus typed with `HttpClientEvents` over the same emitter, and subscribe to it:
+Each event is emitted on the client's emitter under its type, one of the [`ApplicationWebhookEventType`](https://discord-api-types.dev/api/discord-api-types-v10/enum/ApplicationWebhookEventType) values. An `HttpBot`'s client event bus accepts them, so write an `AbstractWebhookEventSubscriber` and subscribe it like any other client subscriber:
 
 ```ts twoslash
-import type { HttpNyxClient } from '@nyx-discord/http';
-declare const client: HttpNyxClient;
+import type { HttpBot } from '@nyx-discord/http';
+declare const bot: HttpBot;
 // ---cut---
 import type { APIWebhookEventApplicationAuthorizedData } from '@discordjs/core';
 import { ApplicationWebhookEventType } from '@discordjs/core';
-import {
-  BaseClientSubscriber,
-  BasicEventEmitterBus,
-  type EventEmitterLike,
-  type HttpClientEvents,
-  type Metadata,
-  type WebhookEventProps,
-} from '@nyx-discord/http';
+import { AbstractWebhookEventSubscriber, type Metadata, type WebhookEventProps } from '@nyx-discord/http';
 
-class AuthorizedSubscriber extends BaseClientSubscriber<
-  HttpClientEvents,
-  ApplicationWebhookEventType.ApplicationAuthorized
-> {
+class AuthorizedSubscriber extends AbstractWebhookEventSubscriber<ApplicationWebhookEventType.ApplicationAuthorized> {
   protected readonly event = ApplicationWebhookEventType.ApplicationAuthorized;
 
   public handleEvent(
@@ -56,13 +46,10 @@ class AuthorizedSubscriber extends BaseClientSubscriber<
   }
 }
 
-const webhookBus = BasicEventEmitterBus.createSyncWithEmitter<
-  HttpClientEvents,
-  EventEmitterLike
->(client.getEmitter());
-
-await webhookBus.subscribe(new AuthorizedSubscriber());
+await bot.subscribeToClient(new AuthorizedSubscriber());
 ```
+
+Since they're client subscribers, the [event loader](/loaders/events) picks them up too, and their metadata has the same fields as other client events, like [`TypedFields.HttpRequest`](/use/http/requests#reading-the-request).
 
 The payload is the usual `{ data, api, shardId }`, where `data` is the event's data (`APIWebhookEvent...Data` from `discord-api-types`), plus the event's `timestamp`. Webhook events aren't realtime and can arrive late or out of order, so use the timestamp when order matters.
 

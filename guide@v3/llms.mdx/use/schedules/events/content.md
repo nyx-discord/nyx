@@ -10,7 +10,7 @@ This is useful for monitoring, logging, or any other custom logic you want to ex
 
 The following events are available:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { ScheduleEventEnum } from '@nyx-discord/djs';
@@ -23,6 +23,17 @@ ScheduleEventEnum.
   <Tab>
 ```ts twoslash
 import { ScheduleEventEnum } from '@nyx-discord/djs-core';
+
+// @noErrors
+ScheduleEventEnum.
+//                ^|
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { ScheduleEventEnum } from '@nyx-discord/http';
 
 // @noErrors
 ScheduleEventEnum.
@@ -45,7 +56,7 @@ Create a subscriber that will listen to a given event, use the `ScheduleEventArg
 
 Subscribe to the event using the `ScheduleManager`'s `subscribe()` method.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -63,6 +74,19 @@ await bot.getScheduleManager().subscribe(subscriber);
 import { EventSubscriber, ScheduleEventArgs } from '@nyx-discord/djs-core';
 declare const subscriber: EventSubscriber<ScheduleEventArgs, keyof ScheduleEventArgs>;
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut-end---
+await bot.getScheduleManager().subscribe(subscriber);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { EventSubscriber, ScheduleEventArgs } from '@nyx-discord/http';
+declare const subscriber: EventSubscriber<ScheduleEventArgs, keyof ScheduleEventArgs>;
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 // ---cut-end---
 await bot.getScheduleManager().subscribe(subscriber);

@@ -19,7 +19,7 @@ Create a custom schedule manager by either:
 * Extending <DocsLink pkg='base' name='DefaultScheduleManager' decorated={false} /> (<BaseMention />'s implementation, recommended for less work).
 * Implementing <DocsLink pkg='base' name='ScheduleManager' decorated={false} /> (<BaseMention />'s interface).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultScheduleManager } from '@nyx-discord/djs';
@@ -34,6 +34,19 @@ class MyScheduleManager extends DefaultScheduleManager {
   <Tab>
 ```ts twoslash
 import { DefaultScheduleManager } from '@nyx-discord/djs-core';
+
+class MyScheduleManager extends DefaultScheduleManager {
+  public myCustomPublicMethod() {
+    return 'I work!' as const;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultScheduleManager } from '@nyx-discord/http';
 
 class MyScheduleManager extends DefaultScheduleManager {
   public myCustomPublicMethod() {
@@ -153,7 +166,7 @@ The class is able to infer the type of your custom manager, so accessing any cus
 
 If you ever want to use this custom bot type with your injected manager somewhere else, you can do so via the generic:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { Client } from 'discord.js';
@@ -186,6 +199,29 @@ class MyScheduleManager extends DefaultScheduleManager {
 }
 // ---cut---
 import type { NyxBot, InjectableBotDependencies } from '@nyx-discord/djs-core';
+
+type BotWithCustomManager = NyxBot<InjectableBotDependencies & { scheduleManager: MyScheduleManager }>;
+
+function functionOnlyForCustomManager(bot: BotWithCustomManager) {
+  const manager = bot.getScheduleManager();
+  const result = manager.myCustomPublicMethod();
+  //     ^?
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { Client } from 'discord.js';
+import { DefaultScheduleManager } from '@nyx-discord/http';
+class MyScheduleManager extends DefaultScheduleManager {
+  public myCustomPublicMethod() {
+    return 'I work!' as const;
+  }
+}
+// ---cut---
+import type { NyxBot, InjectableBotDependencies } from '@nyx-discord/http';
 
 type BotWithCustomManager = NyxBot<InjectableBotDependencies & { scheduleManager: MyScheduleManager }>;
 

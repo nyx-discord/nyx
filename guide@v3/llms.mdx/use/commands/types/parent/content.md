@@ -13,7 +13,7 @@ Parent commands are top-level, non executable commands that can have children, w
 
 Extend the `AbstractParentCommand` class:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractParentCommand } from '@nyx-discord/djs';
@@ -27,6 +27,18 @@ class MyCommand extends AbstractParentCommand {}
   <Tab>
 ```ts twoslash
 import { AbstractParentCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractParentCommand {}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractParentCommand } from '@nyx-discord/http';
 
 // ---cut-start---
 // @ts-expect-error Incomplete example
@@ -45,30 +57,44 @@ Implement `data` that stores the command's data.
 
 <Callout type= "warn">The `data` field must not contain any option, only the base values (name, description, etc). If they are included, they will be ignored.</Callout>
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-    import { SlashCommandBuilder } from 'discord.js';
-    import { AbstractParentCommand } from '@nyx-discord/djs';
+import { SlashCommandBuilder } from 'discord.js';
+import { AbstractParentCommand } from '@nyx-discord/djs';
 
-    class MyCommand extends AbstractParentCommand {
-      protected readonly data = new SlashCommandBuilder()
-        .setName('my-command')
-        .setDescription('My command')
-        .toJSON();
-    }
+class MyCommand extends AbstractParentCommand {
+  protected readonly data = new SlashCommandBuilder()
+    .setName('my-command')
+    .setDescription('My command')
+    .toJSON();
+}
 ```
   </Tab>
   <Tab>
 ```ts twoslash
-    import { AbstractParentCommand } from '@nyx-discord/djs-core';
+import { AbstractParentCommand } from '@nyx-discord/djs-core';
 
-    class MyCommand extends AbstractParentCommand {
-      protected readonly data = {
-        name: 'my-command',
-        description: 'My command',
-      };
-    }
+class MyCommand extends AbstractParentCommand {
+  protected readonly data = {
+    name: 'my-command',
+    description: 'My command',
+  };
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractParentCommand } from '@nyx-discord/http';
+
+class MyCommand extends AbstractParentCommand {
+  protected readonly data = {
+    name: 'my-command',
+    description: 'My command',
+  };
+}
 ```
   </Tab>
 </Tabs>
@@ -80,7 +106,7 @@ Implement `data` that stores the command's data.
 
 Instantiate and register it to a bot's `CommandManager`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { ParentCommand, NyxBot } from '@nyx-discord/djs';
@@ -99,6 +125,17 @@ declare const bot: NyxBot;
 await bot.getCommandManager().addCommands(new MyCommand());
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { ParentCommand, NyxBot } from '@nyx-discord/http';
+declare const MyCommand: new () => ParentCommand;
+declare const bot: NyxBot;
+// ---cut---
+await bot.getCommandManager().addCommands(new MyCommand());
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -108,7 +145,7 @@ await bot.getCommandManager().addCommands(new MyCommand());
 
 By default, all commands will be deployed in the global scope. If you want to deploy them in a specific guild, you can do so by implementing the `getGuilds()` method.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractParentCommand } from '@nyx-discord/djs';
@@ -126,6 +163,22 @@ class MyCommand extends AbstractParentCommand {
   <Tab>
 ```ts twoslash
 import { AbstractParentCommand } from '@nyx-discord/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyCommand extends AbstractParentCommand {
+  public getGuilds() {
+    return ['GUILD_ID', 'ANOTHER_GUILD_ID'];
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractParentCommand } from '@nyx-discord/http';
 
 // ---cut-start---
 // @ts-expect-error Incomplete example
@@ -145,7 +198,7 @@ If you're ever overriding from another base command, you can return `null` to ma
 
 Children aren't static: they can be added and removed in runtime.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -172,11 +225,26 @@ parent.removeChildByInstance(subCommand);
 parent.removeChildByName('sub-command-group-name');
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { ParentCommand, SubCommand, SubCommandGroup } from '@nyx-discord/http';
+declare const parent: ParentCommand;
+declare const subCommand: SubCommand;
+declare const subCommandGroup: SubCommandGroup;
+// ---cut-end---
+parent.addChildren(subCommand, subCommandGroup);
+parent.removeChildByInstance(subCommand);
+parent.removeChildByName('sub-command-group-name');
+```
+  </Tab>
 </Tabs>
 
 However, for the changes to be reflected in Discord, you must edit the command afterwards:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -197,11 +265,23 @@ declare const parent: ParentCommand;
 await bot.getCommandManager().editCommands(parent);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { NyxBot, ParentCommand } from '@nyx-discord/http';
+declare const bot: NyxBot;
+declare const parent: ParentCommand;
+// ---cut-end---
+await bot.getCommandManager().editCommands(parent);
+```
+  </Tab>
 </Tabs>
 
 You can also query them by name, class or `Collection`:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -232,6 +312,31 @@ import { ParentCommand } from '@nyx-discord/djs-core';
 declare const parent: ParentCommand;
 // ---cut-end---
 import { AbstractSubCommand } from '@nyx-discord/djs-core';
+
+const byName = parent.findChildByName('sub-command-name');
+//    ^?
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MySubCommandClass extends AbstractSubCommand { /** */ }
+
+const byClass = parent.findChildByClass(MySubCommandClass);
+//    ^?
+
+const allChildren = parent.getChildren();
+//    ^?
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { ParentCommand } from '@nyx-discord/http';
+declare const parent: ParentCommand;
+// ---cut-end---
+import { AbstractSubCommand } from '@nyx-discord/http';
 
 const byName = parent.findChildByName('sub-command-name');
 //    ^?

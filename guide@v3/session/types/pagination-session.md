@@ -31,7 +31,7 @@ You can override this behavior by overriding `extractPageFromInteraction()`, or 
 ### Creation [#creation-1]
 Extend the `AbstractPaginationSession` class:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs';
@@ -52,6 +52,18 @@ import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs-core
 class MyPaginationSession extends AbstractPaginationSession {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs-core';
+
+// ---cut-start---
+// @ts-expect-error Incomplete example
+// ---cut-end---
+class MyPaginationSession extends AbstractPaginationSession {}
+```
+  </Tab>
 </Tabs>
 </Step>
 <Step>
@@ -59,7 +71,7 @@ class MyPaginationSession extends AbstractPaginationSession {}
 
 Apart from the base `Session` implementation, also implement the `updatePage()` method:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractPaginationSession, type DjsSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs';
@@ -96,6 +108,26 @@ class MyPaginationSession extends AbstractPaginationSession<void> {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractPaginationSession, type CoreSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+// ---cut-start---
+class MyPaginationSession extends AbstractPaginationSession<void> {
+  public async onStart() {}
+  public async onEnd() {}
+// ---cut-end---
+  protected async updatePage(interaction: CoreSessionUpdateInteraction): Promise<boolean> {
+    await interaction.api.interactions.updateMessage(interaction.data.id, interaction.data.token, {
+      content: `Page: ${this.currentPage}`,
+    });
+    return true;
+  }
+}
+```
+  </Tab>
 </Tabs>
 
 Similarly to `update()`, it must return whether the session's TTL should be renewed or not.
@@ -106,7 +138,7 @@ Similarly to `update()`, it must return whether the session's TTL should be rene
 
 Instantiate and start your session the same way as a regular one:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -131,6 +163,28 @@ await session.start();
 ```ts twoslash
 // ---cut-start---
 import type { NyxBot } from '@nyx-discord/djs-core';
+import { AbstractPaginationSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MyPaginationSession extends AbstractPaginationSession<void> {
+  public async onStart() {}
+  public async onEnd() {}
+  protected async updatePage() { return true; }
+}
+
+declare const interaction: CoreSessionStartInteraction;
+declare const bot: NyxBot;
+const sessionId = 'mySessionId';
+// ---cut-end---
+const session = new MyPaginationSession({ bot, id: sessionId, startInteraction: interaction });
+await session.start();
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import type { NyxBot } from '@nyx-discord/http';
 import { AbstractPaginationSession, type CoreSessionStartInteraction } from '@nyx-discord/plugin-sessions/djs-core';
 
 class MyPaginationSession extends AbstractPaginationSession<void> {
@@ -222,48 +276,48 @@ You can either:
 * Put the pagination custom id in the select menu itself, making it switch to that page regardless of selection.
 
 ```ts twoslash
-  import { SelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
-  import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs';
+import { SelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
+import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs';
 
-  // @ts-expect-error Incomplete example
-  class MyPaginationSession extends AbstractPaginationSession<void> {
-    public async start() {
-  // ---cut---
-  const selectId = this.buildPageCustomId(3);
-  const select = new SelectMenuBuilder()
-    .setCustomId(selectId)
-    .setPlaceholder('Switch to page 3')
-  // ---cut-after---
-    }
+// @ts-expect-error Incomplete example
+class MyPaginationSession extends AbstractPaginationSession<void> {
+  public async start() {
+// ---cut---
+const selectId = this.buildPageCustomId(3);
+const select = new SelectMenuBuilder()
+  .setCustomId(selectId)
+  .setPlaceholder('Switch to page 3')
+// ---cut-after---
   }
+}
 ```
 
 * Put the pagination custom id in the select menu's options, making it switch to that page only when the option is selected.
   Note that you still need to put the session's custom id in the select menu itself.
 
 ```ts twoslash
-  import { StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
-  import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs';
+import { StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
+import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs';
 
-  // @ts-expect-error Incomplete example
-  class MyPaginationSession extends AbstractPaginationSession<void> {
-    public async start() {
-  // ---cut---
-  const selectId = this.buildCustomId();
-  const select = new StringSelectMenuBuilder()
-    .setPlaceholder('Go to page...')
-    .setCustomId(selectId)
-    .addOptions([
-      new StringSelectMenuOptionBuilder()
-        .setLabel('1')
-        .setValue(this.buildPageCustomId(1)),
-      new StringSelectMenuOptionBuilder()
-        .setLabel('2')
-        .setValue(this.buildPageCustomId(2)),
-    ]);
-  // ---cut-after---
-    }
+// @ts-expect-error Incomplete example
+class MyPaginationSession extends AbstractPaginationSession<void> {
+  public async start() {
+// ---cut---
+const selectId = this.buildCustomId();
+const select = new StringSelectMenuBuilder()
+  .setPlaceholder('Go to page...')
+  .setCustomId(selectId)
+  .addOptions([
+    new StringSelectMenuOptionBuilder()
+      .setLabel('1')
+      .setValue(this.buildPageCustomId(1)),
+    new StringSelectMenuOptionBuilder()
+      .setLabel('2')
+      .setValue(this.buildPageCustomId(2)),
+  ]);
+// ---cut-after---
   }
+}
 ```
 
 You can add more ways by overriding `extractPageFromSelectMenu()`.
@@ -276,21 +330,21 @@ You can either:
 * Put the pagination custom id in the modal itself, making it switch to that page regardless of values.
 
 ```ts twoslash
-  import { ModalBuilder, TextInputBuilder } from 'discord.js';
-  import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs';
+import { ModalBuilder, TextInputBuilder } from 'discord.js';
+import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs';
 
-  // @ts-expect-error Incomplete example
-  class MyPaginationSession extends AbstractPaginationSession<void> {
-    public async start() {
-  // ---cut---
-  const modalId = this.buildPageCustomId(3);
-  const modal = new ModalBuilder()
-    // highlight-next-line
-    .setCustomId(modalId)
-    .setTitle('A modal that switches to page 3');
-  // ---cut-after---
-    }
+// @ts-expect-error Incomplete example
+class MyPaginationSession extends AbstractPaginationSession<void> {
+  public async start() {
+// ---cut---
+const modalId = this.buildPageCustomId(3);
+const modal = new ModalBuilder()
+  // highlight-next-line
+  .setCustomId(modalId)
+  .setTitle('A modal that switches to page 3');
+// ---cut-after---
   }
+}
 ```
 
 * Put the session's custom id in the modal's components, making it switch to that component's value (if it's a number).
@@ -299,24 +353,24 @@ You can either:
   <Callout type="warn">If the component's value is not a number, it will be handled as a regular update (`handleModal()`).</Callout>
 
 ```ts twoslash
-  import { ModalBuilder, TextInputBuilder, ActionRowBuilder } from 'discord.js';
-  import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs';
+import { ModalBuilder, TextInputBuilder, ActionRowBuilder } from 'discord.js';
+import { AbstractPaginationSession } from '@nyx-discord/plugin-sessions/djs';
 
-  // @ts-expect-error Incomplete example
-  class MyPaginationSession extends AbstractPaginationSession<void> {
-    public async start() {
-  // ---cut---
-  const customId = this.buildCustomId();
-  const modal = new ModalBuilder()
-    .setCustomId(customId)
-    .setTitle('Type a page number')
-    .addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(
-      new TextInputBuilder().setCustomId(customId)
-        .setLabel('Page')
-    ));
-  // ---cut-after---
-    }
+// @ts-expect-error Incomplete example
+class MyPaginationSession extends AbstractPaginationSession<void> {
+  public async start() {
+// ---cut---
+const customId = this.buildCustomId();
+const modal = new ModalBuilder()
+  .setCustomId(customId)
+  .setTitle('Type a page number')
+  .addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(
+    new TextInputBuilder().setCustomId(customId)
+      .setLabel('Page')
+  ));
+// ---cut-after---
   }
+}
 ```
 
 </Tab>
@@ -326,7 +380,7 @@ You can either:
 
 The `AbstractPaginationSession` has a utility method for building an action row containing two buttons that switch to the previous and next page:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -349,6 +403,33 @@ await this.startInteraction.reply({ components: [row] });
 ```
   </Tab>
   <Tab>
+```ts twoslash
+// ---cut-start---
+import { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+import { AbstractPaginationSession, type CoreSessionUpdateInteraction } from '@nyx-discord/plugin-sessions/djs-core';
+
+class MyPaginationSession extends AbstractPaginationSession<void> {
+  public async onStart() {}
+  public async onEnd() {}
+  protected async updatePage(_interaction: CoreSessionUpdateInteraction) { return true; }
+
+  public async example() {
+// ---cut-end---
+const row = this.buildBasicPageRow();
+await this.startInteraction.api.interactions.reply(
+  this.startInteraction.data.id,
+  this.startInteraction.data.token,
+  { components: [row] },
+);
+// ---cut-start---
+  }
+}
+// ---cut-end---
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
 ```ts twoslash
 // ---cut-start---
 import { ActionRowBuilder, ButtonBuilder } from 'discord.js';

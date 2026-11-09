@@ -20,7 +20,7 @@ Create a custom command repository by either:
 * Extending `DefaultCommandRepository` (recommended, less work).
 * Implementing `CommandRepository`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```  ts twoslash
 import { DefaultCommandRepository } from '@nyx-discord/djs';
@@ -35,6 +35,15 @@ import { DefaultCommandRepository } from '@nyx-discord/djs-core';
 class MyCommandRepository extends DefaultCommandRepository {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/http';
+
+class MyCommandRepository extends DefaultCommandRepository {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -43,7 +52,7 @@ class MyCommandRepository extends DefaultCommandRepository {}
 
 Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultCommandRepository } from '@nyx-discord/djs';
@@ -61,6 +70,21 @@ bot.getCommandManager().setRepository(MyCommandRepository.create());
 ```ts twoslash
 import { DefaultCommandRepository } from '@nyx-discord/djs-core';
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+class MyCommandRepository extends DefaultCommandRepository {
+  /** Your overrides */
+}
+
+bot.getCommandManager().setRepository(MyCommandRepository.create());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandRepository } from '@nyx-discord/http';
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 // ---cut---
 class MyCommandRepository extends DefaultCommandRepository {

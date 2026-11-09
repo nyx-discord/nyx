@@ -6,7 +6,7 @@ Event buses are objects that store and notify their `EventSubscribers` when an e
 
 An event bus can be un/subscribed to:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -35,11 +35,27 @@ await bus.subscribe(subscriber);
 await bus.unsubscribe(subscriber);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { EventBus, EventSubscriber } from '@nyx-discord/http';
+type EventArgs = {
+  someEvent: [string, number];
+};
+declare const bus: EventBus<EventArgs>;
+declare const subscriber: EventSubscriber<EventArgs, 'someEvent'>;
+// ---cut-end---
+await bus.subscribe(subscriber);
+await bus.unsubscribe(subscriber);
+```
+  </Tab>
 </Tabs>
 
 Can be used to emit an event type-safely:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -74,11 +90,30 @@ await bus.emit('someEvent', ['hello', 123]);
 await bus.emit('someEvent', [true, 123]);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { EventBus } from '@nyx-discord/http';
+// ---cut-end---
+type EventArgs = {
+  someEvent: [string, number];
+};
+
+declare const bus: EventBus<EventArgs>;
+
+await bus.emit('someEvent', ['hello', 123]);
+// @errors: 2322
+// Error! Argument missmatch
+await bus.emit('someEvent', [true, 123]);
+```
+  </Tab>
 </Tabs>
 
 It can be iterated and its subscribers can be obtained:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -100,6 +135,25 @@ for (const [id, subscriber] of bus) {
 ```ts twoslash
 // ---cut-start---
 import { EventBus } from '@nyx-discord/djs-core';
+type EventArgs = {
+  someEvent: [string, number];
+};
+declare const bus: EventBus<EventArgs>;
+// ---cut-end---
+const subscribers = bus.getSubscribers();
+//    ^?
+
+for (const [id, subscriber] of bus) {
+  //            ^?
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { EventBus } from '@nyx-discord/http';
 type EventArgs = {
   someEvent: [string, number];
 };
@@ -135,7 +189,7 @@ It calls its subscribers asynchronously, meaning that it doesn't wait for the cu
 
 To tackle the mentioned disadvantages, it has a concurrency limit functionality. This allows you to set how many subscribers are being checked or executed at the same time.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -166,6 +220,23 @@ const dispatcher = bus.getDispatcher() as AsyncEventDispatcher;
 dispatcher.setConcurrencyLimit(5);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { EventBus } from '@nyx-discord/http';
+type EventArgs = {
+  someEvent: [string, number];
+};
+declare const bus: EventBus<EventArgs>;
+// ---cut-end---
+import { AsyncEventDispatcher } from '@nyx-discord/http';
+
+const dispatcher = bus.getDispatcher() as AsyncEventDispatcher;
+dispatcher.setConcurrencyLimit(5);
+```
+  </Tab>
 </Tabs>
 
 <Callout>
@@ -186,7 +257,7 @@ It calls its subscribers synchronously, meaning that it waits for the current su
 
 To tackle the mentioned disadvantages, it has a sync timeout functionality. This allows you to set "timeframe" for any subscriber to finish, before the dispatcher stops waiting and calls the next subscriber.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -217,6 +288,23 @@ const dispatcher = bus.getDispatcher() as SyncEventDispatcher;
 dispatcher.setSyncTimeout(50_000);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { EventBus } from '@nyx-discord/http';
+type EventArgs = {
+  someEvent: [string, number];
+};
+declare const bus: EventBus<EventArgs>;
+// ---cut-end---
+import { SyncEventDispatcher } from '@nyx-discord/http';
+
+const dispatcher = bus.getDispatcher() as SyncEventDispatcher;
+dispatcher.setSyncTimeout(50_000);
+```
+  </Tab>
 </Tabs>
 <Callout>The default is of 10000 ms (10 seconds).</Callout>
 
@@ -226,7 +314,7 @@ dispatcher.setSyncTimeout(50_000);
 
 The `Client` event bus is a built-in bus that wraps its events:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -247,11 +335,23 @@ const bus = bot.getClientEventBus();
 //    ^?
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut-end---
+const bus = bot.getClientEventBus();
+//    ^?
+```
+  </Tab>
 </Tabs>
 
 The bot also has a utility method to directly subscribe to it:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -274,13 +374,26 @@ declare const eventSubscriber: EventSubscriber<MappedEvents, GatewayDispatchEven
 await bot.subscribeToClient(eventSubscriber);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { Bot, EventSubscriber } from '@nyx-discord/http';
+import { GatewayDispatchEvents, type MappedEvents } from '@discordjs/core';
+declare const bot: Bot;
+declare const eventSubscriber: EventSubscriber<MappedEvents, GatewayDispatchEvents.InteractionCreate>;
+// ---cut-end---
+await bot.subscribeToClient(eventSubscriber);
+```
+  </Tab>
 </Tabs>
 
 ### Manager buses [#manager-buses]
 
 Each manager holds a bus that wraps events related to the feature they manage:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 // ---cut-start---
@@ -301,6 +414,24 @@ const pluginBus = bot.getPluginManager().getEventBus();
 ```ts twoslash
 // ---cut-start---
 import { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut-end---
+const commandBus = bot.getCommandManager().getEventBus();
+//    ^?
+
+const scheduleBus = bot.getScheduleManager().getEventBus();
+//    ^?
+
+const pluginBus = bot.getPluginManager().getEventBus();
+//    ^?
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+// ---cut-start---
+import { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 // ---cut-end---
 const commandBus = bot.getCommandManager().getEventBus();
@@ -347,7 +478,7 @@ If you want a bus whose `emit()` method is manually called, either:
 - Use `BasicEventBus.createSync()` to create a sync bus.
 - Use `BasicEventBus.createAsync()` to create an async bus.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { BasicEventBus } from '@nyx-discord/djs';
@@ -376,6 +507,22 @@ const syncBus = BasicEventBus.createSync<MyEventsArgs>();
 const asyncBus = BasicEventBus.createAsync<MyEventsArgs>();
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { BasicEventBus } from '@nyx-discord/http';
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+
+const syncBus = BasicEventBus.createSync<MyEventsArgs>();
+const asyncBus = BasicEventBus.createAsync<MyEventsArgs>();
+```
+  </Tab>
 </Tabs>
 
 #### From an EventEmitter [#from-an-eventemitter]
@@ -385,7 +532,7 @@ You can also create a bus that will wrap an existent `EventEmitter`, or a class 
 - Use `BasicEventBus.createSync()` to create a sync bus.
 - Use `BasicEventBus.createAsync()` to create an async bus.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { EventEmitter } from 'node:events';
@@ -418,6 +565,24 @@ const syncBus = BasicEventEmitterBus.createSyncWithEmitter<MyEventsArgs, EventEm
 const asyncBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventsArgs, EventEmitter>(emitter);
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { EventEmitter } from 'node:events';
+import { BasicEventEmitterBus } from '@nyx-discord/http';
+// ---cut-start---
+type MyEventsArgs = {
+  someEvent: [string, number];
+  anotherEvent: [boolean];
+};
+// ---cut-end---
+
+const emitter = new EventEmitter();
+const syncBus = BasicEventEmitterBus.createSyncWithEmitter<MyEventsArgs, EventEmitter>(emitter);
+const asyncBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventsArgs, EventEmitter>(emitter);
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -427,7 +592,7 @@ const asyncBus = BasicEventEmitterBus.createAsyncWithEmitter<MyEventsArgs, Event
 
 Apart from the events specified in the type, the bus also emits extra events related to the bus itself:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { EventBusEventEnum } from '@nyx-discord/djs';
@@ -439,6 +604,16 @@ EventBusEventEnum.
   <Tab>
 ```ts twoslash
 import { EventBusEventEnum } from '@nyx-discord/djs-core';
+// @noErrors
+EventBusEventEnum.
+//                ^|
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { EventBusEventEnum } from '@nyx-discord/http';
 // @noErrors
 EventBusEventEnum.
 //                ^|

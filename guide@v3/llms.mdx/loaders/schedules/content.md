@@ -21,7 +21,7 @@ Any `.js` or `.mjs` file at any depth that exports a class extending <DocsLink p
 
 By default, schedules are automatically registered via `scheduleManager.addSchedule()`:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -42,11 +42,23 @@ import { ScheduleLoader } from '@nyx-discord/loaders';
 await ScheduleLoader.load({ bot, path: './dist/schedules' });
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+import { ScheduleLoader } from '@nyx-discord/loaders';
+
+await ScheduleLoader.load({ bot, path: './dist/schedules' });
+```
+  </Tab>
 </Tabs>
 
 Pass `register: false` to handle registration yourself:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -68,6 +80,26 @@ for (const schedule of schedules) {
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { ScheduleLoader } from '@nyx-discord/loaders';
+
+const schedules = await ScheduleLoader.load({
+  bot,
+  path: './dist/schedules',
+  register: false,
+});
+
+for (const schedule of schedules) {
+  await bot.getScheduleManager().addSchedule(schedule);
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 // ---cut---
 import { ScheduleLoader } from '@nyx-discord/loaders';
@@ -87,7 +119,7 @@ for (const schedule of schedules) {
 
 ## Writing schedules for the loader [#writing-schedules-for-the-loader]
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractSchedule } from '@nyx-discord/djs';
@@ -116,6 +148,22 @@ export class DailyReport extends AbstractSchedule {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/http';
+import type { Metadata } from '@nyx-discord/http';
+
+export class DailyReport extends AbstractSchedule {
+  protected readonly interval = '0 0 * * *'; // Every day at midnight
+
+  public async tick(meta: Metadata) {
+    // Send daily report...
+  }
+}
+```
+  </Tab>
 </Tabs>
 
 <Callout>
@@ -124,7 +172,7 @@ Schedules are instantiated with <code>new Class()</code> (no arguments). They do
 
 Alternatively, you can specify a `static create(bot)` factory:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { AbstractSchedule } from '@nyx-discord/djs';
@@ -148,6 +196,27 @@ export class DailyReport extends AbstractSchedule {
 ```ts twoslash
 import { AbstractSchedule } from '@nyx-discord/djs-core';
 import type { Metadata, NyxBot } from '@nyx-discord/djs-core';
+
+export class DailyReport extends AbstractSchedule {
+  protected readonly interval = '0 0 * * *';
+
+  public static create(bot: NyxBot) {
+    return new DailyReport();
+  }
+
+  // ...
+  // ---cut-start---
+  async tick(meta: Metadata) {}
+  // ---cut-end---
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { AbstractSchedule } from '@nyx-discord/http';
+import type { Metadata, NyxBot } from '@nyx-discord/http';
 
 export class DailyReport extends AbstractSchedule {
   protected readonly interval = '0 0 * * *';

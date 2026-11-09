@@ -19,7 +19,7 @@ Create a custom command manager by either:
 * Extending `DefaultCommandManager`.
 * Implementing `CommandManager`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultCommandManager } from '@nyx-discord/djs';
@@ -34,6 +34,19 @@ class MyCommandManager extends DefaultCommandManager {
   <Tab>
 ```ts twoslash
 import { DefaultCommandManager } from '@nyx-discord/djs-core';
+
+class MyCommandManager extends DefaultCommandManager {
+  public myCustomPublicMethod() {
+    return 'I work!' as const;
+  }
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandManager } from '@nyx-discord/http';
 
 class MyCommandManager extends DefaultCommandManager {
   public myCustomPublicMethod() {
@@ -153,7 +166,7 @@ The class is able to infer the type of your custom manager, so accessing any cus
 
 If you ever want to use this custom bot type with your injected manager somewhere else, you can do so via the generic:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { Client } from 'discord.js';
@@ -186,6 +199,29 @@ class MyCommandManager extends DefaultCommandManager {
 }
 // ---cut---
 import type { NyxBot, InjectableBotDependencies } from '@nyx-discord/djs-core';
+
+type BotWithCustomManager = NyxBot<InjectableBotDependencies & { commandManager: MyCommandManager }>;
+
+function functionOnlyForCustomManager(bot: BotWithCustomManager) {
+  const manager = bot.getCommandManager();
+  const result = manager.myCustomPublicMethod();
+  //     ^?
+}
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { Client } from 'discord.js';
+import { DefaultCommandManager } from '@nyx-discord/http';
+class MyCommandManager extends DefaultCommandManager {
+  public myCustomPublicMethod() {
+    return 'I work!' as const;
+  }
+}
+// ---cut---
+import type { NyxBot, InjectableBotDependencies } from '@nyx-discord/http';
 
 type BotWithCustomManager = NyxBot<InjectableBotDependencies & { commandManager: MyCommandManager }>;
 

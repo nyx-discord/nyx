@@ -19,7 +19,7 @@ Create a custom command resolver by either:
 * Extending `DefaultCommandResolver` (recommended, less work).
 * Implementing `CommandResolver`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultCommandResolver } from '@nyx-discord/djs';
@@ -34,6 +34,15 @@ import { DefaultCommandResolver } from '@nyx-discord/djs-core';
 class MyCommandResolver extends DefaultCommandResolver {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/http';
+
+class MyCommandResolver extends DefaultCommandResolver {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -42,7 +51,7 @@ class MyCommandResolver extends DefaultCommandResolver {}
 
 Create it and set it to the [`CommandManager`](/extend/commands/command-manager).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultCommandResolver } from '@nyx-discord/djs';
@@ -60,6 +69,21 @@ bot.getCommandManager().setResolver(MyCommandResolver.create());
 ```ts twoslash
 import { DefaultCommandResolver } from '@nyx-discord/djs-core';
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+class MyCommandResolver extends DefaultCommandResolver {
+  /** Your overrides */
+}
+
+bot.getCommandManager().setResolver(MyCommandResolver.create());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultCommandResolver } from '@nyx-discord/http';
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 // ---cut---
 class MyCommandResolver extends DefaultCommandResolver {

@@ -21,7 +21,7 @@ Create a custom schedule repository by either:
 * Extending <DocsLink pkg='base' name='DefaultScheduleRepository' decorated={false} /> (<BaseMention />'s implementation, recommended for less work).
 * Implementing <DocsLink pkg='base' name='ScheduleRepository' decorated={false} /> (<BaseMention />'s interface).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultScheduleRepository } from '@nyx-discord/djs';
@@ -44,6 +44,19 @@ class MyScheduleRepository extends DefaultScheduleRepository {
 }
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultScheduleRepository } from '@nyx-discord/http';
+
+class MyScheduleRepository extends DefaultScheduleRepository {
+  public myCustomMethod() {
+    // Custom logic
+  }
+}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -52,7 +65,7 @@ class MyScheduleRepository extends DefaultScheduleRepository {
 
 Create it and set it to the [`ScheduleManager`](/extend/schedules/schedule-manager).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { DefaultScheduleRepository } from '@nyx-discord/djs';
@@ -70,6 +83,21 @@ bot.getScheduleManager().setRepository(MyScheduleRepository.create());
 ```ts twoslash
 import { DefaultScheduleRepository } from '@nyx-discord/djs-core';
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+class MyScheduleRepository extends DefaultScheduleRepository {
+  /** Your overrides */
+}
+
+bot.getScheduleManager().setRepository(MyScheduleRepository.create());
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { DefaultScheduleRepository } from '@nyx-discord/http';
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 // ---cut---
 class MyScheduleRepository extends DefaultScheduleRepository {

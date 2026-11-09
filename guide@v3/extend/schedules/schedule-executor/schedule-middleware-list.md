@@ -27,7 +27,7 @@ Create a custom `ScheduleMiddlewareList` by either:
 * Extending `ScheduleMiddlewareList` (recommended, less work).
 * Implementing `MiddlewareList<ScheduleMiddlewareResolvable>`.
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { ScheduleMiddlewareList } from '@nyx-discord/djs';
@@ -42,6 +42,15 @@ import { ScheduleMiddlewareList } from '@nyx-discord/djs-core';
 class MyMiddlewareList extends ScheduleMiddlewareList {}
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { ScheduleMiddlewareList } from '@nyx-discord/http';
+
+class MyMiddlewareList extends ScheduleMiddlewareList {}
+```
+  </Tab>
 </Tabs>
 
 </Step>
@@ -50,7 +59,7 @@ class MyMiddlewareList extends ScheduleMiddlewareList {}
 
 Inject it into a custom `DefaultScheduleExecutor`, then set that executor to the [`ScheduleManager`](/extend/schedules/schedule-manager).
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import { BasicErrorHandler, DefaultScheduleExecutor, ScheduleMiddlewareList, TypedFields } from '@nyx-discord/djs';
@@ -77,6 +86,27 @@ import { BasicErrorHandler, DefaultScheduleExecutor, ScheduleMiddlewareList, Typ
 class MyMiddlewareList extends ScheduleMiddlewareList {}
 // ---cut---
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+
+const executor = new DefaultScheduleExecutor(
+  MyMiddlewareList.create(),
+  BasicErrorHandler.createWithFallbackLogger((_error, _schedule, [metadata]) =>
+    TypedFields.Bot.get(metadata, true).getLogger(),
+  ),
+);
+
+bot.getScheduleManager().setExecutor(executor);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import { BasicErrorHandler, DefaultScheduleExecutor, ScheduleMiddlewareList, TypedFields } from '@nyx-discord/http';
+
+class MyMiddlewareList extends ScheduleMiddlewareList {}
+// ---cut---
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 
 const executor = new DefaultScheduleExecutor(

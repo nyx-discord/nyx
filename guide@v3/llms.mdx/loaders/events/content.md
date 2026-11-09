@@ -43,7 +43,7 @@ A recommended convention:
 
 By default, events are automatically subscribed to the appropriate buses:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -64,11 +64,23 @@ import { EventLoader } from '@nyx-discord/loaders';
 await EventLoader.load({ bot, path: './dist/events' });
 ```
   </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+await EventLoader.load({ bot, path: './dist/events' });
+```
+  </Tab>
 </Tabs>
 
 Pass `register: false` to handle registration yourself:
 
-<Tabs items={['discord.js', '@discordjs/core']}>
+<Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs';
@@ -92,6 +104,28 @@ await bot.getScheduleManager().subscribe(...events.schedule);
   <Tab>
 ```ts twoslash
 import type { NyxBot } from '@nyx-discord/djs-core';
+declare const bot: NyxBot;
+// ---cut---
+import { EventLoader } from '@nyx-discord/loaders';
+
+const events = await EventLoader.load({
+  bot,
+  path: './dist/events',
+  register: false,
+});
+
+await bot.subscribeToClient(...events.client);
+await bot.getCommandManager().subscribe(...events.command);
+await bot.getService().subscribe(...events.service);
+await bot.getPluginManager().subscribe(...events.plugin);
+await bot.getScheduleManager().subscribe(...events.schedule);
+```
+  </Tab>
+  <Tab>
+  Same as `@discordjs/core`, importing from `@nyx-discord/http`:
+
+```ts twoslash
+import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 // ---cut---
 import { EventLoader } from '@nyx-discord/loaders';
