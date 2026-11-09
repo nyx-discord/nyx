@@ -46,7 +46,7 @@
     "@swc-node/register": "~1.12.1",
     "@swc/core": "~1.16.22",
     "@swc/helpers": "~0.5.24",
-    "@types/node": "18.19.130",
+    "@types/node": "22.20.5",
     "@vitest/coverage-v8": "5.1.0",
     "barrelsby": "2.8.1",
     "conventional-changelog-conventionalcommits": "10.4.1",
