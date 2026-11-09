@@ -39,8 +39,8 @@
     "prepush": "pnpm validate"
   },
   "devDependencies": {
-    "@commitlint/cli": "17.8.1",
-    "@commitlint/config-conventional": "17.8.1",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
     "@eslint/js": "10.0.1",
     "@repo/typedoc-plugin-entities": "workspace:*",
     "@swc-node/register": "~1.12.1",
