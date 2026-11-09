@@ -1,7 +1,7 @@
-:HL["/nyx/guide@v3/_next/static/chunks/05i1tmvb59cjg.css","style"]
+:HL["/nyx/guide@v3/_next/static/chunks/2h7u922hqovyb.css","style"]
 :HL["/nyx/guide@v3/_next/static/chunks/1ix59xuhq-q14.css","style"]
 :HL["/nyx/guide@v3/_next/static/media/07c7676b89ed2778-s.p.2bn3s6zvc0dyp.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 3:[["children",{"s":"__PAGE__","h":160}]]
 2:[["children",{"s":{"n":"slug","t":"oc","k":"use/events/buses","s":["api","llms-full.txt","llms.mdx","llms.txt"]},"h":64,"c":"$Q3"}]]
 1:[["children",{"s":"(docs)","h":32,"c":"$Q2"}]]
-0:{"b":"BSxndoCywEYWqrfso4t3q","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"Nb-cHxYTUe5CDWQUIPMA0","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

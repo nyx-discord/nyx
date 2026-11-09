@@ -115,3 +115,9 @@
   - [Commands](https://nyx-discord.github.io/nyx/guide@v3/loaders/commands.md)
   - [Events](https://nyx-discord.github.io/nyx/guide@v3/loaders/events.md)
   - [Schedules](https://nyx-discord.github.io/nyx/guide@v3/loaders/schedules.md)
+- Typed Options: Type-safe slash command options, with no codegen.
+  - [Overview](https://nyx-discord.github.io/nyx/guide@v3/typed-options.md)
+
+  - **Options**
+  - [Options](https://nyx-discord.github.io/nyx/guide@v3/typed-options/options.md)
+  - [Subcommands](https://nyx-discord.github.io/nyx/guide@v3/typed-options/subcommands.md)
