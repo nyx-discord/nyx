@@ -1,6 +1,6 @@
 {
   "title": "Session Plugin",
-  "description": "All about the sessions plugin.",
+  "description": "Create stateful interaction sessions with your users.",
   "root": true,
   "icon": "User",
   "pages": [

@@ -6,9 +6,11 @@ import Link from 'next/link';
 export async function DefinedInCard({
   pkg,
   name,
+  showPkg = false,
 }: {
   pkg: string;
   name: string;
+  showPkg?: boolean;
 }) {
   const links = await getLinks(pkg, name);
   if (!links) return null;
@@ -16,6 +18,9 @@ export async function DefinedInCard({
   return (
     <div className="inline-flex items-center rounded-md border border-fd-primary/50 bg-fd-card text-fd-card-foreground shadow-sm">
       <span className="px-3 py-1 text-sm font-medium border-r border-fd-border/50">
+        {showPkg && (
+          <span className="text-fd-muted-foreground">{pkg}/</span>
+        )}
         {name}
       </span>
 

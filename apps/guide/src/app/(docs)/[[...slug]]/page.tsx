@@ -50,12 +50,17 @@ export default async function Page(props: {
       : null;
 
   const { definedIn } = page.data;
+  const definedInNames = definedIn?.map((def) => def.split('/')[1]) ?? [];
   const definedInElement = definedIn ? (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-fd-muted-foreground">See in:</span>{' '}
       {definedIn.map((def) => {
         const [pkg, name] = def.split('/');
-        return <DefinedInCard pkg={pkg} name={name} key={def} />;
+        const showPkg =
+          definedInNames.filter((other) => other === name).length > 1;
+        return (
+          <DefinedInCard pkg={pkg} name={name} showPkg={showPkg} key={def} />
+        );
       })}
     </div>
   ) : null;
