@@ -88,7 +88,7 @@ import type { DjsInteractionTypes } from '@nyx-discord/djs';
 declare const plugin: DjsSessionPlugin;
 declare const MySession: new () => Session<unknown, DjsInteractionTypes>;
 // ---cut---
-const limit = new SessionLimitBuilder()
+const limit = new SessionLimitBuilder<DjsInteractionTypes>()
   .setSession(MySession)
   .addRule((rule) =>
     rule
@@ -116,7 +116,7 @@ import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
 declare const plugin: CoreSessionPlugin;
 declare const MySession: new () => Session<unknown, CoreInteractionTypes>;
 // ---cut---
-const limit = new SessionLimitBuilder()
+const limit = new SessionLimitBuilder<CoreInteractionTypes>()
   .setSession(MySession)
   .addRule((rule) =>
     rule
