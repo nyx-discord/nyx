@@ -16,5 +16,6 @@ export * from './verify/SignatureVerifier';
 export * from './webhook/AbstractWebhookEventSubscriber';
 export * from './webhook/WebhookEventProps';
 
+export { HttpBot as Bot } from './bot/HttpBot';
 export { TypedFields } from './fields/TypedFields';
 export * from '@nyx-discord/djs-core';

@@ -20,11 +20,13 @@ import type {
 } from '../../../src';
 import {
   AbstractStandaloneCommand,
+  Bot,
   AbstractWebhookEventSubscriber,
   BasicEventEmitterBus,
   CoreBot,
   HttpBot,
   HttpNyxClient,
+  TypedFields,
 } from '../../../src';
 import { MockSigner } from '../../client/mocks/MockSigner';
 
@@ -70,6 +72,24 @@ describe('HttpBot', () => {
     expect(bot.getClient()).toBeInstanceOf(HttpNyxClient);
     expect(bot.getClient().getApplicationId()).toBe('123');
     expectTypeOf(bot.getClient()).toEqualTypeOf<HttpNyxClient>();
+  });
+
+  test('GIVEN the package exports WHEN using Bot THEN it is HttpBot, as a value and as the bot type', () => {
+    expect(Bot).toBe(HttpBot);
+
+    const bot: Bot = Bot.create(() => ({
+      applicationId: '123',
+      publicKey: '00',
+      token: 'token',
+      logger: console,
+      deployCommands: false,
+    }));
+
+    expectTypeOf(bot).toEqualTypeOf<HttpBot>();
+    expectTypeOf(bot.getClient()).toEqualTypeOf<HttpNyxClient>();
+    expectTypeOf(TypedFields.HttpBot.get({}, false)).toEqualTypeOf<
+      HttpBot | undefined
+    >();
   });
 
   test('GIVEN a started bot WHEN a signed command arrives THEN the command replies through the callback before handle resolves', async () => {

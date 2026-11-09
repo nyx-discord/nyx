@@ -203,7 +203,7 @@ await myBot.start();
 ```ts twoslash
 import { HttpBot } from '@nyx-discord/http';
 // ---cut-start---
-declare const myBot: ReturnType<typeof HttpBot.create>;
+declare const myBot: HttpBot;
 // ---cut-end---
 import { createServer } from 'node:http';
 import { toNodeListener } from '@nyx-discord/http';

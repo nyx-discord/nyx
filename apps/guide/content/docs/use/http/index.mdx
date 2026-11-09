@@ -33,7 +33,7 @@ The package re-exports `@nyx-discord/djs-core`, so commands, events, schedules a
 
 ### Creating the bot
 
-`HttpBot.create()` works like `Bot.create()`, but takes your application's ID and public key (both on the [Developer Portal](https://discord.com/developers/applications)) instead of a client, and creates the client for you:
+`HttpBot.create()` works like `@nyx-discord/djs-core`'s `Bot.create()`, but takes your application's ID and public key (both on the [Developer Portal](https://discord.com/developers/applications)) instead of a client, and creates the client for you. `Bot` from `@nyx-discord/http` is `HttpBot`, so examples using `Bot.create()` or the `Bot` type work as-is:
 
 ```ts twoslash
 declare const env: Record<string, string>;
@@ -65,7 +65,7 @@ Pass incoming requests to the client from your server. See [Mounting](/use/http/
 
 ```ts twoslash
 import { HttpBot } from '@nyx-discord/http';
-declare const bot: ReturnType<typeof HttpBot.create>;
+declare const bot: HttpBot;
 // ---cut---
 import { createServer } from 'node:http';
 import { toNodeListener } from '@nyx-discord/http';
