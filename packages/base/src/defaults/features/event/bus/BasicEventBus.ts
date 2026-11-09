@@ -12,7 +12,6 @@ import type { AnyEventSubscriberFrom } from '#types/features/event/subscriber/ty
 import type { Identifier } from '#types/identity/Identifier';
 import type { Metadata } from '#types/meta/Metadata';
 import type { MetadataFactory } from '#types/meta/MetadataFactory';
-import type { Awaitable } from '#types/types/Awaitable';
 import type { Comparator } from '#types/types/Comparator';
 import type { ReadonlyCollectionFrom } from '#types/types/ReadonlyCollectionFrom';
 import type { ReadonlyCollection } from '@discordjs/collection';
@@ -130,7 +129,7 @@ export class BasicEventBus<
 
     if (!affected || !affected.size) return this;
 
-    const subscriberPromises: Array<Awaitable<void>> = [];
+    const subscriberPromises: Promise<void>[] = [];
 
     for (const [key, collection] of affected.entries()) {
       const affectedObjects = clearProtected
@@ -143,7 +142,7 @@ export class BasicEventBus<
         const unsubscribePromise = subscriber.onUnsubscribe(
           this as EventBus<EventArgsObject>,
         );
-        subscriberPromises.push(unsubscribePromise);
+        subscriberPromises.push(Promise.resolve(unsubscribePromise));
         collection.delete(subscriberId);
       }
 
