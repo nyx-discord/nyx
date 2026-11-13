@@ -87,7 +87,7 @@ On the Developer Portal, set your app's **Interactions Endpoint URL** to the pub
 
 - Only interactions (`InteractionCreate`) and [webhook events](/use/http/webhook-events) are emitted. Subscribers to any other gateway event (messages, members, guilds...) never fire.
 - Commands work unchanged: they reply through `api.interactions.reply()` and friends, as they do on the gateway. See [Handling requests](/use/http/requests).
-- Schedules run while the process is alive. On serverless platforms, triggering them (e.g. with Workers cron triggers) is up to you.
+- Schedules run while the process is alive. On serverless platforms, triggering them (e.g. with Workers cron triggers) is up to you, see [Serverless](/use/http/serverless).
 - Only the `@discordjs/core` adapter is supported, since discord.js structures need a gateway-backed `Client`.
 
 ## Getting the bot

@@ -1,7 +1,6 @@
 import { docs } from 'collections/server';
 import { loader, llms } from 'fumadocs-core/source';
-import { icons } from 'lucide-react';
-import { createElement } from 'react';
+import { getIcon } from './icons';
 import { withHttpTabs } from './llms-http-tabs';
 import { absoluteUrl } from './site';
 
@@ -9,10 +8,7 @@ import { absoluteUrl } from './site';
 export const source = loader({
   // it assigns a URL to your pages
   baseUrl: '/',
-  icon(icon) {
-    if (icon && icon in icons)
-      return createElement(icons[icon as keyof typeof icons]);
-  },
+  icon: (icon) => getIcon(icon),
   source: docs.toFumadocsSource(),
 });
 

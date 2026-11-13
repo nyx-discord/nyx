@@ -1,0 +1,6 @@
+{
+  "title": "Serverless",
+  "icon": "Cloud",
+  "defaultOpen": false,
+  "pages": ["cloudflare-workers", "vercel", "netlify", "supabase", "aws-lambda"]
+}

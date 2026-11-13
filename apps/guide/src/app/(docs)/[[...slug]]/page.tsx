@@ -9,9 +9,8 @@ import {
   DocsPage,
   DocsTitle,
 } from 'fumadocs-ui/page';
-import { icons as lucideIcons } from 'lucide-react';
+import { getIcon } from '@/lib/icons';
 import { notFound } from 'next/navigation';
-import { createElement } from 'react';
 import {
   HoverCard,
   HoverCardContent,
@@ -42,12 +41,7 @@ export default async function Page(props: {
   }
 
   const { icon } = page.data;
-  const iconElement =
-    icon && icon in lucideIcons
-      ? createElement(lucideIcons[icon as keyof typeof lucideIcons], {
-          size: '3em',
-        })
-      : null;
+  const iconElement = getIcon(icon, { size: '3em' });
 
   const { definedIn } = page.data;
   const definedInNames = definedIn?.map((def) => def.split('/')[1]) ?? [];
@@ -117,10 +111,7 @@ export default async function Page(props: {
               const { data } = found.page;
               const { icon } = data;
 
-              const iconElement =
-                icon && icon in lucideIcons
-                  ? createElement(lucideIcons[icon as keyof typeof lucideIcons])
-                  : null;
+              const iconElement = getIcon(icon);
 
               const content = (await data.load()).structuredData.contents[0]
                 ?.content;

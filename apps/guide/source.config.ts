@@ -28,7 +28,7 @@ export const docs = defineDocs({
 export default defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
-      langs: ['js', 'ts', 'bash', 'sh', 'json', 'diff'],
+      langs: ['js', 'ts', 'bash', 'sh', 'json', 'diff', 'toml'],
       themes: {
         light: 'github-light',
         dark: 'github-dark',

@@ -2,5 +2,5 @@
   "title": "HTTP Bots",
   "icon": "Globe",
   "defaultOpen": false,
-  "pages": ["mounting", "requests", "webhook-events", "configuration"]
+  "pages": ["mounting", "requests", "serverless", "webhook-events", "configuration"]
 }
