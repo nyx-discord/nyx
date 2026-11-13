@@ -133,6 +133,8 @@ export default {
 };
 ```
 
+On Workers, your secrets only arrive with the first request, so the client can't be created when the module loads. See [Cloudflare Workers](/use/http/serverless/cloudflare-workers) for a complete setup.
+
 ## Bun and Deno [#bun-and-deno]
 
 Both accept a default export with a `fetch` handler:

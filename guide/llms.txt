@@ -19,6 +19,13 @@
     - [HTTP Overview](https://nyx-discord.github.io/nyx/guide/use/http.md)
     - [Mounting](https://nyx-discord.github.io/nyx/guide/use/http/mounting.md): Connect the client to your server or runtime.
     - [Handling requests](https://nyx-discord.github.io/nyx/guide/use/http/requests.md): How the client answers Discord, and how commands reply.
+    - Serverless
+      - [Serverless](https://nyx-discord.github.io/nyx/guide/use/http/serverless.md): Run an HTTP bot on serverless platforms like Cloudflare Workers, Vercel or AWS Lambda.
+      - [Cloudflare Workers](https://nyx-discord.github.io/nyx/guide/use/http/serverless/cloudflare-workers.md): Run an HTTP bot on Cloudflare Workers.
+      - [Vercel](https://nyx-discord.github.io/nyx/guide/use/http/serverless/vercel.md): Run an HTTP bot on Vercel Functions.
+      - [Netlify](https://nyx-discord.github.io/nyx/guide/use/http/serverless/netlify.md): Run an HTTP bot on Netlify Functions.
+      - [Supabase Edge Functions](https://nyx-discord.github.io/nyx/guide/use/http/serverless/supabase.md): Run an HTTP bot on Supabase Edge Functions.
+      - [AWS Lambda](https://nyx-discord.github.io/nyx/guide/use/http/serverless/aws-lambda.md): Run an HTTP bot on AWS Lambda with a function URL.
     - [Webhook events](https://nyx-discord.github.io/nyx/guide/use/http/webhook-events.md): Receive app authorizations, entitlements and other webhook events.
     - [Configuration](https://nyx-discord.github.io/nyx/guide/use/http/configuration.md): Replace the parts of the HTTP client.
 

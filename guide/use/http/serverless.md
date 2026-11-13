@@ -1,0 +1,94 @@
+# Serverless (https://nyx-discord.github.io/nyx/guide/use/http/serverless)
+
+On serverless platforms there's no long-lived process: the platform starts an instance when a request arrives, may reuse it
+for a while, and stops it whenever it wants. The bot works the same way there, but a few things need to change compared
+to a regular server.
+
+## Creating the bot [#creating-the-bot]
+
+Create the bot once per instance and reuse it for every request the instance receives. Put its creation in a function,
+so your platform's entry and your [command deploy script](#deploying-commands) can share it:
+
+```ts twoslash title="src/bot.ts"
+import { HttpBot } from '@nyx-discord/http';
+
+export type BotEnv = { APP_ID: string; DISCORD_PUBLIC_KEY: string; TOKEN: string };
+
+export async function createBot(env: BotEnv, deployCommands: boolean) {
+  const bot = HttpBot.create(() => ({
+    applicationId: env.APP_ID,
+    publicKey: env.DISCORD_PUBLIC_KEY,
+    token: env.TOKEN,
+    logger: console,
+    deployCommands,
+  }));
+
+  // await bot.getCommandManager().addCommands(...);
+  await bot.start();
+  return bot;
+}
+```
+
+## Deploying commands [#deploying-commands]
+
+Each new instance runs `bot.start()`, so with `deployCommands: true`, every cold start would deploy your commands to Discord
+again, wasting rate limits and slowing down the first request. Create the bot with `deployCommands: false` on the platform,
+and deploy commands from your machine (or CI) with a script that reuses the same function:
+
+```ts twoslash title="scripts/deploy-commands.ts"
+// @noErrors
+import 'dotenv/config';
+import { createBot } from '../src/bot';
+
+await createBot(process.env as never, true);
+console.log('Commands deployed.');
+```
+
+Run it again whenever you add or change a command. Commands are matched by name, so the bot doesn't need to know their IDs.
+
+## Keeping work alive [#keeping-work-alive]
+
+The platform may stop the instance once the response is sent, cutting off anything your commands do after their first
+reply. Pass the platform's `waitUntil` to the client, see [Serverless platforms](/use/http/requests#serverless-platforms).
+Platforms without one, like [AWS Lambda](/use/http/serverless/aws-lambda), need to wait for the handlers before responding.
+
+Schedules don't run by themselves either, since there's no process to keep their timers. Trigger the work from your
+platform's scheduled jobs instead, like [Workers cron triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/).
+
+## Testing without Discord [#testing-without-discord]
+
+You can test your endpoint before setting it on the Developer Portal by signing requests yourself. Generate a keypair, use
+its public key as `DISCORD_PUBLIC_KEY`, and sign each request like Discord does:
+
+```ts twoslash title="scripts/send.ts"
+// @noErrors
+import { createPrivateKey, generateKeyPairSync, sign } from 'node:crypto';
+
+// once: generate a keypair, and set `publicKeyHex` as DISCORD_PUBLIC_KEY
+const { publicKey, privateKey } = generateKeyPairSync('ed25519');
+const publicKeyHex = publicKey.export({ format: 'der', type: 'spki' }).subarray(-32).toString('hex');
+
+const body = JSON.stringify({ id: '1', application_id: '1', type: 1, token: 't', version: 1 });
+const timestamp = Math.floor(Date.now() / 1000).toString();
+const signature = sign(null, Buffer.from(timestamp + body), privateKey).toString('hex');
+
+const response = await fetch('http://localhost:8787/interactions' /* your local URL */, {
+  method: 'POST',
+  headers: { 'X-Signature-Ed25519': signature, 'X-Signature-Timestamp': timestamp },
+  body,
+});
+console.log(response.status, await response.text()); // 200 {"type":1}
+```
+
+That's a `PING`. Sending an application command interaction runs your command, though its reply fails with
+`Unknown interaction`, since Discord never created it.
+
+## Platform examples [#platform-examples]
+
+<Cards>
+<Card title="Cloudflare Workers" icon={<SiCloudflareworkers />} href="/use/http/serverless/cloudflare-workers" external={false} />
+<Card title="Vercel" icon={<SiVercel />} href="/use/http/serverless/vercel" external={false} />
+<Card title="Netlify" icon={<SiNetlify />} href="/use/http/serverless/netlify" external={false} />
+<Card title="Supabase Edge Functions" icon={<SiSupabase />} href="/use/http/serverless/supabase" external={false} />
+<Card title="AWS Lambda" icon={<LambdaIcon />} href="/use/http/serverless/aws-lambda" external={false} />
+</Cards>
