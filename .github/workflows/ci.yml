@@ -3,8 +3,16 @@ name: Continuous Integration
 on:
   push:
     branches: [ "main", "v*" ]
+    paths: &ci-paths
+      - '**'
+      - '!**/assets/**'
+      - '!.husky/**'
+      - '!.commitlintrc.json'
+      - '!.github/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     branches: [ "main", "v*" ]
+    paths: *ci-paths
   workflow_dispatch:
 
 jobs:
