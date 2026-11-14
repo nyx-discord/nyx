@@ -72,7 +72,7 @@ declare const bot: NyxBot;
 const executor = new DefaultScheduleExecutor(
   MyMiddlewareList.create(),
   BasicErrorHandler.createWithFallbackLogger((_error, _schedule, [metadata]) =>
-    TypedFields.Bot.get(metadata, true).getLogger(),
+    TypedFields.getLogger(metadata),
   ),
 );
 
@@ -91,7 +91,7 @@ declare const bot: NyxBot;
 const executor = new DefaultScheduleExecutor(
   MyMiddlewareList.create(),
   BasicErrorHandler.createWithFallbackLogger((_error, _schedule, [metadata]) =>
-    TypedFields.Bot.get(metadata, true).getLogger(),
+    TypedFields.getLogger(metadata),
   ),
 );
 
@@ -112,7 +112,7 @@ declare const bot: NyxBot;
 const executor = new DefaultScheduleExecutor(
   MyMiddlewareList.create(),
   BasicErrorHandler.createWithFallbackLogger((_error, _schedule, [metadata]) =>
-    TypedFields.Bot.get(metadata, true).getLogger(),
+    TypedFields.getLogger(metadata),
   ),
 );
 

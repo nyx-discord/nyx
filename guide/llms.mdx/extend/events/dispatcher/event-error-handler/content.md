@@ -154,7 +154,7 @@ type MyEvents = {
 declare const bus: EventBus<MyEvents>;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<AnyEventSubscriber, EventDispatchArgs>(
-  (_error, _subscriber, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _subscriber, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const dispatcher = BasicSyncEventDispatcher.create({
@@ -184,7 +184,7 @@ type MyEvents = {
 declare const bus: EventBus<MyEvents>;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<AnyEventSubscriber, EventDispatchArgs>(
-  (_error, _subscriber, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _subscriber, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const dispatcher = BasicSyncEventDispatcher.create({
@@ -216,7 +216,7 @@ type MyEvents = {
 declare const bus: EventBus<MyEvents>;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<AnyEventSubscriber, EventDispatchArgs>(
-  (_error, _subscriber, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _subscriber, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const dispatcher = BasicSyncEventDispatcher.create({

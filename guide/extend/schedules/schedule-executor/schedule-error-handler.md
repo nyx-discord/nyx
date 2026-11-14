@@ -71,7 +71,7 @@ import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -97,7 +97,7 @@ import type { NyxBot } from '@nyx-discord/djs-core';
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -125,7 +125,7 @@ import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -157,7 +157,7 @@ import {
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -181,7 +181,7 @@ import {
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -207,7 +207,7 @@ import {
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(

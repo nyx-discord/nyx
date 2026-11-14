@@ -229,6 +229,14 @@ import { TypedFields } from '@nyx-discord/djs';
 const bot = TypedFields.Bot.get(meta, true);
 //    ^?
 
+// Shorthands for the bot typed for this adapter, its discord.js Client and its logger, which throw if the meta has no bot.
+const typedBot = TypedFields.getBot(meta);
+//    ^?
+const client = TypedFields.getClient(meta);
+//    ^?
+const logger = TypedFields.getLogger(meta);
+//    ^?
+
 // The identifier of this object execution, which is a Symbol containing some debugable information.
 const id = TypedFields.Id.get(meta, true);
 //    ^?
@@ -255,6 +263,16 @@ import { TypedFields } from '@nyx-discord/djs-core';
 
 // The bot who triggered the object (command, event, etc).
 const bot = TypedFields.Bot.get(meta, true);
+//    ^?
+
+// Shorthands for the bot typed for this adapter, its @discordjs/core gateway Client, its REST API and its logger, which throw if the meta has no bot.
+const typedBot = TypedFields.getBot(meta);
+//    ^?
+const client = TypedFields.getClient(meta);
+//    ^?
+const api = TypedFields.getApi(meta);
+//    ^?
+const logger = TypedFields.getLogger(meta);
 //    ^?
 
 // The identifier of this object execution, which is a Symbol containing some debugable information.
@@ -285,6 +303,16 @@ import { TypedFields } from '@nyx-discord/http';
 
 // The bot who triggered the object (command, event, etc).
 const bot = TypedFields.Bot.get(meta, true);
+//    ^?
+
+// Shorthands for the bot typed for this adapter, its @discordjs/core gateway Client, its REST API and its logger, which throw if the meta has no bot.
+const typedBot = TypedFields.getBot(meta);
+//    ^?
+const client = TypedFields.getClient(meta);
+//    ^?
+const api = TypedFields.getApi(meta);
+//    ^?
+const logger = TypedFields.getLogger(meta);
 //    ^?
 
 // The identifier of this object execution, which is a Symbol containing some debugable information.

@@ -978,10 +978,7 @@ import { TypedFields } from '@nyx-discord/djs';
 import type { AnyExecutableCommand, CommandExecutionArgs } from '@nyx-discord/djs';
 
 const myHandler = MyErrorHandler.createWithFallbackLogger<AnyExecutableCommand, CommandExecutionArgs>(
-  (_error, _command, [_interaction, metadata]) => {
-    const bot = TypedFields.Bot.get(metadata, true);
-    return bot.getLogger();
-  }
+  (_error, _command, [_interaction, metadata]) => TypedFields.getLogger(metadata),
 );
 ```
   </Tab>
@@ -995,10 +992,7 @@ import { TypedFields } from '@nyx-discord/djs-core';
 import type { AnyExecutableCommand, CommandExecutionArgs } from '@nyx-discord/djs-core';
 
 const myHandler = MyErrorHandler.createWithFallbackLogger<AnyExecutableCommand, CommandExecutionArgs>(
-  (_error, _command, [_interaction, metadata]) => {
-    const bot = TypedFields.Bot.get(metadata, true);
-    return bot.getLogger();
-  }
+  (_error, _command, [_interaction, metadata]) => TypedFields.getLogger(metadata),
 );
 ```
   </Tab>
@@ -1014,10 +1008,7 @@ import { TypedFields } from '@nyx-discord/http';
 import type { AnyExecutableCommand, CommandExecutionArgs } from '@nyx-discord/http';
 
 const myHandler = MyErrorHandler.createWithFallbackLogger<AnyExecutableCommand, CommandExecutionArgs>(
-  (_error, _command, [_interaction, metadata]) => {
-    const bot = TypedFields.Bot.get(metadata, true);
-    return bot.getLogger();
-  }
+  (_error, _command, [_interaction, metadata]) => TypedFields.getLogger(metadata),
 );
 ```
   </Tab>
@@ -1485,7 +1476,7 @@ type MyEvents = {
 declare const bus: EventBus<MyEvents>;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<AnyEventSubscriber, EventDispatchArgs>(
-  (_error, _subscriber, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _subscriber, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const dispatcher = BasicSyncEventDispatcher.create({
@@ -1515,7 +1506,7 @@ type MyEvents = {
 declare const bus: EventBus<MyEvents>;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<AnyEventSubscriber, EventDispatchArgs>(
-  (_error, _subscriber, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _subscriber, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const dispatcher = BasicSyncEventDispatcher.create({
@@ -1547,7 +1538,7 @@ type MyEvents = {
 declare const bus: EventBus<MyEvents>;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<AnyEventSubscriber, EventDispatchArgs>(
-  (_error, _subscriber, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _subscriber, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const dispatcher = BasicSyncEventDispatcher.create({
@@ -2458,7 +2449,7 @@ import type { NyxBot } from '@nyx-discord/djs';
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -2484,7 +2475,7 @@ import type { NyxBot } from '@nyx-discord/djs-core';
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -2512,7 +2503,7 @@ import type { NyxBot } from '@nyx-discord/http';
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -2544,7 +2535,7 @@ import {
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -2568,7 +2559,7 @@ import {
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -2594,7 +2585,7 @@ import {
 declare const bot: NyxBot;
 
 const errorHandler = BasicErrorHandler.createWithFallbackLogger<Schedule, ScheduleTickArgs>(
-  (_error, _schedule, [metadata]) => TypedFields.Bot.get(metadata, true).getLogger(),
+  (_error, _schedule, [metadata]) => TypedFields.getLogger(metadata),
 );
 
 const executor = new DefaultScheduleExecutor(
@@ -2685,7 +2676,7 @@ declare const bot: NyxBot;
 const executor = new DefaultScheduleExecutor(
   MyMiddlewareList.create(),
   BasicErrorHandler.createWithFallbackLogger((_error, _schedule, [metadata]) =>
-    TypedFields.Bot.get(metadata, true).getLogger(),
+    TypedFields.getLogger(metadata),
   ),
 );
 
@@ -2704,7 +2695,7 @@ declare const bot: NyxBot;
 const executor = new DefaultScheduleExecutor(
   MyMiddlewareList.create(),
   BasicErrorHandler.createWithFallbackLogger((_error, _schedule, [metadata]) =>
-    TypedFields.Bot.get(metadata, true).getLogger(),
+    TypedFields.getLogger(metadata),
   ),
 );
 
@@ -2725,7 +2716,7 @@ declare const bot: NyxBot;
 const executor = new DefaultScheduleExecutor(
   MyMiddlewareList.create(),
   BasicErrorHandler.createWithFallbackLogger((_error, _schedule, [metadata]) =>
-    TypedFields.Bot.get(metadata, true).getLogger(),
+    TypedFields.getLogger(metadata),
   ),
 );
 
@@ -16644,7 +16635,7 @@ On the Developer Portal, set your app's **Interactions Endpoint URL** to the pub
 
 ## Getting the bot [#getting-the-bot]
 
-Inside commands, subscribers and schedules, `TypedFields.HttpBot` gets the bot from the metadata, typed so its client is the `HttpNyxClient`:
+Inside commands, subscribers and schedules, `TypedFields.getBot()` gets the bot from the metadata, typed so its client is the `HttpNyxClient` (a shorthand for `TypedFields.HttpBot.get(meta, true)`):
 
 ```ts twoslash
 import { AbstractSchedule, TypedFields, type Metadata } from '@nyx-discord/http';
@@ -16653,14 +16644,17 @@ class CleanupSchedule extends AbstractSchedule {
   protected readonly interval = '0 * * * *';
 
   public async tick(meta: Metadata) {
-    const bot = TypedFields.HttpBot.get(meta, true);
+    const bot = TypedFields.getBot(meta);
     const client = bot.getClient();
     //    ^?
+
+    // Shorthand for bot.getClient().getApi(), the REST API
+    const api = TypedFields.getApi(meta);
   }
 }
 ```
 
-`@nyx-discord/http` exports its own `TypedFields`, without `@nyx-discord/djs-core`'s `GatewayCoreBot`, since HTTP bots have no gateway client.
+`@nyx-discord/http` exports its own `TypedFields`, without `@nyx-discord/djs-core`'s `GatewayCoreBot` and `getClient()`, since HTTP bots have no gateway client.
 
 
 # Mounting (https://nyx-discord.github.io/nyx/guide/use/http/mounting)
@@ -17827,10 +17821,9 @@ errorHandler.setConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `MyError occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -17855,10 +17848,9 @@ errorHandler.setConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `MyError occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -17885,10 +17877,9 @@ errorHandler.setConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `MyError occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -17958,10 +17949,9 @@ errorHandler.setFallbackConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `An unhandled error occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -17986,10 +17976,9 @@ errorHandler.setFallbackConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `An unhandled error occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -18016,10 +18005,9 @@ errorHandler.setFallbackConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `An unhandled error occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -18355,6 +18343,14 @@ import { TypedFields } from '@nyx-discord/djs';
 const bot = TypedFields.Bot.get(meta, true);
 //    ^?
 
+// Shorthands for the bot typed for this adapter, its discord.js Client and its logger, which throw if the meta has no bot.
+const typedBot = TypedFields.getBot(meta);
+//    ^?
+const client = TypedFields.getClient(meta);
+//    ^?
+const logger = TypedFields.getLogger(meta);
+//    ^?
+
 // The identifier of this object execution, which is a Symbol containing some debugable information.
 const id = TypedFields.Id.get(meta, true);
 //    ^?
@@ -18381,6 +18377,16 @@ import { TypedFields } from '@nyx-discord/djs-core';
 
 // The bot who triggered the object (command, event, etc).
 const bot = TypedFields.Bot.get(meta, true);
+//    ^?
+
+// Shorthands for the bot typed for this adapter, its @discordjs/core gateway Client, its REST API and its logger, which throw if the meta has no bot.
+const typedBot = TypedFields.getBot(meta);
+//    ^?
+const client = TypedFields.getClient(meta);
+//    ^?
+const api = TypedFields.getApi(meta);
+//    ^?
+const logger = TypedFields.getLogger(meta);
 //    ^?
 
 // The identifier of this object execution, which is a Symbol containing some debugable information.
@@ -18411,6 +18417,16 @@ import { TypedFields } from '@nyx-discord/http';
 
 // The bot who triggered the object (command, event, etc).
 const bot = TypedFields.Bot.get(meta, true);
+//    ^?
+
+// Shorthands for the bot typed for this adapter, its @discordjs/core gateway Client, its REST API and its logger, which throw if the meta has no bot.
+const typedBot = TypedFields.getBot(meta);
+//    ^?
+const client = TypedFields.getClient(meta);
+//    ^?
+const api = TypedFields.getApi(meta);
+//    ^?
+const logger = TypedFields.getLogger(meta);
 //    ^?
 
 // The identifier of this object execution, which is a Symbol containing some debugable information.
@@ -19291,8 +19307,8 @@ class MemberCountSchedule extends AbstractSchedule {
   protected readonly interval = '*/30 * * * *';
 
   public async tick(meta: Metadata) {
-    const bot = TypedFields.DjsBot.get(meta, true);
-    const client = bot.getClient().getEmitter();
+    // the discord.js Client of the bot that ticked this schedule
+    const client = TypedFields.getClient(meta);
     if (!client.user) return;
 
     const memberCount = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
@@ -19315,10 +19331,9 @@ class MemberCountSchedule extends AbstractSchedule {
   protected readonly interval = '*/30 * * * *';
 
   public async tick(meta: Metadata) {
-    // GatewayCoreBot types the client as a gateway CoreNyxClient, which presences need
-    const bot = TypedFields.GatewayCoreBot.get(meta, true);
-    const client = bot.getClient().getEmitter();
-    const api = bot.getClient().getApi();
+    // the gateway Client of the bot that ticked this schedule, which presences need
+    const client = TypedFields.getClient(meta);
+    const api = client.api;
 
     // Ideally you should cache and update these, but it's a simple example
     const guilds = await api.users.getGuilds({ with_counts: true });

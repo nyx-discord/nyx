@@ -66,10 +66,9 @@ errorHandler.setConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `MyError occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -94,10 +93,9 @@ errorHandler.setConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `MyError occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -124,10 +122,9 @@ errorHandler.setConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `MyError occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -197,10 +194,9 @@ errorHandler.setFallbackConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `An unhandled error occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -225,10 +221,9 @@ errorHandler.setFallbackConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `An unhandled error occurred while executing ${name} with args: ${args}`,
       error
     );
@@ -255,10 +250,9 @@ errorHandler.setFallbackConsumer(
     args: CommandExecutionArgs,
   ) => {
     const [_interaction, meta] = args;
-    const bot = TypedFields.Bot.get(meta, true);
     const { name } = command.getData();
 
-    bot.getLogger().error(
+    TypedFields.getLogger(meta).error(
       `An unhandled error occurred while executing ${name} with args: ${args}`,
       error
     );

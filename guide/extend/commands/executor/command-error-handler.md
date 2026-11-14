@@ -131,10 +131,7 @@ import { TypedFields } from '@nyx-discord/djs';
 import type { AnyExecutableCommand, CommandExecutionArgs } from '@nyx-discord/djs';
 
 const myHandler = MyErrorHandler.createWithFallbackLogger<AnyExecutableCommand, CommandExecutionArgs>(
-  (_error, _command, [_interaction, metadata]) => {
-    const bot = TypedFields.Bot.get(metadata, true);
-    return bot.getLogger();
-  }
+  (_error, _command, [_interaction, metadata]) => TypedFields.getLogger(metadata),
 );
 ```
   </Tab>
@@ -148,10 +145,7 @@ import { TypedFields } from '@nyx-discord/djs-core';
 import type { AnyExecutableCommand, CommandExecutionArgs } from '@nyx-discord/djs-core';
 
 const myHandler = MyErrorHandler.createWithFallbackLogger<AnyExecutableCommand, CommandExecutionArgs>(
-  (_error, _command, [_interaction, metadata]) => {
-    const bot = TypedFields.Bot.get(metadata, true);
-    return bot.getLogger();
-  }
+  (_error, _command, [_interaction, metadata]) => TypedFields.getLogger(metadata),
 );
 ```
   </Tab>
@@ -167,10 +161,7 @@ import { TypedFields } from '@nyx-discord/http';
 import type { AnyExecutableCommand, CommandExecutionArgs } from '@nyx-discord/http';
 
 const myHandler = MyErrorHandler.createWithFallbackLogger<AnyExecutableCommand, CommandExecutionArgs>(
-  (_error, _command, [_interaction, metadata]) => {
-    const bot = TypedFields.Bot.get(metadata, true);
-    return bot.getLogger();
-  }
+  (_error, _command, [_interaction, metadata]) => TypedFields.getLogger(metadata),
 );
 ```
   </Tab>
