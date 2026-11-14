@@ -10,6 +10,25 @@
   --color-fd-primary: var(--nyx-color);
 }
 
+/* In the components layer so Tailwind utilities (e.g. motion-reduce:animate-none) can override it */
+@layer components {
+  .code-showcase-progress {
+    width: 0;
+    animation-name: code-showcase-progress;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+}
+
+@keyframes code-showcase-progress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
 body {
   overscroll-behavior-y: none;
   background-color: var(--color-fd-background);
