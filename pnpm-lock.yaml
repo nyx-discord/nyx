@@ -260,6 +260,9 @@ importers:
       '@icons-pack/react-simple-icons':
         specifier: 13.15.1
         version: 13.15.1(react@19.3.1)
+      discord-component-embed:
+        specifier: 1.1.0
+        version: 1.1.0(react@19.3.1)
       fumadocs-core:
         specifier: 16.18.4
         version: 16.18.4(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(algoliasearch@5.36.0)(lucide-react@1.70.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.5(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)
@@ -5698,6 +5701,19 @@ packages:
       {
         integrity: sha512-R1CTSSt4RshqCq23j2Xq2ZscvzB4LzG9OB1CYQdKUGdw8Ti/oF/72EEtK2mNpagG/Vj9NcBT7dw9lKLf+Dacfg==,
       }
+
+  discord-component-embed@1.1.0:
+    resolution:
+      {
+        integrity: sha512-2HRI0kLs2fjKV0iGRsFl5Db/1T4n0NnDKNz+J+Cqt2eMPHoX2BWEUOQP0EFK7sdMva14kIv76agFNJobukTMgQ==,
+      }
+    engines: { bun: '>=1.4.2', node: ^24.22.1 || >=26.12.1 }
+    hasBin: true
+    peerDependencies:
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   discord.js@14.22.1:
     resolution:
@@ -13034,6 +13050,10 @@ snapshots:
   diff@8.0.4: {}
 
   discord-api-types@0.38.57: {}
+
+  discord-component-embed@1.1.0(react@19.3.1):
+    optionalDependencies:
+      react: 19.3.1
 
   discord.js@14.22.1:
     dependencies:

@@ -1,6 +1,7 @@
 import Logo from '@/../public/logo.png';
 import { CodeExamples } from '@/components/CodeExamples';
 import { Hero } from '@/components/Hero';
+import { LandingEmbed } from '@/components/LandingEmbed';
 import { LinkCards } from '@/components/LinkCards';
 import { discordInvite, docsUrl, guideUrl } from '@/lib/links';
 import { SiDiscord } from '@icons-pack/react-simple-icons';
@@ -31,6 +32,8 @@ export default function HomePage() {
         },
       ]}
     >
+      <LandingEmbed />
+
       <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 py-8">
         <div
           aria-hidden
