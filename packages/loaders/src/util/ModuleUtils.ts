@@ -4,9 +4,9 @@ import { extname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { LoaderError } from '../error/LoaderError.js';
 
-const SUPPORTED_EXTENSIONS = new Set(['.js', '.mjs']);
-
 export class ModuleUtils {
+  protected static readonly SupportedExtensions = new Set(['.js', '.mjs']);
+
   public static async recurseDir(
     dir: string,
     filter?: (filePath: string) => boolean,
@@ -23,7 +23,7 @@ export class ModuleUtils {
         if (!entry.isFile()) continue;
 
         const fileExt = extname(entry.name);
-        if (!SUPPORTED_EXTENSIONS.has(fileExt)) continue;
+        if (!this.SupportedExtensions.has(fileExt)) continue;
 
         const absolutePath = join(entry.parentPath ?? dir, entry.name);
         if (filter && !filter(absolutePath)) continue;

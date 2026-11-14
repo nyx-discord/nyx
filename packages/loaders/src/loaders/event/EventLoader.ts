@@ -26,7 +26,7 @@ type EventSubscriberBuckets = {
 };
 
 export class EventLoader {
-  private static readonly SUBSCRIBER_CHECKS = [
+  private static readonly SubscriberChecks = [
     {
       bucket: 'client' as const,
       Class: BaseClientSubscriber,
@@ -119,7 +119,7 @@ export class EventLoader {
   ): { bucket: keyof EventSubscriberBuckets } | { error: string } {
     const matches: (keyof EventSubscriberBuckets)[] = [];
 
-    for (const { bucket, Class } of this.SUBSCRIBER_CHECKS) {
+    for (const { bucket, Class } of this.SubscriberChecks) {
       if ((value as any).prototype instanceof Class) {
         matches.push(bucket);
       }
