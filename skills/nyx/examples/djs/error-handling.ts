@@ -9,7 +9,7 @@ export function setupErrorHandling(bot: DjsNyxBot) {
 
   // Consumers are matched by error class, subclasses included. CommandError wraps errors thrown by execute().
   commandErrors.setConsumer(CommandError, async (error, command, [interaction, meta]) => {
-    TypedFields.Bot.get(meta, true).getLogger().error(`Command ${command.getData().name} failed`, error);
+    TypedFields.getLogger(meta).error(`Command ${command.getData().name} failed`, error);
     if (interaction.isRepliable() && !interaction.replied) {
       await interaction.reply({ content: 'Something went wrong.', ephemeral: true });
     }

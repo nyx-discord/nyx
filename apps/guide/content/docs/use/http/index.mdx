@@ -92,7 +92,7 @@ On the Developer Portal, set your app's **Interactions Endpoint URL** to the pub
 
 ## Getting the bot
 
-Inside commands, subscribers and schedules, `TypedFields.HttpBot` gets the bot from the metadata, typed so its client is the `HttpNyxClient`:
+Inside commands, subscribers and schedules, `TypedFields.getBot()` gets the bot from the metadata, typed so its client is the `HttpNyxClient` (a shorthand for `TypedFields.HttpBot.get(meta, true)`):
 
 ```ts twoslash
 import { AbstractSchedule, TypedFields, type Metadata } from '@nyx-discord/http';
@@ -101,11 +101,14 @@ class CleanupSchedule extends AbstractSchedule {
   protected readonly interval = '0 * * * *';
 
   public async tick(meta: Metadata) {
-    const bot = TypedFields.HttpBot.get(meta, true);
+    const bot = TypedFields.getBot(meta);
     const client = bot.getClient();
     //    ^?
+
+    // Shorthand for bot.getClient().getApi(), the REST API
+    const api = TypedFields.getApi(meta);
   }
 }
 ```
 
-`@nyx-discord/http` exports its own `TypedFields`, without `@nyx-discord/djs-core`'s `GatewayCoreBot`, since HTTP bots have no gateway client.
+`@nyx-discord/http` exports its own `TypedFields`, without `@nyx-discord/djs-core`'s `GatewayCoreBot` and `getClient()`, since HTTP bots have no gateway client.

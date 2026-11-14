@@ -1,5 +1,5 @@
 import { DefaultMetadataFactory } from '@nyx-discord/base';
-import type { Client } from '@discordjs/core';
+import type { API, Client } from '@discordjs/core';
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import type { CoreClient, CoreNyxClient, NyxBot } from '../../../src';
 import { TypedFields } from '../../../src';
@@ -31,5 +31,34 @@ describe('TypedFields (djs-core)', () => {
     expectTypeOf<
       ReturnType<ReturnType<GatewayBotType['getClient']>['getEmitter']>
     >().toEqualTypeOf<Client>();
+  });
+
+  test('GIVEN metadata with the Bot field WHEN calling getBot and getClient THEN returns the bot and its client emitter', () => {
+    const client = {};
+    const bot = {
+      getClient: () => ({ getEmitter: () => client }),
+    } as unknown as NyxBot;
+    const meta = DefaultMetadataFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]).createOrPopulate(undefined, 'meta');
+
+    expect(TypedFields.getBot(meta)).toBe(bot);
+    expect(TypedFields.getClient(meta)).toBe(client);
+    expectTypeOf(TypedFields.getClient).returns.toEqualTypeOf<Client>();
+  });
+
+  test('GIVEN metadata with the Bot field WHEN calling getApi THEN returns the client API', () => {
+    const api = {};
+    const bot = {
+      getClient: () => ({ getApi: () => api }),
+    } as unknown as NyxBot;
+    const meta = DefaultMetadataFactory.createWith([
+      TypedFields.Bot,
+      bot,
+    ]).createOrPopulate(undefined, 'meta');
+
+    expect(TypedFields.getApi(meta)).toBe(api);
+    expectTypeOf(TypedFields.getApi).returns.toEqualTypeOf<API>();
   });
 });

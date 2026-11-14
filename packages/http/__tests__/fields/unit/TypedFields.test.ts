@@ -1,5 +1,5 @@
 import { describe, expect, expectTypeOf, test } from 'vitest';
-import type { HttpNyxClient, NyxBot } from '../../../src';
+import type { HttpBot, HttpNyxClient, NyxBot } from '../../../src';
 import { DefaultMetadataFactory, TypedFields } from '../../../src';
 
 describe('TypedFields (http)', () => {
@@ -11,6 +11,7 @@ describe('TypedFields (http)', () => {
     ]).createOrPopulate(undefined, 'meta');
 
     expect(TypedFields.HttpBot.get(meta)).toBe(bot);
+    expect(TypedFields.getBot(meta)).toBe(bot);
   });
 
   test('GIVEN the http TypedFields WHEN reading their types THEN HttpBot has an HttpNyxClient and GatewayCoreBot is hidden', () => {
@@ -20,5 +21,9 @@ describe('TypedFields (http)', () => {
       ReturnType<HttpBotType['getClient']>
     >().toEqualTypeOf<HttpNyxClient>();
     expectTypeOf(TypedFields).not.toHaveProperty('GatewayCoreBot');
+    expectTypeOf(TypedFields).not.toHaveProperty('getClient');
+    expectTypeOf(TypedFields).toHaveProperty('getApi');
+    expectTypeOf(TypedFields).toHaveProperty('getLogger');
+    expectTypeOf(TypedFields.getBot).returns.toEqualTypeOf<HttpBot>();
   });
 });

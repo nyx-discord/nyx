@@ -3,14 +3,18 @@ import { createTypedField } from 'typed-field';
 import type { NyxBot } from '../bot/NyxBot';
 import type { AnyEventBus } from '../features/event/bus/AnyEventBus';
 import type { Identifier } from '../identity/Identifier';
+import type { NyxLogger } from '../log/NyxLogger';
+import type { ReadonlyMetadata } from '../meta/ReadonlyMetadata';
 
 /** Type of a typed field. */
 export type TypedField<T> = LibTypedField<T>;
 
+const BotField = createTypedField<NyxBot>('NyxBot');
+
 /** Stores known typed fields for the framework and re-exports the typed-field library. */
 export const TypedFields = {
   /** Field that sets/gets the bot instance. */
-  Bot: createTypedField<NyxBot>('NyxBot'),
+  Bot: BotField,
 
   /** Field that sets/gets the identifier of this object. */
   Id: createTypedField<Identifier>('Identifier'),
@@ -29,4 +33,12 @@ export const TypedFields = {
 
   /** Creates a typed field. */
   create: createTypedField,
+
+  /**
+   * Returns the logger of the bot from the given metadata.
+   *
+   * @throws {Error} If the metadata has no bot.
+   */
+  getLogger: (meta: ReadonlyMetadata): NyxLogger =>
+    BotField.get(meta, true).getLogger(),
 } as const;

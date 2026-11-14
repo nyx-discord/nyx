@@ -22,8 +22,7 @@ export class ReadyLogger extends AbstractDJSClientSubscriber<typeof Events.Clien
 
   // The meta comes first, then the event's arguments.
   public async handleEvent(meta: Metadata, client: Client<true>) {
-    const bot = TypedFields.Bot.get(meta, true);
-    bot.getLogger().log(`Logged in as ${client.user.tag}`);
+    TypedFields.getLogger(meta).log(`Logged in as ${client.user.tag}`);
   }
 }
 

@@ -6,9 +6,8 @@ export class PresenceSchedule extends AbstractSchedule {
   protected readonly interval = '*/30 * * * *'; // Every 30 minutes.
 
   public async tick(meta: Metadata) {
-    // DjsBot is the discord.js-typed bot; TypedFields.Bot gives the generic NyxBot.
-    const bot = TypedFields.DjsBot.get(meta, true);
-    const client = bot.getClient().getEmitter();
+    // The discord.js Client of the bot that ticked this schedule; TypedFields.getBot(meta) gives the DjsBot.
+    const client = TypedFields.getClient(meta);
     if (!client.user) return;
 
     const members = client.guilds.cache.reduce((total, guild) => total + guild.memberCount, 0);

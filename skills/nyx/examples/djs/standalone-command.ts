@@ -16,9 +16,9 @@ export class PingCommand extends AbstractStandaloneCommand {
 
   public async execute(interaction: ChatInputCommandInteraction, meta: Metadata) {
     // The meta carries the bot that received the interaction, so one instance works across bots.
-    // TypedFields.DjsBot is typed for discord.js; TypedFields.Bot is the adapter-agnostic NyxBot.
-    const bot = TypedFields.DjsBot.get(meta, true);
-    await interaction.reply(`Pong! (${bot.getClient().getEmitter().ws.ping}ms)`);
+    // TypedFields.getClient(meta) is the discord.js Client; TypedFields.getBot(meta) gives the DjsBot.
+    const client = TypedFields.getClient(meta);
+    await interaction.reply(`Pong! (${client.ws.ping}ms)`);
   }
 }
 
