@@ -11,9 +11,9 @@ export function LandingEmbed() {
         </TextDisplay>
         <Separator divider={true} />
         <TextDisplay>
-          Let nyx handle commands, events and schedules, leaving your process,
-          design, build step and deployment architecture to you. Supports
-          `discord.js` or `@discordjs/core`, through the gateway or HTTP.
+          nyx handles the Discord part, leaving your process, build step and
+          architecture to you. Supports `discord.js` or `@discordjs/core`,
+          through the gateway or HTTP.
         </TextDisplay>
       </Container>
     </ComponentEmbed>
