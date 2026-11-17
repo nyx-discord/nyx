@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/nyx-discord/nyx/compare/%40nyx-discord%2Fbase%401.0.1...%40nyx-discord%2Fbase%401.1.0) (2026-11-17)
+
+### Features
+
+- add typed fields bot, client, api and logger helpers ([bbdeb3f](https://github.com/nyx-discord/nyx/commit/bbdeb3fdeda6f8b32a3ad84e4dffdf27a4a646e4))
+- **base:** widen NyxBot to be of any platform ([cf788a0](https://github.com/nyx-discord/nyx/commit/cf788a0f109d3722dad9a5795964596f7db24822))
+
 ## [1.0.1](https://github.com/nyx-discord/nyx/compare/%40nyx-discord%2Fbase%401.0.0...%40nyx-discord%2Fbase%401.0.1) (2026-11-09)
 
 ### Bug Fixes
