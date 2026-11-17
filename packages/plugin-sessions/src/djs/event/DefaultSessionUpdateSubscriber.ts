@@ -7,7 +7,6 @@ import { Events } from 'discord.js';
 import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 import { DjsSessionPlugin } from '../plugin/DjsSessionPlugin.js';
 
-// eslint-disable-next-line max-len
 export class DefaultSessionUpdateSubscriber extends AbstractDJSClientSubscriber<Events.InteractionCreate> {
   protected override readonly event = Events.InteractionCreate;
 

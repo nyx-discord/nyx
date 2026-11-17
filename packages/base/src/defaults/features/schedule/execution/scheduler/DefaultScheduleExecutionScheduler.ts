@@ -28,7 +28,6 @@ export type ScheduleJobParams = Omit<CronOptions, 'paused'>;
 /** The raw job behind each adapter: a croner {@link Cron}, or a {@link TimerJobAdapter}'s current timeout. */
 export type DefaultScheduleJob = Cron | TimerJobHandle | null;
 
-// eslint-disable-next-line max-len
 export class DefaultScheduleExecutionScheduler implements ScheduleExecutionScheduler<DefaultScheduleJob> {
   protected static readonly DefaultJobParameters: ScheduleJobParams = {};
 

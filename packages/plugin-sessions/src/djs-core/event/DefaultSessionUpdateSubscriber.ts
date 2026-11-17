@@ -9,7 +9,6 @@ import { InteractionType } from '@discordjs/core';
 import type { SessionUpdateInteraction } from '../../shared/types/interaction/SessionUpdateInteraction';
 import { CoreSessionPlugin } from '../plugin/CoreSessionPlugin.js';
 
-// eslint-disable-next-line max-len
 export class DefaultSessionUpdateSubscriber extends AbstractCoreClientSubscriber<GatewayDispatchEvents.InteractionCreate> {
   protected override readonly event = GatewayDispatchEvents.InteractionCreate;
 

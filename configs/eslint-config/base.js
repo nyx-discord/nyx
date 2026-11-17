@@ -92,6 +92,7 @@ export const config = [
           ignoreStrings: true,
           ignoreTemplateLiterals: true,
           ignoreRegExpLiterals: true,
+          ignorePattern: String.raw`^\s*(export\s+)?(default\s+)?(declare\s+)?(abstract\s+)?(class|interface)\s`,
         },
       ],
     },
