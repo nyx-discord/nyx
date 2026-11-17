@@ -1,15 +1,14 @@
-import type { ParentCommand } from '../../../src';
-import type { APIApplicationCommandSubcommandGroupOption } from 'discord-api-types/v10';
+import type { ParentCommand, SubCommandGroupData } from '../../../src';
 import { BaseSubCommandGroup } from '../../../src';
 
 export class MockSubCommandGroup extends BaseSubCommandGroup {
-  protected readonly data: APIApplicationCommandSubcommandGroupOption;
+  protected readonly data: SubCommandGroupData;
 
   constructor(parent: ParentCommand, name?: string) {
     super(parent);
     this.data = {
       name: name ?? 'mock-subcommand-group',
       description: 'Mock subcommand group',
-    } as APIApplicationCommandSubcommandGroupOption;
+    };
   }
 }

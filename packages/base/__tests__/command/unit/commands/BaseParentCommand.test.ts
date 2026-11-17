@@ -1,3 +1,4 @@
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import { describe, expect, test } from 'vitest';
 import { MockParentCommand } from '../../mocks/MockParentCommand';
 import { MockSubCommand } from '../../mocks/MockSubCommand';
@@ -30,8 +31,16 @@ describe('BaseParentCommand (Discord Payload Assembly & Hierarchy)', () => {
         name: 'config',
         description: 'Mock command',
         options: [
-          { name: 'view', description: 'Mock subcommand' },
-          { name: 'set', description: 'Mock subcommand' },
+          {
+            name: 'view',
+            description: 'Mock subcommand',
+            type: ApplicationCommandOptionType.Subcommand,
+          },
+          {
+            name: 'set',
+            description: 'Mock subcommand',
+            type: ApplicationCommandOptionType.Subcommand,
+          },
         ],
       });
     });
@@ -54,9 +63,18 @@ describe('BaseParentCommand (Discord Payload Assembly & Hierarchy)', () => {
           {
             name: 'users',
             description: 'Mock subcommand group',
+            type: ApplicationCommandOptionType.SubcommandGroup,
             options: [
-              { name: 'add', description: 'Mock subcommand' },
-              { name: 'remove', description: 'Mock subcommand' },
+              {
+                name: 'add',
+                description: 'Mock subcommand',
+                type: ApplicationCommandOptionType.Subcommand,
+              },
+              {
+                name: 'remove',
+                description: 'Mock subcommand',
+                type: ApplicationCommandOptionType.Subcommand,
+              },
             ],
           },
         ],
@@ -88,19 +106,39 @@ describe('BaseParentCommand (Discord Payload Assembly & Hierarchy)', () => {
         name: 'system',
         description: 'Mock command',
         options: [
-          { name: 'ping', description: 'Mock subcommand' },
+          {
+            name: 'ping',
+            description: 'Mock subcommand',
+            type: ApplicationCommandOptionType.Subcommand,
+          },
           {
             name: 'logs',
             description: 'Mock subcommand group',
+            type: ApplicationCommandOptionType.SubcommandGroup,
             options: [
-              { name: 'view', description: 'Mock subcommand' },
-              { name: 'clear', description: 'Mock subcommand' },
+              {
+                name: 'view',
+                description: 'Mock subcommand',
+                type: ApplicationCommandOptionType.Subcommand,
+              },
+              {
+                name: 'clear',
+                description: 'Mock subcommand',
+                type: ApplicationCommandOptionType.Subcommand,
+              },
             ],
           },
           {
             name: 'database',
             description: 'Mock subcommand group',
-            options: [{ name: 'backup', description: 'Mock subcommand' }],
+            type: ApplicationCommandOptionType.SubcommandGroup,
+            options: [
+              {
+                name: 'backup',
+                description: 'Mock subcommand',
+                type: ApplicationCommandOptionType.Subcommand,
+              },
+            ],
           },
         ],
       });

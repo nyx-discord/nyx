@@ -1,6 +1,10 @@
-import type { APIApplicationCommandSubcommandOption } from 'discord-api-types/v10';
 import { vi } from 'vitest';
-import type { Metadata, ParentCommand, SubCommandGroup } from '../../../src';
+import type {
+  Metadata,
+  ParentCommand,
+  SubCommandData,
+  SubCommandGroup,
+} from '../../../src';
 import { BaseSubCommand } from '../../../src';
 import { MockParentCommand } from './MockParentCommand';
 import { MockSubCommandGroup } from './MockSubCommandGroup';
@@ -8,14 +12,14 @@ import { MockSubCommandGroup } from './MockSubCommandGroup';
 export class MockSubCommand extends BaseSubCommand {
   public execute = vi.fn();
 
-  protected readonly data: APIApplicationCommandSubcommandOption;
+  protected readonly data: SubCommandData;
 
   constructor(parent: ParentCommand | SubCommandGroup, name?: string) {
     super(parent);
     this.data = {
       name: name ?? 'mock-subcommand',
       description: 'Mock subcommand',
-    } as APIApplicationCommandSubcommandOption;
+    };
   }
 
   public static createOnGroup() {

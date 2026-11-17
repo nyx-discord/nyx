@@ -1,5 +1,6 @@
 import type { NyxBot } from '#types/bot/NyxBot';
 import type { ParentCommand } from '#types/features/command/commands/ParentCommand';
+import type { SubCommandData } from '#types/features/command/commands/data/SubCommandData';
 import type { SubCommand } from '#types/features/command/commands/SubCommand';
 import type { SubCommandGroup } from '#types/features/command/commands/SubCommandGroup';
 import type { CommandCustomIdData } from '#types/features/command/customId/data/CommandCustomIdData';
@@ -7,7 +8,10 @@ import type { InteractionTypes } from '#types/features/command/InteractionTypes'
 import type { Metadata } from '#types/meta/Metadata';
 import type { Awaitable } from '#types/types/Awaitable';
 import type { APIApplicationCommandSubcommandOption } from 'discord-api-types/v10';
-import { ApplicationCommandType } from 'discord-api-types/v10';
+import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+} from 'discord-api-types/v10';
 import { NotImplementedError } from '../../../errors/NotImplementedError';
 import { BaseExecutableCommand } from './executable/BaseExecutableCommand';
 
@@ -16,7 +20,7 @@ export abstract class BaseSubCommand<
   Types extends InteractionTypes = InteractionTypes,
 >
   extends BaseExecutableCommand<
-    APIApplicationCommandSubcommandOption,
+    SubCommandData,
     Types['ChatInputInteraction'],
     Types
   >
@@ -27,6 +31,10 @@ export abstract class BaseSubCommand<
   constructor(parent: ParentCommand<Types> | SubCommandGroup<Types>) {
     super();
     this.parent = parent;
+  }
+
+  public override getData(): APIApplicationCommandSubcommandOption {
+    return { ...this.data, type: ApplicationCommandOptionType.Subcommand };
   }
 
   public getParent(): ParentCommand<Types> | SubCommandGroup<Types> {

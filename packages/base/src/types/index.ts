@@ -29,6 +29,8 @@ export * from './features/command/commands/SubCommandGroup';
 export * from './features/command/commands/TopLevelCommand';
 export * from './features/command/commands/child/ChildableCommand';
 export * from './features/command/commands/child/ChildCommand';
+export * from './features/command/commands/data/SubCommandData';
+export * from './features/command/commands/data/SubCommandGroupData';
 export * from './features/command/commands/executable/AnyExecutableCommand';
 export * from './features/command/commands/executable/ChatExecutableCommand';
 export * from './features/command/commands/executable/ExecutableCommand';
