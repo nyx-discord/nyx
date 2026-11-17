@@ -19,7 +19,7 @@ import {
   type AnySelectMenuInteraction,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
-  type ModalSubmitInteraction,
+  type ModalMessageModalSubmitInteraction,
 } from 'discord.js';
 
 // The type argument is the session's result, which whoever started it receives when it ends.
@@ -73,7 +73,7 @@ export class CounterSession extends AbstractSession<number> {
     return true;
   }
 
-  protected override async handleModal(interaction: ModalSubmitInteraction) {
+  protected override async handleModal(interaction: ModalMessageModalSubmitInteraction) {
     const value = Number(interaction.fields.getTextInputValue('value'));
     if (Number.isNaN(value)) {
       await interaction.reply({ content: 'That isn\'t a number.', ephemeral: true });
@@ -81,9 +81,7 @@ export class CounterSession extends AbstractSession<number> {
     }
 
     this.result = value;
-    if (interaction.isFromMessage()) {
-      await interaction.update({ content: this.render(), components: this.buildRows() });
-    }
+    await interaction.update({ content: this.render(), components: this.buildRows() });
     return true;
   }
 

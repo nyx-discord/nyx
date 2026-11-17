@@ -24,7 +24,7 @@ import {
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   type InteractionUpdateOptions,
-  type ModalSubmitInteraction,
+  type ModalMessageModalSubmitInteraction,
 } from 'discord.js';
 
 type Profile = { name: string | null; color: string | null };
@@ -62,7 +62,7 @@ class NameStage extends AbstractSessionStartStage<string> {
     return true;
   }
 
-  protected override async handleModal(interaction: ModalSubmitInteraction) {
+  protected override async handleModal(interaction: ModalMessageModalSubmitInteraction) {
     this.result = interaction.fields.getTextInputValue('name');
     await updateMessage(interaction, this.render(), this.components());
     return true;
