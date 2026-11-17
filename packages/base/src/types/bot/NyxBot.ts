@@ -1,11 +1,16 @@
+import type { NyxClient } from '../client/NyxClient';
 import type { Identifier } from '../identity/Identifier';
 import type { BotStatus } from '../service/BotStatus';
 import type { InjectableBotDependencies } from './inject/InjectableBotDependencies.js';
 
-/** A bot of the nyx framework. */
+/**
+ * A bot of the nyx framework, of any platform.
+ *
+ * If you need platform-specific APIs, use its respective type, like DjsNyxBot.
+ */
 export interface NyxBot<
   Implementations extends InjectableBotDependencies<any, any, any, any> =
-    InjectableBotDependencies,
+    InjectableBotDependencies<any, NyxClient, any, any>,
 > {
   /** Returns the logger of this bot for console output. */
   getLogger(): Implementations['logger'];
