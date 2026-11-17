@@ -119,13 +119,21 @@ export class DefaultSessionLimitManager<
     });
   }
 
-  /** @inheritdoc */
+  /**
+   * @inheritdoc
+   *
+   * @throws {AggregateError} If any displaced session failed to end, once every one was tried.
+   */
   public async commit(session: Session<unknown, Types>): Promise<void> {
     const targets = this.displacements.get(session.getId()) ?? [];
     this.displacements.delete(session.getId());
-
+    // cleared upfront so a failing end doesn't leave the others uncounted
     for (const target of targets) {
       this.displacing.delete(target.getId());
+    }
+
+    const errors: unknown[] = [];
+    for (const target of targets) {
       // it may have ended or expired while the new session was starting
       if (
         target.getState() !== SessionStateEnum.Running
@@ -134,11 +142,19 @@ export class DefaultSessionLimitManager<
         continue;
       }
 
-      await this.plugin.end(
-        target,
-        'Session replaced',
-        SessionEndCodes.Displaced,
-      );
+      try {
+        await this.plugin.end(
+          target,
+          'Session replaced',
+          SessionEndCodes.Displaced,
+        );
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+
+    if (errors.length > 0) {
+      throw new AggregateError(errors, 'Failed to end displaced sessions.');
     }
   }
 

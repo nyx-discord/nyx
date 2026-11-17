@@ -170,7 +170,17 @@ export abstract class BaseSessionPlugin<
         return false;
       }
 
-      await this.limitManager.commit(session);
+      // the session already started, so failing to end a displaced one mustn't fail it
+      try {
+        await this.limitManager.commit(session);
+      } catch (error) {
+        this.bot
+          ?.getLogger()
+          .error(
+            `Failed to end sessions displaced by session with ID '${session.getId()}'`,
+            error,
+          );
+      }
 
       Promise.resolve(
         this.bus.emit(SessionEventEnum.SessionStart, [

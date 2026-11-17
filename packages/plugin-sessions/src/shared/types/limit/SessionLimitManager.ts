@@ -23,7 +23,11 @@ export interface SessionLimitManager<
     meta: Record<string | symbol, unknown>,
   ): Awaitable<void>;
 
-  /** Ends the sessions displaced to make room for the given session. Called once it has started. */
+  /**
+   * Ends the sessions displaced to make room for the given session. Called once it has started.
+   *
+   * @throws {AggregateError} If any displaced session failed to end, once every one was tried.
+   */
   commit(session: Session<unknown, Types>): Awaitable<void>;
 
   /** Releases a session's reserved slot, and keeps running any session it was going to displace. Called when the session ends, expires or fails to start. */
