@@ -25,17 +25,17 @@ The command will simply not be called if the filter returns `false`, so if you w
 
 Either:
 
-- Create a class that extends `BaseCommandFilter` and implements the `check()` method.
+- Create a class that extends `AbstractCommandFilter` and implements the `check()` method.
  <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-import { BaseCommandFilter } from '@nyx-discord/djs';
-import type { AnyExecutableCommand, CommandResolvableInteraction, DjsInteractionTypes, Metadata } from '@nyx-discord/djs';
+import { AbstractCommandFilter } from '@nyx-discord/djs';
+import type { DjsAnyExecutableCommand, DjsCommandResolvableInteraction, Metadata } from '@nyx-discord/djs';
 
-class MyFilter extends BaseCommandFilter {
+class MyFilter extends AbstractCommandFilter {
   public async check(
-    command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction<DjsInteractionTypes>,
+    command: DjsAnyExecutableCommand,
+    interaction: DjsCommandResolvableInteraction,
     meta: Metadata
   ): Promise<boolean> {
     // Do some checks
@@ -46,13 +46,13 @@ class MyFilter extends BaseCommandFilter {
   </Tab>
   <Tab>
 ```ts twoslash
-import { BaseCommandFilter } from '@nyx-discord/djs-core';
-import type { AnyExecutableCommand, CommandResolvableInteraction, CoreInteractionTypes, Metadata } from '@nyx-discord/djs-core';
+import { AbstractCommandFilter } from '@nyx-discord/djs-core';
+import type { CoreAnyExecutableCommand, CoreCommandResolvableInteraction, Metadata } from '@nyx-discord/djs-core';
 
-class MyFilter extends BaseCommandFilter {
+class MyFilter extends AbstractCommandFilter {
   public async check(
-    command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction<CoreInteractionTypes>,
+    command: CoreAnyExecutableCommand,
+    interaction: CoreCommandResolvableInteraction,
     meta: Metadata
   ): Promise<boolean> {
     // Do some checks
@@ -65,13 +65,13 @@ class MyFilter extends BaseCommandFilter {
   Same as `@discordjs/core`, importing from `@nyx-discord/http`:
 
 ```ts twoslash
-import { BaseCommandFilter } from '@nyx-discord/http';
-import type { AnyExecutableCommand, CommandResolvableInteraction, CoreInteractionTypes, Metadata } from '@nyx-discord/http';
+import { AbstractCommandFilter } from '@nyx-discord/http';
+import type { CoreAnyExecutableCommand, CoreCommandResolvableInteraction, Metadata } from '@nyx-discord/http';
 
-class MyFilter extends BaseCommandFilter {
+class MyFilter extends AbstractCommandFilter {
   public async check(
-    command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction<CoreInteractionTypes>,
+    command: CoreAnyExecutableCommand,
+    interaction: CoreCommandResolvableInteraction,
     meta: Metadata
   ): Promise<boolean> {
     // Do some checks
@@ -86,9 +86,9 @@ class MyFilter extends BaseCommandFilter {
  <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-import { type CommandFilterResolvable } from '@nyx-discord/djs';
+import { type DjsCommandFilterResolvable } from '@nyx-discord/djs';
 
-const myFilter: CommandFilterResolvable = async (command, interaction, meta) => {
+const myFilter: DjsCommandFilterResolvable = async (command, interaction, meta) => {
   // Do some checks
   return true; // or false if the command should not be executed
 };
@@ -96,9 +96,9 @@ const myFilter: CommandFilterResolvable = async (command, interaction, meta) => 
   </Tab>
   <Tab>
 ```ts twoslash
-import { type CommandFilterResolvable } from '@nyx-discord/djs-core';
+import { type CoreCommandFilterResolvable } from '@nyx-discord/djs-core';
 
-const myFilter: CommandFilterResolvable = async (command, interaction, meta) => {
+const myFilter: CoreCommandFilterResolvable = async (command, interaction, meta) => {
   // Do some checks
   return true; // or false if the command should not be executed
 };
@@ -108,9 +108,9 @@ const myFilter: CommandFilterResolvable = async (command, interaction, meta) => 
   Same as `@discordjs/core`, importing from `@nyx-discord/http`:
 
 ```ts twoslash
-import { type CommandFilterResolvable } from '@nyx-discord/http';
+import { type CoreCommandFilterResolvable } from '@nyx-discord/http';
 
-const myFilter: CommandFilterResolvable = async (command, interaction, meta) => {
+const myFilter: CoreCommandFilterResolvable = async (command, interaction, meta) => {
   // Do some checks
   return true; // or false if the command should not be executed
 };
@@ -133,9 +133,9 @@ Override the `filter` property in your command:
 import { AbstractStandaloneCommand } from '@nyx-discord/djs';
 
 // ---cut-start---
-import { BaseCommandFilter } from '@nyx-discord/djs';
+import { AbstractCommandFilter } from '@nyx-discord/djs';
 // @ts-expect-error Incomplete example
-class MyFilter extends BaseCommandFilter {}
+class MyFilter extends AbstractCommandFilter {}
 // @ts-expect-error Incomplete example
 // ---cut-end---
 class MyCommand extends AbstractStandaloneCommand {
@@ -148,9 +148,9 @@ class MyCommand extends AbstractStandaloneCommand {
 import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
 // ---cut-start---
-import { BaseCommandFilter } from '@nyx-discord/djs-core';
+import { AbstractCommandFilter } from '@nyx-discord/djs-core';
 // @ts-expect-error Incomplete example
-class MyFilter extends BaseCommandFilter {}
+class MyFilter extends AbstractCommandFilter {}
 // @ts-expect-error Incomplete example
 // ---cut-end---
 class MyCommand extends AbstractStandaloneCommand {
@@ -165,9 +165,9 @@ class MyCommand extends AbstractStandaloneCommand {
 import { AbstractStandaloneCommand } from '@nyx-discord/http';
 
 // ---cut-start---
-import { BaseCommandFilter } from '@nyx-discord/http';
+import { AbstractCommandFilter } from '@nyx-discord/http';
 // @ts-expect-error Incomplete example
-class MyFilter extends BaseCommandFilter {}
+class MyFilter extends AbstractCommandFilter {}
 // @ts-expect-error Incomplete example
 // ---cut-end---
 class MyCommand extends AbstractStandaloneCommand {
@@ -185,8 +185,8 @@ class MyCommand extends AbstractStandaloneCommand {
 import { AbstractStandaloneCommand } from '@nyx-discord/djs';
 
 // ---cut-start---
-import { type CommandFilterResolvable } from '@nyx-discord/djs';
-declare const myFilter: CommandFilterResolvable;
+import { type DjsCommandFilterResolvable } from '@nyx-discord/djs';
+declare const myFilter: DjsCommandFilterResolvable;
 // @ts-expect-error Incomplete example
 // ---cut-end---
 class MyCommand extends AbstractStandaloneCommand {
@@ -199,8 +199,8 @@ class MyCommand extends AbstractStandaloneCommand {
 import { AbstractStandaloneCommand } from '@nyx-discord/djs-core';
 
 // ---cut-start---
-import { type CommandFilterResolvable } from '@nyx-discord/djs-core';
-declare const myFilter: CommandFilterResolvable;
+import { type CoreCommandFilterResolvable } from '@nyx-discord/djs-core';
+declare const myFilter: CoreCommandFilterResolvable;
 // @ts-expect-error Incomplete example
 // ---cut-end---
 class MyCommand extends AbstractStandaloneCommand {
@@ -215,8 +215,8 @@ class MyCommand extends AbstractStandaloneCommand {
 import { AbstractStandaloneCommand } from '@nyx-discord/http';
 
 // ---cut-start---
-import { type CommandFilterResolvable } from '@nyx-discord/http';
-declare const myFilter: CommandFilterResolvable;
+import { type CoreCommandFilterResolvable } from '@nyx-discord/http';
+declare const myFilter: CoreCommandFilterResolvable;
 // @ts-expect-error Incomplete example
 // ---cut-end---
 class MyCommand extends AbstractStandaloneCommand {
@@ -290,10 +290,10 @@ A simple cooldown filter that prevents a command from being executed too frequen
 <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-import { BaseCommandFilter } from '@nyx-discord/djs';
-import type { AnyExecutableCommand, CommandResolvableInteraction, DjsInteractionTypes, Metadata } from '@nyx-discord/djs';
+import { AbstractCommandFilter } from '@nyx-discord/djs';
+import type { DjsAnyExecutableCommand, DjsCommandResolvableInteraction, Metadata } from '@nyx-discord/djs';
 
-class CooldownFilter extends BaseCommandFilter {
+class CooldownFilter extends AbstractCommandFilter {
   protected readonly cooldowns = new Map<string, number>();
 
   protected readonly sweepInterval: NodeJS.Timeout;
@@ -314,8 +314,8 @@ class CooldownFilter extends BaseCommandFilter {
   }
 
   public async check(
-    command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction<DjsInteractionTypes>,
+    command: DjsAnyExecutableCommand,
+    interaction: DjsCommandResolvableInteraction,
     meta: Metadata
   ): Promise<boolean> {
     const userId = interaction.user.id;
@@ -335,10 +335,10 @@ class CooldownFilter extends BaseCommandFilter {
   </Tab>
   <Tab>
 ```ts twoslash
-import { BaseCommandFilter } from '@nyx-discord/djs-core';
-import type { AnyExecutableCommand, CommandResolvableInteraction, CoreInteractionTypes, Metadata } from '@nyx-discord/djs-core';
+import { AbstractCommandFilter } from '@nyx-discord/djs-core';
+import type { CoreAnyExecutableCommand, CoreCommandResolvableInteraction, Metadata } from '@nyx-discord/djs-core';
 
-class CooldownFilter extends BaseCommandFilter {
+class CooldownFilter extends AbstractCommandFilter {
   protected readonly cooldowns = new Map<string, number>();
 
   protected readonly sweepInterval: NodeJS.Timeout;
@@ -359,8 +359,8 @@ class CooldownFilter extends BaseCommandFilter {
   }
 
   public async check(
-    command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction<CoreInteractionTypes>,
+    command: CoreAnyExecutableCommand,
+    interaction: CoreCommandResolvableInteraction,
     meta: Metadata
   ): Promise<boolean> {
     const user = interaction.data.user ?? interaction.data.member?.user;
@@ -383,10 +383,10 @@ class CooldownFilter extends BaseCommandFilter {
   Same as `@discordjs/core`, importing from `@nyx-discord/http`:
 
 ```ts twoslash
-import { BaseCommandFilter } from '@nyx-discord/http';
-import type { AnyExecutableCommand, CommandResolvableInteraction, CoreInteractionTypes, Metadata } from '@nyx-discord/http';
+import { AbstractCommandFilter } from '@nyx-discord/http';
+import type { CoreAnyExecutableCommand, CoreCommandResolvableInteraction, Metadata } from '@nyx-discord/http';
 
-class CooldownFilter extends BaseCommandFilter {
+class CooldownFilter extends AbstractCommandFilter {
   protected readonly cooldowns = new Map<string, number>();
 
   protected readonly sweepInterval: NodeJS.Timeout;
@@ -407,8 +407,8 @@ class CooldownFilter extends BaseCommandFilter {
   }
 
   public async check(
-    command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction<CoreInteractionTypes>,
+    command: CoreAnyExecutableCommand,
+    interaction: CoreCommandResolvableInteraction,
     meta: Metadata
   ): Promise<boolean> {
     const user = interaction.data.user ?? interaction.data.member?.user;
@@ -436,11 +436,11 @@ A permission filter that checks if a member has the required permissions to exec
 <Tabs items={['discord.js', '@discordjs/core', 'HTTP']}>
   <Tab>
 ```ts twoslash
-import { BaseCommandFilter } from '@nyx-discord/djs';
-import type { AnyExecutableCommand, CommandResolvableInteraction, DjsInteractionTypes, Metadata } from '@nyx-discord/djs';
+import { AbstractCommandFilter } from '@nyx-discord/djs';
+import type { DjsAnyExecutableCommand, DjsCommandResolvableInteraction, Metadata } from '@nyx-discord/djs';
 import { PermissionFlagsBits } from 'discord.js';
 
-class PermissionFilter extends BaseCommandFilter {
+class PermissionFilter extends AbstractCommandFilter {
   protected readonly requiredPermissions: bigint;
 
   constructor(requiredPermissions: bigint) {
@@ -449,8 +449,8 @@ class PermissionFilter extends BaseCommandFilter {
   }
 
   public async check(
-    command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction<DjsInteractionTypes>,
+    command: DjsAnyExecutableCommand,
+    interaction: DjsCommandResolvableInteraction,
     meta: Metadata
   ): Promise<boolean> {
     if (!interaction.member || !interaction.inCachedGuild()) {
@@ -470,11 +470,11 @@ class PermissionFilter extends BaseCommandFilter {
   </Tab>
   <Tab>
 ```ts twoslash
-import { BaseCommandFilter } from '@nyx-discord/djs-core';
-import type { AnyExecutableCommand, CommandResolvableInteraction, CoreInteractionTypes, Metadata } from '@nyx-discord/djs-core';
+import { AbstractCommandFilter } from '@nyx-discord/djs-core';
+import type { CoreAnyExecutableCommand, CoreCommandResolvableInteraction, Metadata } from '@nyx-discord/djs-core';
 import { PermissionFlagsBits } from 'discord.js';
 
-class PermissionFilter extends BaseCommandFilter {
+class PermissionFilter extends AbstractCommandFilter {
   protected readonly requiredPermissions: bigint;
 
   constructor(requiredPermissions: bigint) {
@@ -483,8 +483,8 @@ class PermissionFilter extends BaseCommandFilter {
   }
 
   public async check(
-    command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction<CoreInteractionTypes>,
+    command: CoreAnyExecutableCommand,
+    interaction: CoreCommandResolvableInteraction,
     meta: Metadata
   ): Promise<boolean> {
     const member = interaction.data.member;
@@ -506,11 +506,11 @@ class PermissionFilter extends BaseCommandFilter {
   Same as `@discordjs/core`, importing from `@nyx-discord/http`:
 
 ```ts twoslash
-import { BaseCommandFilter } from '@nyx-discord/http';
-import type { AnyExecutableCommand, CommandResolvableInteraction, CoreInteractionTypes, Metadata } from '@nyx-discord/http';
+import { AbstractCommandFilter } from '@nyx-discord/http';
+import type { CoreAnyExecutableCommand, CoreCommandResolvableInteraction, Metadata } from '@nyx-discord/http';
 import { PermissionFlagsBits } from 'discord.js';
 
-class PermissionFilter extends BaseCommandFilter {
+class PermissionFilter extends AbstractCommandFilter {
   protected readonly requiredPermissions: bigint;
 
   constructor(requiredPermissions: bigint) {
@@ -519,8 +519,8 @@ class PermissionFilter extends BaseCommandFilter {
   }
 
   public async check(
-    command: AnyExecutableCommand,
-    interaction: CommandResolvableInteraction<CoreInteractionTypes>,
+    command: CoreAnyExecutableCommand,
+    interaction: CoreCommandResolvableInteraction,
     meta: Metadata
   ): Promise<boolean> {
     const member = interaction.data.member;
