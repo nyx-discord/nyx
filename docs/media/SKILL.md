@@ -67,7 +67,7 @@ For `@nyx-discord/http`, use the @discordjs/core examples importing from `@nyx-d
 
 **Typing**
 - Inside executed objects, get the adapter-typed bot with `TypedFields.getBot(meta)` and its client with `TypedFields.getClient(meta)` (both throw if the meta has no bot). `getBot` returns a `DjsBot` (djs), `CoreBot` (djs-core) or `HttpBot` (http); `getClient` returns the discord.js `Client` (djs) or the @discordjs/core gateway `Client` (djs-core, e.g. for presences), and doesn't exist in http since HTTP bots have no gateway client. They're shorthands for the `TypedFields.DjsBot`/`CoreBot`/`GatewayCoreBot`/`HttpBot` fields. `TypedFields.getApi(meta)` (djs-core and http) returns the @discordjs/core REST `API`, and `TypedFields.getLogger(meta)` (every adapter) returns the bot's logger. `TypedFields.Bot` is the adapter-agnostic `NyxBot`, so its client is untyped. With http, `TypedFields.HttpRequest` gives the HTTP request an interaction or webhook event came from.
-- Parameterize interaction-generic types with the adapter: `CommandFilterResolvable<DjsInteractionTypes>`, `CommandResolvableInteraction<CoreInteractionTypes>`, `CommandLoader.load<DjsInteractionTypes>(...)`.
+- Use the adapter helpers for command filters/middlewares: `AbstractCommandFilter`, `AbstractCommandMiddleware`, `DjsCommandFilterResolvable` / `CoreCommandFilterResolvable`, `DjsCommandMiddlewareResolvable` / `CoreCommandMiddlewareResolvable`, plus `Djs*`/`Core*` aliases for `CommandResolvableInteraction`, `CommandExecutableInteraction`, `AnyExecutableCommand`, `CommandExecutionArgs`, `CommandErrorHandler` and `CommandEventArgs`. Parameterize other interaction-generic types with the adapter: `CommandLoader.load<DjsInteractionTypes>(...)`.
 - Type functions and fields that receive a bot as `DjsNyxBot` (djs), `CoreNyxBot` (djs-core) or `HttpBot` (http), which is what `Bot.create()` returns. A bare `NyxBot` loses the adapter types, and passing a created bot to it fails to typecheck. Use `NyxBot` only in adapter-agnostic code like plugins.
 - Use `override` when replacing a concrete member (`filter`, `priority`, `lifetime`, `getGuilds`, `autocomplete`, `handleButton`...).
 
@@ -87,8 +87,8 @@ For `@nyx-discord/http`, use the @discordjs/core examples importing from `@nyx-d
 - Sessions live in memory only and end on restart.
 
 **Filters, middlewares, errors**
-- Filters (`protected override readonly filter`, a `BaseCommandFilter` or a function) return a boolean. When one returns `false` the command silently doesn't run, so reply inside the filter if the user should be told.
-- Middlewares (`BaseCommandMiddleware`, returning `this.true()` / `this.false()`) run before every command. Add them with `bot.getCommandManager().getExecutor().getMiddleware().add(...)`.
+- Filters (`protected override readonly filter`, an `AbstractCommandFilter` or a function) return a boolean. When one returns `false` the command silently doesn't run, so reply inside the filter if the user should be told.
+- Middlewares (`AbstractCommandMiddleware`, returning `this.true()` / `this.false()`) run before every command. Add them with `bot.getCommandManager().getExecutor().getMiddleware().add(...)`.
 - Errors go to the executor's `ErrorHandler`: `getExecutor().getErrorHandler().setConsumer(ErrorClass, fn)` / `.setFallbackConsumer(fn)`. nyx never replies to users on errors, so do it there.
 
 **Design**
