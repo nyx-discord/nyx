@@ -4,7 +4,6 @@ import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
 import type {
   APIMessageComponentButtonInteraction,
   APIMessageComponentSelectMenuInteraction,
-  APIModalSubmitInteraction,
 } from '@discordjs/core';
 import { ComponentType, InteractionType } from '@discordjs/core';
 import { BaseSession } from '../../shared/base/session/BaseSession.js';
@@ -23,7 +22,7 @@ export abstract class AbstractSession<Result = void> extends BaseSession<
 
     if (data.type === InteractionType.ModalSubmit) {
       return this.handleModal(
-        interaction as ToEventProps<APIModalSubmitInteraction>,
+        interaction as CoreInteractionTypes['ModalMessageModalSubmitInteraction'],
         meta,
       );
     }

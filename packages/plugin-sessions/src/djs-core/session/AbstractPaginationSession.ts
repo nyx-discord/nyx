@@ -4,7 +4,6 @@ import type { CoreInteractionTypes } from '@nyx-discord/djs-core';
 import type {
   APIMessageComponentButtonInteraction,
   APIMessageComponentSelectMenuInteraction,
-  APIModalSubmitInteraction,
 } from '@discordjs/core';
 import { ComponentType, InteractionType } from '@discordjs/core';
 import { BasePaginationSession } from '../../shared/base/session/BasePaginationSession.js';
@@ -25,7 +24,7 @@ export abstract class AbstractPaginationSession<
       const data = interaction.data;
       if (data.type === InteractionType.ModalSubmit) {
         return this.handleModal(
-          interaction as ToEventProps<APIModalSubmitInteraction>,
+          interaction as CoreInteractionTypes['ModalMessageModalSubmitInteraction'],
           meta,
         );
       }
@@ -64,7 +63,7 @@ export abstract class AbstractPaginationSession<
 
     if (data.type === InteractionType.ModalSubmit) {
       return this.extractPageFromModal(
-        interaction as ToEventProps<APIModalSubmitInteraction>,
+        interaction as CoreInteractionTypes['ModalMessageModalSubmitInteraction'],
       );
     }
     if (data.data.component_type === ComponentType.Button) {
@@ -109,7 +108,7 @@ export abstract class AbstractPaginationSession<
 
   /** Extracts the referred page in a ModalSubmitInteraction, if any. */
   protected extractPageFromModal(
-    interaction: ToEventProps<APIModalSubmitInteraction>,
+    interaction: CoreInteractionTypes['ModalMessageModalSubmitInteraction'],
   ): number | null {
     const data = interaction.data.data;
     const newPage = this.extractPageFromCustomId(data.custom_id);

@@ -16,4 +16,6 @@ export interface InteractionTypes {
   readonly SelectMenuInteraction: unknown;
   /** The interaction type for modal submissions. */
   readonly ModalSubmitInteraction: unknown;
+  /** The interaction type for modal submissions that originated from a message component. */
+  readonly ModalMessageModalSubmitInteraction: unknown;
 }

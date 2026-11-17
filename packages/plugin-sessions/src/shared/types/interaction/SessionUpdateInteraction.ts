@@ -6,4 +6,4 @@ export type SessionUpdateInteraction<
 > =
   | Types['ButtonInteraction']
   | Types['SelectMenuInteraction']
-  | Types['ModalSubmitInteraction'];
+  | Types['ModalMessageModalSubmitInteraction'];

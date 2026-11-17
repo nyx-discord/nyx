@@ -215,7 +215,7 @@ export abstract class BaseSession<
 
   /** Handles a modal submit interaction whose customId matches this session. */
   protected handleModal(
-    _interaction: Types['ModalSubmitInteraction'],
+    _interaction: Types['ModalMessageModalSubmitInteraction'],
     _meta: Metadata,
   ): boolean | Promise<boolean> {
     throw new NotImplementedError();

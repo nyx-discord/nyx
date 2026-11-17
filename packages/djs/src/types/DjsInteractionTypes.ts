@@ -6,6 +6,7 @@ import type {
   ChatInputCommandInteraction,
   ContextMenuCommandInteraction,
   MessageContextMenuCommandInteraction,
+  ModalMessageModalSubmitInteraction,
   ModalSubmitInteraction,
   UserContextMenuCommandInteraction,
 } from 'discord.js';
@@ -20,4 +21,5 @@ export interface DjsInteractionTypes extends InteractionTypes {
   readonly ButtonInteraction: ButtonInteraction;
   readonly SelectMenuInteraction: AnySelectMenuInteraction;
   readonly ModalSubmitInteraction: ModalSubmitInteraction;
+  readonly ModalMessageModalSubmitInteraction: ModalMessageModalSubmitInteraction;
 }

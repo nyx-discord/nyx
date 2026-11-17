@@ -83,7 +83,7 @@ export abstract class BaseSessionStage<
 
   /** Handles a modal submit interaction whose customId matches this session stage. */
   protected handleModal(
-    _interaction: Types['ModalSubmitInteraction'],
+    _interaction: Types['ModalMessageModalSubmitInteraction'],
     _meta: Metadata,
   ): Awaitable<boolean> {
     throw new NotImplementedError();

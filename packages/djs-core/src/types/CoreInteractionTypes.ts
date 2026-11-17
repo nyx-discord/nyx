@@ -2,6 +2,7 @@ import type {
   APIApplicationCommandAutocompleteInteraction,
   APIChatInputApplicationCommandInteraction,
   APIContextMenuInteraction,
+  APIMessage,
   APIMessageApplicationCommandInteraction,
   APIMessageComponentButtonInteraction,
   APIMessageComponentSelectMenuInteraction,
@@ -21,4 +22,7 @@ export interface CoreInteractionTypes extends InteractionTypes {
   readonly ButtonInteraction: ToEventProps<APIMessageComponentButtonInteraction>;
   readonly SelectMenuInteraction: ToEventProps<APIMessageComponentSelectMenuInteraction>;
   readonly ModalSubmitInteraction: ToEventProps<APIModalSubmitInteraction>;
+  readonly ModalMessageModalSubmitInteraction: ToEventProps<
+    APIModalSubmitInteraction & { message: APIMessage }
+  >;
 }
