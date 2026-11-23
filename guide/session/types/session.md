@@ -127,7 +127,7 @@ Optionally implement `handleButton`, `handleSelectMenu`, and `handleModal` metho
   <Tab>
 ```ts twoslash
 import { AbstractSession } from '@nyx-discord/plugin-sessions/djs';
-import type { ButtonInteraction, AnySelectMenuInteraction, ModalSubmitInteraction } from 'discord.js';
+import type { ButtonInteraction, AnySelectMenuInteraction, ModalMessageModalSubmitInteraction } from 'discord.js';
 
 class MySession extends AbstractSession {
   // ---cut-start---
@@ -144,7 +144,7 @@ class MySession extends AbstractSession {
     return true;
   }
 
-  protected async handleModal(interaction: ModalSubmitInteraction) {
+  protected async handleModal(interaction: ModalMessageModalSubmitInteraction) {
     // Reply to modals
     return true;
   }
