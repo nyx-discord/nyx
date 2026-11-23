@@ -136,7 +136,7 @@
 <li><span><span class="tsd-kind-parameter">session</span>: <a href="../interfaces/_nyx-discord_plugin-sessions.Session.html" class="tsd-signature-type tsd-kind-interface">Session</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L160">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:160</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L176">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:176</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="checkandreserve"><span>check<wbr/>And<wbr/>Reserve</span><a href="#checkandreserve" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -180,7 +180,7 @@
 <h4 class="tsd-anchor-link" id="throws-1">Throws<a href="#throws-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the limit is exceeded and the action prevents proceeding.</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L230">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:230</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L246">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:246</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="commit"><span>commit</span><a href="#commit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -193,10 +193,14 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">session</span>: <a href="../interfaces/_nyx-discord_plugin-sessions.Session.html" class="tsd-signature-type tsd-kind-interface">Session</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-2">Throws<a href="#throws-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If any displaced session failed to end, once every one was tried.</p>
+</div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitManager.html">SessionLimitManager</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitManager.html#commit">commit</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L123">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:123</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L127">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:127</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="computescopekey"><code class="tsd-tag">Protected</code><span>compute<wbr/>Scope<wbr/>Key</span><a href="#computescopekey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -212,7 +216,7 @@
 <li><span><span class="tsd-kind-parameter">scope</span>: <a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitKeyProvider.html" class="tsd-signature-type tsd-kind-interface">SessionLimitKeyProvider</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> (<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">session</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/_nyx-discord_plugin-sessions.Session.html" class="tsd-signature-type tsd-kind-interface">Session</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span>)</span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L303">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:303</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L319">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:319</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="getmatchingsessions"><code class="tsd-tag">Protected</code><span>get<wbr/>Matching<wbr/>Sessions</span><a href="#getmatchingsessions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -229,7 +233,7 @@
 <li><span><span class="tsd-kind-parameter">scope</span>: <a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitKeyProvider.html" class="tsd-signature-type tsd-kind-interface">SessionLimitKeyProvider</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> (<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">session</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/_nyx-discord_plugin-sessions.Session.html" class="tsd-signature-type tsd-kind-interface">Session</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span>)</span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/_nyx-discord_plugin-sessions.Session.html" class="tsd-signature-type tsd-kind-interface">Session</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L280">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:280</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L296">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:296</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getpolicies"><span>get<wbr/>Policies</span><a href="#getpolicies" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -241,7 +245,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ReadonlyMap</span><span class="tsd-signature-symbol">&lt;</span><br/>    <a href="../types/_nyx-discord_base.Constructor.html" class="tsd-signature-type tsd-kind-type-alias">Constructor</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_nyx-discord_plugin-sessions.Session.html" class="tsd-signature-type tsd-kind-interface">Session</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-keyword">readonly</span> <a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimit.html" class="tsd-signature-type tsd-kind-interface">SessionLimit</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitManager.html">SessionLimitManager</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitManager.html#getpolicies">getPolicies</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L152">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:152</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L168">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:168</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="register"><span>register</span><a href="#register" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -257,7 +261,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-2">Throws<a href="#throws-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If called after the plugin has started.</p>
+<h4 class="tsd-anchor-link" id="throws-3">Throws<a href="#throws-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If called after the plugin has started.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitManager.html">SessionLimitManager</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitManager.html#register">register</a></p>
 <ul>
@@ -277,7 +281,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitManager.html">SessionLimitManager</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitManager.html#release">release</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L146">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:146</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L162">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:162</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="remove"><span>remove</span><a href="#remove" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -293,7 +297,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-3">Throws<a href="#throws-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If called after the plugin has started.</p>
+<h4 class="tsd-anchor-link" id="throws-4">Throws<a href="#throws-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If called after the plugin has started.</p>
 </div></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitManager.html">SessionLimitManager</a>.<a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimitManager.html#remove">remove</a></p>
 <ul>
@@ -315,10 +319,10 @@
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_nyx-discord_plugin-sessions.SessionLimit.html" class="tsd-signature-type tsd-kind-interface">SessionLimit</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#types">Types</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-throws">
-<h4 class="tsd-anchor-link" id="throws-4">Throws<a href="#throws-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If multiple policies match at the same prototype level without disambiguating predicates.</p>
+<h4 class="tsd-anchor-link" id="throws-5">Throws<a href="#throws-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If multiple policies match at the same prototype level without disambiguating predicates.</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L189">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:189</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L205">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:205</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="withlock"><code class="tsd-tag">Protected</code><span>with<wbr/>Lock</span><a href="#withlock" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -337,7 +341,7 @@
 <li><span><span class="tsd-kind-parameter">fn</span>: <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#withlockt">T</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#withlockt">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L169">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:169</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/nyx-discord/nyx/blob/main/packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts#L185">packages/plugin-sessions/src/shared/base/limit/DefaultSessionLimitManager.ts:185</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="create"><code class="tsd-tag">Static</code><span>create</span><a href="#create" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
